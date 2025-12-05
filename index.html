@@ -11,7 +11,8 @@
     <div class="scroll-progress" id="scrollProgress"></div><div class="custom-cursor" id="customCursor"></div>
     <nav><!-- Navigation -->
         <div class="nav-container">
-            <div class="logo">Echo</div>
+            <!--<div class="logo">Echo</div>-->
+            <div class="logo-container"><div class="logo">Echo</div></div>
             <ul class="nav-links">
                 <li><a href="#accueil">Accueil</a></li>
                 <li><a href="#team">Team Nightberry</a></li>
@@ -25,6 +26,7 @@
     </nav>
     <section class="hero"><!-- Accueil -->
         <div class="arriere" id="accueil"></div> 
+        <div class="particles" aria-hidden="true"></div>
         <div class="hero-content">
             <h1><span></span>Echo</h1>
             <p class="nav-links" style="gap:inherit!important; place-items: center; margin-left: 135px;"><span style="display: inline-block; text-align: center;">par la&nbsp;<a href="#team">Team Nightberry</a></span></p>
@@ -82,8 +84,39 @@
             <div class="feature-card"><div class="feature-icon">🔗</div><h3>-</h3><p>-</p></div>
         </div>
     </section>
-    <footer><p>&copy; 2025 Echo. Tous droits réservés.</p></footer>
-    <div class="floating-buttons"><button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+<footer>
+  <p>&copy; 2025 Echo. Tous droits réservés • 
+    <span class="version-text">Version 1.0 · Beta</span>
+  </p>
+</footer>
+<button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
+  <i class="fa-solid fa-circle-dot"></i>
+</button>
+<!-- ===== BOUTONS FLOTTANTS ===== -->
+<div class="floating-buttons">
+  <button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut">
+    <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+  <button class="floating-btn btn-music" id="musicBtn" title="Lecture/Pause musique">
+    <i class="fa-solid fa-music"></i>
+  </button>
+</div>
+
+<!-- ===== AUDIO ===== -->
+<audio id="backgroundMusic" src="musique.mp3" loop preload="auto"></audio>
+
+<!-- ===== MODALE D’ACCÈS SECRET ===== -->
+<div id="secretModal" class="secret-modal">
+  <div class="secret-box">
+    <h3>🔒 Accès restreint</h3>
+    <p>Entrez le code d’accès :</p>
+    <input type="password" id="secretInput" placeholder="Code..." />
+    <div class="secret-actions">
+      <button id="cancelSecret" class="btn-cancel">Annuler</button>
+      <button id="confirmSecret" class="btn-confirm">Valider</button>
+    </div>
+  </div>
+</div>
 </body>
 <script>
         // Curseur personnalisé - FIX BUG
@@ -291,5 +324,170 @@
         document.addEventListener('contextmenu', function(event) {
             event.preventDefault();
         });
+
+
+
+
+// BOUTON TELECHARGER //
+const jeuDispo = false; // ← c
+
+function appliquerDisponibiliteBouton(bouton) {
+    if (!bouton) return;
+
+    if (bouton.querySelector('i')) {
+        bouton.innerHTML = '<i class="fa-solid fa-download fa-bounce"></i> Télécharger le jeu';
+    } else {
+        bouton.textContent = 'Télécharger le jeu';
+    }
+
+    const infoSpan = document.createElement('span');
+    infoSpan.style.position = 'absolute';
+    infoSpan.style.bottom = '6px';
+    infoSpan.style.left = '50%';
+    infoSpan.style.transform = 'translateX(-50%)';
+    infoSpan.style.fontSize = '0.65rem';
+    infoSpan.style.opacity = '0.8';
+    infoSpan.style.pointerEvents = 'none';
+    infoSpan.style.fontWeight = 'normal';
+    infoSpan.style.whiteSpace = 'nowrap';
+
+    if (jeuDispo) {
+        infoSpan.textContent = 'v1.0';
+        bouton.style.opacity = '1';
+        bouton.style.cursor = 'pointer';
+        bouton.style.pointerEvents = 'auto';
+    } else {
+        infoSpan.innerHTML = '<i class="fa-solid fa-hourglass-half fa-fade"></i> Bientôt disponible';
+        //infoSpan.textContent = '⏳ Bientôt disponible';
+        bouton.style.opacity = '0.6';
+        bouton.style.cursor = 'not-allowed';
+        bouton.style.pointerEvents = 'none';
+    }
+
+    bouton.style.position = 'relative';
+    bouton.appendChild(infoSpan);
+}
+
+const btnHero = document.querySelector('.hero .btn-primary');
+const btnTelecharger = document.querySelector('#telecharger .btn-primary');
+appliquerDisponibiliteBouton(btnHero);
+appliquerDisponibiliteBouton(btnTelecharger);
+
+
+// === Particules lentes dans le fond ===
+const particlesContainer = document.querySelector('.particles');
+if (particlesContainer) {
+  const particleCount = 35; // nombre de particules
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.animationDelay = (Math.random() * 20) + 's';
+    p.style.animationDuration = (15 + Math.random() * 10) + 's';
+    p.style.opacity = 0.1 + Math.random() * 0.4;
+    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+    particlesContainer.appendChild(p);
+  }
+}
+
+
+
+// === RÉACTION SONORE VISUELLE (Activation manuelle) ===
+const audioVis = document.getElementById('audioVisualizer');
+function triggerAudioReaction() {
+  if (!audioVis) return;
+  audioVis.classList.add('active');
+  setTimeout(() => audioVis.classList.remove('active'), 800);
+}
+
+// Exemple : pulsation visuelle quand on clique sur un bouton
+document.querySelectorAll('.btn-primary, .btn-secondary').forEach(btn => {
+  btn.addEventListener('click', () => triggerAudioReaction());
+});
+
+
+
+
+
+// === Contrôle de la musique (lecture/pause) ===
+const musicBtn = document.getElementById('musicBtn');
+const musique = document.getElementById('backgroundMusic');
+
+if (musique && musicBtn) {
+  musique.volume = 0.4;
+
+  const updateIcon = () => {
+    const icon = musicBtn.querySelector('i');
+    if (musique.paused) {
+      icon.classList.remove('fa-pause');
+      icon.classList.add('fa-music');
+      icon.style.color = 'var(--debut)';
+    } else {
+      icon.classList.remove('fa-music');
+      icon.classList.add('fa-pause');
+      icon.style.color = 'var(--finn)';
+    }
+  };
+
+  musicBtn.addEventListener('click', () => {
+    if (musique.paused) {
+      musique.play().catch(err => console.log('Lecture refusée :', err));
+    } else {
+      musique.pause();
+    }
+    updateIcon();
+  });
+
+  // Permet lecture si interaction (scroll/clic/touche) — au cas où autoplay bloqué
+  const activerMusique = () => {
+    musique.play().then(updateIcon).catch(()=>{});
+    ['click','scroll','keydown','mousemove','touchstart']
+      .forEach(evt=>window.removeEventListener(evt, activerMusique));
+  };
+  ['click','scroll','keydown','mousemove','touchstart']
+    .forEach(evt=>window.addEventListener(evt, activerMusique, {once:true}));
+}
+
+
+
+
+//  <!-- ===== SCRIPT ===== -->
+const secretBtn  = document.getElementById('versionAccessBtn');
+const modal      = document.getElementById('secretModal');
+const input      = document.getElementById('secretInput');
+const cancelBtn  = document.getElementById('cancelSecret');
+const confirmBtn = document.getElementById('confirmSecret');
+
+const codeSecret  = "N1ghtberryV1.2";
+const lienVersions = "versions.html";
+
+// --- Ouverture
+secretBtn.addEventListener('click', () => {
+  document.body.style.overflow = 'hidden';   // bloque le scroll
+  modal.classList.add('active');
+  input.value = "";
+  setTimeout(() => input.focus(), 200);
+});
+
+// --- Fermeture
+function closeModal() {
+  document.body.style.overflow = '';         // rétablit scroll
+  modal.classList.remove('active');
+}
+
+cancelBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+// --- Validation
+confirmBtn.addEventListener('click', () => {
+  if (input.value === codeSecret) {
+    closeModal();
+    window.open(lienVersions, "_blank");
+  } else {
+    input.style.borderColor = "red";
+    setTimeout(() => (input.style.borderColor = "rgba(102,126,234,0.4)"), 1000);
+  }
+});
 </script>
 </html>
