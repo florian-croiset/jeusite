@@ -798,7 +798,7 @@ body {
 
 
 
-/* NOUVEAU v1.2 */
+/* NOUVEAU v1.1 */
 
 
 .fa-bounce {
@@ -884,6 +884,9 @@ nav.scrolled .nav-container {
   padding: 0.7rem 2rem!important;              /* au lieu de 0.4 rem */
   transform: scale(0.98)!important;            /* mini‑réduction fluide */
 }
+
+
+
 
 
 .version-text {
@@ -1121,8 +1124,6 @@ nav.scrolled .nav-container {
 }
 
 
-
-
 .custom-cursor {
   position: fixed;
   width: 20px;
@@ -1137,3 +1138,15 @@ nav.scrolled .nav-container {
 }
 
 
+/**/
+#copyLock:hover {
+  color: var(--fin);
+  transform: scale(1.1);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+
+#copyLock, #copyLock * {
+  cursor: none !important;       /* garde ton curseur perso */
+  pointer-events: auto !important; /* reste cliquable */
+}
