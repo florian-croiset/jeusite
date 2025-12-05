@@ -886,9 +886,6 @@ nav.scrolled .nav-container {
 }
 
 
-
-
-
 .version-text {
   display: inline-block;
   font-weight: 600;
@@ -898,6 +895,7 @@ nav.scrolled .nav-container {
               var(--finn),
               var(--debut));
   -webkit-background-clip: text;
+  color: transparent; 
   -webkit-text-fill-color: transparent;
   background-clip: text;
   background-size: 300%;
@@ -1138,3 +1136,4 @@ nav.scrolled .nav-container {
   mix-blend-mode: difference;
   will-change: transform;
 }
+
