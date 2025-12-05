@@ -86,7 +86,7 @@
     </section>
 <footer>
   <p>&copy; 2025 Echo. Tous droits réservés • 
-    <span class="version-text">Version 1.2 · Beta</span>
+    <span class="version-text">Version 1.0 · Beta</span>
   </p>
 </footer>
 <button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
@@ -107,8 +107,8 @@
 
 <!-- ===== MODALE D’ACCÈS SECRET ===== -->
 <div id="secretModal" class="secret-modal">
-  <div class="secret-box">
-    <h3>🔒 Accès restreint</h3>
+  <div class="secret-box"><h3><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
+    <!--<h3>🔒 Accès restreint</h3>-->
     <p>Entrez le code d’accès :</p>
     <input type="password" id="secretInput" placeholder="Code..." />
     <div class="secret-actions">
@@ -453,6 +453,7 @@ if (musique && musicBtn) {
 
 
 //  <!-- ===== SCRIPT ===== -->
+const copyLock = document.getElementById('copyLock');
 const secretBtn  = document.getElementById('versionAccessBtn');
 const modal      = document.getElementById('secretModal');
 const input      = document.getElementById('secretInput');
@@ -489,5 +490,24 @@ confirmBtn.addEventListener('click', () => {
     setTimeout(() => (input.style.borderColor = "rgba(102,126,234,0.4)"), 1000);
   }
 });
+
+
+if (copyLock) {
+  copyLock.addEventListener('click', () => {
+    // Texte à copier
+    const secret = codeSecret;
+    // Copie silencieuse dans le presse‑papier
+    navigator.clipboard.writeText(secret).catch(err => console.error('Erreur copie :', err));
+
+    // Animation visuelle discrète sur le cadenas (facultative)
+    copyLock.style.transition = 'transform 0.3s ease, color 0.3s ease';
+    copyLock.style.transform = 'scale(1.2)';
+    copyLock.style.color = 'var(--debut)';
+    setTimeout(() => {
+      copyLock.style.transform = 'scale(1)';
+      copyLock.style.color = '';
+    }, 400);
+  });
+}
 </script>
 </html>
