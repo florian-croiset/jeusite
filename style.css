@@ -471,7 +471,7 @@
         section {
             /*padding: 4rem 2rem;*/
             padding: 2rem 2rem;
-            max-width: 1400px;
+            /*max-width: 1400px;*/
             margin: 0 auto;
             opacity: 0;
             transform: translateY(50px);
@@ -1150,3 +1150,4 @@ nav.scrolled .nav-container {
   cursor: none !important;       /* garde ton curseur perso */
   pointer-events: auto !important; /* reste cliquable */
 }
+
