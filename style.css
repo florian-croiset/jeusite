@@ -446,8 +446,9 @@
         }
 
         .btn-secondary:hover::after {
-            width: 300px;
-            height: 300px;
+            width: 310px;
+       /* 300 */
+            height: 310px;
         }
 
         .btn-secondary:hover {
@@ -1161,4 +1162,5 @@ nav.scrolled .nav-container {
        z-index: 0;                  /* derrière le contenu */
        filter: brightness(0.7);     /* optionnel, assombrit un peu */
 }
+
 
