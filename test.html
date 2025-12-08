@@ -14,11 +14,11 @@
             <!--<div class="logo">Echo</div>-->
             <div class="logo-container"><div class="logo"><a href="#accueil" style="text-decoration:none;">Echo</a></div></div>
             <div class="burger" id="burger">
-                <span><a href="#team">Team Nightberry</a></span>
-                <span><a href="#telecharger">Télécharger le jeu</a></span>
-                <span><a href="#install">Installer / désinstaller le jeu</a></span>
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-            <ul class="nav-links">
+            <ul class="nav-links" id="nav-links">
                 <!--<li><a href="#accueil">Accueil</a></li>-->
                 <li><a href="#team">Team Nightberry</a></li>
                 <li><a href="#telecharger">Télécharger le jeu</a></li>
@@ -527,6 +527,7 @@ burger.addEventListener("click", () => {
     burger.classList.toggle("active");
 });
 
+
 </script>
 <style>
 /* =========================
@@ -764,6 +765,24 @@ burger.addEventListener("click", () => {
 
     .burger.active span:nth-child(3) {
         transform: rotate(-45deg) translateY(-8px);
+    }
+}
+
+@media (max-width: 768px) {
+
+    .cta-buttons {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem !important;
+        width: 100%;
+    }
+
+    .cta-buttons .btn {
+        width: 100%;
+        margin: 0 !important;
+        transform: none !important;
+        font-size: 1rem !important;
+        padding: 1rem !important;
     }
 }
 
