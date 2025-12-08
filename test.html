@@ -335,16 +335,16 @@
 
 
 // BOUTON TELECHARGER //
+// Vérifier si l'écran est petit (mobile)
+function estSurMobile() {
+    return window.innerWidth <= 768; // largeur pour considérer comme mobile
+}
+
+// BOUTON TELECHARGER //
 const jeuDispo = false; // ← c
 
 function appliquerDisponibiliteBouton(bouton) {
     if (!bouton) return;
-
-    if (bouton.querySelector('i')) {
-        bouton.innerHTML = '<i class="fa-solid fa-download fa-bounce"></i> Télécharger le jeu';
-    } else {
-        bouton.textContent = 'Télécharger le jeu';
-    }
 
     const infoSpan = document.createElement('span');
     infoSpan.style.position = 'absolute';
@@ -357,17 +357,28 @@ function appliquerDisponibiliteBouton(bouton) {
     infoSpan.style.fontWeight = 'normal';
     infoSpan.style.whiteSpace = 'nowrap';
 
-    if (jeuDispo) {
-        infoSpan.textContent = 'v1.0';
-        bouton.style.opacity = '1';
-        bouton.style.cursor = 'pointer';
-        bouton.style.pointerEvents = 'auto';
-    } else {
-        infoSpan.innerHTML = '<i class="fa-solid fa-hourglass-half fa-fade"></i> Bientôt disponible';
-        //infoSpan.textContent = '⏳ Bientôt disponible';
+    // Si sur mobile, on modifie directement le texte
+    if (estSurMobile()) {
+        bouton.innerHTML = '<i class="fa-solid fa-times"></i> Jeu non disponible sur mobile';
+        infoSpan.textContent = ''; // On ne veut pas de texte supplémentaire sous le bouton
         bouton.style.opacity = '0.6';
         bouton.style.cursor = 'not-allowed';
         bouton.style.pointerEvents = 'none';
+    } else {
+        // Sinon, on applique le comportement normal (selon disponibilité du jeu)
+        if (jeuDispo) {
+            bouton.innerHTML = '<i class="fa-solid fa-download fa-bounce"></i> Télécharger le jeu';
+            infoSpan.textContent = 'v1.0';
+            bouton.style.opacity = '1';
+            bouton.style.cursor = 'pointer';
+            bouton.style.pointerEvents = 'auto';
+        } else {
+            bouton.innerHTML = '<i class="fa-solid fa-download"></i> Télécharger le jeu';
+            infoSpan.innerHTML = '<i class="fa-solid fa-hourglass-half fa-fade"></i> Bientôt disponible';
+            bouton.style.opacity = '0.6';
+            bouton.style.cursor = 'not-allowed';
+            bouton.style.pointerEvents = 'none';
+        }
     }
 
     bouton.style.position = 'relative';
@@ -376,26 +387,17 @@ function appliquerDisponibiliteBouton(bouton) {
 
 const btnHero = document.querySelector('.hero .btn-primary');
 const btnTelecharger = document.querySelector('#telecharger .btn-primary');
+
+// Appliquer les changements de disponibilité sur les boutons
 appliquerDisponibiliteBouton(btnHero);
 appliquerDisponibiliteBouton(btnTelecharger);
 
+// Si la taille de la fenêtre change, on réapplique la fonction pour adapter le texte si nécessaire
+window.addEventListener('resize', () => {
+    appliquerDisponibiliteBouton(btnHero);
+    appliquerDisponibiliteBouton(btnTelecharger);
+});
 
-// === Particules lentes dans le fond ===
-const particlesContainer = document.querySelector('.particles');
-if (particlesContainer) {
-  const particleCount = 35; // nombre de particules
-  for (let i = 0; i < particleCount; i++) {
-    const p = document.createElement('div');
-    p.classList.add('particle');
-    p.style.left = Math.random() * 100 + '%';
-    p.style.top = Math.random() * 100 + '%';
-    p.style.animationDelay = (Math.random() * 20) + 's';
-    p.style.animationDuration = (15 + Math.random() * 10) + 's';
-    p.style.opacity = 0.1 + Math.random() * 0.4;
-    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
-    particlesContainer.appendChild(p);
-  }
-}
 
 
 
