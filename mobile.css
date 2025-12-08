@@ -125,7 +125,7 @@
 /* ===========================
    NAVBAR DESKTOP
    =========================== */
-.navbar {
+/*.navbar {
     position: fixed;
     width: 100%;
     top: 0;
@@ -161,7 +161,7 @@
 
 .nav-links a:hover {
     opacity: 0.7;
-}
+}*/
 
 /* ===========================
    BOUTON BURGER (MOBILE)
