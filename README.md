@@ -46,7 +46,6 @@ Le site web a été conçu pour servir de **vitrine officielle** du projet : a
 
 ## 🧩 Fichiers et structure
 <pre>
-```text
 Echo/
 │
 ├── index.html        → page principale du site
@@ -57,7 +56,6 @@ Echo/
 ├── arriere.png       → image de fond de la section Team
 ├── musique.mp3       → musique de fond
 └── README.md         → ce fichier
-```
 </pre>
 ---
 
