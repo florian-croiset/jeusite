@@ -186,7 +186,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: rgba(102, 126, 234, 0.6);    
+            /*background: rgba(102, 126, 234, 0.6);*/
         }
 
         .hero::before {
@@ -777,7 +777,7 @@
             background-size: cover; /* Pour que l'image couvre toute la page */
             background-position: center; /* Pour centrer l'image */
             background-repeat: no-repeat; /* Pour éviter la répétition de l'image */
-            background-image: url('arriere.png');
+            /*background-image: url('arriere.png');*/
         }
 
         :root {
@@ -1161,3 +1161,4 @@ nav.scrolled .nav-container {
        z-index: 0;                  /* derrière le contenu */
        filter: brightness(0.7);     /* optionnel, assombrit un peu */
 }
+
