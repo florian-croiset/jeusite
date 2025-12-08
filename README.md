@@ -45,18 +45,20 @@ Le site web a été conçu pour servir de **vitrine officielle** du projet : a
 ---
 
 ## 🧩 Fichiers et structure
-``
+<pre>
+```text
 Echo/
 │
-├── index.html           → page principale du site
-├── versions.html        → historique complet des versions
-├── style.css            → thème principal (desktop)
-├── mobile.css           → thème adapté au mobile
-├── anim.mp4             → vidéo d’intro de la hero section
-├── arriere.png          → image de fond de la section Team
-├── musique.mp3          → musique de fond
-└── README.md            → ce fichier
-``
+├── index.html        → page principale du site
+├── versions.html     → historique complet des versions
+├── style.css         → thème principal (desktop)
+├── mobile.css        → thème adapté au mobile
+├── anim.mp4          → vidéo d’intro de la hero section
+├── arriere.png       → image de fond de la section Team
+├── musique.mp3       → musique de fond
+└── README.md         → ce fichier
+```
+</pre>
 ---
 
 ## 🗓️ Historique des versions
