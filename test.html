@@ -362,7 +362,8 @@ function appliquerDisponibiliteBouton(bouton) {
     if (estSurMobile()) {
         bouton.innerHTML = '<i class="fa-solid fa-download fa-bounce"></i> Télécharger le jeu';
         infoSpan.innerHTML = '<i class="fa-solid fa-times"></i> Jeu non disponible sur mobile';
-        bouton.style.opacity = '0.6';
+        bouton.style.opacity = '0.3';
+        // bouton.style.opacity = '0.6';
         bouton.style.cursor = 'not-allowed';
         bouton.style.pointerEvents = 'none';
     } else {
@@ -376,7 +377,7 @@ function appliquerDisponibiliteBouton(bouton) {
         } else {
             bouton.innerHTML = '<i class="fa-solid fa-download"></i> Télécharger le jeu';
             infoSpan.innerHTML = '<i class="fa-solid fa-hourglass-half fa-fade"></i> Bientôt disponible';
-            bouton.style.opacity = '0.6';
+            bouton.style.opacity = '0.3';
             bouton.style.cursor = 'not-allowed';
             bouton.style.pointerEvents = 'none';
         }
