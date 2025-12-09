@@ -296,6 +296,10 @@
     .countdown-title{
         font-size: 0.8rem;
     }
+
+      .btn-primary{
+            top:-10px;
+      }
 }
 
 
