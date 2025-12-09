@@ -463,7 +463,7 @@ if (musique && musicBtn) {
 
 
 
-//  <!-- ===== SCRIPT ===== -->
+//  <!-- ===== FENETRE MODALE VERROUILLEE ===== -->
 const copyLock = document.getElementById('copyLock');
 const secretBtn  = document.getElementById('versionAccessBtn');
 const modal      = document.getElementById('secretModal');
@@ -502,12 +502,24 @@ confirmBtn.addEventListener('click', () => {
   }
 });
 
+// --- Fermer avec Échap
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModal();
+  }
 
+  // --- Valider avec Entrée
+  if (e.key === 'Enter') {
+    confirmBtn.click();
+  }
+});
+
+// --- Copie du code secret
 if (copyLock) {
   copyLock.addEventListener('click', () => {
     // Texte à copier
     const secret = codeSecret;
-    // Copie silencieuse dans le presse‑papier
+    // Copie silencieuse dans le presse-papier
     navigator.clipboard.writeText(secret).catch(err => console.error('Erreur copie :', err));
 
     // Animation visuelle discrète sur le cadenas (facultative)
@@ -520,6 +532,7 @@ if (copyLock) {
     }, 400);
   });
 }
+
 
 
 
