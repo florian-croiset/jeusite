@@ -300,6 +300,9 @@
       .btn-primary{
             top:-10px;
       }
+      .countdown-timer{
+            gap:1em;
+      }
 }
 
 
