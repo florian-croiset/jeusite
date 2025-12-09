@@ -276,6 +276,11 @@
         padding: 1rem !important;
     }
 
+.btn-secondary:hover::after {
+      width: 700px;
+      height: 700px;
+        }
+
     .countdown-item{
         padding: 0.4rem 1rem;
     }
