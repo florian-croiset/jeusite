@@ -2,7 +2,9 @@
       VERSION MOBILE
    ========================= */
 @media (max-width: 768px) {
-
+  .hero h1 {
+            font-size: 25rem;
+   }
     /* --- NAVBAR --- */
     .nav-container {
         flex-direction: column;
