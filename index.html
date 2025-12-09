@@ -361,7 +361,8 @@ function appliquerDisponibiliteBouton(bouton) {
     // Si sur mobile, on modifie directement le texte
     if (estSurMobile()) {
         bouton.innerHTML = '<i class="fa-solid fa-download fa-bounce"></i> Télécharger le jeu';
-        infoSpan.innerHTML = '<i class="fa-solid fa-times"></i> Jeu non disponible sur mobile';
+        //infoSpan.innerHTML = '<i class="fa-solid fa-times"></i> Jeu non disponible sur mobile';
+        infoSpan.innerHTML = '<span class="icon-stack"><i class="fa-solid fa-mobile-alt"></i><i class="fa-solid fa-slash"></i></span> Jeu non disponible sur mobile';
         bouton.style.opacity = '0.3';
         // bouton.style.opacity = '0.6';
         bouton.style.cursor = 'not-allowed';
