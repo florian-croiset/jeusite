@@ -264,6 +264,8 @@
         display: inline flex;
         /* flow-root list-item*/
         margin-top: 20px;
+      text-align: center;
+          display: initial;
     }
 
     .cta-buttons .btn {
