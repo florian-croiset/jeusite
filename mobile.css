@@ -297,3 +297,20 @@
         font-size: 0.8rem;
     }
 }
+
+
+
+ .icon-stack {
+  position: relative;
+  display: inline-block;
+}
+.icon-stack i {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.fa-slash::before{
+  left:-4px;
+  position: inherit;
+}
