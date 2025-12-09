@@ -301,8 +301,9 @@
 
 
  .icon-stack {
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  padding-top: 2px;
+  left: -12px;
 }
 .icon-stack i {
   position: absolute;
