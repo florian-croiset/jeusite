@@ -307,8 +307,8 @@
 }
 .icon-stack i {
   position: absolute;
-  top: 0;
-  left: 0;
+  /*top: 0;
+  left: 0;*/
 }
 
 .fa-slash::before{
