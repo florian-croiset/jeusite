@@ -207,8 +207,8 @@
         display: flex;
         top: 26px;
         position: absolute;
-        /*left: 470px;*/
-        left: 350px;
+        /*left: 350px;*/
+        left: 80%;
         z-index: 10;
     }
 
