@@ -1,4 +1,6 @@
-        * {
+/* Version 1.1 et 1.2 */
+
+       * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -1169,3 +1171,4 @@ nav.scrolled .nav-container {
 .feature-text{
        font-size:14px;
 }
+
