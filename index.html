@@ -119,7 +119,7 @@
 
 <!-- ===== MODALE D’ACCÈS SECRET ===== -->
 <div id="secretModal" class="secret-modal">
-  <div class="secret-box"><h3><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
+  <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer compte à rebours" style="display:contents;"><i class="fa-solid fa-hourglass-half"></i></button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3><!-- Bouton Sablier pour changer la durée du compte à rebours -->
     <!--<h3>🔒 Accès restreint</h3>-->
     <p>Entrez le code d’accès :</p>
     <input type="password" id="secretInput" placeholder="Code..." />
@@ -540,7 +540,6 @@ if (copyLock) {
 
 
 
-
 // BURGER MENU
 const burger = document.getElementById("burger");
 const navLinks = document.getElementById("nav-links");
@@ -550,6 +549,129 @@ burger.addEventListener("click", () => {
     burger.classList.toggle("active");
 });
 
+/* === SABLIER (Mode test 10s réinitialisable, cache le titre à la fin) === */
+const sablierBtn = document.getElementById('sablierBtn');
+if (sablierBtn) {
+  let mainIntervalId = null;   // timer principal
+  let testInterval = null;     // timer du mode test
+  
+  // Conserver l'interval d’origine si besoin
+  if (window._countdownInterval === undefined) {
+    window._countdownInterval = setInterval(updateCountdown, 1000);
+  }
+  mainIntervalId = window._countdownInterval;
+
+  sablierBtn.addEventListener('click', () => {
+    // 🛑 Stoppe d’abord tout ce qui tourne
+    clearInterval(mainIntervalId);
+    clearInterval(testInterval);
+
+    // 🔁 Remet les boutons en mode « bientôt disponible »
+    jeuDispo = false;
+    appliquerDisponibiliteBouton(btnHero);
+    appliquerDisponibiliteBouton(btnTelecharger);
+
+    // Rétablit la phrase "Lancement..."
+    const titre = document.querySelector(".countdown-title");
+    if (titre) titre.style.display = "block";
+
+    // Animation du bouton
+    sablierBtn.style.transition = "transform 0.3s, color 0.3s";
+    sablierBtn.style.color = "var(--finn)";
+    sablierBtn.style.transform = "rotate(15deg) scale(1.3)";
+
+    const now = Date.now();
+    const testTarget = now + 10 * 1000; // 10 s à partir de maintenant
+
+    function updateTestCountdown() {
+      const distance = testTarget - Date.now();
+
+      if (distance <= 0) {
+        // 🎉 Fin du test → Débloque téléchargement
+        jeuDispo = true;
+        appliquerDisponibiliteBouton(btnHero);
+        appliquerDisponibiliteBouton(btnTelecharger);
+
+        document.querySelector(".countdown-timer").innerHTML = `
+          <div class="countdown-item">
+            <span class="countdown-value">🎉</span>
+            <span class="countdown-label">Lancé&nbsp;!</span>
+          </div>`;
+
+        if (titre) titre.style.display = "none";
+        clearInterval(testInterval);
+        sablierBtn.style.color = "";
+        sablierBtn.style.transform = "";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("days").textContent = days;
+      document.getElementById("hours").textContent = hours;
+      document.getElementById("minutes").textContent = minutes;
+      document.getElementById("seconds").textContent = seconds;
+    }
+
+    // Remet le HTML original du compteur s’il y avait 🎉
+    const timer = document.querySelector(".countdown-timer");
+    if (timer && !timer.querySelector("#days")) {
+      timer.innerHTML = `
+        <div class="countdown-item">
+          <span class="countdown-value" id="days">0</span>
+          <span class="countdown-label">Jours</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="hours">0</span>
+          <span class="countdown-label">Heures</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="minutes">0</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value" id="seconds">0</span>
+          <span class="countdown-label">Secondes</span>
+        </div>`;
+    }
+
+    updateTestCountdown();
+    testInterval = setInterval(updateTestCountdown, 1000);
+  });
+}
+
+// Pause/Dépause de la musique avec la touche P (simule un clic)
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'p' || event.key === 'P') {
+        event.preventDefault();
+        // Simule un clic utilisateur sur le bouton musique :
+        musicBtn.click();
+        
+        // Ajoute un léger effet de feedback visuel
+        musicBtn.style.transform = "scale(1.2)";
+        setTimeout(() => {
+            musicBtn.style.transform = "";
+        }, 150);
+    }
+});
+
+/* === FERMETURE DU MENU BURGER AU CLIC D’UN LIEN === */
+document.querySelectorAll('#nav-links a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      smoothScrollTo(target);  // utilise ta fonction existante
+    }
+
+    // ferme le menu burger s’il est ouvert
+    navLinks.classList.remove('active');
+    burger.classList.remove('active');
+  });
+});
 
 </script>
 <style>
