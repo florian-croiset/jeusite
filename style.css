@@ -1172,3 +1172,21 @@ nav.scrolled .nav-container {
        font-size:14px;
 }
 
+.btn-sablier {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+}
+
+.btn-sablier i {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-sablier:hover i {
+  transform: rotate(15deg);
+  color: var(--debut);
+}
