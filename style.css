@@ -616,7 +616,8 @@
         }
 
         .feature-icon {
-            font-size: 2.5rem;
+            /*font-size: 2.5rem;*/
+              font-size: 2rem;
             margin-bottom: 1rem;
             display: inline-block;
             animation: float 3s ease-in-out infinite;
@@ -1163,4 +1164,8 @@ nav.scrolled .nav-container {
        filter: brightness(0.7);     /* optionnel, assombrit un peu */
 }
 
+/* NOUVEAU v1.4 */
 
+.feature-text{
+       font-size:14px;
+}
