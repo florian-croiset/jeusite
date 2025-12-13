@@ -63,6 +63,7 @@ Echo/
 
 | Version | Date | Changements clés |
 |----------|------|------------------|
+| **1.4** | 13 décembre 2025 | Partage intégré (QR Code...), mode test 🕒 du compte à rebours, modale améliorée et lore |
 | **1.3** | 9 décembre 2025 | Responsive complet, menu burger, gestion du téléchargement sur mobile |
 | **1.2** | 5 décembre 2025 | Effets visuels, musique, modale secrète |
 | **1.1** | 2 décembre 2025 | Compte à rebours, bouton « Remonter en haut » |
