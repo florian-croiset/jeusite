@@ -1352,3 +1352,38 @@ nav.scrolled .nav-container {
 .btn-confirm:focus, .btn-confirm:active {
     color: white !important;
 }
+
+/* FENETRE SECRETE - BOUTON EFFACER ET COLLER */
+  /* Conteneur pour l'input et le bouton Coller */
+.input-paste-container {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Petit espace entre le champ et le bouton */
+    margin-bottom: 20px; /* Ajout d'une marge sous le conteneur */
+}
+
+/* S'assurer que le champ d'entrée prend la bonne largeur */
+#secretInput {
+    flex-grow: 1; /* Permet à l'input de prendre l'espace restant */
+}
+
+/* Style du bouton Coller */
+.btn-paste {
+    /* Style de base pour un bouton discret */
+    background: transparent;
+    border: none;
+    color: var(--debut); /* Utiliser la couleur principale de votre thème */
+    font-size: 1.4rem;
+    padding: 5px 8px;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.btn-paste:hover {
+    color: var(--finn); /* Couleur de survol */
+    transform: scale(1.1);
+}
+
+.btn-paste:active {
+    transform: scale(0.95);
+}
