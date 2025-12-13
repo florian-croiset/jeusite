@@ -1,83 +1,114 @@
-
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echo – Historique des versions</title>
-
-    <!-- Librairies indispensables -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
-        /* === Design général (hérité du site) === */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* === Design général === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             background: #0a0a0a;
             color: #e0e0e0;
             overflow-x: hidden;
         }
-        :root {
-            --debut:#00d0c6;
-            --fin:#005867;
-            --finn:#8735b9;
+
+        body {
+            /* === Désactiver la sélection de texte === */
+            -webkit-user-select: none;
+            /* Chrome, Safari, Opera */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Standard */
         }
 
+        :root {
+            --debut: #00d0c6;
+            --fin: #005867;
+            --finn: #8735b9;
+        }
+
+        /* === En-tête (Header) === */
         header {
             text-align: center;
             padding: 3rem 1rem 1rem;
-            background: rgba(255,255,255,0.02);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
+
         header h1 {
             font-size: 3.5rem;
-            background: linear-gradient(135deg,var(--debut),var(--fin),var(--finn));
+            background: linear-gradient(135deg, var(--debut), var(--fin), var(--finn));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 300%;
             animation: headerGradient 6s linear infinite;
-            text-shadow: 0 0 20px rgba(102,126,234,0.4);
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
         }
+
         header p {
             color: #b0b0b0;
             margin-top: .8rem;
         }
 
         @keyframes headerGradient {
-            0%{background-position:0% 50%}
-            100%{background-position:300% 50%}
+            0% {
+                background-position: 0% 50%
+            }
+
+            100% {
+                background-position: 300% 50%
+            }
         }
 
+        /* === Contenu principal (Main) === */
         main {
             max-width: 900px;
             margin: 3rem auto 6rem auto;
             padding: 0 1.5rem;
         }
 
+        /* === Cartes de version === */
         .version-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 2rem;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
+            /* -> Retiré pour assurer que la bordure/box-shadow est visible sur le hover */
             transition: all 0.4s ease;
+            animation: fadeInUp 0.7s ease forwards;
         }
 
         .version-card:hover {
-            transform: translateY(-6px) scale(1.02);
+            /*transform: translateY(-6px) scale(1.02);*/
             border-color: var(--debut);
-            box-shadow: 0 15px 35px rgba(102,126,234,0.3);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
         }
 
         .version-card::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transition: left .6s;
         }
 
@@ -87,8 +118,9 @@
 
         .version-title {
             font-size: 1.8rem;
-            background: linear-gradient(135deg,var(--debut),var(--fin),var(--finn));
+            background: linear-gradient(135deg, var(--debut), var(--fin), var(--finn));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: .5rem;
         }
@@ -99,6 +131,7 @@
             margin-bottom: 1rem;
         }
 
+        /* === Liste des changements (UL/LI) === */
         .version-content ul {
             list-style: none;
             margin-left: 0;
@@ -107,21 +140,45 @@
         .version-content li {
             margin-bottom: .5rem;
             color: #b0b0b0;
+
+            /* Pour gérer le wrapping du texte et l'alignement de la puce */
+            display: flex;
+            align-items: flex-start;
+            white-space: normal;
+            word-break: normal;
+            overflow-wrap: break-word;
         }
 
         .version-content li::before {
             content: "• ";
             color: var(--debut);
+            margin-right: 5px;
+            flex-shrink: 0;
+            /* Empêche la puce de se rétrécir */
         }
 
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === Footer === */
         footer {
             text-align: center;
             padding: 2rem;
-            background: rgba(0,0,0,0.4);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: #808080;
         }
 
+        /* === Bouton de retour (Back-Btn) === */
         a.back-btn {
             position: fixed;
             bottom: 2rem;
@@ -129,17 +186,18 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            border: 2px solid rgba(102,126,234,0.3);
-            background: rgba(10,10,10,0.8);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             transition: all .3s ease;
             text-decoration: none !important;
         }
-        a.back-btn:after{
+
+        a.back-btn:after {
             display: none !important;
         }
 
@@ -148,123 +206,264 @@
             font-size: 1.4rem;
             transition: color .3s ease, transform .3s ease;
         }
+
         a.back-btn:hover {
             transform: scale(1.1) translateY(-4px);
             border-color: var(--fin);
-            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
-            background: rgba(102,126,234,0.1);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            background: rgba(102, 126, 234, 0.1);
         }
+
         a.back-btn:hover i {
             color: var(--finn);
             transform: rotate(-15deg);
         }
 
-        @keyframes fadeInUp {
-            from {opacity:0; transform:translateY(30px);}
-            to{opacity:1; transform:translateY(0);}
+        /* ======================================= */
+        /* ======  OPTIMISATION POUR MOBILE ====== */
+        /* ======================================= */
+        @media (max-width: 768px) {
+
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            main {
+                padding: 0 1rem;
+                margin: 2rem auto 5rem auto;
+            }
+
+            /*.version-card {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .version-card:hover {
+                transform: none;
+                border-color: rgba(255, 255, 255, 0.1);
+                box-shadow: none;
+            }
+
+            .version-card:hover::before {
+                left: -100%;
+            }*/
+
+            .version-title {
+                font-size: 1.5rem;
+            }
+
+            .version-content li {
+                font-size: 0.95rem;
+            }
+
+            a.back-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            a.back-btn i {
+                font-size: 1.2rem;
+            }
+
+            footer {
+                padding: 1.5rem 1rem;
+                font-size: 0.8rem;
+            }
         }
-        .version-card {animation: fadeInUp 0.7s ease forwards;}
+
+
+        /* === Mise en évidence de la version actuelle (1.4) === */
+        .latest-version {
+            /* Augmente la force du halo pour l'attirer l'oeil */
+            box-shadow: 0 0 40px rgba(0, 208, 198, 0.6), 0 0 15px rgba(135, 53, 185, 0.4);
+
+            /* Double bordure subtile (l'une solide, l'autre par box-shadow) */
+            border: 2px solid var(--debut);
+
+            /* Annule l'animation initiale fadeInUp pour ne pas surcharger la mise en page */
+            animation: none;
+        }
+
+        /* Force la bordure et le glow au survol pour qu'ils soient plus intenses */
+        .latest-version:hover {
+            /*transform: translateY(-8px) scale(1.03);*/
+            border-color: var(--finn);
+            box-shadow: 0 0 50px rgba(0, 208, 198, 0.9), 0 0 20px rgba(135, 53, 185, 0.6);
+        }
+
+        /* Modifie la couleur du titre pour un gradient plus vif */
+        .latest-version .version-title {
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(0, 208, 198, 0.3);
+        }
+
+        /* Met en évidence les puces de la dernière version */
+        .latest-version .version-content li::before {
+            color: var(--finn);
+            /* Utilise la couleur secondaire pour le contraste */
+        }
+
+        /* === Correction Mobile pour la version actuelle === */
+        @media (max-width: 768px) {
+
+            /* Restaure les effets d'animation de la carte pour la version la plus récente sur mobile */
+            .latest-version {
+                transform: translateY(-4px);
+                /* Petit décalage pour attirer l'oeil sans être intrusif */
+                box-shadow: 0 0 20px rgba(0, 208, 198, 0.4);
+            }
+
+            /* On maintient un petit effet au tap/hover sur mobile (même si c'est rare) */
+            .latest-version:hover {
+                transform: translateY(-4px);
+            }
+        }
+
+
+
+        /* Le nouveau style pour l'étiquette "Version actuelle" */
+        .latest-version {
+            /* ... (styles déjà définis : box-shadow, border, etc.) ... */
+
+            position: relative;
+            /* NÉCESSAIRE pour positionner l'étiquette */
+            overflow: hidden;
+            /* Assure que l'étiquette sort légèrement de la carte : visible*/
+        }
+
+        .latest-version::after {
+            content: "Version actuelle";
+            position: absolute;
+            top: -1px;
+            /* Légèrement décalé du haut */
+            left: -1px;
+            /* Légèrement décalé de la gauche (à cause du border) */
+            padding: 5px 10px;
+            background-color: var(--debut);
+            /* Couleur de fond cyan/bleu */
+            color: #0a0a0a;
+            /* Texte noir sur fond clair pour un contraste max */
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 15px 0 15px 0;
+            /* Coins arrondis en haut à gauche et en bas à droite */
+            z-index: 10;
+
+            /* Ajout d'une ombre portée pour un effet de relief */
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Ajustement mobile pour l'étiquette */
+        @media (max-width: 768px) {
+            .latest-version::after {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+                top: 0;
+                left: 0;
+            }
+        }
     </style>
 </head>
-<body>
 
-<header>
-    <h1>Historique des Versions</h1>
-    <p><i class="fa-solid fa-code-branch"></i>  Journal des améliorations du site <strong>Echo</strong></p>
-</header>
+<body oncontextmenu="return false;">
 
-<main>
-    <!-- v1.4 -->
-    <div class="version-card">
-        <div class="version-title">Version 1.4</div>
-        <div class="version-date">13 décembre 2025</div>
-        <div class="version-content">
-            <ul>
-                <li>Ajout du favicon 🪶</li>
-                <li>Bouton 「Télécharger」 redirige vers le fichier exécutable (fichier.exe)</li>
-                <li>Icône fusée 🚀 animée dans le titre du compte à rebours</li>
-                <li>Nouveau bouton sablier 🕒 pour accélérer le compte à rebours (de 10 s en mode test)</li>
-                <li>Déblocage automatique du téléchargement à la fin du compte à rebours</li>
-                <li>Raccourci clavier P pour lecture / pause musique 🎵</li>
-                <li>Modale d’accès secret améliorée : coller 📋, effacer ❌, Entrée = valider / Échap = fermer</li>
-                <li>Nouveau bouton flottant de partage 🔗 (API nat + QR Code + copie du lien)</li>
-                <li>Section 「Lore」 complétée : présentation + 4 actes narratifs (Kaelen : L’Ombre du Soleil)</li>
-                <li>Fermeture auto du menu burger après clic sur un lien</li>
-                <li>Améliorations visuelles et interface plus fluide sur mobile et desktop</li>
-            </ul>
+    <header>
+        <h1>Historique des Versions</h1>
+        <p><i class="fa-solid fa-code-branch"></i> Journal des améliorations du site <strong>Echo</strong></p>
+    </header>
+
+    <main>
+        <div class="version-card latest-version">
+            <div class="version-title">Version 1.4</div>
+            <div class="version-date">13 décembre 2025</div>
+            <div class="version-content">
+                <ul>
+                    <li>Ajout du favicon 🪶</li>
+                    <li>Bouton 「Télécharger」 redirige vers le fichier exécutable (fichier.exe)</li>
+                    <li>Icône fusée 🚀 animée dans le titre du compte à rebours</li>
+                    <li>Nouveau bouton sablier 🕒 pour accélérer le compte à rebours (de 10 s en mode test)</li>
+                    <li>Déblocage automatique du téléchargement à la fin du compte à rebours</li>
+                    <li>Raccourci clavier P pour lecture / pause musique 🎵</li>
+                    <li>Modale d’accès secret améliorée : coller 📋, effacer ❌, Entrée = valider / Échap = fermer</li>
+                    <li>Nouveau bouton flottant de partage 🔗 (API nat + QR Code + copie du lien)</li>
+                    <li>Section 「Lore」 complétée : présentation + 4 actes narratifs (Kaelen : L’Ombre du Soleil)</li>
+                    <li>Fermeture auto du menu burger après clic sur un lien</li>
+                    <li>Améliorations visuelles et interface plus fluide sur mobile et desktop</li>
+                </ul>
+            </div>
         </div>
-    </div>
-    <!-- v1.3 -->
-    <div class="version-card">
-        <div class="version-title">Version 1.3</div>
-        <div class="version-date">9 décembre 2025</div>
-        <div class="version-content">
-            <ul>
-                <li>Menu burger pour mobile 📱</li>
-                <li>Feuille de style mobile (mobile.css) ajoutée</li>
-                <li>Boutons « Télécharger » adaptés au mobile (non cliquables + texte spécifique)</li>
-                <li>Texte et icônes du bouton Télécharger améliorés (selon disponibilité)</li>
-                <li>Code JS du bouton refactorisé et plus lisible</li>
-                <li>Détection auto des appareils (window.innerWidth <= 768px)</li>
-                <li>Ré‑adapatation au redimensionnement de la fenêtre</li>
-                <li>Lien « Team Nightberry » plus grand dans l’en‑tête</li>
-                <li>Structure de navigation simplifiée et plus claire</li>
-                <li>Mise à jour générale du script pour plus de stabilité et compatibilité</li>
-            </ul>
+        <div class="version-card">
+            <div class="version-title">Version 1.3</div>
+            <div class="version-date">9 décembre 2025</div>
+            <div class="version-content">
+                <ul>
+                    <li>Menu burger pour mobile 📱</li>
+                    <li>Feuille de style mobile (mobile.css) ajoutée</li>
+                    <li>Boutons « Télécharger » adaptés au mobile (non cliquables + texte spécifique)</li>
+                    <li>Texte et icônes du bouton Télécharger améliorés (selon disponibilité)</li>
+                    <li>Code JS du bouton refactorisé et plus lisible</li>
+                    <li>Détection auto des appareils (window.innerWidth <= 768px)</li>
+                    <li>Ré‑adapatation au redimensionnement de la fenêtre</li>
+                    <li>Lien « Team Nightberry » plus grand dans l’en‑tête</li>
+                    <li>Structure de navigation simplifiée et plus claire</li>
+                    <li>Mise à jour générale du script pour plus de stabilité et compatibilité</li>
+                </ul>
+            </div>
         </div>
-    </div>
-    <!-- v1.2 -->
-    <div class="version-card">
-        <div class="version-title">Version 1.2</div>
-        <div class="version-date">5 décembre 2025</div>
-        <div class="version-content">
-            <ul>
-                <li>Logo animé (gradient + effet holographique)</li>
-                <li>Barre de navigation adoucie au scroll</li>
-                <li>Particules et filaments d’énergie dans le fond</li>
-                <li>Soulignement liquide des liens</li>
-                <li>Bouton musique 🎵 / ⏸️ flottant + lecture automatique après interaction</li>
-                <li>Texte de version animé dans le footer</li>
-                <li>Fenêtre modale d’accès secret (stylisée)</li>
-            </ul>
+        <div class="version-card">
+            <div class="version-title">Version 1.2</div>
+            <div class="version-date">5 décembre 2025</div>
+            <div class="version-content">
+                <ul>
+                    <li>Logo animé (gradient + effet holographique)</li>
+                    <li>Barre de navigation adoucie au scroll</li>
+                    <li>Particules et filaments d’énergie dans le fond</li>
+                    <li>Soulignement liquide des liens</li>
+                    <li>Bouton musique 🎵 / ⏸️ flottant + lecture automatique après interaction</li>
+                    <li>Texte de version animé dans le footer</li>
+                    <li>Fenêtre modale d’accès secret (stylisée)</li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!-- v1.1 -->
-    <div class="version-card">
-        <div class="version-title">Version 1.1</div>
-        <div class="version-date">2 décembre 2025</div>
-        <div class="version-content">
-            <ul>
-                <li>Ajout du système de compte à rebours (Hero)</li>
-                <li>Ajout du bouton 「Remonter en haut」 flottant</li>
-                <li>Optimisations de scroll et animations des sections</li>
-            </ul>
+        <div class="version-card">
+            <div class="version-title">Version 1.1</div>
+            <div class="version-date">2 décembre 2025</div>
+            <div class="version-content">
+                <ul>
+                    <li>Ajout du système de compte à rebours (Hero)</li>
+                    <li>Ajout du bouton 「Remonter en haut」 flottant</li>
+                    <li>Optimisations de scroll et animations des sections</li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!-- v1.0 -->
-    <div class="version-card">
-        <div class="version-title">Version 1.0</div>
-        <div class="version-date">1er décembre 2025</div>
-        <div class="version-content">
-            <ul>
-                <li>Première mise en ligne du site Echo</li>
-                <li>Section Team, Gameplay, Lore, Téléchargement</li>
-                <li>Design principal dark / néon cyan–violet</li>
-            </ul>
+        <div class="version-card">
+            <div class="version-title">Version 1.0</div>
+            <div class="version-date">1er décembre 2025</div>
+            <div class="version-content">
+                <ul>
+                    <li>Première mise en ligne du site Echo</li>
+                    <li>Section Team, Gameplay, Lore, Téléchargement</li>
+                    <li>Design principal dark / néon cyan–violet</li>
+                </ul>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<footer>
-    <p>&copy; 2025 Echo&nbsp;–&nbsp;Historique des versions</p>
-</footer>
+    <footer>
+        <p>&copy; 2025 Echo – Historique des versions</p>
+    </footer>
 
-<!-- Bouton retour -->
-<a href="index.html" class="back-btn" title="Retour au site principal">
-    <i class="fa-solid fa-arrow-left"></i>
-</a>
+    <a href="index.html" class="back-btn" title="Retour au site principal">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
 
 </body>
-</html>              
+
+</html>
