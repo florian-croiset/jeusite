@@ -1190,3 +1190,165 @@ nav.scrolled .nav-container {
   transform: rotate(15deg);
   color: var(--debut);
 }
+
+
+
+
+/* AJOUT BOUTON PARTAGER */
+/* === Bouton d'accès (flottant en bas à gauche) === */
+.btn-share-access {
+  position: fixed;
+  bottom: 5rem;
+  left: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(102,126,234,0.2);
+  z-index: 9999; /* au-dessus du footer */
+}
+
+.btn-share-access i {
+  color: rgba(102, 126, 234, 0.3);
+  transition: color 0.3s ease, transform 0.3s;
+  font-size: 0.9rem;
+}
+
+.btn-share-access:hover {
+  border-color: var(--debut);
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.4);
+  transform: scale(1.1);
+}
+
+.btn-share-access:hover i {
+  color: var(--finn);
+  transform: rotate(10deg);
+}
+
+
+
+
+/* Style du bouton de partage */
+.btn-share {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-top: 10px;
+}
+
+/* Ajustement de la modale pour le partage */
+.share-box {
+    text-align: center;
+    max-width: 350px !important;
+}
+
+.qr-container {
+    /*background: white;*/
+    padding: 15px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.qr-container img {
+    width: 150px;
+    height: 150px;
+    /*display: block;*/
+}
+
+
+/* Conteneur global de la zone de lien */
+.link-share-area {
+    display: flex;
+    flex-direction: column; /* On empile pour un centrage parfait */
+    align-items: center;    /* Centre horizontalement les éléments enfants */
+    justify-content: center;
+    gap: 15px;              /* Espace entre l'input et le bouton */
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Style de l'input (le lien) */
+#shareLinkInput {
+    width: 100%;            /* Prend toute la largeur disponible dans la box */
+    max-width: 280px;       /* Limite la largeur pour l'esthétique */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: white !important;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    text-align: center;     /* Centre le texte du lien à l'intérieur */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#shareLinkInput:focus {
+    border-color: var(--debut);
+}
+
+/* Style du bouton Copier */
+#copyLinkBtn {
+    min-width: 120px;       /* Largeur fixe pour éviter qu'il ne bouge au changement de texte */
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+/* État copié (pour le texte blanc lors de la transition) */
+#copyLinkBtn.copied {
+    background: var(--debut) !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+/*
+.link-share-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#shareLinkInput {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}*/
+
+.share-box h3 i {
+    color: var(--debut);
+    margin-right: 10px;
+}
+
+
+/* Style de base pour assurer la visibilité */
+.btn-confirm {
+    transition: all 0.3s ease;
+    color: white !important; /* Force le texte en blanc par défaut */
+}
+
+/* État lorsque le lien est copié */
+.btn-confirm.copied {
+    background-color: var(--debut) !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+/* On s'assure que même si on enlève la souris, le texte reste blanc */
+.btn-confirm:focus, .btn-confirm:active {
+    color: white !important;
+}
