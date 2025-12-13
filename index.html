@@ -129,6 +129,40 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+<div class="floating-buttons">
+  <button class="floating-btn btn-share-access" id="shareBtn" title="Partager le site">
+    <i class="fa-solid fa-share-nodes"></i>
+  </button>
+</div>
+
+<div id="shareModal" class="secret-modal">
+  <div class="secret-box share-box">
+    <h3><i class="fa-solid fa-share-nodes"></i> Partager Echo</h3>
+    
+    <div class="qr-container">
+      <img id="qrCodeImg" src="" alt="QR Code du site">
+      <p style="font-size: 0.8rem; color: #b0b0b0; margin-top: 10px;">Scannez pour ouvrir sur mobile</p>
+    </div>
+
+    <div class="link-share-area">
+      <input type="text" id="shareLinkInput" readonly>
+      <button id="copyLinkBtn" class="btn-confirm">Copier</button>
+    </div>
+
+    <div class="secret-actions">
+      <button id="closeShare" class="btn-cancel">Fermer</button>
+    </div>
+  </div>
+</div>
+
+
+
 </body>
 <script>
         // Curseur personnalisé - FIX BUG
@@ -673,6 +707,86 @@ document.querySelectorAll('#nav-links a[href^="#"]').forEach(link => {
   });
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const shareBtn = document.getElementById('shareBtn');
+const shareModal = document.getElementById('shareModal');
+const closeShare = document.getElementById('closeShare');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const shareLinkInput = document.getElementById('shareLinkInput');
+const qrCodeImg = document.getElementById('qrCodeImg');
+
+const siteUrl = window.location.href;
+
+shareBtn.addEventListener('click', async () => {
+    // 1. Priorité à l'API de partage native (Mobile / Chrome / Safari)
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Echo - Team Nightberry',
+                text: 'Découvrez Echo, une aventure intense dans un futur dystopique !',
+                url: siteUrl
+            });
+        } catch (err) {
+            console.log("Partage annulé ou erreur");
+        }
+    } else {
+        // 2. Fallback pour Desktop : Afficher la modale avec QR Code
+        openShareModal();
+    }
+});
+
+function openShareModal() {
+    shareLinkInput.value = siteUrl;
+    
+    // Génération automatique du QR Code via une API gratuite (GoQR)
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(siteUrl)}&color=00d0c6&bgcolor=0f0f0f`;
+    qrCodeImg.src = qrApiUrl;
+
+    document.body.style.overflow = 'hidden';
+    shareModal.classList.add('active');
+}
+
+// Fermeture de la modale
+closeShare.addEventListener('click', () => {
+    shareModal.classList.remove('active');
+    document.body.style.overflow = '';
+});
+
+// Copie du lien
+copyLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(siteUrl).then(() => {
+        // On ajoute la classe 'copied' qui gère la couleur blanche et le fond
+        copyLinkBtn.classList.add('copied');
+        const originalText = "Copier";
+        copyLinkBtn.textContent = "Copié!";
+        
+        // On retire l'effet après 2 secondes
+        setTimeout(() => {
+            copyLinkBtn.classList.remove('copied');
+            copyLinkBtn.textContent = originalText;
+        }, 2000);
+    }).catch(err => {
+        console.error('Erreur lors de la copie :', err);
+    });
+});
 </script>
 <style>
 </style>
