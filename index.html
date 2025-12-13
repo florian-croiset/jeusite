@@ -122,18 +122,17 @@
   <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3><!-- Bouton Sablier pour changer la durée du compte à rebours -->
     <!--<h3>🔒 Accès restreint</h3>-->
     <p>Entrez le code d’accès :</p>
-    <input type="password" id="secretInput" placeholder="Code..." />
+    <div class="input-paste-container">
+      <input type="password" id="secretInput" placeholder="Code..." />
+      <button id="clearBtn" class="btn-paste" title="Effacer le code"><i class="fa-solid fa-xmark"></i></button>
+      <button id="pasteBtn" class="btn-paste" title="Coller le code"><i class="fa-solid fa-paste"></i></button>
+    </div>
     <div class="secret-actions">
       <button id="cancelSecret" class="btn-cancel">Annuler</button>
       <button id="confirmSecret" class="btn-confirm">Valider</button>
     </div>
   </div>
 </div>
-
-
-
-
-
 
 <div class="floating-buttons">
   <button class="floating-btn btn-share-access" id="shareBtn" title="Partager le site">
@@ -500,8 +499,6 @@ if (musique && musicBtn) {
 }
 
 
-
-
 //  <!-- ===== FENETRE MODALE VERROUILLEE ===== -->
 const copyLock = document.getElementById('copyLock');
 const secretBtn  = document.getElementById('versionAccessBtn');
@@ -708,24 +705,6 @@ document.querySelectorAll('#nav-links a[href^="#"]').forEach(link => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const shareBtn = document.getElementById('shareBtn');
 const shareModal = document.getElementById('shareModal');
 const closeShare = document.getElementById('closeShare');
@@ -787,6 +766,57 @@ copyLinkBtn.addEventListener('click', () => {
         console.error('Erreur lors de la copie :', err);
     });
 });
+
+// --- Bouton Coller
+const pasteBtn = document.getElementById('pasteBtn');
+const secretInput = document.getElementById('secretInput'); // Déjà défini, mais on s'assure qu'il est accessible
+
+if (pasteBtn && secretInput) {
+    pasteBtn.addEventListener('click', async () => {
+        try {
+            // Lecture du contenu du presse-papier
+            const pasteText = await navigator.clipboard.readText();
+            
+            // Coller le texte dans le champ de saisie
+            secretInput.value = pasteText;
+
+            // Feedback visuel (optionnel)
+            pasteBtn.style.color = 'var(--finn)'; // Change de couleur
+            setTimeout(() => {
+                pasteBtn.style.color = 'var(--debut)'; // Rétablit la couleur
+            }, 300);
+
+            // Optionnel : Mettre le focus et tenter la validation immédiatement si le code a une longueur raisonnable
+            secretInput.focus();
+
+        } catch (err) {
+            console.error('Erreur lors de l’accès au presse-papier : ', err);
+            // Indiquer à l'utilisateur qu'une erreur est survenue (ex: permission non accordée)
+            alert("Impossible de coller : veuillez autoriser l'accès au presse-papier.");
+        }
+    });
+}
+
+
+// --- Bouton Effacer
+const clearBtn = document.getElementById('clearBtn');
+// secretInput est déjà défini
+
+if (clearBtn && secretInput) {
+    clearBtn.addEventListener('click', () => {
+        // Efface le contenu du champ de saisie
+        secretInput.value = '';
+        
+        // Feedback visuel
+        clearBtn.style.color = 'red'; // Feedback clair d'effacement
+        setTimeout(() => {
+            clearBtn.style.color = 'var(--debut)'; // Rétablit la couleur
+        }, 300);
+
+        // Optionnel : Remettre le focus dans le champ
+        secretInput.focus();
+    });
+}
 </script>
 <style>
 </style>
