@@ -8,5 +8,6 @@ import './ui/modal.js';
 import './utils/countdown.js';
 import './utils/share.js';
 import './utils/clipboard.js';
+import './design.js';
 
 document.addEventListener('contextmenu', e => e.preventDefault());
