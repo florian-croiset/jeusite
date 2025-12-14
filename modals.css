@@ -144,3 +144,42 @@
 #shareLinkInput:focus {
   border-color: var(--debut);
 }
+
+/* ---------------------------------------------------------
+   3. BOUTONS D’ACTION DES MODALES (annuler / confirmer)
+--------------------------------------------------------- */
+.btn-cancel,
+.btn-confirm {
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  font-weight: 600;
+  border: 2px solid var(--debut);
+  background: transparent;
+  color: var(--debut);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Effet Hover : bouton Annuler */
+.btn-cancel:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Effet Hover : bouton Confirmer */
+.btn-confirm:hover {
+  background: var(--debut);
+  color: #0a0a0a;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+}
+
+/* État copié (cas lien partage, conserver texte blanc) */
+.btn-confirm.copied {
+  background-color: var(--debut) !important;
+  color: white !important;
+  transform: scale(1.05);
+}
+.btn-confirm:focus,
+.btn-confirm:active {
+  color: white !important;
+}
