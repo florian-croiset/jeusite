@@ -272,8 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let downloadBtn = item.download
-            ? `<a href="${item.download}" download target="_blank" class="lienimage copy-btn" style="margin-top:20px;">Télécharger PNG</a>`
-            : `<button class="copy-btn">Télécharger PNG</button>`;
+            ? `<a href="${item.download}" download target="_blank" class="lienimage copy-btn" style="margin-top:20px;">Télécharger l'image</a>`
+            : `<button class="copy-btn">Télécharger l'image</button>`;
 
         card.innerHTML = `
       ${visual}
