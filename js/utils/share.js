@@ -79,3 +79,17 @@ export function copyShareLink(btn) {
     }
   }).catch(err => console.error('Erreur lors de la copie :', err));
 }
+
+// ---------------------------------------------------------
+// 6. FERMETURE AVEC LA TOUCHE ÉCHAP
+// ---------------------------------------------------------
+document.addEventListener('keydown', e => {
+  // Vérifie si la touche pressée est "Escape"
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('shareModal');
+    // Ferme seulement si la modale est actuellement active
+    if (modal && modal.classList.contains('active')) {
+      closeShareModal();
+    }
+  }
+});
