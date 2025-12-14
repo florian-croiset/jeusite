@@ -93,3 +93,20 @@ document.addEventListener('keydown', e => {
     }
   }
 });
+
+// ---------------------------------------------------------
+// 7. FERMETURE AU CLIC EN DEHORS DE LA BOÎTE
+// ---------------------------------------------------------
+document.addEventListener('click', e => {
+  const modal = document.getElementById('shareModal');
+  const box   = modal?.querySelector('.share-box');
+
+  // Si la modale est active et que le clic est à l’extérieur de la boîte
+  if (modal && modal.classList.contains('active')) {
+    // Vérifie que la cible du clic est bien l’arrière‑plan et pas la boîte
+    const clickedOutside = box && !box.contains(e.target);
+    if (clickedOutside) {
+      closeShareModal();
+    }
+  }
+});
