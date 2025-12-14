@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo - Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="test.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="custom-cursor" id="customCursor"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo"><a href="#accueil" style="text-decoration:none;">Echo - Design</a></div>
+            </div>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#couleurs">Palette de couleur</a></li>
+                <li><a href="#typographie">Typographie</a></li>
+                <li><a href="#logo">Logo</a></li>
+                <li><a href="#sprites">Sprites</a></li>
+                <li><a href="#ui">Interface</a></li>
+                <li><a href="#icones">Icônes</a></li>
+                <li><a href="#telechargement">Télécharger la charte graphique</a></li>
+                <li><a href="diapo.html" class="btn-login">▶ Diaporama</a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="hero">
+        <video autoplay muted loop playsinline class="background-video">
+            <source src="anim.mp4" type="video/mp4">Votre navigateur ne supporte pas la
+            lecture vidéo.
+        </video>
+        <div class="arriere" id="accueil"></div>
+        <div class="particles" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1><span></span>Echo</h1>
+            <p class="nav-links" style="gap:inherit!important; place-items: center; margin-left: 135px;"><span
+                    style="display: inline-block; text-align: center;">par la&nbsp;<a href="#team"
+                        style="font-size: 2rem;">Team Nightberry</a></span></p>
+            <div class="countdown-section">
+                <div class="countdown-title"><i class="fa-solid fa-rocket fa-beat"
+                        style="animation-duration: var(--fa-animation-duration,3s)!important;"></i><!--🚀--> Lancement
+                    de la version bêta du jeu dans :</div>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="days">0</span>
+                        <span class="countdown-label">Jours</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="hours">0</span>
+                        <span class="countdown-label">Heures</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="minutes">0</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="seconds">0</span>
+                        <span class="countdown-label">Secondes</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <a href="fichier.exe" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger la charte
+                    graphique</a>
+                <a href="#couleurs" class="btn btn-secondary">Voir la charte graphique</a>
+            </div>
+        </div>
+    </section>
+    <section id="couleurs">
+        <h2>Palette de Couleurs</h2>
+        <div class="color-grid" id="colorGrid"></div>
+    </section>
+
+    <section id="typographie">
+        <h2>Typographie</h2>
+        <div class="typo-section">
+            <div class="typo-example">
+                <h3>Titre Principal - Display</h3>
+                <div style="font-size: 3rem; font-weight: bold; color: var(--primary);">ECHO</div>
+                <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Orbitron, Exo 2, ou équivalent
+                    futuriste</p>
+            </div>
+
+            <div class="typo-example">
+                <h3>Titre Secondaire - Headings</h3>
+                <div style="font-size: 2rem; font-weight: 600; color: var(--primary-light);">Exploration des Profondeurs
+                </div>
+                <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Rajdhani, Saira, ou sans-serif
+                    moderne</p>
+            </div>
+
+            <div class="typo-example">
+                <h3>Corps de texte - Body</h3>
+                <div style="font-size: 1.1rem; color: var(--primary-light); line-height: 1.8;">
+                    Chaque couloir cache des secrets technologiques et des dangers insoupçonnés.
+                </div>
+                <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Inter, Roboto, Segoe UI</p>
+            </div>
+
+            <div class="typo-example">
+                <h3>Interface / HUD</h3>
+                <div style="font-family: monospace; font-size: 1rem; color: var(--primary);">
+                    HP: 100/100 | ENERGY: 85% | AMMO: 24/120
+                </div>
+                <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Courier New, Consolas, ou
+                    monospace</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="logo">
+        <h2>Logo & Variations</h2>
+        <div class="logo-showcase" id="logoShowcase"></div>
+    </section>
+
+    <section id="sprites">
+        <h2>Sprites & Personnages</h2>
+        <div class="asset-grid" id="spritesGrid"></div>
+    </section>
+
+
+    <section id="ui">
+        <h2>Éléments d'Interface</h2>
+        <div class="asset-grid" id="uiGrid"></div>
+    </section>
+
+
+    <section id="icones">
+        <h2>Icônes de Jeu</h2>
+        <div class="icons-grid" id="iconsGrid"></div>
+    </section>
+    <!--<section id="telecharger" class="features">
+        <h2>Télécharger</h2><div class="contact-form"><div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div></div>
+    </section>-->
+    <section id="telechargement" class="download-section">
+        <h2>Téléchargement</h2>
+        <p style="color: var(--primary-light); font-size: 1.2rem; margin-bottom: 2rem;">
+            Téléchargez l'intégralité de la charte graphique
+        </p>
+        <div class="btn-group">
+            <button class="download-btn" onclick="downloadCharter()">
+                📦 Kit Complet (.zip)
+            </button>
+            <button class="download-btn" onclick="downloadPDF()">
+                📄 PDF Charte Graphique
+            </button>
+            <button class="download-btn" onclick="downloadAssets()">
+                🎨 Assets Pack
+            </button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Echo. Tous droits réservés • 
+            <span class="version-text">Version 1.5 · Beta</span>
+        </p>
+    </footer>
+
+    <!--
+
+SPRITES
+<img src="assets/sprites/vaisseau.png" alt="Vaisseau" style="width: 100%; height: 200px; object-fit: contain; background: var(--bg-dark); border-radius: 10px; padding: 20px;">
+
+UI
+<img src="assets/ui/barre-vie.png" alt="Barre de vie" style="width: 100%; height: 200px; object-fit: contain; background: var(--bg-dark); border-radius: 10px; padding: 20px;">
+
+ICONES
+<img src="assets/icones/energie.png" alt="Énergie" style="width: 60px; height: 60px; object-fit: contain;">
+-->
+
+
+    <button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
+        <i class="fa-solid fa-circle-dot"></i>
+    </button>
+    <div class="floating-buttons">
+        <button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+        </button>
+        <button class="floating-btn btn-music" id="musicBtn" title="Lecture/Pause musique">
+            <i class="fa-solid fa-music"></i>
+        </button>
+    </div>
+
+    <audio id="backgroundMusic" src="musique.mp3" loop preload="auto"></audio>
+
+    <div id="secretModal" class="secret-modal">
+        <div class="secret-box">
+            <h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i
+                        class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock"
+                    title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
+            <p>Entrez le code d’accès :</p>
+            <div class="input-paste-container">
+                <input type="password" id="secretInput" placeholder="Code..." />
+                <button id="clearBtn" class="btn-paste" title="Effacer le code"><i
+                        class="fa-solid fa-xmark"></i></button>
+                <button id="pasteBtn" class="btn-paste" title="Coller le code"><i
+                        class="fa-solid fa-paste"></i></button>
+            </div>
+            <div class="secret-actions">
+                <button id="cancelSecret" class="btn-cancel">Annuler</button>
+                <button id="confirmSecret" class="btn-confirm">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-buttons">
+        <button class="floating-btn btn-share-access" id="shareBtn" title="Partager le site">
+            <i class="fa-solid fa-share-nodes"></i>
+        </button>
+    </div>
+
+    <div id="shareModal" class="secret-modal">
+        <div class="secret-box share-box">
+            <h3><i class="fa-solid fa-share-nodes"></i> Partager Echo</h3>
+
+            <div class="qr-container">
+                <img id="qrCodeImg" src="" alt="QR Code du site">
+                <p style="font-size: 0.8rem; color: #b0b0b0; margin-top: 10px;">Scannez pour ouvrir sur mobile</p>
+            </div>
+
+            <div class="link-share-area">
+                <input type="text" id="shareLinkInput" readonly>
+                <button id="copyLinkBtn" class="btn-confirm">Copier</button>
+            </div>
+
+            <div class="secret-actions">
+                <button id="closeShare" class="btn-cancel">Fermer</button>
+            </div>
+        </div>
+    </div>
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal">&times;</span>
+        <img id="modalImg" alt="">
+        <div id="caption"></div>
+    </div>
+
+    <script src="test.js"></script>
+    <script src="script.js"></script>
+    <div id="privateShareModal" class="secret-modal">
+        <div class="secret-box">
+            <span class="close-modal"><!--&times;--></span>
+
+            <h3 style="color:red!important; -webkit-text-fill-color:red;"><i class="fa-solid fa-ban fa-fade"></i>
+                Partage interdit <i class="fa-solid fa-ban fa-fade"></i></h3>
+            <p>
+                <i class="fa-solid fa-lock"></i> Cette page est privée.<br>
+                Le partage à des personnes extérieures à la <strong>Team Nightberry</strong> est strictement interdit.
+            </p>
+
+            <div class="secret-actions">
+                <button id="closePrivateShare" class="btn-confirm">Compris</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
