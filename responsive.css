@@ -1,8 +1,43 @@
-/* =========================
-      VERSION MOBILE
-   ========================= */
+/* =========================================
+   RESPONSIVE.CSS 
+   Adaptations mobiles et tablettes
+   ========================================= */
+
+
+/* -----------------------------------------
+   1. Réglages généraux (≤768px)
+----------------------------------------- */
 @media (max-width: 768px) {
-    /* --- NAVBAR --- */
+
+    /* Typographie de base */
+    h2 {
+        font-size: 2rem;
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Images responsives */
+    img {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    /* Désactivation du scroll‑snap sur mobile */
+    html {
+        scroll-snap-type: none !important;
+    }
+}
+
+
+/* -----------------------------------------
+   2. Navigation mobile
+----------------------------------------- */
+@media (max-width: 768px) {
+
+    /* Conteneur nav */
     .nav-container {
         flex-direction: column;
         gap: 0.8rem;
@@ -14,6 +49,7 @@
         width: auto;
     }
 
+    /* Liens */
     .nav-links {
         flex-wrap: wrap;
         justify-content: center;
@@ -27,21 +63,27 @@
         border-radius: 8px;
     }
 
-    /* met un fond discret quand on clique */
     .nav-links a:active {
         transform: scale(0.95);
         opacity: 0.7;
     }
 
-    /* --- CURSEUR CUSTOM DESACTIVÉ --- */
+    /* Désactivation du curseur custom */
     .custom-cursor {
         display: none !important;
     }
+
     body {
         cursor: auto !important;
     }
+}
 
-    /* --- HERO --- */
+
+/* -----------------------------------------
+   3. Hero section mobile
+----------------------------------------- */
+@media (max-width: 768px) {
+
     .hero {
         height: auto;
         padding: 4rem 1rem;
@@ -53,7 +95,7 @@
     }
 
     .hero h1 {
-        font-size: 5rem; /* propre sur mobile */
+        font-size: 5rem;
         min-height: auto;
         margin-bottom: 1.5rem;
     }
@@ -63,7 +105,7 @@
         margin-bottom: 1.5rem;
     }
 
-    /* boutons alignés verticalement */
+    /* Boutons CTA */
     .cta-buttons {
         flex-direction: column;
         width: 100%;
@@ -73,35 +115,27 @@
         width: 100%;
         font-size: 1rem;
     }
+}
 
-    /* --- SECTIONS GÉNÉRALES --- */
+
+/* -----------------------------------------
+   4. Sections générales
+----------------------------------------- */
+@media (max-width: 768px) {
+
     section {
         padding: 3rem 1rem;
     }
 
-    h2 {
-        font-size: 1.8rem;
-        text-align: center;
+    .about-content {
+        grid-template-columns: 1fr;
     }
 
-    p {
-        font-size: 1rem;
-        line-height: 1.6;
-    }
-
-    /* --- IMAGES RESPONSIVES --- */
-    img {
-        max-width: 100%;
-        height: auto !important;
-    }
-
-    /* --- GRID → COLONNE --- */
     .services-grid {
-        grid-template-columns: 1fr; /* une seule colonne sur mobile */
+        grid-template-columns: 1fr;
         gap: 1.5rem;
     }
 
-    /* --- FORMULAIRE --- */
     .contact-card {
         padding: 1.5rem;
     }
@@ -114,57 +148,14 @@
     .contact-card button {
         width: 100%;
     }
-
-    /* --- SCROLL SNAP DESACTIVÉ SUR MOBILE --- */
-    html {
-        scroll-snap-type: none !important;
-    }
 }
 
-/* ===========================
-   NAVBAR DESKTOP
-   =========================== */
-.navbar {
-    position: fixed;
-    width: 100%;
-    top: 0;
-    backdrop-filter: blur(10px);
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1000;
-}
 
-.nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-}
+/* -----------------------------------------
+   5. Menu burger (mobile)
+----------------------------------------- */
 
-.logo img {
-    height: 55px;
-    transition: 0.3s ease;
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
-}
-
-/*.nav-links a {
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: 0.3s;
-}*/
-
-.nav-links a:hover {
-    opacity: 0.7;
-}
-
-/* ===========================
-   BOUTON BURGER (MOBILE)
-   =========================== */
+/* Icône burger */
 .burger {
     display: none;
     flex-direction: column;
@@ -180,56 +171,36 @@
     border-radius: 3px;
 }
 
-/* ===========================
-   MOBILE VERSION
-   =========================== */
-
-
-/*@media (max-width: 400px) {
-    .burger {
-        display: flex;
-        top: 26px;
-        position: absolute;
-        left: 120px;
-        z-index: 10;
-    }
-}*/
-    
+/* Activation sur mobile */
 @media (max-width: 768px) {
-
-    /* On réduit la navbar */
     .nav-container {
         padding: 1rem;
     }
 
-    /* Le burger apparaît */
     .burger {
         display: flex;
-        top: 26px;
         position: absolute;
-        /*left: 350px;*/
+        top: 26px;
         left: 80%;
         z-index: 10;
     }
 
-    /* Les liens deviennent un menu déroulant */
+    /* Menu déroulant */
     .nav-links {
         position: absolute;
-        /*top: 80px;*/
         top: 70px;
         right: 0;
-        background: rgba(0,0,0,0.85);
         width: 100%;
         flex-direction: column;
         align-items: center;
         padding: 1.5rem 0;
         gap: 1.2rem;
+        background: rgba(0, 0, 0, 0.85);
         transform: translateY(-150%);
         opacity: 0;
         transition: 0.3s ease-in-out;
     }
 
-    /* Menu actif */
     .nav-links.active {
         transform: translateY(0);
         opacity: 1;
@@ -253,19 +224,20 @@
     }
 }
 
+
+/* -----------------------------------------
+   6. Ajustements spécifiques pour petits écrans
+----------------------------------------- */
 @media (max-width: 768px) {
 
+    /* CTA */
     .cta-buttons {
         flex-direction: column !important;
         align-items: stretch !important;
         gap: 1rem !important;
-        /*width: 100%;*/
-        width:65%;
-        display: inline flex;
-        /* flow-root list-item*/
+        width: 65%;
         margin-top: 20px;
-      text-align: center;
-          display: initial;
+        text-align: center;
     }
 
     .cta-buttons .btn {
@@ -276,49 +248,33 @@
         padding: 1rem !important;
     }
 
-.btn-secondary:hover::after {
-      width: 700px;
-      height: 700px;
-        }
+    .btn-secondary:hover::after {
+        width: 700px;
+        height: 700px;
+    }
 
-    .countdown-item{
+    /* Countdown */
+    .countdown-item {
         padding: 0.4rem 1rem;
     }
-    
-    .countdown-value{
-        font-size:1.5rem;
+
+    .countdown-value {
+        font-size: 1.5rem;
     }
 
-    .countdown-label{
+    .countdown-label {
         font-size: 0.55rem;
     }
 
-    .countdown-title{
+    .countdown-title {
         font-size: 0.8rem;
     }
 
-      .btn-primary{
-            top:-10px;
-      }
-      .countdown-timer{
-            gap:1em;
-      }
-}
+    .countdown-timer {
+        gap: 1em;
+    }
 
-
-
- .icon-stack {
-  position: absolute;
-  padding-top: 2px;
-  left: -12px;
-}
-.icon-stack i {
-  position: absolute;
-  /*top: 0;
-  left: 0;*/
-}
-
-.fa-slash::before{
-  left:-4px;
-  position: inherit;
+    .btn-primary {
+        top: -10px;
+    }
 }
