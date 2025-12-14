@@ -1,0 +1,39 @@
+/* =========================================================
+   BASE.CSS  
+   Styles de base et réinitialisation globale
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. RESET GÉNÉRAL
+--------------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ---------------------------------------------------------
+   2. STYLE GLOBAL DU BODY
+--------------------------------------------------------- */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  overflow-x: hidden;
+  cursor: none !important;
+  scroll-behavior: auto; /* Comportement de défilement par défaut */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* ---------------------------------------------------------
+   3. DÉSACTIVATION DE LA SÉLECTION DE TEXTE
+--------------------------------------------------------- */
+body {
+  -webkit-user-select: none; /* Safari, Chrome, Opera */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
+  user-select: none;         /* Standard */
+}
