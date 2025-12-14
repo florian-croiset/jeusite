@@ -1,0 +1,127 @@
+/* =========================================================
+   HERO.CSS  
+   Section d’accueil principale (Hero) : fond, vidéo, titre, effets holographiques
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. STRUCTURE GÉNÉRALE DU HERO
+--------------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0a0a0a;
+  opacity: 1;
+  transform: none;
+}
+
+/* Alignement pour scroll-snap activé */
+html.snap-enabled .hero {
+  scroll-snap-align: start;
+}
+
+/* Arrière-plan décoratif (radial animé) */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+              rgba(102, 126, 234, 0.2) 0%,
+              transparent 70%);
+  animation: pulse-bg 5s ease-in-out infinite;
+  z-index: 0;
+}
+
+
+/* ---------------------------------------------------------
+   2. CONTENU DU HERO
+--------------------------------------------------------- */
+.hero-content {
+  text-align: center;
+  z-index: 1;
+  padding: 2rem;
+  max-width: 1100px;
+  transform: scale(0.85);
+}
+
+/* Titre principal */
+.hero h1 {
+  font-size: 12rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg,
+              var(--debut) 0%,
+              var(--fin) 50%,
+              var(--finn) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInUp 1s ease-out, glow 3s ease-in-out infinite;
+  background-size: 200% 200%;
+  position: relative;
+  min-height: 140px;
+}
+
+/* Effet holographique sur le titre */
+.hero h1::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg,
+              var(--debut) 0%,
+              var(--fin) 50%,
+              var(--finn) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: hologram-scan 3s linear infinite;
+  opacity: 0.3;
+}
+
+/* Sous-titre / phrase d'accroche */
+.hero p {
+  font-size: 1.8rem;
+  color: #b0b0b0;
+  margin-bottom: 3rem;
+  text-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+  animation: fadeInUp 1s ease-out 0.2s backwards;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.8;
+}
+
+
+/* ---------------------------------------------------------
+   3. FOND & VIDÉO / IMAGE
+--------------------------------------------------------- */
+
+/* Vidéo d’arrière-plan */
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* couvre tout sans déformation */
+  z-index: 0;              /* derrière le contenu */
+  filter: brightness(0.7); /* légère obscurcissement */
+}
+
+/* Arrière-plan image alternative */
+.arriere {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Exemple d'image : background-image: url('arriere.png'); */
+}
