@@ -107,16 +107,31 @@
 
     /* Boutons CTA */
     .cta-buttons {
-        flex-direction: column;
-        width:65%;
+        flex-direction: column !important;
+        width:70%;
         display: inline-flex;
         margin-top: 20px;
         text-align: center;
+        align-items: stretch !important;
+        gap: 1rem !important;
     }
 
     .btn {
         width: 100%;
         font-size: 1rem;
+    }
+
+    .cta-buttons .btn {
+        width: 100%;
+        margin: 0 !important;
+        transform: none !important;
+        font-size: 1rem !important;
+        padding: 1rem !important;
+    }
+
+    .btn-secondary:hover::after {
+        width: 700px;
+        height: 700px;
     }
 }
 
@@ -232,29 +247,6 @@
    6. Ajustements spécifiques pour petits écrans
 ----------------------------------------- */
 @media (max-width: 768px) {
-
-    /* CTA */
-    .cta-buttons {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 1rem !important;
-        width: 65%;
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .cta-buttons .btn {
-        width: 100%;
-        margin: 0 !important;
-        transform: none !important;
-        font-size: 1rem !important;
-        padding: 1rem !important;
-    }
-
-    .btn-secondary:hover::after {
-        width: 700px;
-        height: 700px;
-    }
 
     /* Countdown */
     .countdown-item {
