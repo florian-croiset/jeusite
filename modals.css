@@ -1,0 +1,146 @@
+/* =========================================================
+   MODALS.CSS  
+   Fenêtres modales : accès secret & partage
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. MODALE SECRET (fenêtre mot de passe / code)
+--------------------------------------------------------- */
+.secret-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.secret-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Contenu interne */
+.secret-box {
+  background: rgba(15, 15, 15, 0.9);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 15px;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+  animation: fadeInScale 0.4s ease-out;
+}
+
+.secret-box h3 {
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--debut), var(--finn));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.secret-box p {
+  color: #b0b0b0;
+  margin-bottom: 1rem;
+}
+
+/* Champs d’entrée secret */
+#secretInput {
+  width: 200px;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  background: transparent;
+  color: #e0e0e0;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s;
+  flex-grow: 1;
+}
+
+#secretInput:focus {
+  border-color: var(--finn);
+}
+
+/* Conteneur du champ + bouton coller */
+.input-paste-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+/* Actions boutons valider / annuler */
+.secret-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+
+/* ---------------------------------------------------------
+   2. MODALE DE PARTAGE (QR / lien)
+--------------------------------------------------------- */
+.share-box {
+  text-align: center;
+  max-width: 350px !important;
+}
+
+.share-box h3 i {
+  color: var(--debut);
+  margin-right: 10px;
+}
+
+/* QR Code */
+.qr-container {
+  padding: 15px;
+  border-radius: 12px;
+  display: inline-block;
+  margin: 20px 0;
+}
+
+.qr-container img {
+  width: 150px;
+  height: 150px;
+}
+
+/* Zone contenant le lien + bouton copier */
+.link-share-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Champ de lien */
+#shareLinkInput {
+  width: 100%;
+  max-width: 280px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  color: white !important;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+#shareLinkInput:focus {
+  border-color: var(--debut);
+}
