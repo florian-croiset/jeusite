@@ -3,6 +3,9 @@
    Gestion des boutons (Télécharger / Sablier / CTA / Feedback visuel)
    ========================================================= */
 
+// --- IMPORTS ---
+import { updateCountdown } from '../utils/countdown.js';
+
 // ---------------------------------------------------------
 // 1. DÉTERMINE SI ON EST SUR MOBILE
 // ---------------------------------------------------------
