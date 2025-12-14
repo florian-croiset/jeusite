@@ -1,0 +1,479 @@
+/* =========================================================
+   COMPONENTS.CSS  
+   Styles des composants UI : boutons, stats, scroll bar, countdown, icônes…
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. BOUTONS GÉNÉRAUX
+--------------------------------------------------------- */
+.btn {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* Bouton login */
+.btn-login {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 2px solid var(--debut);
+    background: transparent;
+    color: var(--debut);
+    border-radius: 50px;
+    transition: all 0.3s;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-login:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: var(--fin);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+
+/* ---------------------------------------------------------
+   2. BOUTONS PRIMAIRES & SECONDAIRES
+--------------------------------------------------------- */
+.btn-primary {
+    background: linear-gradient(135deg, var(--debut) 0%, var(--fin) 100%);
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    animation: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--debut);
+    border: 2px solid var(--debut);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.btn-secondary:hover::after {
+    width: 310px;
+    height: 310px;
+}
+
+.btn-secondary:hover {
+    border-color: var(--fin);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+
+/* ---------------------------------------------------------
+   3. BOUTON COLLAGE / MODALE
+--------------------------------------------------------- */
+.btn-paste {
+    background: transparent;
+    border: none;
+    color: var(--debut);
+    font-size: 1.4rem;
+    padding: 5px 8px;
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.btn-paste:hover {
+    color: var(--finn);
+    transform: scale(1.1);
+}
+
+.btn-paste:active {
+    transform: scale(0.95);
+}
+
+
+/* ---------------------------------------------------------
+   4. CTA (CALL‑TO‑ACTION)
+--------------------------------------------------------- */
+.cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    animation: fadeInUp 1s ease-out 0.5s backwards;
+    margin-bottom: 2rem;
+}
+
+
+/* ---------------------------------------------------------
+   5. BOUTONS FLOTTANTS (droite / gauche / musique / partage)
+--------------------------------------------------------- */
+.floating-buttons {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 999;
+}
+
+.floating-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.floating-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--debut);
+    fill: none;
+    stroke-width: 2;
+    transition: all 0.3s;
+}
+
+.btn-scroll-top:hover svg,
+.btn-chatbot:hover svg {
+    stroke: var(--finn);
+    transform: scale(1.2);
+}
+
+.floating-btn:hover {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    border-color: var(--debut);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* Bouton musique */
+.btn-music {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-music i {
+    color: var(--debut);
+    font-size: 1.4rem;
+    transition: transform 0.4s ease, color 0.4s ease;
+}
+
+.btn-music:hover {
+    transform: scale(1.15) translateY(-5px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    border-color: var(--debut);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.btn-music:hover i {
+    color: var(--finn);
+    transform: rotate(20deg);
+}
+
+/* Halo pulsé */
+.btn-music::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.4),
+        0 0 20px rgba(135, 53, 185, 0.3);
+    animation: musicHalo 2.8s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+/* Bouton secret (gauche bas) */
+.btn-hidden-access {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    z-index: 9999;
+}
+
+.btn-hidden-access i {
+    color: rgba(102, 126, 234, 0.3);
+    transition: color 0.3s ease, transform 0.3s;
+    font-size: 0.9rem;
+}
+
+.btn-hidden-access:hover {
+    border-color: var(--debut);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.4);
+    transform: scale(1.1);
+}
+
+.btn-hidden-access:hover i {
+    color: var(--finn);
+    transform: rotate(10deg);
+}
+
+/* Bouton partage */
+.btn-share-access {
+    position: fixed;
+    bottom: 5rem;
+    left: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    z-index: 9999;
+}
+
+.btn-share-access i {
+    color: rgba(102, 126, 234, 0.3);
+    transition: color 0.3s ease, transform 0.3s;
+    font-size: 0.9rem;
+}
+
+.btn-share-access:hover {
+    border-color: var(--debut);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.4);
+    transform: scale(1.1);
+}
+
+.btn-share-access:hover i {
+    color: var(--finn);
+    transform: rotate(10deg);
+}
+
+/* Bouton sablier */
+.btn-sablier {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+}
+
+.btn-sablier i {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-sablier:hover i {
+    transform: rotate(15deg);
+    color: var(--debut);
+}
+
+
+/* ---------------------------------------------------------
+   6. STATS
+--------------------------------------------------------- */
+.stat-item {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 15px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    min-width: 200px;
+    transition: all 0.3s;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--debut);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.stat-number {
+    font-size: 4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--debut) 0%, var(--fin) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #b0b0b0;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+}
+
+
+/* ---------------------------------------------------------
+   7. SCROLL PROGRESS BAR
+--------------------------------------------------------- */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--debut) 0%, var(--fin) 50%, var(--finn) 100%);
+    z-index: 9999;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+
+/* ---------------------------------------------------------
+   8. COMPTE À REBOURS
+--------------------------------------------------------- */
+.countdown-section {
+    text-align: center;
+    margin: 2rem 0;
+    animation: fadeInUp 1s ease-out 0.9s backwards;
+}
+
+.countdown-title {
+    font-size: 1.2rem;
+    color: #b0b0b0;
+    margin-bottom: 1rem;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.countdown-item {
+    text-align: center;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 15px;
+}
+
+.countdown-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--debut) 0%, var(--fin) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+}
+
+.countdown-label {
+    font-size: 0.85rem;
+    color: #808080;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.3rem;
+}
+
+
+/* ---------------------------------------------------------
+   9. COPYLOCK
+--------------------------------------------------------- */
+#copyLock:hover {
+    color: var(--fin);
+    transform: scale(1.1);
+    transition: transform 0.2s, color 0.2s;
+}
+
+#copyLock,
+#copyLock * {
+    cursor: none !important;
+    pointer-events: auto !important;
+}
+
+
+/* ---------------------------------------------------------
+   10. TEXTES DIVERS
+--------------------------------------------------------- */
+.feature-text {
+    font-size: 14px;
+}
+
+
+/* ---------------------------------------------------------
+   11. ICONES EMPILÉES
+--------------------------------------------------------- */
+.icon-stack {
+    position: absolute;
+    padding-top: 2px;
+    left: -12px;
+}
+
+.icon-stack i {
+    position: absolute;
+}
+
+.fa-slash::before {
+    left: -4px;
+    position: inherit;
+}
