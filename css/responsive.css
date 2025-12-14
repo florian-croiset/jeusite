@@ -108,7 +108,7 @@
     /* Boutons CTA */
     .cta-buttons {
         flex-direction: column !important;
-        width:70%;
+        width:80%;
         display: inline-flex;
         margin-top: 20px;
         text-align: center;
