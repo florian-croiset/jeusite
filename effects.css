@@ -1,0 +1,160 @@
+/* =========================================================
+   EFFECTS.CSS  
+   Animations et effets visuels globaux du site
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   1. ANIMATIONS VISUELLES GÉNÉRALES
+--------------------------------------------------------- */
+
+/* Étincelles / scintillement */
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Effet de pulsation douce (fond / halo) */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Défilement holographique du texte */
+@keyframes hologram-scan {
+  0% { clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); }
+  50% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+  100% { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); }
+}
+
+/* Effet de brillance sur dégradés (texte “glow”) */
+@keyframes glow {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6));
+  }
+}
+
+/* Animation de mise en relief  */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation d’apparition avec zoom */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Flottement vertical (icônes / décor) */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Effet de pulsation sur un fond (ex : hero) */
+@keyframes pulse-bg {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+
+/* ---------------------------------------------------------
+   2. ANIMATIONS DE BOUTONS ET HALO
+--------------------------------------------------------- */
+
+/* Pulsation de boutons */
+@keyframes pulse-btn {
+  0%, 100% {
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    transform: scale(1.02);
+  }
+}
+
+/* Halo du curseur */
+@keyframes cursorHalo {
+  from {
+    box-shadow:
+      0 0 10px rgba(102, 126, 234, 0.3),
+      0 0 20px rgba(102, 126, 234, 0.2);
+  }
+  to {
+    box-shadow:
+      0 0 25px rgba(135, 53, 185, 0.6),
+      0 0 40px rgba(102, 126, 234, 0.4);
+  }
+}
+
+/* Halo lumineux du bouton musique */
+@keyframes musicHalo {
+  0% { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.15); }
+}
+
+
+/* ---------------------------------------------------------
+   3. ANIMATIONS DES PARTICULES
+--------------------------------------------------------- */
+
+/* Montée des particules décoratives */
+@keyframes floatParticle {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to   { transform: translateY(-200vh) scale(0.5); opacity: 0; }
+}
+
+/* Conteneur et style des particules */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(102, 126, 234, 0.6);
+  border-radius: 50%;
+  animation: floatParticle 20s linear infinite;
+}
+
+
+/* ---------------------------------------------------------
+   4. AUTRES ANIMATIONS DE STYLE
+--------------------------------------------------------- */
+
+/* Défilement du dégradé de la “version text” */
+@keyframes versionFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* Brillance douce du texte version */
+@keyframes versionGlowSoft {
+  0%, 100% {
+    text-shadow:
+      0 0 5px rgba(0, 208, 198, 0.4),
+      0 0 10px rgba(135, 53, 185, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(135, 53, 185, 0.6),
+      0 0 40px rgba(0, 208, 198, 0.5);
+  }
+}
+
+/* Animation Font Awesome (rebond) */
+.fa-bounce {
+  --fa-animation-duration: 4s !important;
+  --fa-animation-iteration-count: infinite;
+  --fa-animation-timing: ease-in-out;
+}
