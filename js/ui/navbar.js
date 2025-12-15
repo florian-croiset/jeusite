@@ -21,27 +21,38 @@ window.addEventListener('scroll', () => {
 });
 
 
-// --- Menu Burger ---
-const burger = document.getElementById('burger');
-const navLinks = document.getElementById('nav-links');
+// BURGER MENU
+const burger = document.getElementById("burger");
+const navLinks = document.getElementById("nav-links");
 
-if (burger && navLinks) {
-  burger.addEventListener('click', () => {
-    burger.classList.toggle('active');
-    navLinks.classList.toggle('active');
-  });
+burger.addEventListener("click", () => {
+  navLinks.classList.toggle("active");
+  burger.classList.toggle("active");
+});
 
-  // Fermeture du menu au clic sur un lien
-  document.querySelectorAll('#nav-links a[href^="#"]').forEach(link => {
-    link.addEventListener('click', e => {
-      e.preventDefault();
-      const target = document.querySelector(link.getAttribute('href'));
-      if (target) {
-        // Reutilise smoothScrollTo si défini ailleurs
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      navLinks.classList.remove('active');
-      burger.classList.remove('active');
-    });
-  });
-}
+// Fermer le menu avec la touche Échap
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && navLinks.classList.contains("active")) {
+    navLinks.classList.remove("active");
+    burger.classList.remove("active");
+  }
+});
+
+// Fermer le menu en cliquant en dehors
+document.addEventListener("click", (e) => {
+  const isClickInsideBurger = burger.contains(e.target);
+  const isClickInsideMenu = navLinks.contains(e.target);
+  
+  if (!isClickInsideBurger && !isClickInsideMenu && navLinks.classList.contains("active")) {
+    navLinks.classList.remove("active");
+    burger.classList.remove("active");
+  }
+});
+
+// Fermer le menu en cas de scroll
+window.addEventListener("scroll", () => {
+  if (navLinks.classList.contains("active")) {
+    navLinks.classList.remove("active");
+    burger.classList.remove("active");
+  }
+});
