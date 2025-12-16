@@ -1,21 +1,20 @@
 /* =========================================================
    SHARE.JS
-   Gestion du partage du site (mobile API + fallback QR code)
+   Gestion unifiée du partage (Public/Privé + Mobile/Desktop)
    ========================================================= */
 
 // ---------------------------------------------------------
-// 1. CONFIGURATION DE BASE
+// 1. CONFIGURATION
 // ---------------------------------------------------------
 export const siteUrl = window.location.href;
 const titleText = 'Echo - Team Nightberry';
 const shareText = 'Découvrez Echo, une aventure intense dans un futur dystopique !';
 
-
 // ---------------------------------------------------------
 // 2. PARTAGE NATIF (API Web Share)
 // ---------------------------------------------------------
 export async function shareNative() {
-  if (!navigator.share) return false; // pas supporté
+  if (!navigator.share) return false; // API non supportée
 
   try {
     await navigator.share({
@@ -23,16 +22,15 @@ export async function shareNative() {
       text:  shareText,
       url:   siteUrl
     });
-    return true;
+    return true; // Partage réussi
   } catch (err) {
-    console.warn('Partage annulé ou non supporté', err);
-    return false;
+    // console.warn('Partage annulé ou non supporté', err);
+    return false; // Erreur ou annulation par l'utilisateur
   }
 }
 
-
 // ---------------------------------------------------------
-// 3. MODALE DE PARTAGE (fallback desktop)
+// 3. GESTION DE LA MODALE CLASSIQUE (QR Code)
 // ---------------------------------------------------------
 export function openShareModal() {
   const modal   = document.getElementById('shareModal');
@@ -41,68 +39,130 @@ export function openShareModal() {
 
   if (!modal) return;
 
+  // Remplir l'input avec l'URL
   if (linkInp) linkInp.value = siteUrl;
 
-  // Génération du QR Code (via API goQR)
+  // Génération du QR Code
   const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(siteUrl)}&color=00d0c6&bgcolor=0f0f0f`;
   if (qrImg) qrImg.src = qrApiUrl;
 
   modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden'; // Bloque le scroll
 }
 
-
-// ---------------------------------------------------------
-// 4. FERMETURE DE LA MODALE
-// ---------------------------------------------------------
 export function closeShareModal() {
   const modal = document.getElementById('shareModal');
   if (!modal) return;
   modal.classList.remove('active');
+  document.body.style.overflow = ''; 
+}
+
+// ---------------------------------------------------------
+// 4. GESTION DE LA MODALE PRIVÉE (Interdit)
+// ---------------------------------------------------------
+export function openPrivateShareModal() {
+  const modal = document.getElementById("privateShareModal");
+  if (!modal) return;
+  
+  modal.classList.add("active");
+  document.body.style.overflow = 'hidden';
+}
+
+export function closePrivateShareModal() {
+  const modal = document.getElementById("privateShareModal");
+  if (!modal) return;
+  
+  modal.classList.remove("active");
   document.body.style.overflow = '';
 }
 
-
 // ---------------------------------------------------------
-// 5. COPIE DU LIEN DANS LE PRESSE-PAPIER
+// 5. COPIE DU LIEN
 // ---------------------------------------------------------
-export function copyShareLink(btn) {
-  navigator.clipboard.writeText(siteUrl).then(() => {
-    if (btn) {
-      const original = btn.textContent;
-      btn.textContent = 'Copié !';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = original;
-        btn.classList.remove('copied');
-      }, 2000);
-    }
-  }).catch(err => console.error('Erreur lors de la copie :', err));
+const copyBtn = document.getElementById('copyLinkBtn');
+if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(siteUrl).then(() => {
+            const original = copyBtn.textContent;
+            copyBtn.textContent = 'Copié !';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+                copyBtn.textContent = original;
+                copyBtn.classList.remove('copied');
+            }, 2000);
+        }).catch(err => console.error('Erreur copie', err));
+    });
 }
 
 // ---------------------------------------------------------
-// 6. FERMETURE AVEC LA TOUCHE ÉCHAP
+// 6. LOGIQUE CENTRALE (Au Clic sur le Bouton)
 // ---------------------------------------------------------
-document.addEventListener('keydown', e => {
-  // Vérifie si la touche pressée est "Escape"
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('shareModal');
-    // Ferme seulement si la modale est actuellement active
-    if (modal && modal.classList.contains('active')) {
-      closeShareModal();
+document.addEventListener("click", async function (e) {
+    // On cible le bouton (ou son icône intérieure)
+    const btn = e.target.closest("#shareBtn");
+    
+    // Si ce n'est pas le bouton share, on ne fait rien
+    if (!btn) return;
+
+    e.preventDefault();
+
+    // LECTURE DE L'ATTRIBUT HTML pour savoir si c'est autorisé
+    // "true" (string) devient true (boolean), tout le reste devient false
+    const isSharingAllowed = btn.dataset.allowShare === "true";
+
+    if (isSharingAllowed) {
+        // CAS 1 : Page Publique
+        // D'abord on tente le natif (mobile)
+        const success = await shareNative();
+        
+        // Si le natif échoue (ou si on est sur PC), on ouvre la modale QR
+        if (!success) {
+            openShareModal();
+        }
+    } else {
+        // CAS 2 : Page Privée
+        openPrivateShareModal();
     }
-  }
 });
 
 // ---------------------------------------------------------
-// 7. FERMETURE AU CLIC EN DEHORS DE LA BOÎTE (corrigé)
+// 7. GESTION GLOBALE DES FERMETURES (Modales)
 // ---------------------------------------------------------
-const modal = document.getElementById('shareModal');
-if (modal) {
-  modal.addEventListener('click', e => {
-    // e.target === modal  ⇒ l’utilisateur a cliqué sur le fond gris
-    if (e.target === modal) {
-      closeShareModal();
+document.addEventListener("DOMContentLoaded", () => {
+    // -- Modale Classique (QR) --
+    const shareModal = document.getElementById('shareModal');
+    const closeShareBtn = document.getElementById('closeShare');
+
+    if (closeShareBtn) closeShareBtn.addEventListener('click', closeShareModal);
+    
+    if (shareModal) {
+        shareModal.addEventListener('click', (e) => {
+            if (e.target === shareModal) closeShareModal();
+        });
     }
-  });
-}
+
+    // -- Modale Privée (Interdit) --
+    const privateModal = document.getElementById("privateShareModal");
+    const closePrivateBtn = document.getElementById("closePrivateShare");
+    const closePrivateX = privateModal ? privateModal.querySelector(".close-modal") : null;
+
+    if (closePrivateBtn) closePrivateBtn.addEventListener("click", closePrivateShareModal);
+    if (closePrivateX)   closePrivateX.addEventListener("click", closePrivateShareModal);
+
+    if (privateModal) {
+        privateModal.addEventListener("click", (e) => {
+            if (e.target === privateModal) closePrivateShareModal();
+        });
+    }
+});
+
+// Touche Échap pour tout fermer
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        const shareModal = document.getElementById('shareModal');
+        const privateModal = document.getElementById("privateShareModal");
+
+        if (shareModal && shareModal.classList.contains('active')) closeShareModal();
+        if (privateModal && privateModal.classList.contains('active')) closePrivateShareModal();
+    }
+});
