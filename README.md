@@ -56,8 +56,11 @@ Echo/
 ├── index.html             → page principale (accueil)
 ├── versions.html          → journal de versions
 ├── diapo.html             → présentation interactive
+├── design.html            → charte graphique du jeu
+├── liens.html             → liste des liens interes
 │
 ├── assets/                → fichiers multimédia
+|    ├── tous les médias
 │    ├── anim.mp4
 │    ├── arriere.png
 │    ├── musique.mp3
@@ -66,6 +69,7 @@ Echo/
 ├── css/                   → styles découpés par composant
 │    ├── main.css
 │    ├── layout.css
+│    ├── design.css
 │    ├── hero.css
 │    ├── effects.css
 │    ├── modals.css
@@ -76,6 +80,7 @@ Echo/
 │
 ├── js/
 │    ├── main.js
+│    ├── design.js
 │    ├── ui/
 │    │    ├── navbar.js
 │    │    ├── buttons.js
@@ -96,6 +101,7 @@ Echo/
 
 | Version | Date | Changements clés |
 | :-- | :-- | :-- |
+| **1.5** | 16 décembre 2025 | Amélioration menu burger ; ajout pages "Design" et "Liens" ; correction de bugs ; version mobile de versions |
 | **1.4** | 13 décembre 2025 | Favicon ajouté 🪶 ; bouton Téléchargement actif vers `.exe` ; sablier test compte à rebours ; raccourci `P` musique ; modale secrète enrichie (coller/effacer/entrée/échappement) ; bouton de partage (API + QR Code) ; Lore : 4 actes de l’histoire de Kaelen ; burger auto‑fermant ; performances améliorées mobile/desktop. |
 | **1.3** | 9 décembre 2025 | Menu burger mobile ; nouvelle feuille `mobile.css` ; boutons de téléchargement dynamiques ; refactor JS ; détection responsive automatique ; optimisations UI. |
 | **1.2** | 5 décembre 2025 | Logo animé holographique ; effets visuels étendus ; bouton musique ; footer animé ; modale secrète (v1). |
