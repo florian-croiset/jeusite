@@ -264,55 +264,5 @@ ICONES
         </div>
     </div>
 </body>
-<script type="module" src="js/main.js">
-document.addEventListener(
-    "click",
-    function (e) {
-        const btn = e.target.closest("#shareBtn");
-        if (!btn) return;
-
-        // Bloque TOUT (y compris secretModal)
-        e.preventDefault();
-        e.stopImmediatePropagation();
-
-        document.getElementById("privateShareModal").classList.add("active");
-    },
-    true // ← capture = priorité maximale
-);
-
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const privateModal = document.getElementById("privateShareModal");
-    if (!privateModal) return; // sécurité
-
-    const closePrivateBtn = document.getElementById("closePrivateShare");
-    const closePrivateX = privateModal.querySelector(".close-modal");
-
-    // Bouton "Compris"
-    closePrivateBtn.addEventListener("click", () => {
-        privateModal.classList.remove("active");
-    });
-
-    // Croix ×
-    closePrivateX.addEventListener("click", () => {
-        privateModal.classList.remove("active");
-    });
-
-    // Clic hors modale
-    privateModal.addEventListener("click", (e) => {
-        if (e.target === privateModal) {
-            privateModal.classList.remove("active");
-        }
-    });
-
-    // Touche Échap
-    window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            privateModal.classList.remove("active");
-        }
-    });
-
-});
-</script>
+<script type="module" src="js/main.js"></script>
 </html>
