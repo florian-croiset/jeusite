@@ -130,15 +130,15 @@ document.addEventListener("DOMContentLoaded", () => {
             img: "assets/pngTorche.png",
             download: "assets/pngTorche.png",
             zoomable: true
-        }/*
-        {
-            title: "Logo E Nv Rond",
-            desc: "_",
-            img: "assets/pngLogoE.png",
-            download: "assets/pngLogoE.png",
-            zoomable: true
         },
         {
+            title: "Cristal",
+            desc: "_",
+            img: "assets/pngcristal.png",
+            download: "assets/pngcristal.png",
+            zoomable: true
+        }
+        /*{
             title: "Logo E An Rond",
             desc: "_",
             img: "assets/pngLogoEP.png",
