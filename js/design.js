@@ -160,13 +160,28 @@ document.addEventListener("DOMContentLoaded", () => {
             download: "assets/pngLogoG.png",
             zoomable: true
         },
-        /*{
-            title: "Logo G Carré",
+        {
+            title: "Logo Team Cercle",
             desc: "_",
-            img: "assets/pngLogoG.png",
-            download: "assets/pngLogoG.png",
+            img: "assets/pngteamcercle.png",
+            download: "assets/pngteamcercle.png",
             zoomable: true
         },
+        {
+            title: "Logo E nonpixel",
+            desc: "_",
+            img: "assets/pnglogononpixel.png",
+            download: "assets/pnglogononpixel.png",
+            zoomable: true
+        },
+        {
+            title: "Logo E cercle blanc",
+            desc: "_",
+            img: "assets/pnglogoEcercleblanc.png",
+            download: "assets/pnglogoEcercleblanc.png",
+            zoomable: true
+        }
+        /*
 
         
             {
