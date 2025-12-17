@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
             visual = `
         <img src="${item.img}"
              alt="${item.title}"
-             class="${item.zoomable ? "zoomable" : ""asset-placeholder}"
+             class="${item.zoomable ? "zoomable" : ""} asset-placeholder"
              style="width:200px;height:200px;object-fit:contain;">
       `;
         } else if (item.placeholder) {
