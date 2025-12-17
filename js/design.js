@@ -241,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "Décor pixel",
             desc: "_",
             img: "assets/pngArriere",
-            download: "assets/pngArriere",
+            download: "assets/pngDecorPixel.png",
             zoomable: true
         },
         {
