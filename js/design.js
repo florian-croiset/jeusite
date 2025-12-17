@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
             download: "assets/pnglogoEcercleblanc.png",
             zoomable: true
         }
-        /*
+        *//*
 
         
             {
