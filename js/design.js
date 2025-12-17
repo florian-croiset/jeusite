@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // AUDIO
         else if (item.type === "audio") {
             visual = `
-                <audio controls style="width:200px;">
+                <audio controls style="width:200px; margin-top: 70px; margin-bottom: 90px;">
                     <source src="${item.src}" type="audio/mpeg">
                     Votre navigateur ne supporte pas l'audio.
                 </audio>
