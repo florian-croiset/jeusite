@@ -331,6 +331,100 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+//MEDIAS
+document.addEventListener("DOMContentLoaded", () => {
+
+    const medias = [
+    {
+        type: "image",
+        title: "Arrière",
+        desc: "_",
+        src: "assets/arriere.png",
+        download: "assets/arriere.png",
+        zoomable: true
+    },
+    {
+        type: "video",
+        title: "Arrière Vidéo",
+        desc: "Vidéo arrière flamme",
+        src: "assets/anim.mp4",
+        poster: "assets/arriere.png",
+        download: "assets/anim.mp4"
+    },
+    {
+        type: "audio",
+        title: "Musique du jeu",
+        desc: "Musique principale",
+        src: "assets/musique.mp3",
+        download: "assets/musique.mp3"
+    }
+];
+
+
+    const containerm = document.getElementById("mediasShowcase");
+
+    medias.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "logo-card";
+
+        let visual = "";
+
+        // IMAGE
+        if (item.type === "image") {
+            visual = `
+                <img src="${item.src}"
+                     alt="${item.title}"
+                     class="${item.zoomable ? "zoomable" : ""}"
+                     style="width:200px;height:200px;object-fit:contain;">
+            `;
+        }
+
+        // VIDEO
+        else if (item.type === "video") {
+            visual = `
+                <video controls
+                       poster="${item.poster || ""}"
+                       style="width:200px;height:200px;object-fit:contain;">
+                    <source src="${item.src}" type="video/mp4">
+                    Votre navigateur ne supporte pas la vidéo.
+                </video>
+            `;
+        }
+
+        // AUDIO
+        else if (item.type === "audio") {
+            visual = `
+                <audio controls style="width:200px;">
+                    <source src="${item.src}" type="audio/mpeg">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            `;
+        }
+
+        const downloadBtn = item.download
+            ? `<a href="${item.download}" download class="lienimage copy-btn" style="margin-top:20px;">Télécharger</a>`
+            : "";
+
+        card.innerHTML = `
+            ${visual}
+            <h3 style="color:var(--primary-light);margin-bottom:1rem;">${item.title}</h3>
+            <p style="color:var(--accent); margin-bottom:30px;">${item.desc}</p>
+            ${downloadBtn}
+        `;
+
+        containerm.appendChild(card);
+    });
+});
+
+
+
+
+
+
+
+
 function copyColor(color, element) {
     navigator.clipboard.writeText(color).then(() => {
         const btn = element.querySelector('.copy-btn');
