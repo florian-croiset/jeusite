@@ -123,14 +123,14 @@ document.addEventListener("DOMContentLoaded", () => {
             img: "assets/pngSpriteperso.png",
             download: "assets/pngSpriteperso.png",
             zoomable: true
-        }/*
+        }?
         {
-            title: "Logo E Nv",
+            title: "Torche",
             desc: "_",
-            img: "assets/jpgLogoEGA.jpg",
-            download: "assets/jpgLogoEGA.jpg",
+            img: "assets/pngTorche.png",
+            download: "assets/pngTorche.ong",
             zoomable: true
-        },
+        }/*
         {
             title: "Logo E Nv Rond",
             desc: "_",
