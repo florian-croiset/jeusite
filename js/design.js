@@ -233,6 +233,126 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const images = [
+        {
+            title: "Favicon",
+            desc: "Version carrée 32x32 pixels",
+            img: "assets/favicon.ico",
+            download: "assets/favicon.ico",
+            zoomable: true
+        },
+        {
+            title: "Logo E Nv",
+            desc: "_",
+            img: "assets/jpgLogoEGA.jpg",
+            download: "assets/jpgLogoEGA.jpg",
+            zoomable: true
+        },
+        {
+            title: "Logo E Nv Rond",
+            desc: "_",
+            img: "assets/pngLogoE.png",
+            download: "assets/pngLogoE.png",
+            zoomable: true
+        },
+        {
+            title: "Logo E An Rond",
+            desc: "_",
+            img: "assets/pngLogoEP.png",
+            download: "assets/pngLogoEP.png",
+            zoomable: true
+        },
+        {
+            title: "Logo Team Carré",
+            desc: "_",
+            img: "assets/pngLogoTeam.png",
+            download: "assets/pngLogoTeam.png",
+            zoomable: true
+        },
+        {
+            title: "Logo G Carré",
+            desc: "_",
+            img: "assets/pngLogoG.png",
+            download: "assets/pngLogoG.png",
+            zoomable: true
+        },
+        {
+            title: "Logo G Carré",
+            desc: "_",
+            img: "assets/pngLogoG.png",
+            download: "assets/pngLogoG.png",
+            zoomable: true
+        },
+
+        /*
+            {
+              title: "Logo Inversé",
+              desc: "Pour fonds clairs",
+              placeholder: {
+                text: "E",
+                bg: "white",
+                color: "var(--bg-dark)",
+                radius: "50%"
+              }
+            },
+            {
+              title: "Icône App",
+              desc: "Version carrée pour applications",
+              placeholder: {
+                text: "E",
+                bg: "var(--bg-dark)",
+                color: "var(--primary)",
+                radius: "20px"
+              }
+            }*/
+    ];
+
+    const containeri = document.getElementById("imageShowcase");
+
+    images.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "logo-card";
+
+        let visual = "";
+
+        if (item.img) {
+            visual = `
+        <img src="${item.img}"
+             alt="${item.title}"
+             class="${item.zoomable ? "zoomable" : ""}"
+             style="width:200px;height:200px;object-fit:contain;">
+      `;
+        } else if (item.placeholder) {
+            visual = `
+        <div class="logo-placeholder"
+             style="background:${item.placeholder.bg};
+                    color:${item.placeholder.color};
+                    border-radius:${item.placeholder.radius};">
+          ${item.placeholder.text}
+        </div>
+      `;
+        }
+
+        let downloadBtn = item.download
+            ? `<a href="${item.download}" download target="_blank" class="lienimage copy-btn" style="margin-top:20px;">Télécharger l'image</a>`
+            : `<button class="copy-btn">Télécharger l'image</button>`;
+
+        card.innerHTML = `
+      ${visual}
+      <h3 style="color:var(--primary-light);margin-bottom:1rem;">${item.title}</h3>
+      <p style="color:var(--accent); margin-bottom:30px;">${item.desc}</p>
+      ${downloadBtn}
+    `;
+
+        containeri.appendChild(card);
+    });
+});
+
+
+
 function copyColor(color, element) {
     navigator.clipboard.writeText(color).then(() => {
         const btn = element.querySelector('.copy-btn');
