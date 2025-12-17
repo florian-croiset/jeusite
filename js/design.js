@@ -250,15 +250,15 @@ document.addEventListener("DOMContentLoaded", () => {
             img: "assets/pngArriere.png",
             download: "assets/pngArriere.png",
             zoomable: true
-        }
-        /*{
-            title: "Logo E Nv Rond",
-            desc: "_",
-            img: "assets/pngLogoE.png",
-            download: "assets/pngLogoE.png",
-            zoomable: true
         },
         {
+            title: "Décor arrière transparent",
+            desc: "_",
+            img: "assets/pngarrieretrans.png",
+            download: "assets/pngarrieretrans.png",
+            zoomable: true
+        }
+        /*{
             title: "Logo E An Rond",
             desc: "_",
             img: "assets/pngLogoEP.png",
