@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
             download: "assets/pngLogoG.png",
             zoomable: true
         },
-        {
+        /*{
             title: "Logo G Carré",
             desc: "_",
             img: "assets/pngLogoG.png",
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
             zoomable: true
         },
 
-        /*
+        
             {
               title: "Logo Inversé",
               desc: "Pour fonds clairs",
@@ -238,20 +238,20 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
     const images = [
         {
-            title: "Favicon",
-            desc: "Version carrée 32x32 pixels",
-            img: "assets/favicon.ico",
-            download: "assets/favicon.ico",
-            zoomable: true
-        },
-        {
-            title: "Logo E Nv",
+            title: "Décor pixel",
             desc: "_",
-            img: "assets/jpgLogoEGA.jpg",
-            download: "assets/jpgLogoEGA.jpg",
+            img: "assets/pngArriere",
+            download: "assets/pngArriere",
             zoomable: true
         },
         {
+            title: "Décor arrière",
+            desc: "_",
+            img: "assets/pngArriere.png",
+            download: "assets/pngArriere.png",
+            zoomable: true
+        }
+        /*{
             title: "Logo E Nv Rond",
             desc: "_",
             img: "assets/pngLogoE.png",
@@ -285,29 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
             img: "assets/pngLogoG.png",
             download: "assets/pngLogoG.png",
             zoomable: true
-        },
-
-        /*
-            {
-              title: "Logo Inversé",
-              desc: "Pour fonds clairs",
-              placeholder: {
-                text: "E",
-                bg: "white",
-                color: "var(--bg-dark)",
-                radius: "50%"
-              }
-            },
-            {
-              title: "Icône App",
-              desc: "Version carrée pour applications",
-              placeholder: {
-                text: "E",
-                bg: "var(--bg-dark)",
-                color: "var(--primary)",
-                radius: "20px"
-              }
-            }*/
+        },*/
     ];
 
     const containeri = document.getElementById("imageShowcase");
