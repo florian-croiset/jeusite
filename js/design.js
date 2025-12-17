@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "Torche",
             desc: "_",
             img: "assets/pngTorche.png",
-            download: "assets/pngTorche.ong",
+            download: "assets/pngTorche.png",
             zoomable: true
         }/*
         {
