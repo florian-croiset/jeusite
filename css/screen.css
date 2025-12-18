@@ -1,0 +1,153 @@
+/* --- HERO : TITRE ET TEXTE --- */
+.hero h1 {
+    opacity: 0;
+    transform: translateY(30px);
+    /* On ne met pas l'animation ici, on attend .loaded */
+}
+
+.hero p {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* --- COUNTDOWN / STATS --- */
+.countdown-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+}
+
+/* --- DÉCLENCHEMENT APRÈS SPLASH --- */
+/* Le titre apparaît en premier */
+.loaded .hero h1 {
+    animation: fadeInUp 1s ease-out forwards, glow 3s ease-in-out infinite;
+}
+
+
+/* Animation : UNIQUEMENT pour les écrans > 768px */
+@media (min-width: 769px) {
+    .loaded .hero p {
+        animation: fadeInUp 1s ease-out 0.3s forwards;
+    }
+}
+
+/* Sur Mobile : On l'affiche directement sans animation ou avec un état fixe */
+@media (max-width: 768px) {
+    .loaded .hero p {
+        /*opacity: 1;*/
+        transform: translateY(0);
+        /* Pas d'animation ici pour éviter les saccades sur mobile */
+    }
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- LE CONTENEUR DU TIMER --- */
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    /* État initial */
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.8s ease-out;
+}
+
+/* --- LES BLOCS INDIVIDUELS (Jours, Heures...) --- */
+.countdown-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effet rebond léger */
+}
+
+/* --- DÉCLENCHEMENT APRÈS LE SPLASH --- */
+
+/* Le conteneur global arrive après le titre du countdown (0.8s) */
+.loaded .countdown-timer {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.8s;
+}
+
+/* Cascade des éléments enfants (un par un) */
+.loaded .countdown-item:nth-child(1) { transition-delay: 1.1s; opacity: 1; transform: translateY(0); }
+.loaded .countdown-item:nth-child(2) { transition-delay: 1.25s; opacity: 1; transform: translateY(0); }
+.loaded .countdown-item:nth-child(3) { transition-delay: 1.4s; opacity: 1; transform: translateY(0); }
+.loaded .countdown-item:nth-child(4) { transition-delay: 1.55s; opacity: 1; transform: translateY(0); }
+
+
+/* --- CTA BUTTONS --- */
+.cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    /* État initial */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease-out;
+}
+
+/* --- COUNTDOWN TITLE --- */
+.countdown-title {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--debut);
+    /* État initial */
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.8s ease-out;
+}
+
+/* --- DÉCLENCHEMENT APRÈS SPLASH (DANS LE BODY.LOADED) --- */
+
+/* Les boutons arrivent 0.6s après l'ouverture (juste après le texte du hero) */
+.loaded .cta-buttons {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.5s;
+}
+
+/* Le titre "Lancement de la version bêta..." arrive en même temps que les boutons */
+.loaded .countdown-title {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.8s;
+}
+
+
+@media (max-width: 768px) {
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .cta-buttons .btn {
+        width: 80%!important; /* Plus large sur mobile pour faciliter le clic */
+    }
+
+    .countdown-title {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    .countdown-timer {
+        gap: 0.5rem; /* Espace réduit sur mobile */
+        /*flex-wrap: wrap;  Permet de passer sur 2 lignes si l'écran est très petit */
+    }
+
+    .countdown-item {
+        padding: 0.5rem;
+        /*min-width: 70px;*/
+        transform: translateY(10px); /* Mouvement plus court pour plus de fluidité */
+    }
+}
