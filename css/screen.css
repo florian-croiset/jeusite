@@ -1,3 +1,99 @@
+  /* --- SPLASH SCREEN --- */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.splash-content { text-align: center; }
+
+.splash-logo {
+    font-size: 5rem;
+    font-weight: bold;
+    letter-spacing: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: splashPulse 2s infinite alternate;
+}
+
+.splash-subtitle {
+    color: #444;
+    letter-spacing: 5px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+}
+
+@keyframes splashPulse {
+    from { filter: drop-shadow(0 0 5px rgba(102,126,234,0.3)); transform: scale(0.98); }
+    to { filter: drop-shadow(0 0 20px rgba(102,126,234,0.6)); transform: scale(1); }
+}
+
+/* --- ETAT INITIAL DES SECTIONS (CACHÉES) --- */
+section:not(.hero) {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 4rem !important; /* Ajuste la taille pour mobile */
+        min-height: auto !important;
+    }
+    
+    /* On réduit le mouvement sur mobile pour éviter les saccades */
+    .hero h1, .hero p, .countdown-item {
+        transform: translateY(15px);
+    }
+}
+/* --- MOBILE OPTIMIZATION --- */
+@media (max-width: 768px) {
+    .splash-logo { font-size: 3rem; letter-spacing: 8px; }
+    section:not(.hero) { transform: translateY(20px); } /* Moins de décalage sur mobile */
+}
+  /* Cache les modales secrètes et de partage au chargement */
+.secret-modal {
+    display: none; /* Indispensable pour qu'elles ne bloquent pas l'écran */
+    position: fixed;
+    z-index: 10000;
+    /* ... reste de votre style ... */
+}
+
+/* Si vous utilisez une classe "active" pour les ouvrir en JS */
+.secret-modal.active {
+    display: flex;
+}
+
+/* Cache le chatbot au chargement */
+.chatbot-window {
+    display: none;  /* Ou transform: translateY(100%) selon votre script */
+}
+/*
+.chatbot-window.active {
+    display: flex !important;
+}
+*/
+
+
 /* --- HERO : TITRE ET TEXTE --- */
 .hero h1 {
     opacity: 0;
