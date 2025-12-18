@@ -4,7 +4,8 @@
    ========================================================= */
 
 // --- IMPORTS ---
-import { updateCountdown } from '../utils/countdown.js';
+import { updateCountdown } from '../utils/screen.js';
+// import { updateCountdown } from '../utils/countdown.js';
 
 // ---------------------------------------------------------
 // 1. DÉTERMINE SI ON EST SUR MOBILE
