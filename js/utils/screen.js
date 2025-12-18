@@ -1,77 +1,92 @@
-// ==========================================
-// CENTRALISATION DU CHARGEMENT (CHEF D'ORCHESTRE)
-// ==========================================
+/* =========================================================
+   GESTION DU CHARGEMENT ET DES ANIMATIONS (Chef d'orchestre)
+   ========================================================= */
+
 window.addEventListener('load', () => {
     const splash = document.getElementById('splash-screen');
 
-    // 1. On définit le temps d'affichage du Splash (ex: 2.2 secondes)
     setTimeout(() => {
-        // 2. Disparition du Splash
+        // 1. Cacher le Splash
         if (splash) {
             splash.classList.add('hidden');
-            // Optionnel : on le retire du DOM après l'effet de fondu
             setTimeout(() => splash.remove(), 800);
         }
 
-        // 3. LE SIGNAL DE DÉPART : On ajoute .loaded au body
-        // C'est cette ligne qui déclenche les animations CSS définies plus haut
+        // 2. Signal de départ pour les animations CSS (.loaded)
         document.body.classList.add('loaded');
 
-        // 4. On lance les scripts de calcul (Compteurs, Observers de scroll)
-        // On attend 500ms après l'ouverture pour que les calculs ne ralentissent pas l'anim
+        // 3. Initialisation des systèmes après un léger délai
         setTimeout(() => {
-            if (typeof updateTestCountdown === "function") {
-                updateTestCountdown();
-                setInterval(updateTestCountdown, 1000);
-            }
-            
-            // Activer l'observer pour les autres sections du site
+            // Lancer le compte à rebours
+            initMainCountdown();
+
+            // Activer l'observation des sections au scroll
             const sections = document.querySelectorAll('section:not(.hero)');
             sections.forEach(section => {
-                observer.observe(section);
+                sectionObserver.observe(section);
             });
         }, 500);
 
-    }, 1000); /*2200*/
+    }, 2200); // Temps du Splash Screen
 });
 
-// ==========================================
-// GESTION DES SECTIONS AU SCROLL
-// ==========================================
+/* =========================================================
+   INTERSECTION OBSERVER (Animations au scroll)
+   ========================================================= */
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+};
+
 const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            // Optionnel: on arrête d'observer une fois affiché
-            sectionObserver.unobserve(entry.target);
+            sectionObserver.unobserve(entry.target); // On arrête d'observer une fois visible
         }
     });
-}, { threshold: 0.15 });
+}, observerOptions);
 
-function initScrollObserver() {
-    const sections = document.querySelectorAll('section:not(.hero)');
-    sections.forEach(sec => sectionObserver.observe(sec));
+/* =========================================================
+   FONCTION COMPTE À REBOURS ADAPTÉE
+   ========================================================= */
+const targetDate = new Date('2026-05-25T00:00:00').getTime();
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+    const timerWrap = document.querySelector('.countdown-timer');
+
+    if (diff <= 0) {
+        if (timerWrap) {
+            timerWrap.innerHTML = `
+                <div class="countdown-item">
+                    <span class="countdown-value">🎉</span>
+                    <span class="countdown-label">Lancé !</span>
+                </div>`;
+        }
+        if (window._countdownInterval) clearInterval(window._countdownInterval);
+        return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const elD = document.getElementById('days');
+    const elH = document.getElementById('hours');
+    const elM = document.getElementById('minutes');
+    const elS = document.getElementById('seconds');
+
+    if (elD) elD.textContent = d;
+    if (elH) elH.textContent = h.toString().padStart(2, '0');
+    if (elM) elM.textContent = m.toString().padStart(2, '0');
+    if (elS) elS.textContent = s.toString().padStart(2, '0');
 }
 
-// ==========================================
-// ANIMATION DES COMPTEURS (COUNTDOWN)
-// ==========================================
-function initCountdownAnimation() {
-    // On récupère les IDs des blocs countdown
-    const ids = ['days', 'hours', 'minutes', 'seconds'];
-    
-    ids.forEach((id, index) => {
-        const el = document.getElementById(id);
-        if (el) {
-            // On anime l'opacité du bloc parent d'abord
-            const parent = el.closest('.countdown-item');
-            setTimeout(() => {
-                if (parent) parent.style.opacity = "1";
-                if (parent) parent.style.transform = "translateY(0)";
-                
-                // Ici tu peux appeler une fonction de montée de chiffres si tu veux
-                // animateValue(el, 0, parseInt(el.textContent), 1000);
-            }, index * 200); // Décalage en cascade
-        }
-    });
+function initMainCountdown() {
+    if (window._countdownInterval) clearInterval(window._countdownInterval);
+    window._countdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
 }
