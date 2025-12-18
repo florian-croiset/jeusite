@@ -139,7 +139,7 @@
     display: flex;
     gap: 1.5rem;
     justify-content: center;
-    animation: fadeInUp 1s ease-out 0.5s backwards;
+    /*animation: fadeInUp 1s ease-out 0.5s backwards;*/
     margin-bottom: 2rem;
 }
 
