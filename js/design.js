@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         grid.appendChild(card);
     });
-});
 }
+});
 
 
 document.addEventListener("DOMContentLoaded", () => {
