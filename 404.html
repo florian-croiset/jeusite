@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo - Liens</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/design.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+<style>
+html, body {
+  overflow: hidden!important; /* Empêche tout défilement */
+  height: 100%!important;     /* Assure que la hauteur reste fixe */
+}
+</style>
+<body>
+    <!--<div class="scroll-progress" id="scrollProgress"></div>-->
+    <div class="custom-cursor" id="customCursor"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo"><a href="#accueil" style="text-decoration:none;">Echo - 404</a></div>
+            </div>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="https://florian-croiset.github.io/jeusite/" class="btn-login"><i class="fa-solid fa-hand-point-right"></i> Retour au site principal <i class="fa-solid fa-hand-point-left"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="hero">
+        <video autoplay muted loop playsinline class="background-video">
+            <source src="assets/anim.mp4" type="video/mp4">Votre navigateur ne supporte pas la
+            lecture vidéo.
+        </video>
+        <div class="arriere" id="accueil"></div>
+        <div class="particles" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1><span id="dynamicTitle"></span><!--Echo--></h1>
+            <p class="nav-links" style="gap:inherit!important; place-items: center; margin-left: 135px;"><span
+                    style="display: inline-block; text-align: center; margin-right:100px;">par la&nbsp;<a href="#team"
+                        style="font-size: 2rem;">Team Nightberry</a></span></p>
+            <div class="countdown-section" style="display:none;">
+                <div class="countdown-title"><i class="fa-solid fa-rocket fa-beat"
+                        style="animation-duration: var(--fa-animation-duration,3s)!important;"></i> Lancement
+                    de la version bêta du jeu dans :</div>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="days">0</span>
+                        <span class="countdown-label">Jours</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="hours">0</span>
+                        <span class="countdown-label">Heures</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="minutes">0</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="seconds">0</span>
+                        <span class="countdown-label">Secondes</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <!--<a href="fichier.exe" class="btn btn-primary"><i class="fa-solid fa-download"></i></a>-->
+                <a href="https://florian-croiset.github.io/jeusite/" class="btn btn-secondary" rel="noopener noreferrer">Aller au site principal</a>
+            </div>
+        </div>
+    </section><footer>
+        <p>&copy; 2025 Echo. Tous droits réservés • 
+            <span class="version-text">Version 1.5 · Beta</span>
+        </p>
+    </footer>
+    <button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
+        <i class="fa-solid fa-circle-dot"></i>
+    </button>
+    <div class="floating-buttons">
+        <button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+        </button>
+        <button class="floating-btn btn-music" id="musicBtn" title="Lecture/Pause musique">
+            <i class="fa-solid fa-music"></i>
+        </button>
+    </div>
+
+    <audio id="backgroundMusic" src="assets/musique.mp3" loop preload="auto"></audio>
+
+    <div id="secretModal" class="secret-modal">
+        <div class="secret-box">
+            <h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i
+                        class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock"
+                    title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
+            <p>Entrez le code d’accès :</p>
+            <div class="input-paste-container">
+                <input type="password" id="secretInput" placeholder="Code..." />
+                <button id="clearBtn" class="btn-paste" title="Effacer le code"><i
+                        class="fa-solid fa-xmark"></i></button>
+                <button id="pasteBtn" class="btn-paste" title="Coller le code"><i
+                        class="fa-solid fa-paste"></i></button>
+            </div>
+            <div class="secret-actions">
+                <button id="cancelSecret" class="btn-cancel">Annuler</button>
+                <button id="confirmSecret" class="btn-confirm">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-buttons">
+        <button class="floating-btn btn-share-access" id="shareBtn" title="Partager le site">
+            <i class="fa-solid fa-share-nodes"></i>
+        </button>
+    </div>
+
+    <div id="shareModal" class="secret-modal">
+        <div class="secret-box share-box">
+            <h3><i class="fa-solid fa-share-nodes"></i> Partager Echo</h3>
+
+            <div class="qr-container">
+                <img id="qrCodeImg" src="" alt="QR Code du site">
+                <p style="font-size: 0.8rem; color: #b0b0b0; margin-top: 10px;">Scannez pour ouvrir sur mobile</p>
+            </div>
+
+            <div class="link-share-area">
+                <input type="text" id="shareLinkInput" readonly>
+                <button id="copyLinkBtn" class="btn-confirm">Copier</button>
+            </div>
+
+            <div class="secret-actions">
+                <button id="closeShare" class="btn-cancel">Fermer</button>
+            </div>
+        </div>
+    </div>
+    <div id="privateShareModal" class="secret-modal">
+        <div class="secret-box">
+            <span class="close-modal"><!--&times;--></span>
+
+            <h3 style="color:red!important; -webkit-text-fill-color:red;"><i class="fa-solid fa-ban fa-fade"></i>
+                Partage interdit <i class="fa-solid fa-ban fa-fade"></i></h3>
+            <p>
+                <i class="fa-solid fa-lock"></i> Cette page est privée.<br>
+                Le partage à des personnes extérieures à la <strong>Team Nightberry</strong> est strictement interdit.
+            </p>
+
+            <div class="secret-actions">
+                <button id="closePrivateShare" class="btn-confirm">Compris</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="js/main.js">
+document.body.style.overflow = "hidden"; // désactive le scroll
+</script>
+<style>
+    /* Style de base du span contenant le titre */
+    #dynamicTitle {
+        transition: opacity 0.5s ease;  /* Ajoute une transition fluide pour l'opacité */
+    }
+
+    /* Classe pour rendre le texte invisible avant de changer */
+    .fade-out {
+        opacity: 0;
+    }
+
+    /* Classe pour rendre le texte visible après l'animation */
+    .fade-in {
+        opacity: 1;
+    }
+
+    .cta-buttons{
+        margin-top:40px;
+    }
+
+    .btn{
+        /*margin-right: 20px;*/
+        margin-top: 30px;
+    }
+@media (max-width: 768px) {
+    .cta-buttons{
+        display:inline-block;
+        margin-top:60px!important;
+        width: 100%;
+    }
+    .cta-buttons::marker{
+        display: none;
+    }
+}
+</style>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    let titleIndex = 0;
+    const titles = ["404", "404"];
+    const titleElement = document.getElementById('dynamicTitle'); // Cibler l'élément span
+
+    function changeTitle() {
+        // Ajouter la classe fade-out pour commencer la transition
+        titleElement.classList.add('fade-out');
+
+        // Attendre que la transition de fade-out soit terminée (500ms)
+        setTimeout(() => {
+            // Changer le texte du titre
+            titleIndex = (titleIndex + 1) % titles.length;
+            titleElement.textContent = titles[titleIndex];
+
+            // Enlever la classe fade-out et ajouter fade-in pour la transition
+            titleElement.classList.remove('fade-out');
+            titleElement.classList.add('fade-in');
+        }, 500);  // Délai de 500ms pour correspondre à la durée de la transition fade-out
+
+        // Réappliquer la transition fade-out après chaque changement
+        setTimeout(() => {
+            titleElement.classList.remove('fade-in');
+        }, 500);  // Réinitialiser la transition après le fade-in
+    }
+
+    // Démarrer le changement du titre une fois la page prête
+    changeTitle();
+
+    // Répéter la fonction toutes les 2 secondes
+    setInterval(changeTitle, 2800);
+  });
+</script>
+</html>
