@@ -81,23 +81,22 @@ window.addEventListener('resize', () => {
 // 3. SABLIER (MODE TEST DE 10 s POUR DÉBLOQUER LE TÉLÉCHARGEMENT)
 // ---------------------------------------------------------
 const sablierBtn = document.getElementById('sablierBtn');
+let testInterval = null; // Déclaré à l'extérieur pour pouvoir le stopper
 
 if (sablierBtn) {
-  let mainIntervalId = null;
-  let testInterval = null;
-
-  // on conserve l’interval du compte à rebours global
-  if (window._countdownInterval === undefined) {
-    window._countdownInterval = setInterval(updateCountdown, 1000);
-  }
-  mainIntervalId = window._countdownInterval;
-
   sablierBtn.addEventListener('click', () => {
-    // Stoppe tout
-    clearInterval(mainIntervalId);
-    clearInterval(testInterval);
+    
+    // --- L'ACTION CRUCIALE ICI ---
+    // On arrête l'intervalle global de 2026 défini dans screen.js
+    if (window._countdownInterval) {
+      clearInterval(window._countdownInterval);
+      window._countdownInterval = null; 
+    }
+    
+    // On arrête un ancien test si l'utilisateur reclique comme un fou
+    if (testInterval) clearInterval(testInterval);
 
-    // Rétablit “bientôt disponible”
+    // Reset des boutons et du titre
     jeuDispo = false;
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
@@ -105,29 +104,23 @@ if (sablierBtn) {
     const titre = document.querySelector('.countdown-title');
     if (titre) titre.style.display = 'block';
 
-    // Animation du sablier
-    sablierBtn.style.transition = 'transform 0.3s, color 0.3s';
+    // Animation Sablier
     sablierBtn.style.color = 'var(--finn)';
     sablierBtn.style.transform = 'rotate(15deg) scale(1.3)';
 
-    // Compte à rebours de test : 10 secondes
-    const now = Date.now();
-    const testTarget = now + 10 * 1000;
+    // Config du test 10s
+    const testTarget = Date.now() + 10 * 1000;
 
     function updateTestCountdown() {
       const distance = testTarget - Date.now();
 
       if (distance <= 0) {
-        // FIN : débloque le téléchargement
         jeuDispo = true;
         appliquerDisponibiliteBouton(btnHero);
         appliquerDisponibiliteBouton(btnTelecharger);
-
+        
         document.querySelector('.countdown-timer').innerHTML = `
-          <div class="countdown-item">
-            <span class="countdown-value">🎉</span>
-            <span class="countdown-label">Lancé&nbsp;!</span>
-          </div>`;
+          <div class="countdown-item"><span class="countdown-value">🎉</span><span class="countdown-label">Lancé&nbsp;!</span></div>`;
 
         if (titre) titre.style.display = 'none';
         clearInterval(testInterval);
@@ -136,33 +129,32 @@ if (sablierBtn) {
         return;
       }
 
-      // Mise à jour du texto
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      // Affichage formaté 00
+      const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
 
-      document.getElementById('days').textContent = days;
-      document.getElementById('hours').textContent = hours;
-      document.getElementById('minutes').textContent = minutes;
-      document.getElementById('seconds').textContent = seconds;
+      document.getElementById('days').textContent = d;
+      document.getElementById('hours').textContent = h.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = m.toString().padStart(2, '0');
+      document.getElementById('seconds').textContent = s.toString().padStart(2, '0');
     }
 
-    // Remet le HTML initial s’il y avait 🎉
+    // Réinjecte le HTML si on était sur le message "Lancé 🎉"
     const timer = document.querySelector('.countdown-timer');
-    if (timer && !timer.querySelector('#days')) {
+    if (timer && !document.getElementById('days')) {
       timer.innerHTML = `
         <div class="countdown-item"><span class="countdown-value" id="days">0</span><span class="countdown-label">Jours</span></div>
-        <div class="countdown-item"><span class="countdown-value" id="hours">0</span><span class="countdown-label">Heures</span></div>
-        <div class="countdown-item"><span class="countdown-value" id="minutes">0</span><span class="countdown-label">Minutes</span></div>
-        <div class="countdown-item"><span class="countdown-value" id="seconds">0</span><span class="countdown-label">Secondes</span></div>`;
+        <div class="countdown-item"><span class="countdown-value" id="hours">00</span><span class="countdown-label">Heures</span></div>
+        <div class="countdown-item"><span class="countdown-value" id="minutes">00</span><span class="countdown-label">Minutes</span></div>
+        <div class="countdown-item"><span class="countdown-value" id="seconds">00</span><span class="countdown-label">Secondes</span></div>`;
     }
 
     updateTestCountdown();
     testInterval = setInterval(updateTestCountdown, 1000);
   });
 }
-
 
 // ---------------------------------------------------------
 // 4. FEEDBACK VISUEL / SONORE SUR LES BOUTONS
