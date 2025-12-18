@@ -85,8 +85,12 @@ export function updateCountdown() {
     if (elS) elS.textContent = s.toString().padStart(2, '0');
 }
 
-function initMainCountdown() {
-    if (window._countdownInterval) clearInterval(window._countdownInterval);
+// Dans screen.js
+export function initMainCountdown() {
+    // Si un intervalle existe déjà, on le détruit avant de recommencer
+    if (window._countdownInterval) {
+        clearInterval(window._countdownInterval);
+    }
     window._countdownInterval = setInterval(updateCountdown, 1000);
     updateCountdown();
 }
