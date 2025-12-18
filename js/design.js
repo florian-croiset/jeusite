@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const grid = document.getElementById("colorGrid");
-
+    if (grid) {
     colors.forEach(({ name, hex }) => {
         const card = document.createElement("div");
         card.className = "color-card";
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         grid.appendChild(card);
     });
 });
-
+}
 
 
 document.addEventListener("DOMContentLoaded", () => {
