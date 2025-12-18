@@ -52,7 +52,7 @@ const sectionObserver = new IntersectionObserver((entries) => {
    ========================================================= */
 const targetDate = new Date('2026-05-25T00:00:00').getTime();
 
-function updateCountdown() {
+export function updateCountdown() {
     const now = new Date().getTime();
     const diff = targetDate - now;
     const timerWrap = document.querySelector('.countdown-timer');
