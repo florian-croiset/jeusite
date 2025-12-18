@@ -59,7 +59,7 @@ html.snap-enabled .hero {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: fadeInUp 1s ease-out, glow 3s ease-in-out infinite;
+  /*animation: fadeInUp 1s ease-out, glow 3s ease-in-out infinite;*/
   background-size: 200% 200%;
   position: relative;
   min-height: 140px;
@@ -90,7 +90,7 @@ html.snap-enabled .hero {
   color: #b0b0b0;
   margin-bottom: 3rem;
   text-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
-  animation: fadeInUp 1s ease-out 0.2s backwards;
+  /*animation: fadeInUp 1s ease-out 0.2s backwards;*/
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
