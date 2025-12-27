@@ -250,7 +250,7 @@ html.snap-enabled section {
     font-size: 2rem;
     margin-bottom: 1rem;
     display: inline-block;
-    animation: float 3s ease-in-out infinite;
+    /*animation: float 3s ease-in-out infinite;*/
 }
 
 .feature-card h3 {

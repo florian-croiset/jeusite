@@ -4,7 +4,9 @@
   <!-- Préconnexion aux domaines externes -->
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-
+<!-- Précharger les ressources critiques -->
+<link rel="preload" as="video" href="assets/mp4compressFlamme.mp4" type="video/mp4">
+<link rel="preload" as="image" href="assets/arriere.png">
 <!-- Précharger la police critique -->
 <link rel="preload" 
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2" 
@@ -42,11 +44,62 @@
 </script>
 </head>
 <body>
-    <div id="splash-screen">
+      <noscript>
+        <div style="position: fixed; inset: 0; background: #0a0a0a; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; text-align: center; padding: 2rem;">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem; color: #00d0c6;">⚠️</h1>
+            <h2 style="color: #00d0c6; margin-bottom: 1rem;">JavaScript est requis</h2>
+            <p style="color: #888; max-width: 500px;">
+                Ce site nécessite JavaScript pour fonctionner correctement. 
+                Veuillez activer JavaScript dans les paramètres de votre navigateur.
+            </p>
+        </div>
+    </noscript>
+    <!--<div id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo">ECHO</div>
             <div class="splash-subtitle">PAR LA TEAM NIGHTBERRY</div>
             <div class="splash-loader"></div>
+        </div>
+    </div>-->
+        <div id="splash-screen">
+        <!-- Grille cyberpunk -->
+        <div class="cyber-grid"></div>
+
+        <!-- Particules d'arrière-plan -->
+        <!--<div class="splash-particles" id="splashParticles"></div>-->
+
+        <!-- Contenu principal -->
+        <div class="splash-content">
+            <div class="logo-decoration">
+                <div class="splash-logo"><h1><span></span>Echo</h1></div>
+            </div>
+            <div class="splash-subtitle">Par la Team Nightberry</div>
+
+            <!-- Loader -->
+            <div class="splash-loader-container">
+                <div class="splash-loader">
+                    <div class="loader-circle"></div>
+                    <div class="loader-circle-progress"></div>
+                    <div class="loader-core"></div>
+                    <div class="loader-orbit">
+                        <div class="orbit-particle"></div>
+                        <div class="orbit-particle"></div>
+                        <div class="orbit-particle"></div>
+                        <div class="orbit-particle"></div>
+                    </div>
+                </div>
+
+                <!-- Barre de progression -->
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <!-- Texte de chargement -->
+                <div class="loading-text">
+                    Chargement
+                    <span class="loading-percentage" id="loadingPercentage">0%</span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="scroll-progress" id="scrollProgress"></div><div class="custom-cursor" id="customCursor"></div>
