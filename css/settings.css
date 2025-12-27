@@ -1,0 +1,629 @@
+/* =========================================================
+   MODALE DE PARAMÈTRES
+   ========================================================= */
+
+.settings-box {
+    max-width: 700px;
+    width: 90%;
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-box h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    color: var(--bleu);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.settings-box h3 i:first-child {
+    margin-right: 10px;
+}
+
+/* Bouton paramètres dans la modale secrète */
+.btn-settings-icon {
+    background: rgba(0, 208, 198, 0.1);
+    border: 1px solid var(--bleu);
+    color: var(--bleu);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /*display: flex;
+    align-items: center;
+    justify-content: center;*/
+    margin-left: 30px;
+}
+
+.btn-settings-icon:hover {
+    background: var(--bleu);
+    color: #0a0a0a;
+    transform: rotate(90deg);
+    box-shadow: 0 0 20px var(--rgbbleu6);
+}
+
+/* =========================================================
+   ONGLETS
+   ========================================================= */
+
+.settings-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(0, 208, 198, 0.2);
+    flex-shrink: 0;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.tab-btn i {
+    font-size: 1.1rem;
+}
+
+.tab-btn:hover {
+    color: var(--bleu);
+}
+
+.tab-btn.active {
+    color: var(--bleu);
+    border-bottom-color: var(--bleu);
+}
+
+/* =========================================================
+   CONTENU DES ONGLETS
+   ========================================================= */
+
+.settings-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Liste des paramètres */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Item de paramètre */
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: rgba(0, 208, 198, 0.05);
+    border: 1px solid rgba(0, 208, 198, 0.2);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.setting-item.highlighted {
+    background: rgba(0, 208, 198, 0.1);
+    border-color: var(--bleu);
+    box-shadow: 0 0 15px var(--rgbbleu5);
+}
+
+.setting-item:hover {
+    background: rgba(0, 208, 198, 0.1);
+    border-color: var(--bleu);
+    transform: translateX(5px);
+}
+
+/* Info du paramètre */
+.setting-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    flex: 1;
+}
+
+.setting-info > i {
+    font-size: 1.4rem;
+    color: var(--bleu);
+    margin-top: 5px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.setting-info > div {
+    flex: 1;
+}
+
+.setting-info strong {
+    display: block;
+    color: #fff;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.setting-info p {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   TOGGLE SWITCH
+   ========================================================= */
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.toggle-slider:before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: #888;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: linear-gradient(135deg, var(--bleu), var(--violet));
+    border-color: var(--bleu);
+    box-shadow: 0 0 15px var(--rgbbleu5);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(30px);
+    background: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.toggle-switch input:disabled + .toggle-slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toggle-switch:hover .toggle-slider {
+    border-color: var(--bleu);
+}
+
+.toggle-switch input:checked:hover + .toggle-slider {
+    box-shadow: 0 0 25px var(--rgbbleu8);
+}
+
+/* =========================================================
+   INFO PERFORMANCE
+   ========================================================= */
+
+.performance-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.performance-info i {
+    font-size: 2rem;
+    color: #ffc107;
+}
+
+.performance-info p {
+    color: #ddd;
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   RACCOURCIS CLAVIER
+   ========================================================= */
+
+.shortcuts-desc {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.shortcuts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(0, 208, 198, 0.05);
+    border: 1px solid rgba(0, 208, 198, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.shortcut-item:hover {
+    background: rgba(0, 208, 198, 0.1);
+    border-color: var(--bleu);
+}
+
+.shortcut-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.shortcut-info i {
+    font-size: 1.2rem;
+    color: var(--bleu);
+    width: 30px;
+    text-align: center;
+}
+
+.shortcut-input {
+    background: rgba(0, 208, 198, 0.1);
+    border: 1px solid rgba(0, 208, 198, 0.3);
+    color: var(--bleu);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    min-width: 120px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+.shortcut-input:hover {
+    border-color: var(--bleu);
+    box-shadow: 0 0 15px var(--rgbbleu5);
+}
+
+.shortcut-input.capturing {
+    animation: pulse 1s infinite;
+    border-color: var(--bleu);
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 10px var(--rgbbleu5); }
+    50% { box-shadow: 0 0 25px var(--rgbbleu8); }
+}
+
+/* =========================================================
+   SÉLECTEUR DE LANGUE
+   ========================================================= */
+
+.language-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.language-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: rgba(0, 208, 198, 0.05);
+    border: 2px solid rgba(0, 208, 198, 0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.language-option:hover {
+    background: rgba(0, 208, 198, 0.1);
+    border-color: var(--bleu);
+    transform: translateY(-5px);
+}
+
+.language-option.active {
+    background: rgba(0, 208, 198, 0.15);
+    border-color: var(--bleu);
+    box-shadow: 0 0 20px var(--rgbbleu5);
+}
+
+.language-option .flag {
+    font-size: 4rem;
+}
+
+.language-option .lang-name {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* =========================================================
+   FOOTER DES PARAMÈTRES
+   ========================================================= */
+
+.settings-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 208, 198, 0.2);
+    flex-shrink: 0;
+    margin-top: 1rem;
+}
+
+.btn-reset {
+    background: rgba(255, 69, 58, 0.1);
+    border: 1px solid rgba(255, 69, 58, 0.3);
+    color: #ff453a;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-reset:hover {
+    background: rgba(255, 69, 58, 0.2);
+    border-color: #ff453a;
+    transform: scale(1.05);
+}
+
+/* =========================================================
+   NOTIFICATION
+   ========================================================= */
+
+.settings-notification {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    background: linear-gradient(135deg, var(--bleu), var(--violet));
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 208, 198, 0.4);
+    font-size: 0.9rem;
+    font-weight: 500;
+    z-index: 99999;
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    pointer-events: none;
+}
+
+.settings-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* =========================================================
+   MODE PERFORMANCE
+   ========================================================= */
+
+.performance-mode .particles,
+.performance-mode .splash-particles,
+.performance-mode .background-video {
+    display: none !important;
+}
+
+.performance-mode * {
+    animation-duration: 0.1s !important;
+}
+
+/* =========================================================
+   MODE CLAIR
+   ========================================================= */
+
+.light-mode {
+    --bleu: #4a90e2;
+    --violet: #9b59b6;
+    --rgbbleu8: rgba(74, 144, 226, 0.8);
+    --rgbbleu9: rgba(74, 144, 226, 0.9);
+    --rgbbleu6: rgba(74, 144, 226, 0.6);
+    --rgbbleu5: rgba(74, 144, 226, 0.5);
+}
+
+.light-mode {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #2c3e50;
+}
+
+.light-mode .navbar,
+.light-mode .secret-box,
+.light-mode .settings-box {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.light-mode h1,
+.light-mode h2,
+.light-mode h3,
+.light-mode strong {
+    color: #2c3e50;
+}
+
+.light-mode p,
+.light-mode .setting-info p {
+    color: #555;
+}
+
+.light-mode .setting-item {
+    background: rgba(74, 144, 226, 0.05);
+    border-color: rgba(74, 144, 226, 0.2);
+}
+
+.light-mode .btn-primary,
+.light-mode .btn-confirm {
+    background: linear-gradient(135deg, #4a90e2, #9b59b6);
+}
+
+.light-mode .hero {
+    background: linear-gradient(135deg, rgba(245, 247, 250, 0.9) 0%, rgba(195, 207, 226, 0.9) 100%);
+}
+
+.light-mode .arriere {
+    opacity: 0.3;
+}
+
+/* =========================================================
+   DÉSACTIVER ANIMATIONS
+   ========================================================= */
+
+.no-animations * {
+    animation: none !important;
+    transition: none !important;
+}
+
+.no-animations .hero h1,
+.no-animations section {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .settings-box {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .settings-tabs {
+        gap: 0.25rem;
+    }
+    
+    .tab-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .tab-btn span {
+        display: none;
+    }
+    
+    .tab-btn i {
+        font-size: 1.3rem;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .toggle-switch {
+        align-self: flex-end;
+    }
+    
+    .shortcut-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .shortcut-input {
+        width: 100%;
+    }
+    
+    .language-selector {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-footer {
+        flex-direction: column;
+    }
+    
+    .btn-reset,
+    .settings-footer .btn-confirm {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .settings-notification {
+        right: 20px;
+        left: 20px;
+        text-align: center;
+    }
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.settings-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+    background: rgba(0, 208, 198, 0.05);
+    border-radius: 10px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--bleu), var(--violet));
+    border-radius: 10px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+    background: var(--bleu);
+}

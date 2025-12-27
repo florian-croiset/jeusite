@@ -67,7 +67,7 @@ if (musique && musicBtn) {
   // 5. RACCOURCI CLAVIER : TOUCHE « P »
   // -------------------------------------------------------
   document.addEventListener('keydown', e => {
-    if (e.key === 'p' || e.key === 'P') {
+    if (e.key === 'm' || e.key === 'M') {
       e.preventDefault();
       musicBtn.click();                       // Simule un clic
       musicBtn.style.transform = 'scale(1.2)'; // Feedback visuel

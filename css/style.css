@@ -29,3 +29,6 @@
 
 /* Screen */
 @import url("screen.css");
+
+/* Settings */
+@import url("settings.css");
