@@ -64,7 +64,7 @@ if (musique && musicBtn) {
 
 
   // -------------------------------------------------------
-  // 5. RACCOURCI CLAVIER : TOUCHE « P »
+  // 5. RACCOURCI CLAVIER : TOUCHE « M »
   // -------------------------------------------------------
   document.addEventListener('keydown', e => {
     if (e.key === 'm' || e.key === 'M') {

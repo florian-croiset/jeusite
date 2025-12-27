@@ -586,9 +586,9 @@ class SettingsManager {
     
     executeShortcut(action) {
         switch(action) {
-            case 'toggleMusic':
+            /*case 'toggleMusic':
                 document.getElementById('musicBtn')?.click();
-                break;
+                break;*/
             case 'openSettings':
                 this.openModal();
                 break;

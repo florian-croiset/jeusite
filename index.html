@@ -277,11 +277,11 @@ s0.parentNode.insertBefore(s1,s0);
 <!--<script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>693eb7c5bdb6af04d662ab4e,693eb74190e8e205d87db8ff</script>-->
 </body>
 <script>
-  // Charger l'audio seulement quand l'utilisateur interagit
+// Charger l'audio seulement quand l'utilisateur interagit
 document.getElementById('musicBtn').addEventListener('click', function() {
     const audio = document.getElementById('backgroundMusic');
     if (!audio.src) {
-        audio.load(); // Charger seulement maintenant
+        audio.load();
     }
 }, { once: true });
 </script>
