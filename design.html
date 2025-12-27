@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/design.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -217,24 +219,10 @@
     </section>
 
     <footer>
-        <p>&copy; 2025 Echo. Tous droits réservés • 
-            <span class="version-text">Version 1.5 · Beta</span>
+        <p>&copy; 2025 Echo. Tous droits réservés • 
+            <span class="version-text">Version 1.5 · Beta</span>
         </p>
     </footer>
-
-    <!--
-
-SPRITES
-<img src="assets/sprites/vaisseau.png" alt="Vaisseau" style="width: 100%; height: 200px; object-fit: contain; background: var(--bg-dark); border-radius: 10px; padding: 20px;">
-
-UI
-<img src="assets/ui/barre-vie.png" alt="Barre de vie" style="width: 100%; height: 200px; object-fit: contain; background: var(--bg-dark); border-radius: 10px; padding: 20px;">
-
-ICONES
-<img src="assets/icones/energie.png" alt="Énergie" style="width: 60px; height: 60px; object-fit: contain;">
--->
-
-
     <button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
         <i class="fa-solid fa-circle-dot"></i>
     </button>
@@ -318,6 +306,7 @@ ICONES
         </div>
     </div>
 </body>
-<script type="module" src="js/main.js"></script>
 <script type="module" src="js/design.js"></script>
+<script type="module" src="js/main.js"></script>
+<script type="module" src="js/zip.js"></script>
 </html>
