@@ -9,6 +9,6 @@ import './ui/modal.js';
 import './utils/share.js';
 import './utils/clipboard.js';
 import './utils/screen.js';
-import './design.js';
+//import './design.js';
 
 document.addEventListener('contextmenu', e => e.preventDefault());

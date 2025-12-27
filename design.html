@@ -278,4 +278,13 @@ ICONES
     </div>
 </body>
 <script type="module" src="js/main.js"></script>
+<script>
+  // Vérifier l'URL ou tout autre critère pour savoir si tu es sur la bonne page
+  if (window.location.pathname === '/design.html') {
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = 'js/design.js';
+    document.body.appendChild(script); // Ajoute le script à la fin de la page
+  }
+</script>
 </html>
