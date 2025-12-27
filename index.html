@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr"><!-- Sortie de la version 1.4 -->
 <head>
+  <!-- Préconnexion aux domaines externes -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+<!-- Précharger la police critique -->
+<link rel="preload" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2" 
+      as="font" 
+      type="font/woff2" 
+      crossorigin>
+
+<!-- Charger Font Awesome en asynchrone -->
+<link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      media="print" 
+      onload="this.media='all'">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">-->
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHJEB1CE3S"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JHJEB1CE3S');
-    </script>
+    <!-- Remplacer le script actuel par -->
+<script>
+    window.addEventListener('load', function() {
+        // Charger GA après le chargement complet
+        const script = document.createElement('script');
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-JHJEB1CE3S';
+        script.async = true;
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JHJEB1CE3S');
+    });
+</script>
 </head>
 <body>
     <div id="splash-screen">
@@ -46,7 +70,7 @@
         </div>
     </nav>
     <section class="hero"><!-- Accueil -->
-        <video autoplay muted loop playsinline class="background-video"><source src="assets/anim.mp4" type="video/mp4"><!-- texte fallback au cas où -->Votre navigateur ne supporte pas la lecture vidéo.</video>
+        <video autoplay muted loop playsinline class="background-video"><source src="assets/mp4compressFlamme.mp4" type="video/mp4"><!-- texte fallback au cas où -->Votre navigateur ne supporte pas la lecture vidéo.</video>
         <div class="arriere" id="accueil"></div> 
         <div class="particles" aria-hidden="true"></div>
         <div class="hero-content">
@@ -129,7 +153,7 @@
 </div>
 
 <!-- ===== AUDIO ===== -->
-<audio id="backgroundMusic" src="assets/musique.mp3" loop preload="auto"></audio>
+<audio id="backgroundMusic" src="assets/mp3compressmusique.mp3" loop preload="none"></audio>
 
 <!-- ===== MODALE D’ACCÈS SECRET ===== -->
 <div id="secretModal" class="secret-modal">
@@ -188,6 +212,15 @@ s0.parentNode.insertBefore(s1,s0);
 <!--End of Tawk.to Script-->
 <!--<script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>693eb7c5bdb6af04d662ab4e,693eb74190e8e205d87db8ff</script>-->
 </body>
+<script>
+  // Charger l'audio seulement quand l'utilisateur interagit
+document.getElementById('musicBtn').addEventListener('click', function() {
+    const audio = document.getElementById('backgroundMusic');
+    if (!audio.src) {
+        audio.load(); // Charger seulement maintenant
+    }
+}, { once: true });
+</script>
 <script type="module" src="js/main.js"></script>
 <style></style>
 </html>
