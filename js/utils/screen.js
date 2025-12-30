@@ -378,9 +378,9 @@ if (document.readyState === 'loading') {
    COMPTE À REBOURS (pour compatibilité)
    ========================================================= */
 
-const targetDate = new Date('2026-05-25T00:00:00').getTime();
+//const targetDate = new Date('2026-05-25T00:00:00').getTime();
 
-export function updateCountdown() {
+/*export function updateCountdown() {
     const now = new Date().getTime();
     const diff = targetDate - now;
     const timerWrap = document.querySelector('.countdown-timer');
@@ -419,4 +419,4 @@ export function initMainCountdown() {
     }
     window._countdownInterval = setInterval(updateCountdown, 1000);
     updateCountdown();
-}
+}*/

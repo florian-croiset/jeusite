@@ -477,3 +477,119 @@
     left: -4px;
     position: inherit;
 }
+
+
+
+
+
+/* =============================================
+   CSS À AJOUTER DANS VOTRE FICHIER style.css
+   Pour améliorer l'apparence des boutons désactivés
+   ============================================= */
+
+/* État désactivé du bouton */
+.btn-primary.disabled,
+.btn.disabled {
+    position: relative;
+    background: linear-gradient(135deg, #2a2a3e, #1a1a2e) !important;
+    border: 2px solid var(--danger, #ff0055) !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+    pointer-events: none !important;
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.3) !important;
+    animation: none !important;
+}
+
+/* Overlay de verrouillage */
+.btn-primary.disabled::before,
+.btn.disabled::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 0, 85, 0.1) 10px,
+        rgba(255, 0, 85, 0.1) 20px
+    );
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+/* Animation de l'icône cadenas */
+.btn-primary.disabled i.fa-lock,
+.btn.disabled i.fa-lock {
+    animation: shakee 0.5s ease-in-out;
+}
+
+@keyframes shakee {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+}
+
+/* Empêcher les interactions sur les boutons désactivés */
+.btn-primary.disabled *,
+.btn.disabled * {
+    pointer-events: none !important;
+}
+
+/* Message d'info sous le bouton */
+.info-span {
+    animation: fadeInn 0.5s ease-in;
+}
+
+@keyframes fadeInn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 0.8;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Effet au survol sur bouton désactivé (feedback visuel) */
+.btn-primary.disabled:hover,
+.btn.disabled:hover {
+    transform: none !important;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.5) !important;
+}
+
+/* Animation du message "Lancé" */
+.countdown-finished-message {
+    animation: scaleInn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes scaleInn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Pulsation pour le cadenas */
+@keyframes pulseLockk {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px rgba(255, 0, 85, 0.5));
+    }
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0.8));
+    }
+}
+
+.btn-primary.disabled i.fa-lock {
+    animation: pulseLockk 2s infinite;
+}

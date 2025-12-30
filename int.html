@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo - Exemple d'Intégration Database</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/database-styles.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      media="print" 
+      onload="this.media='all'">
+      <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <script src="js/notifications.js"></script>
+    <script src="js/database-complete.js"></script>
+    <style>        
+        /*.demo-section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }*/
+        
+        .demo-section h2 {
+            color: #00ffff;
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .demo-card {
+            background: #1a1a2e;
+            border: 2px solid #9d00ff;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        
+        .demo-card:hover {
+            border-color: #00ffff;
+            transform: translateY(-5px);
+        }
+        
+        .demo-card h3 {
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+        
+        .demo-card p {
+            color: #b0b0b0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .demo-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /*nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }*/
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ffff;
+        }
+        
+        #user-menu {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: fixed;
+            top: 150px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+<script type="module" src="js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="js/config/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
+</head>
+<body>
+            <div id="splash-screen">
+        <!-- Grille cyberpunk -->
+        <div class="cyber-grid"></div>
+
+        <!-- Particules d'arrière-plan -->
+        <!--<div class="splash-particles" id="splashParticles"></div>-->
+
+        <!-- Contenu principal -->
+        <div class="splash-content">
+            <div class="logo-decoration">
+                <div class="splash-logo"><h1><span></span>Echo</h1></div>
+            </div>
+            <div class="splash-subtitle">Par la Team Nightberry</div>
+
+            <!-- Loader -->
+            <div class="splash-loader-container">
+                <div class="splash-loader">
+                    <div class="loader-circle"></div>
+                    <div class="loader-circle-progress"></div>
+                    <div class="loader-core"></div>
+                    <div class="loader-orbit">
+                        <div class="orbit-particle"></div>
+                        <div class="orbit-particle"></div>
+                        <div class="orbit-particle"></div>
+                        <div class="orbit-particle"></div>
+                    </div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <div class="loading-text">
+                    Chargement
+                    <span class="loading-percentage" id="loadingPercentage">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-progress" id="scrollProgress"></div><div class="custom-cursor" id="customCursor"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <!--<div class="logo">Echo</div>-->
+            <div class="logo-container"><div class="logo"><a href="#accueil" style="text-decoration:none;">Echo</a></div></div>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <!--<li><a href="#accueil">Accueil</a></li>-->
+                <li><a href="#team">Team Nightberry</a></li>
+                <li><a href="#telecharger">Télécharger le jeu</a></li>
+                <li><a href="#install">Installer / désinstaller le jeu</a></li>
+                <li><a href="#gameplay">Gameplay</a></li>
+                <li><a href="#lore">Lore</a></li><!--<li>Thème</li>-->
+                <li><a href="https://ink-bonobo-1b6.notion.site/ebd//2cd1f3f0470c80f4a04fe4ee7194cee0" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Donner mon avis sur le jeu</a></li>
+            </ul>
+        </div>
+    </nav>
+        <div id="user-menu">
+                <button onclick="openLoginModal()" class="btn-small">Connexion</button>
+                <button onclick="openSignupModal()" class="btn-small">Inscription</button>
+            </div>
+        <!--<div class="search-container" style="max-width: 300px;">
+                <input type="text" id="search-input" placeholder="🔍 Rechercher...">
+                <div id="search-results"></div>
+            </div>-->
+    <!-- SECTION 1: COMPTE À REBOURS -->
+    <section class="hero demo-section">
+        <video autoplay muted loop playsinline class="background-video"><source src="assets/mp4compressFlamme.mp4" type="video/mp4"><!-- texte fallback au cas où -->Votre navigateur ne supporte pas la lecture vidéo.</video>
+        <div class="arriere" id="accueil"></div> 
+        <div class="particles" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1><span></span>Echo</h1>
+            <p class="nav-links" style="gap:inherit!important; place-items: center; margin-left: 135px;"><span style="display: inline-block; text-align: center;">par la&nbsp;<a href="#team" style="font-size: 2rem;">Team Nightberry</a></span></p>
+            <div class="countdown-section">
+                <div class="countdown-title"><i class="fa-solid fa-rocket fa-beat" style ="animation-duration: var(--fa-animation-duration,3s)!important;"></i><!--🚀--> Lancement de la version bêta du jeu dans :</div>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="days">0</span>
+                        <span class="countdown-label">Jours</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="hours">0</span>
+                        <span class="countdown-label">Heures</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="minutes">0</span>
+                        <span class="countdown-label">Minutes</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="seconds">0</span>
+                        <span class="countdown-label">Secondes</span>
+                    </div>
+                </div>
+            </div>  
+            <div class="cta-buttons">
+                <a id="telecharger" href="executable/Echo_TeamNightberry_v1.exe" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a>
+                <a href="#gameplay" class="btn btn-secondary">Découvrir les fonctionnalités</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: VERSIONS DU JEU -->
+    <section class="demo-section">
+        <h2>🎮 Versions du Jeu</h2>
+        <div id="versions-container">
+            <p style="text-align: center; color: #9d00ff;">Chargement des versions...</p>
+        </div>
+    </section>
+
+    <!-- SECTION 5: FORMULAIRE DE FEEDBACK -->
+    <section class="demo-section">
+        <h2>💬 Votre Avis</h2>
+        <div id="feedback-container"></div>
+    </section>
+<footer>
+  <p>&copy; 2025 Echo. Tous droits réservés • 
+    <span class="version-text">Version 1.5 · Beta</span>
+  </p>
+</footer>
+<button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
+  <i class="fa-solid fa-circle-dot"></i>
+</button>
+<!-- ===== BOUTONS FLOTTANTS ===== -->
+<div class="floating-buttons">
+  <button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut">
+    <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+  <button class="floating-btn btn-music" id="musicBtn" title="Lecture/Pause musique">
+    <i class="fa-solid fa-music"></i>
+  </button>
+</div>
+
+<!-- ===== AUDIO ===== -->
+<audio id="backgroundMusic" src="assets/mp3compressmusique.mp3" loop preload="none"></audio>
+
+<!-- ===== MODALE D’ACCÈS SECRET ===== -->
+<div id="secretModal" class="secret-modal">
+  <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3><!-- Bouton Sablier pour changer la durée du compte à rebours -->
+    <!--<h3>🔒 Accès restreint</h3>-->
+    <p>Entrez le code d’accès :</p>
+    <div class="input-paste-container">
+      <input type="password" id="secretInput" placeholder="Code..." />
+      <button id="clearBtn" class="btn-paste" title="Effacer le code"><i class="fa-solid fa-xmark"></i></button>
+      <button id="pasteBtn" class="btn-paste" title="Coller le code"><i class="fa-solid fa-paste"></i></button>
+    </div>
+    <div class="secret-actions">
+      <button id="cancelSecret" class="btn-cancel">Annuler</button>
+      <button id="confirmSecret" class="btn-confirm">Valider</button>
+    </div>
+  </div>
+</div>
+
+<div class="floating-buttons">
+  <button class="floating-btn btn-share-access" id="shareBtn" data-allow-share="true" title="Partager le site">
+    <i class="fa-solid fa-share-nodes"></i>
+  </button>
+</div>
+
+<div id="shareModal" class="secret-modal">
+  <div class="secret-box share-box">
+    <h3><i class="fa-solid fa-share-nodes"></i> Partager Echo</h3>
+    
+    <div class="qr-container">
+      <img id="qrCodeImg" src="" alt="QR Code du site">
+      <p style="font-size: 0.8rem; color: #b0b0b0; margin-top: 10px;">Scannez pour ouvrir sur mobile</p>
+    </div>
+
+    <div class="link-share-area">
+      <input type="text" id="shareLinkInput" readonly>
+      <button id="copyLinkBtn" class="btn-confirm">Copier</button>
+    </div>
+
+    <div class="secret-actions">
+      <button id="closeShare" class="btn-cancel">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE DE CONNEXION -->
+<div id="loginModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <button class="auth-close" onclick="closeLoginModal()">&times;</button>
+        
+        <div class="auth-header">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <h2>Connexion</h2>
+            <p>Accédez à votre compte Echo</p>
+        </div>
+        
+        <form id="loginForm" class="auth-form">
+            <div class="auth-input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input 
+                    type="email" 
+                    id="loginEmail" 
+                    placeholder="Email"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+            
+            <div class="auth-input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input 
+                    type="password" 
+                    id="loginPassword" 
+                    placeholder="Mot de passe"
+                    required
+                    autocomplete="current-password"
+                >
+                <button 
+                    type="button" 
+                    class="toggle-password" 
+                    onclick="togglePassword('loginPassword')"
+                    title="Afficher/Masquer"
+                >
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            
+            <div class="auth-options">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <span>Se souvenir de moi</span>
+                </label>
+                <a href="#" class="forgot-password" onclick="handleForgotPassword(); return false;">
+                    Mot de passe oublié ?
+                </a>
+            </div>
+            
+            <button type="submit" class="auth-submit-btn">
+                <span class="btn-text">Se connecter</span>
+                <span class="btn-loader" style="display: none;">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </span>
+            </button>
+            
+            <!--<div class="auth-divider">
+                <span>OU</span>
+            </div>
+            
+            <button type="button" class="auth-social-btn" onclick="loginWithGoogle()">
+                <i class="fa-brands fa-google"></i>
+                Continuer avec Google
+            </button>
+            
+            <div class="auth-switch">
+                Pas encore de compte ? 
+                <a href="#" onclick="switchToSignup(); return false;">S'inscrire</a>
+            </div>-->
+        </form>
+    </div>
+</div>
+
+
+<style>
+.user-profile-menu {
+    position: relative;
+}
+
+.user-avatar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #9d00ff, #00ffff);
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.user-avatar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(157, 0, 255, 0.4);
+}
+
+.user-avatar i {
+    font-size: 20px;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: #1a1a2e;
+    border: 2px solid #9d00ff;
+    border-radius: 12px;
+    min-width: 200px;
+    padding: 10px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+}
+
+.user-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.user-dropdown a:hover {
+    background: rgba(157, 0, 255, 0.1);
+    color: #00ffff;
+}
+
+.user-dropdown hr {
+    border: none;
+    border-top: 1px solid rgba(157, 0, 255, 0.3);
+    margin: 5px 0;
+}
+</style>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// =============================================
+// VÉRIFIER LA SESSION AU CHARGEMENT
+// =============================================
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Attendre que Supabase soit disponible
+    await new Promise(resolve => {
+        const check = setInterval(() => {
+            if (window.supabase) {
+                clearInterval(check);
+                resolve();
+            }
+        }, 100);
+    });
+    
+    // Vérifier la session
+    const { data: { session } } = await window.supabase.auth.getSession();
+    
+    if (session?.user) {
+        updateUIAfterLogin(session.user);
+        console.log('✅ Utilisateur connecté:', session.user.email);
+    }
+    
+    // Écouter les changements d'authentification
+    window.supabase.auth.onAuthStateChange((event, session) => {
+        console.log('Auth event:', event);
+        
+        if (event === 'SIGNED_IN' && session?.user) {
+            updateUIAfterLogin(session.user);
+        } else if (event === 'SIGNED_OUT') {
+            // Restaurer les boutons
+            const userMenu = document.getElementById('user-menu');
+            if (userMenu) {
+                userMenu.innerHTML = `
+                    <button onclick="openLoginModal()" class="btn-small">Connexion</button>
+                    <button onclick="openSignupModal()" class="btn-small">Inscription</button>
+                `;
+            }
+        }
+    });
+});
+
+async function checkGameAvailability() {
+    try {
+        // ✅ VÉRIFIER SI LE COMPTE À REBOURS A DÉJÀ DÉFINI L'ÉTAT
+        if (window.jeuDispo === true || window.jeuDispo === false) {
+            console.log('⏭️ État déjà défini par le compte à rebours, skip de la vérification');
+            return;
+        }
+
+        const now = new Date().toISOString();
+        const { data, error } = await supabase
+            .from('game_versions')
+            .select('*')
+            .eq('is_active', true)
+            .lte('release_date', now)
+            .not('download_url', 'is', null)
+            .order('release_date', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Erreur DB:", error);
+            return;
+        }
+
+        if (data) {
+            console.log("✅ Version active trouvée :", data.version);
+            if (window.updateDownloadState) {
+                window.updateDownloadState(true, data.download_url, data.version);
+            }
+        } else {
+            console.log("🔒 Téléchargement désactivé (aucune version active).");
+            if (window.updateDownloadState) {
+                window.updateDownloadState(false, '#', '');
+            }
+        }
+
+    } catch (err) {
+        console.error("Erreur check version:", err);
+    }
+}
+</script>
+<script>
+// Initialiser les notifications
+document.addEventListener('DOMContentLoaded', async () => {
+    // Attendre EchoDB
+    await new Promise(resolve => {
+        const check = setInterval(() => {
+            if (window.EchoDB) {
+                clearInterval(check);
+                resolve();
+            }
+        }, 100);
+    });
+    
+    // Créer l'instance
+    window.notificationSystem = new NotificationSystem();
+    console.log('✅ Notifications initialisées sur int.html');
+});
+
+
+/*<script src="js/auth.js">*/
+
+    // =============================================
+// INITIALISATION GLOBALE DE SUPABASE
+// =============================================
+/*import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+*/
+window.supabase = supabase;
+
+// Vérifier l'état de connexion
+async function checkConnection() {
+    try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+            console.error('❌ Erreur Supabase:', error);
+        } else {
+            console.log('✅ Supabase connecté et fonctionnel');
+            if (data.session) {
+                console.log('👤 Utilisateur connecté:', data.session.user.email);
+            }
+        }
+    } catch (err) {
+        console.error('❌ Erreur de connexion Supabase:', err);
+    }
+}
+
+// Attendre que le DOM soit prêt
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkConnection);
+} else {
+    checkConnection();
+}
+
+console.log('✅ Client Supabase initialisé et exposé à window.supabase');
+
+// Ce script vérifie que Supabase est bien disponible
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        if (window.supabase) {
+            console.log('✅ window.supabase est disponible');
+            console.log('✅ window.supabase.auth est:', window.supabase.auth ? 'DISPONIBLE' : 'UNDEFINED');
+            
+            // Tester une fonction simple
+            if (window.supabase.auth) {
+                console.log('✅ Supabase Auth fonctionnel');
+            } else {
+                console.error('❌ Supabase Auth est undefined');
+            }
+        } else {
+            console.error('❌ window.supabase n\'est pas défini');
+            console.log('💡 Vérifiez que le script module Supabase est bien chargé');
+        }
+    }, 1000);
+});
+
+
+        // Charger les versions pour la démo
+        async function loadVersionsDemo() {
+            const container = document.getElementById('versions-container');
+            if (!container || !window.EchoDB) return;
+            
+            try {
+                const versions = await EchoDB.GameVersions.getAll();
+                
+                if (versions.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #b0b0b0;">Aucune version disponible</p>';
+                    return;
+                }
+                
+                container.innerHTML = versions.map(v => `
+                    <div class="demo-card">
+                        <h3>Version ${v.version} ${v.is_beta ? '<span style="color:#ffaa00;">BETA</span>' : ''}</h3>
+                        <p><strong style="color:#00ffff;">${v.title}</strong></p>
+                        <p>${v.description || ''}</p>
+                        ${v.changelog ? `
+                            <ul style="color:#b0b0b0; margin-top:10px;">
+                                ${v.changelog.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                        <p style="margin-top:15px; color:#9d00ff; font-size:12px;">
+                            📅 ${new Date(v.release_date).toLocaleDateString('fr-FR')}
+                        </p>
+                        ${v.download_url ? `
+                            <a href="${v.download_url}" 
+                               onclick="trackDownload('${v.version}', '${v.download_url}')"
+                               class="btn btn-primary" 
+                               style="margin-top:15px;">
+                                Télécharger
+                            </a>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erreur chargement versions:', error);
+                container.innerHTML = '<p style="text-align: center; color: #ff0055;">Erreur de chargement</p>';
+            }
+        }
+
+        // Charger les versions après l'initialisation
+        setTimeout(loadVersionsDemo, 2000);
+
+        
+// =============================================
+// GESTION DES MODALES
+// =============================================
+
+function openLoginModal() {
+    const modal = document.getElementById('loginModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLoginModal() {
+    const modal = document.getElementById('loginModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    resetForm('loginForm');
+}
+
+//SIGNUP...
+
+// Fermer en cliquant à l'extérieur
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('auth-modal')) {
+        if (e.target.id === 'loginModal') closeLoginModal();
+        if (e.target.id === 'signupModal') closeSignupModal();
+    }
+});
+
+// Fermer avec Échap
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLoginModal();
+        closeSignupModal();
+    }
+});
+
+// =============================================
+// UTILITAIRES
+// =============================================
+
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+function resetForm(formId) {
+    const form = document.getElementById(formId);
+    form.reset();
+    
+    // Reset password strength
+    const strengthBar = form.querySelector('.strength-fill');
+    if (strengthBar) {
+        strengthBar.style.width = '0%';
+        strengthBar.style.background = '#ff0055';
+    }
+}
+
+function setButtonLoading(button, loading) {
+    const text = button.querySelector('.btn-text');
+    const loader = button.querySelector('.btn-loader');
+    
+    if (loading) {
+        button.classList.add('loading');
+        text.style.display = 'none';
+        loader.style.display = 'inline-block';
+    } else {
+        button.classList.remove('loading');
+        text.style.display = 'inline-block';
+        loader.style.display = 'none';
+    }
+}
+
+// =============================================
+// VALIDATION MOT DE PASSE
+// =============================================
+
+document.getElementById('signupPassword')?.addEventListener('input', (e) => {
+    const password = e.target.value;
+    const strengthBar = document.querySelector('.strength-fill');
+    const strengthText = document.querySelector('.strength-text');
+    
+    let strength = 0;
+    let text = 'Faible';
+    let color = '#ff0055';
+    
+    if (password.length >= 6) strength += 25;
+    if (password.length >= 10) strength += 25;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password)) strength += 15;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 10;
+    
+    if (strength >= 75) {
+        text = 'Fort';
+        color = '#00ff88';
+    } else if (strength >= 50) {
+        text = 'Moyen';
+        color = '#ffaa00';
+    }
+    
+    strengthBar.style.width = `${strength}%`;
+    strengthBar.style.background = color;
+    strengthText.textContent = `Force du mot de passe : ${text}`;
+    strengthText.style.color = color;
+});
+
+// =============================================
+// AUTHENTIFICATION AVEC SUPABASE
+// =============================================
+
+// Connexion
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+    const submitBtn = e.target.querySelector('.auth-submit-btn');
+    
+    setButtonLoading(submitBtn, true);
+    
+    try {
+        // Vérifier que Supabase est disponible
+        if (!window.supabase) {
+            throw new Error('Connexion à la base de données indisponible');
+        }
+        
+        const { data, error } = await window.supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        
+        if (error) throw error;
+        
+        // Notification de succès
+        if (window.showNotification) {
+            showNotification(`✅ Bienvenue ${data.user.email} !`, 'success');
+        } else {
+            alert(`Connexion réussie ! Bienvenue ${data.user.email}`);
+        }
+        
+        // Mettre à jour l'interface utilisateur
+        updateUIAfterLogin(data.user);
+        
+        closeLoginModal();
+        
+    } catch (error) {
+        console.error('Erreur de connexion:', error);
+        
+        if (window.showNotification) {
+            showNotification(`❌ Erreur : ${error.message}`, 'error');
+        } else {
+            alert(`Erreur de connexion : ${error.message}`);
+        }
+    } finally {
+        setButtonLoading(submitBtn, false);
+    }
+});
+
+// Inscription=============================================
+// MOT DE PASSE OUBLIÉ
+// =============================================
+
+async function handleForgotPassword() {
+    const email = prompt('Entrez votre adresse email :');
+    
+    if (!email) return;
+    
+    try {
+        if (!window.supabase) {
+            throw new Error('Connexion à la base de données indisponible');
+        }
+        
+        const { error } = await window.supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password'
+        });
+        
+        if (error) throw error;
+        
+        if (window.showNotification) {
+            showNotification('✅ Email de récupération envoyé !', 'success');
+        } else {
+            alert('Email de récupération envoyé ! Vérifiez votre boîte mail.');
+        }
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        if (window.showNotification) {
+            showNotification(`❌ Erreur : ${error.message}`, 'error');
+        } else {
+            alert(`Erreur : ${error.message}`);
+        }
+    }
+}
+
+// =============================================
+// MISE À JOUR UI APRÈS CONNEXION
+// =============================================
+
+function updateUIAfterLogin(user) {
+    const userMenu = document.getElementById('user-menu');
+    if (!userMenu) return;
+    
+    // Remplacer les boutons connexion/inscription par un menu utilisateur
+    userMenu.innerHTML = `
+        <div class="user-profile-menu">
+            <button class="user-avatar" onclick="toggleUserDropdown()">
+                <i class="fa-solid fa-user-circle"></i>
+                <span>${user.email.split('@')[0]}</span>
+            </button>
+            <div class="user-dropdown" id="userDropdown">
+                <a href="#profile"><i class="fa-solid fa-user"></i> Mon profil</a>
+                <a href="#settings"><i class="fa-solid fa-gear"></i> Paramètres</a>
+                <hr>
+                <a href="#" onclick="handleLogout(); return false;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('active');
+}
+
+async function handleLogout() {
+    try {
+        if (window.supabase) {
+            await window.supabase.auth.signOut();
+        }
+        
+        if (window.showNotification) {
+            showNotification('👋 À bientôt !', 'success');
+        }
+        
+        // Restaurer les boutons de connexion
+        const userMenu = document.getElementById('user-menu');
+        if (userMenu) {
+            userMenu.innerHTML = `
+                <button onclick="openLoginModal()" class="btn-small">Connexion</button>
+                <button onclick="openSignupModal()" class="btn-small">Inscription</button>
+            `;
+        }
+        
+        setTimeout(() => location.reload(), 1000);
+        
+    } catch (error) {
+        console.error('Erreur déconnexion:', error);
+    }
+}
+
+// =============================================
+// CONDITIONS D'UTILISATION
+// =============================================
+
+function showTerms() {
+    const terms = `
+CONDITIONS D'UTILISATION - ECHO
+
+1. Acceptation des conditions
+En utilisant Echo, vous acceptez ces conditions.
+
+2. Utilisation du service
+- Vous devez avoir au moins 13 ans
+- Un seul compte par personne
+- Ne pas partager vos identifiants
+
+3. Contenu utilisateur
+- Vous êtes responsable de votre contenu
+- Pas de contenu illégal ou offensant
+- Nous pouvons supprimer du contenu inapproprié
+
+4. Confidentialité
+Vos données sont protégées conformément à notre politique de confidentialité.
+
+5. Modifications
+Nous pouvons modifier ces conditions à tout moment.
+
+Contact : team@nightberry.echo
+    `.trim();
+    
+    alert(terms);
+}
+
+// =============================================
+// VÉRIFIER LA SESSION AU CHARGEMENT
+// =============================================
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Attendre que Supabase soit disponible
+    await new Promise(resolve => {
+        const check = setInterval(() => {
+            if (window.supabase) {
+                clearInterval(check);
+                resolve();
+            }
+        }, 100);
+    });
+    
+    // Vérifier la session
+    const { data: { session } } = await window.supabase.auth.getSession();
+    
+    if (session?.user) {
+        updateUIAfterLogin(session.user);
+        console.log('✅ Utilisateur connecté:', session.user.email);
+    }
+    
+    // Écouter les changements d'authentification
+    window.supabase.auth.onAuthStateChange((event, session) => {
+        console.log('Auth event:', event);
+        
+        if (event === 'SIGNED_IN' && session?.user) {
+            updateUIAfterLogin(session.user);
+        } else if (event === 'SIGNED_OUT') {
+            // Restaurer les boutons
+            const userMenu = document.getElementById('user-menu');
+            if (userMenu) {
+                userMenu.innerHTML = `
+                    <button onclick="openLoginModal()" class="btn-small">Connexion</button>
+                    <button onclick="openSignupModal()" class="btn-small">Inscription</button>
+                `;
+            }
+        }
+    });
+});
+</script>
+</body>
+</html>

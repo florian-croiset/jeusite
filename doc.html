@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditeur Markdown Echo - Export Professionnel</title>
+    <link rel="stylesheet" href="css/doc.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.4/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div id="toast-container"></div>
+    <header class="header">
+        <h1><i class="fa-solid fa-file-lines"></i>&nbsp;Echo Docs - Éditeur Markdown & PDF</h1>
+        <!--<p>Export professionnel en DOCX, PDF et Markdown - Charte graphique Team Nightberry</p>-->
+    </header>
+    <div class="container">
+        <div class="options-panel">
+            <div class="options-grid">
+                <div class="option-item">
+                    <input type="checkbox" id="optTOC" checked>
+                    <label for="optTOC">
+                        <i class="fa-solid fa-list"></i>
+                        Table des matières
+                    </label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="optNumbering" checked>
+                    <label for="optNumbering">
+                        <i class="fa-solid fa-hashtag"></i>
+                        N° des sections
+                    </label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="optPageNumbers" checked>
+                    <label for="optPageNumbers">
+                        <i class="fa-solid fa-file-lines"></i>
+                        N° de page
+                    </label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="optEcoPrint">
+                    <label for="optEcoPrint">
+                        <i class="fa-solid fa-leaf"></i>
+                        Mode Print
+                    </label>
+                </div>
+                <div class="option-item">
+                    <label for="docTitle">
+                        <i class="fa-solid fa-heading"></i>
+                        Titre du document :
+                    </label>
+                    <input type="text" id="docTitle" placeholder="Mon document" value="Document Echo">
+                </div>
+                <div class="option-item">
+                    <label for="docAuthor">
+                        <i class="fa-solid fa-user"></i>
+                        Auteur :
+                    </label>
+                    <input type="text" id="docAuthor" placeholder="Votre nom" value="Team Nightberry">
+                </div>
+            </div>
+        </div>
+        <div class="toolbar">
+            <button onclick="insertMarkdown('# ', '')"><i class="fa-solid fa-heading"></i> Titre 1</button>
+            <button onclick="insertMarkdown('## ', '')"><i class="fa-solid fa-heading"></i> Titre 2</button>
+            <button onclick="insertMarkdown('### ', '')"><i class="fa-solid fa-heading"></i> Titre 3</button>
+            <div class="toolbar-divider"></div>
+            <button onclick="insertMarkdown('**', '**')"><i class="fa-solid fa-bold"></i> Gras</button>
+            <button onclick="insertMarkdown('*', '*')"><i class="fa-solid fa-italic"></i> Italique</button>
+            <button onclick="insertMarkdown('`', '`')"><i class="fa-solid fa-code"></i> Code</button>
+            <div class="toolbar-divider"></div>
+            <button onclick="insertMarkdown('- ', '')"><i class="fa-solid fa-list-ul"></i> Liste</button>
+            <button onclick="insertMarkdown('1. ', '')"><i class="fa-solid fa-list-ol"></i> Liste
+                num.<!-- numérotée --></button>
+            <div class="toolbar-divider"></div>
+            <button onclick="insertLink()"><i class="fa-solid fa-link"></i> Lien</button>
+            <button onclick="insertImage()"><i class="fa-solid fa-image"></i> Image</button>
+            <button onclick="insertTable()"><i class="fa-solid fa-table"></i> Tableau</button>
+            <div class="toolbar-divider"></div>
+            <button onclick="insertMarkdown('> ', '')"><i class="fa-solid fa-quote-left"></i> Citation</button>
+            <button onclick="insertMarkdown('---\n', '')"><i class="fa-solid fa-minus"></i> Séparateur</button>
+        </div>
+        <div class="editor-layout">
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <h2>Éditeur Markdown</h2>
+                    </div>
+                    <div class="panel-actions">
+                        <span id="wordCount" class="panel-word" style="font-size: 0.8rem; color: var(--accent);">0
+                            mots</span>
+                        <button class="panel-btn" onclick="copyMarkdown()" title="Copier le Markdown">
+                            <i class="fa-solid fa-copy"></i> Copier
+                        </button>
+                        <button class="panel-btn" onclick="downloadMarkdown()" title="Télécharger le fichier .md">
+                            <i class="fa-solid fa-download"></i> .md
+                        </button>
+                    </div>
+                </div>
+                <textarea id="markdownInput" placeholder="Tapez votre texte en Markdown ici...
+
+# Introduction
+
+Bienvenue dans l'éditeur Markdown Echo. Ce document est un exemple.
+
+## Fonctionnalités
+
+### Mise en forme
+
+Vous pouvez utiliser du **texte en gras** et de l'*italique*.
+
+### Listes
+
+- Liste à puces
+- Élément 2
+  - Sous-élément
+
+1. Liste numérotée
+2. Élément 2
+
+### Code
+
+\`Code inline\` ou bloc de code:
+
+\`\`\`
+function hello() {
+  console.log('Hello World');
+}
+\`\`\`
+
+## Conclusion
+
+Bon travail avec votre document !"></textarea>
+            </div>
+
+            <!-- Aperçu -->
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-eye"></i>
+                        <h2>Aperçu en temps réel</h2>
+                    </div>
+                </div>
+                <div id="preview"></div>
+            </div>
+        </div>
+
+        <div class="export-actions">
+            <!--<button class="export-btn" onclick="exportToDOCX()">
+                <i class="fa-solid fa-file-word"></i>
+                Exporter en DOCX
+            </button>-->
+            <button class="export-btn" onclick="exportToPDF()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 576 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                    <path
+                        d="M96 0C60.7 0 32 28.7 32 64l0 384c0 35.3 28.7 64 64 64l80 0 0-112c0-35.3 28.7-64 64-64l176 0 0-165.5c0-17-6.7-33.3-18.7-45.3L290.7 18.7C278.7 6.7 262.5 0 245.5 0L96 0zM357.5 176L264 176c-13.3 0-24-10.7-24-24L240 58.5 357.5 176zM240 380c-11 0-20 9-20 20l0 128c0 11 9 20 20 20s20-9 20-20l0-28 12 0c33.1 0 60-26.9 60-60s-26.9-60-60-60l-32 0zm32 80l-12 0 0-40 12 0c11 0 20 9 20 20s-9 20-20 20zm96-80c-11 0-20 9-20 20l0 128c0 11 9 20 20 20l32 0c28.7 0 52-23.3 52-52l0-64c0-28.7-23.3-52-52-52l-32 0zm20 128l0-88 12 0c6.6 0 12 5.4 12 12l0 64c0 6.6-5.4 12-12 12l-12 0zm88-108l0 128c0 11 9 20 20 20s20-9 20-20l0-44 28 0c11 0 20-9 20-20s-9-20-20-20l-28 0 0-24 28 0c11 0 20-9 20-20s-9-20-20-20l-48 0c-11 0-20 9-20 20z" />
+                </svg>
+                Exporter en PDF
+            </button>
+            <button class="export-btn" onclick="downloadMarkdown()">
+                <i class="fa-solid fa-file-code"></i>
+                Télécharger .md
+            </button>
+        </div>
+    </div>
+
+    <div class="loading-modal" id="loadingModal">
+        <div class="loading-content">
+            <h3>Génération en cours...</h3>
+            <div class="spinner"></div>
+            <p id="loadingText">Veuillez patienter</p>
+        </div>
+    </div>
+
+    <script src="js/doc.js"></script>
+</body>
+
+</html>

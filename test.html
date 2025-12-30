@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Supabase - Echo</title>
+    <link rel="stylesheet" href="css/database-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0f;
+            color: #00ffff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 36px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .test-section {
+            background: #1a1a2e;
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-section h2 {
+            color: #9d00ff;
+            margin-bottom: 15px;
+        }
+
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .test-result.success {
+            background: rgba(0, 255, 136, 0.2);
+            border-left: 4px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .test-result.error {
+            background: rgba(255, 0, 85, 0.2);
+            border-left: 4px solid #ff0055;
+            color: #ff0055;
+        }
+
+        .test-result.pending {
+            background: rgba(255, 255, 0, 0.2);
+            border-left: 4px solid #ffff00;
+            color: #ffff00;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00ffff, #9d00ff);
+            border: none;
+            padding: 12px 24px;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        pre {
+            background: #0a0a0f;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border: 1px solid #9d00ff;
+        }
+
+        .config-info {
+            background: rgba(157, 0, 255, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ffff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Supabase Echo</h1>
+
+        <!-- Configuration -->
+        <div class="test-section">
+            <h2>📝 Configuration</h2>
+            <div class="config-info">
+                <p><strong>URL Supabase:</strong> <span id="config-url">Non configuré</span></p>
+                <p><strong>Clé API:</strong> <span id="config-key">Non configuré</span></p>
+            </div>
+        </div>
+
+        <!-- Tests automatiques -->
+        <div class="test-section">
+            <h2>🧪 Tests automatiques</h2>
+            <button onclick="runAllTests()">▶️ Lancer tous les tests</button>
+            
+            <div id="test-1" class="test-result pending">
+                <span class="loading"></span> Test 1 : SDK Supabase chargé
+            </div>
+            <div id="test-2" class="test-result pending">
+                <span class="loading"></span> Test 2 : Configuration valide
+            </div>
+            <div id="test-3" class="test-result pending">
+                <span class="loading"></span> Test 3 : EchoDB initialisé
+            </div>
+            <div id="test-4" class="test-result pending">
+                <span class="loading"></span> Test 4 : Connexion à la base
+            </div>
+            <div id="test-5" class="test-result pending">
+                <span class="loading"></span> Test 5 : Tables créées
+            </div>
+        </div>
+
+        <!-- Tests manuels -->
+        <div class="test-section">
+            <h2>🎮 Tests manuels</h2>
+            <button onclick="testGetContent()">Récupérer contenu</button>
+            <button onclick="testGetVersions()">Récupérer versions</button>
+            <button onclick="testGetCountdown()">Récupérer countdown</button>
+            <button onclick="testAuth()">Tester auth</button>
+            
+            <div id="manual-results"></div>
+        </div>
+
+        <!-- Logs console -->
+        <div class="test-section">
+            <h2>📋 Logs</h2>
+            <pre id="console-log">En attente des tests...</pre>
+        </div>
+    </div>
+
+
+<div id="feedback-container"></div>
+    <!-- 1. Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Configuration Supabase -->
+    <script type="module" src="js/config/supabase.js"></script>
+
+    <!-- 3. Intégration database complète -->
+    <script type="module" src="js/database.js"></script>
+    <script type="module" src="js/database-complete.js"></script>
+
+    <script>
+        // Fonction de log personnalisée
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            logElement.textContent += `\n[${timestamp}] ${prefix} ${message}`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // Afficher la configuration
+        function displayConfig() {
+            try {
+                const urlElement = document.getElementById('config-url');
+                const keyElement = document.getElementById('config-key');
+                
+                if (window.SUPABASE_URL) {
+                    urlElement.textContent = window.SUPABASE_URL;
+                    urlElement.style.color = '#00ff88';
+                }
+                
+                if (window.SUPABASE_ANON_KEY) {
+                    const maskedKey = window.SUPABASE_ANON_KEY.substring(0, 20) + '...';
+                    keyElement.textContent = maskedKey;
+                    keyElement.style.color = '#00ff88';
+                }
+            } catch (e) {
+                log('Erreur affichage config: ' + e.message, 'error');
+            }
+        }
+
+        // Test 1 : SDK Supabase
+        async function test1() {
+            const element = document.getElementById('test-1');
+            try {
+                if (typeof window.supabase !== 'undefined') {
+                    element.className = 'test-result success';
+                    element.textContent = '✅ Test 1 : SDK Supabase chargé';
+                    log('SDK Supabase détecté', 'success');
+                    return true;
+                } else {
+                    throw new Error('window.supabase non défini');
+                }
+            } catch (e) {
+                element.className = 'test-result error';
+                element.textContent = '❌ Test 1 : SDK Supabase NON chargé';
+                log('Erreur: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        // Test 2 : Configuration
+        async function test2() {
+            const element = document.getElementById('test-2');
+            try {
+                if (window.EchoSupabase) {
+                    element.className = 'test-result success';
+                    element.textContent = '✅ Test 2 : Configuration valide';
+                    log('Client Supabase initialisé', 'success');
+                    return true;
+                } else {
+                    throw new Error('EchoSupabase non initialisé');
+                }
+            } catch (e) {
+                element.className = 'test-result error';
+                element.textContent = '❌ Test 2 : Configuration invalide - ' + e.message;
+                log('Erreur config: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        // Test 3 : EchoDB
+        async function test3() {
+            const element = document.getElementById('test-3');
+            try {
+                if (window.EchoDB && window.EchoDB.Auth && window.EchoDB.Content) {
+                    element.className = 'test-result success';
+                    element.textContent = '✅ Test 3 : EchoDB initialisé avec tous les modules';
+                    log('Modules disponibles: ' + Object.keys(window.EchoDB).join(', '), 'success');
+                    return true;
+                } else {
+                    throw new Error('EchoDB incomplet ou non défini');
+                }
+            } catch (e) {
+                element.className = 'test-result error';
+                element.textContent = '❌ Test 3 : EchoDB NON initialisé - ' + e.message;
+                log('Erreur EchoDB: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        // Test 4 : Connexion DB
+        async function test4() {
+            const element = document.getElementById('test-4');
+            try {
+                const { error } = await window.EchoDB.supabase
+                    .from('profiles')
+                    .select('id', { count: 'exact', head: true });
+                
+                if (!error) {
+                    element.className = 'test-result success';
+                    element.textContent = '✅ Test 4 : Connexion à la base réussie';
+                    log('Base de données accessible', 'success');
+                    return true;
+                } else {
+                    throw error;
+                }
+            } catch (e) {
+                element.className = 'test-result error';
+                element.textContent = '❌ Test 4 : Erreur connexion - ' + e.message;
+                log('Erreur DB: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        // Test 5 : Tables
+        async function test5() {
+            const element = document.getElementById('test-5');
+            try {
+                const tables = ['profiles', 'site_content', 'media', 'game_versions', 'forms', 'countdown', 'news'];
+                const results = [];
+                
+                for (const table of tables) {
+                    const { error } = await window.EchoDB.supabase
+                        .from(table)
+                        .select('id', { head: true });
+                    
+                    if (error) {
+                        results.push(`❌ ${table}`);
+                        log(`Table ${table} : ERREUR`, 'error');
+                    } else {
+                        results.push(`✅ ${table}`);
+                        log(`Table ${table} : OK`, 'success');
+                    }
+                }
+                
+                const allOk = results.every(r => r.startsWith('✅'));
+                
+                if (allOk) {
+                    element.className = 'test-result success';
+                    element.textContent = '✅ Test 5 : Toutes les tables créées (' + tables.length + ')';
+                    return true;
+                } else {
+                    element.className = 'test-result error';
+                    element.textContent = '⚠️ Test 5 : Certaines tables manquantes';
+                    element.innerHTML += '<br><small>' + results.join(' | ') + '</small>';
+                    return false;
+                }
+            } catch (e) {
+                element.className = 'test-result error';
+                element.textContent = '❌ Test 5 : Erreur vérification tables - ' + e.message;
+                log('Erreur tables: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        // Lancer tous les tests
+        async function runAllTests() {
+            log('=== DÉBUT DES TESTS ===');
+            document.getElementById('console-log').textContent = '';
+            
+            const results = [];
+            results.push(await test1());
+            await new Promise(r => setTimeout(r, 500));
+            
+            if (results[0]) {
+                results.push(await test2());
+                await new Promise(r => setTimeout(r, 500));
+            }
+            
+            if (results[1]) {
+                results.push(await test3());
+                await new Promise(r => setTimeout(r, 500));
+            }
+            
+            if (results[2]) {
+                results.push(await test4());
+                await new Promise(r => setTimeout(r, 500));
+            }
+            
+            if (results[3]) {
+                results.push(await test5());
+            }
+            
+            const allPassed = results.every(r => r === true);
+            const passedCount = results.filter(r => r === true).length;
+            
+            log('=== RÉSULTAT ===');
+            log(`Tests réussis : ${passedCount}/${results.length}`, allPassed ? 'success' : 'error');
+            
+            if (allPassed) {
+                log('🎉 Tous les tests sont passés ! Votre configuration est correcte.', 'success');
+            } else {
+                log('⚠️ Certains tests ont échoué. Consultez le guide de dépannage.', 'error');
+            }
+        }
+
+        // Tests manuels
+        async function testGetContent() {
+            const resultsDiv = document.getElementById('manual-results');
+            try {
+                log('Récupération du contenu...');
+                const content = await window.EchoDB.Content.getSection('hero');
+                resultsDiv.innerHTML = '<pre>' + JSON.stringify(content, null, 2) + '</pre>';
+                log('Contenu récupéré : ' + content.length + ' éléments', 'success');
+            } catch (e) {
+                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
+                log('Erreur récupération contenu: ' + e.message, 'error');
+            }
+        }
+
+        async function testGetVersions() {
+            const resultsDiv = document.getElementById('manual-results');
+            try {
+                log('Récupération des versions...');
+                const versions = await window.EchoDB.GameVersions.getAll();
+                resultsDiv.innerHTML = '<pre>' + JSON.stringify(versions, null, 2) + '</pre>';
+                log('Versions récupérées : ' + versions.length, 'success');
+            } catch (e) {
+                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
+                log('Erreur récupération versions: ' + e.message, 'error');
+            }
+        }
+
+        async function testGetCountdown() {
+            const resultsDiv = document.getElementById('manual-results');
+            try {
+                log('Récupération du countdown...');
+                const countdown = await window.EchoDB.Countdown.getActive();
+                resultsDiv.innerHTML = '<pre>' + JSON.stringify(countdown, null, 2) + '</pre>';
+                log('Countdown récupéré', 'success');
+            } catch (e) {
+                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
+                log('Erreur récupération countdown: ' + e.message, 'error');
+            }
+        }
+
+        async function testAuth() {
+            const resultsDiv = document.getElementById('manual-results');
+            try {
+                log('Test authentification...');
+                const user = await window.EchoDB.Auth.getCurrentUser();
+                if (user) {
+                    resultsDiv.innerHTML = '<div class="test-result success">Utilisateur connecté : ' + user.email + '</div>';
+                    log('Utilisateur connecté : ' + user.email, 'success');
+                } else {
+                    resultsDiv.innerHTML = '<div class="test-result pending">Aucun utilisateur connecté</div>';
+                    log('Aucun utilisateur connecté (normal si pas encore de compte)');
+                }
+            } catch (e) {
+                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
+                log('Erreur auth: ' + e.message, 'error');
+            }
+        }
+
+        // Initialisation au chargement
+        window.addEventListener('load', () => {
+            displayConfig();
+            log('Page de test chargée');
+            log('Attendez quelques secondes puis cliquez sur "Lancer tous les tests"');
+            
+            // Auto-lancement après 2 secondes
+            setTimeout(() => {
+                runAllTests();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

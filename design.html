@@ -306,7 +306,18 @@
         </div>
     </div>
 </body>
+
 <script type="module" src="js/design.js"></script>
+<!-- 1. D'ABORD : Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 2. ENSUITE : Configuration Supabase -->
+<script type="module" src="js/config/supabase.js"></script>
+
+<!-- 3. ENFIN : Intégration database (APRÈS que EchoDB soit défini) -->
+<script type="module" src="js/database.js"></script>
+
+<!-- VOS AUTRES SCRIPTS (déjà existants) -->
 <script type="module" src="js/main.js"></script>
 <script type="module" src="js/zip.js"></script>
 </html>
