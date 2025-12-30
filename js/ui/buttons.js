@@ -96,11 +96,11 @@ function appliquerDisponibiliteBouton(bouton) {
       
       if (bouton.tagName === 'A') {
         bouton.removeAttribute('href');
-        bouton.onclick = (e) => {
+        /*bouton.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
           return false;
-        };
+        };*/
       } else {
         bouton.onclick = (e) => {
           e.preventDefault();
