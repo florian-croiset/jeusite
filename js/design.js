@@ -265,13 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
             zoomable: true
         },
         {
-            title: "Logo E Nv Rond",
-            desc: "_",
-            img: "assets/pngLogoE.png",
-            download: "assets/pngLogoE.png",
-            zoomable: true
-        },
-        {
             title: "Logo E An Rond",
             desc: "_",
             img: "assets/pngLogoEP.png",
@@ -307,10 +300,10 @@ document.addEventListener("DOMContentLoaded", () => {
             zoomable: true
         },
         {
-            title: "Logo E cercle blanc",
+            title: "Logo E cercle",
             desc: "_",
-            img: "assets/pnglogoEcercleblanc.png",
-            download: "assets/pnglogoEcercleblanc.png",
+            img: "assets/pnglogoEcercle.png",
+            download: "assets/pnglogoEcercle.png",
             zoomable: true
         }
         /*
@@ -1144,11 +1137,11 @@ const assetFiles = [
     'assets/pngarrieretrans.png',
     'assets/pngcristal.png',
     'assets/pngDecorPixel.png',
-    'assets/pngLogoE.png',
+    //'assets/pngLogoE.png',
     'assets/pngLogoEA.png',
     'assets/pngLogoEC.png',
     'assets/pngLogoEP.png',
-    'assets/pnglogoEcercleblanc.png',
+    'assets/pnglogoEcercle.png',
     'assets/pnglogononpixel.png',
     'assets/pngLogoG.png',
     'assets/pngLogoTeam.png',
