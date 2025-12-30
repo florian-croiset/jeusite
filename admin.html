@@ -877,23 +877,6 @@
                         </div>
                     </div>
                 </div>
-
-
-                <!-- Versions du jeu -->
-                <div class="section" id="versions">
-                    <div class="stat-card" style="border: 1px solid var(--cyan);">
-                        <div class="stat-icon" style="color: var(--cyan);">
-                            <i class="fa-solid fa-power-off"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Téléchargement Public</h3>
-                            <p>Activer/Désactiver l'accès</p>
-
-                            <label class="switch"
-                                style="margin-top: 10px; display: inline-block; position: relative; width: 50px; height: 24px;">
-                                <input type="checkbox" id="globalDownloadSwitch" onchange="toggleDownloadState(this)">
-                                <span class="slider round"
-                                    style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
                                 <style>
                                     /* Style rapide pour le switch si pas déjà présent */
                                     input:checked+.slider {
@@ -916,30 +899,86 @@
                                         border-radius: 50%;
                                     }
                                 </style>
+
+                                <style>
+/* Animation pour le compteur de téléchargements */
+@keyframes countUp {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+td strong {
+    animation: countUp 0.3s ease;
+}
+
+/* Style pour les badges de statut */
+.status-scheduled {
+    background: rgba(255, 170, 0, 0.2);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/* Highlight pour versions programmées */
+tr:has(.status-scheduled) {
+    background: rgba(255, 170, 0, 0.05);
+}
+</style>
+
+                <!-- Versions du jeu -->
+                <div class="section" id="versions">
+                    <div class="stat-card" style="border: 1px solid var(--cyan);">
+                        <div class="stat-icon" style="color: var(--cyan);">
+                            <i class="fa-solid fa-power-off"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Téléchargement Public</h3>
+                            <p>Activer/Désactiver l'accès</p>
+
+                            <label class="switch"
+                                style="margin-top: 10px; display: inline-block; position: relative; width: 50px; height: 24px;">
+                                <input type="checkbox" id="globalDownloadSwitch" onchange="toggleDownloadState(this)">
+                                <span class="slider round"
+                                    style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+
                             </label>
                             <span id="switchStatusText" style="font-size: 12px; margin-left: 10px;">Chargement...</span>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="version-header-actions">
-                            <h2>🎮 Gestion des Versions</h2>
-                            <div class="btn-group">
-                                <button class="btn btn-primary" onclick="openVersionModal()">
-                                    <i class="fa-solid fa-plus"></i> Nouvelle Version
-                                </button>
-                                <button class="btn btn-success" onclick="publishNextVersion()">
-                                    <i class="fa-solid fa-rocket"></i> Publier Prochaine
-                                </button>
-                                <button class="btn btn-warning" onclick="openCountdownModal()">
-                                    <i class="fa-solid fa-clock"></i> Config Countdown
-                                </button>
-                            </div>
-                        </div>
+                    <div id="versions-dashboard"></div>
+ <div class="card">
+        <div class="version-header-actions">
+            <h2>🎮 Gestion des Versions</h2>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="openVersionModal()">
+                    <i class="fa-solid fa-plus"></i> Nouvelle Version
+                </button>
+                <button class="btn btn-success" onclick="publishNextVersion()">
+                    <i class="fa-solid fa-rocket"></i> Publier Prochaine
+                </button>
+                <button class="btn btn-warning" onclick="openCountdownModal()">
+                    <i class="fa-solid fa-clock"></i> Config Countdown
+                </button>
+                <!-- NOUVEAU : Bouton Archives -->
+                <button class="btn" style="background: var(--warning);" onclick="showArchives()">
+                    <i class="fa-solid fa-archive"></i> Archives
+                </button>
+            </div>
+        </div>
 
-                        <div id="versions-container">
-                            <p class="loading">Chargement des versions</p>
-                        </div>
-                    </div>
+        <div id="versions-container">
+            <p class="loading">Chargement des versions</p>
+        </div>
+    </div>
                 </div>
 
                 <!-- Autres sections -->
@@ -1052,11 +1091,21 @@
                     </label>
                 </div>
             </div>
+            <button type="button" class="btn btn-primary" onclick="scheduleVersion(document.getElementById('v-id').value)">
+    ⏰ Programmer
+</button>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="closeVersionModal()">❌ Annuler</button>
-                <button type="submit" class="btn btn-success">💾 Enregistrer</button>
-            </div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger" onclick="closeVersionModal()">❌ Annuler</button>
+    
+    <!-- NOUVEAU : Bouton Programmer -->
+    <button type="button" class="btn btn-primary" onclick="scheduleVersion(document.getElementById('v-id').value)" 
+            id="btn-schedule" style="display: none;">
+        ⏰ Programmer
+    </button>
+    
+    <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+</div>
         </form>
     </div>
 </div>
@@ -1248,6 +1297,15 @@
                 console.error('Erreur activités:', error);
             }
         }
+function toggleScheduleButton() {
+    const isPublished = document.getElementById('v-published').checked;
+    const scheduleBtn = document.getElementById('btn-schedule');
+    const versionId = document.getElementById('v-id').value;
+    
+    if (scheduleBtn) {
+        scheduleBtn.style.display = !isPublished && versionId ? 'inline-block' : 'none';
+    }
+}
 
         // ===== MODAL VERSION (CORRIGÉ) =====
 // Ouvrir le modal
@@ -1258,6 +1316,7 @@ window.openVersionModal = function () {
     document.getElementById('v-date').valueAsDate = new Date();
     document.getElementById('v-published').checked = false; // Par défaut : brouillon
     document.getElementById('version-modal').style.display = 'flex';
+    document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
 };
 
 window.closeVersionModal = function () {
@@ -1284,6 +1343,7 @@ window.editVersion = function (version) {
 
     document.getElementById('modal-title').textContent = 'Modifier la Version';
     document.getElementById('version-modal').style.display = 'flex';
+    document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
 };
 
 // Soumettre le formulaire
@@ -1558,15 +1618,98 @@ window.toggleDownloadState = async function(checkbox) {
     }
 };
 
-// ===== TABLEAU DES VERSIONS =====
+// =============================================
+// CODE À AJOUTER DANS ADMIN.HTML <script>
+// =============================================
+
+// 1. WIDGET DASHBOARD DE STATUT
+async function loadVersionsDashboard() {
+    try {
+        const { data: current } = await supabaseClient
+            .from('game_versions')
+            .select('*, download_stats(download_count)')
+            .eq('is_published', true)
+            .eq('is_archived', false)
+            .order('release_date', { ascending: false })
+            .limit(1)
+            .single();
+
+        const { data: next } = await supabaseClient
+            .from('game_versions')
+            .select('*')
+            .eq('is_published', false)
+            .eq('is_archived', false)
+            .order('scheduled_publish_at', { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+        const { data: drafts } = await supabaseClient
+            .from('game_versions')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_published', false)
+            .eq('is_archived', false);
+
+        const dashboardHTML = `
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card" style="border-color: var(--success);">
+                    <div class="stat-label">Version Actuelle</div>
+                    <div class="stat-value">${current?.version || 'Aucune'}</div>
+                    <div class="stat-detail">${current?.download_stats?.[0]?.download_count || 0} téléchargements</div>
+                </div>
+                
+                <div class="stat-card" style="border-color: var(--cyan);">
+                    <div class="stat-label">Prochaine Sortie</div>
+                    <div class="stat-value">${next?.version || 'N/A'}</div>
+                    <div class="stat-detail">
+                        ${next?.scheduled_publish_at 
+                            ? new Date(next.scheduled_publish_at).toLocaleDateString('fr-FR')
+                            : 'Non programmée'}
+                    </div>
+                </div>
+                
+                <div class="stat-card" style="border-color: var(--warning);">
+                    <div class="stat-label">Brouillons</div>
+                    <div class="stat-value">${drafts?.count || 0}</div>
+                    <div class="stat-detail">En attente</div>
+                </div>
+            </div>
+        `;
+
+        const container = document.getElementById('versions-dashboard');
+        if (container) container.innerHTML = dashboardHTML;
+    } catch (error) {
+        console.error('Erreur dashboard:', error);
+    }
+}
+
+// 2. STATS PAR VERSION
+async function loadVersionWithStats(versionId) {
+    const { data, error } = await supabaseClient
+        .from('game_versions')
+        .select(`
+            *,
+            download_stats(download_count)
+        `)
+        .eq('id', versionId)
+        .single();
+
+    if (error) {
+        console.error('Erreur stats version:', error);
+        return null;
+    }
+    return data;
+}
+
+// 3. MODIFICATION DU TABLEAU DES VERSIONS (remplace loadVersions)
 async function loadVersions() {
     const container = document.getElementById('versions-container');
     container.innerHTML = '<p class="loading">Chargement</p>';
 
     try {
         const { data: versions } = await supabaseClient
-            .from('game_versions')
+            .from('version_stats')
             .select('*')
+            .eq('is_archived', false)
             .order('release_date', { ascending: false });
 
         if (!versions || versions.length === 0) {
@@ -1583,6 +1726,7 @@ async function loadVersions() {
                         <th>Version</th>
                         <th>Titre</th>
                         <th>Date de sortie</th>
+                        <th>📊 Téléch.</th>
                         <th>Statut</th>
                         <th>Actions</th>
                     </tr>
@@ -1590,32 +1734,43 @@ async function loadVersions() {
                 <tbody>
                     ${versions.map(v => {
                         const releaseDate = new Date(v.release_date);
+                        const scheduledDate = v.scheduled_publish_at ? new Date(v.scheduled_publish_at) : null;
                         const isPast = releaseDate <= now;
-                        const status = v.is_published 
-                            ? (isPast ? '🟢 Publiée' : '🔵 Planifiée') 
-                            : '⚫ Brouillon';
+                        
+                        let status = '⚫ Brouillon';
+                        if (v.is_published) {
+                            status = isPast ? '🟢 Publiée' : '🔵 Planifiée';
+                        } else if (scheduledDate && scheduledDate > now) {
+                            status = `⏰ Programmée (${scheduledDate.toLocaleDateString('fr-FR')})`;
+                        }
 
                         return `
                             <tr>
                                 <td><strong>${v.version}</strong></td>
                                 <td>${v.title || '-'}</td>
                                 <td>${releaseDate.toLocaleString('fr-FR')}</td>
+                                <td style="text-align: center;">
+                                    <strong style="color: var(--cyan);">${v.download_count || 0}</strong>
+                                </td>
                                 <td>${status}</td>
                                 <td>
                                     <button class="action-btn btn-edit" onclick='editVersion(${JSON.stringify(v).replace(/'/g, "&#39;")})'>
-                                        ✏️ Modifier
+                                        ✏️
                                     </button>
                                     ${!v.is_published ? `
                                         <button class="action-btn btn-publish" onclick="publishVersion('${v.id}')">
-                                            🚀 Publier
+                                            🚀
                                         </button>
                                     ` : `
                                         <button class="action-btn btn-delete" onclick="unpublishVersion('${v.id}')">
-                                            📦 Dépublier
+                                            📦
                                         </button>
                                     `}
+                                    <button class="action-btn" style="background: var(--warning);" onclick="archiveVersion('${v.id}')">
+                                        📁
+                                    </button>
                                     <button class="action-btn btn-delete" onclick="deleteVersion('${v.id}')">
-                                        🗑️ Supprimer
+                                        🗑️
                                     </button>
                                 </td>
                             </tr>
@@ -1630,6 +1785,199 @@ async function loadVersions() {
     }
 }
 
+// 4. ARCHIVAGE
+window.archiveVersion = async function(id) {
+    if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
+    
+    try {
+        const { error } = await supabaseClient
+            .from('game_versions')
+            .update({ is_archived: true })
+            .eq('id', id);
+
+        if (error) throw error;
+        loadVersions();
+        loadVersionsDashboard();
+        alert('✅ Version archivée !');
+    } catch (err) {
+        alert('❌ Erreur : ' + err.message);
+    }
+};
+
+// 5. PROGRAMMATION INTELLIGENTE
+window.scheduleVersion = function(versionId) {
+    const modal = createModal('⏰ Programmer la publication', `
+        <form id="schedule-form">
+            <div class="form-group">
+                <label>Publication dans :</label>
+                <select id="schedule-type" onchange="updateScheduleFields()">
+                    <option value="custom">📅 Date personnalisée</option>
+                    <option value="hours">⏰ Dans X heures</option>
+                    <option value="days">📆 Dans X jours</option>
+                </select>
+            </div>
+
+            <div id="schedule-custom" class="form-group">
+                <label>Date et heure</label>
+                <input type="datetime-local" id="schedule-datetime">
+            </div>
+
+            <div id="schedule-relative" class="form-group" style="display: none;">
+                <label>Délai</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="schedule-amount" min="1" value="1" style="flex: 1;">
+                    <select id="schedule-unit" style="flex: 1;">
+                        <option value="hours">Heures</option>
+                        <option value="days">Jours</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                <p style="margin: 0; font-size: 0.9rem;">
+                    📌 La version sera automatiquement publiée à la date/heure choisie
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="this.closest('.custom-modal').remove()">
+                    Annuler
+                </button>
+                <button type="submit" class="btn btn-success">Programmer</button>
+            </div>
+        </form>
+    `);
+
+    const form = document.getElementById('schedule-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        let scheduledDate;
+        const type = document.getElementById('schedule-type').value;
+        
+        if (type === 'custom') {
+            scheduledDate = document.getElementById('schedule-datetime').value;
+        } else {
+            const amount = parseInt(document.getElementById('schedule-amount').value);
+            const unit = document.getElementById('schedule-unit').value;
+            
+            const now = new Date();
+            if (unit === 'hours') {
+                now.setHours(now.getHours() + amount);
+            } else {
+                now.setDate(now.getDate() + amount);
+            }
+            scheduledDate = now.toISOString();
+        }
+
+        try {
+            const { error } = await supabaseClient
+                .from('game_versions')
+                .update({ 
+                    scheduled_publish_at: scheduledDate,
+                    is_published: false
+                })
+                .eq('id', versionId);
+
+            if (error) throw error;
+            
+            modal.remove();
+            loadVersions();
+            loadVersionsDashboard();
+            alert('✅ Publication programmée !');
+        } catch (err) {
+            alert('❌ Erreur : ' + err.message);
+        }
+    });
+};
+
+window.updateScheduleFields = function() {
+    const type = document.getElementById('schedule-type').value;
+    const customDiv = document.getElementById('schedule-custom');
+    const relativeDiv = document.getElementById('schedule-relative');
+    const unitSelect = document.getElementById('schedule-unit');
+    
+    if (type === 'custom') {
+        customDiv.style.display = 'block';
+        relativeDiv.style.display = 'none';
+    } else {
+        customDiv.style.display = 'none';
+        relativeDiv.style.display = 'block';
+        unitSelect.value = type;
+    }
+};
+
+// 6. INCRÉMENTER TÉLÉCHARGEMENTS (appel depuis buttons.js)
+window.trackVersionDownload = async function(versionId) {
+    try {
+        await supabaseClient.rpc('increment_download_count', { 
+            p_version_id: versionId 
+        });
+    } catch (error) {
+        console.error('Erreur tracking:', error);
+    }
+};
+
+// 8. INITIALISATION AU CHARGEMENT DE LA SECTION VERSIONS
+document.querySelector('[data-section="versions"]')?.addEventListener('click', () => {
+    loadVersionsDashboard();
+    loadVersions();
+});
+
+// 9. VOIR LES ARCHIVES
+window.showArchives = async function() {
+    const { data: archived } = await supabaseClient
+        .from('game_versions')
+        .select('*')
+        .eq('is_archived', true)
+        .order('release_date', { ascending: false });
+
+    const modal = createModal('📁 Versions archivées', `
+        ${archived && archived.length > 0 ? `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Titre</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${archived.map(v => `
+                        <tr>
+                            <td>${v.version}</td>
+                            <td>${v.title}</td>
+                            <td>
+                                <button class="action-btn btn-edit" onclick="unarchiveVersion('${v.id}')">
+                                    📤 Restaurer
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        ` : '<p style="text-align: center; color: var(--purple);">Aucune version archivée</p>'}
+    `);
+};
+
+window.unarchiveVersion = async function(id) {
+    try {
+        const { error } = await supabaseClient
+            .from('game_versions')
+            .update({ is_archived: false })
+            .eq('id', id);
+
+        if (error) throw error;
+        
+        const modal = document.querySelector('.custom-modal');
+        if (modal) modal.remove();
+        
+        loadVersions();
+        alert('✅ Version restaurée !');
+    } catch (err) {
+        alert('❌ Erreur : ' + err.message);
+    }
+};
 // ===== ACTIONS =====
 window.publishVersion = async function(id) {
     if (!confirm('Publier cette version ?')) return;
@@ -2894,6 +3242,10 @@ window.unpublishVersion = async function(id) {
         }
 
     </script>
+
+
+<script>
+</script>
     <script>
         // Initialiser les notifications
         document.addEventListener('DOMContentLoaded', async () => {

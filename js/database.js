@@ -505,12 +505,10 @@ async function loadNews(limit = 5) {
 // STATISTIQUES ET ANALYTICS
 // =============================================
 
-async function trackPageView() {
+/*async function trackPageView() {
   try {
-    // Vous pouvez tracker les vues de page
     const user = await EchoDB.Auth.getCurrentUser();
     
-    // Insérer dans une table analytics (à créer si nécessaire)
     const { error } = await EchoDB.supabase.from('analytics').insert({
       page: window.location.pathname,
       user_id: user?.id,
@@ -521,14 +519,12 @@ async function trackPageView() {
       console.error('Erreur tracking:', error);
     }
   } catch (error) {
-    // Ignorer les erreurs de tracking
   }
 }
 
-// Tracker automatiquement (seulement si EchoDB est disponible et pas sur admin)
 if (window.EchoDB && !window.location.pathname.includes('admin.html')) {
   trackPageView().catch(() => {});
-}
+}*/
 
 // =============================================
 // EXPORT DES FONCTIONS

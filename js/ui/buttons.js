@@ -10,6 +10,7 @@ window.isTestMode = false;
 window.testInterval = null; 
 window._countdownInterval = null;
 window._countdownHasDecided = false; // ✅ Flag pour mémoriser la décision du countdown
+let currentVersionId = null;
 
 // ---------------------------------------------------------
 // 2. LOGIQUE MOBILE
@@ -64,11 +65,22 @@ function appliquerDisponibiliteBouton(bouton) {
       bouton.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.5)';
       bouton.style.animation = 'pulse 2s infinite';
 
+      // 🔥 NOUVEAU : Ajouter tracking au clic
       if (bouton.tagName === 'A') {
           bouton.href = window.jeuUrl;
           bouton.setAttribute('download', '');
+          bouton.onclick = () => {
+              if (currentVersionId && typeof window.trackVersionDownload === 'function') {
+                  window.trackVersionDownload(currentVersionId);
+              }
+          };
       } else {
-          bouton.onclick = () => window.location.href = window.jeuUrl;
+          bouton.onclick = () => {
+              if (currentVersionId && typeof window.trackVersionDownload === 'function') {
+                  window.trackVersionDownload(currentVersionId);
+              }
+              window.location.href = window.jeuUrl;
+          };
       }
     } else {
       bouton.innerHTML = '<i class="fa-solid fa-lock"></i> Télécharger le jeu';
@@ -82,7 +94,6 @@ function appliquerDisponibiliteBouton(bouton) {
       bouton.style.boxShadow = '';
       bouton.style.animation = '';
       
-      // ✅ SÉCURITÉ : Empêcher TOUS les clics
       if (bouton.tagName === 'A') {
         bouton.removeAttribute('href');
         bouton.onclick = (e) => {
@@ -103,19 +114,21 @@ function appliquerDisponibiliteBouton(bouton) {
   if(!bouton.contains(infoSpan)) bouton.appendChild(infoSpan);
 }
 
+
 const btnHero = document.querySelector('.hero .btn-primary');
 const btnTelecharger = document.querySelector('#telecharger .btn-primary');
 
 // ---------------------------------------------------------
 // 4. CONNECTION AVEC LA DATABASE
 // ---------------------------------------------------------
-window.updateDownloadState = function(isAvailable, url, version) {
+// AJOUTER CETTE FONCTION AVANT updateDownloadState
+
+window.updateDownloadState = function(isAvailable, url, version, versionId = null) {
     if (window.isTestMode) {
         console.log("Mode Test actif : update DB ignorée.");
         return; 
     }
     
-    // ✅ PROTECTION : Si le compte à rebours a déjà bloqué, on ne peut pas réactiver
     if (window._countdownHasDecided && !isAvailable && window.jeuDispo === false) {
         console.log("⏰ Décision du compte à rebours prioritaire : téléchargement bloqué");
         return;
@@ -125,6 +138,7 @@ window.updateDownloadState = function(isAvailable, url, version) {
     window.jeuDispo = isAvailable;
     window.jeuUrl = url;
     window.jeuVersion = version;
+    currentVersionId = versionId; // 🔥 NOUVEAU : Stocker l'ID
     
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
@@ -137,7 +151,6 @@ async function verifierDisponibiliteAdmin() {
     try {
         if (typeof window.EchoDB === 'undefined') return false;
 
-        // 1️⃣ Vérifier le switch global
         const { data: settings } = await window.EchoDB.supabase
             .from('download_settings')
             .select('enabled')
@@ -148,13 +161,12 @@ async function verifierDisponibiliteAdmin() {
             return false;
         }
 
-        // 2️⃣ Récupérer la dernière version publiée
         const now = new Date().toISOString();
         const { data, error } = await window.EchoDB.supabase
             .from('game_versions')
             .select('*')
-            .eq('is_published', true)  // ✅ Versions publiées
-            .lte('release_date', now)  // ✅ Date passée
+            .eq('is_published', true)
+            .lte('release_date', now)
             .order('release_date', { ascending: false })
             .limit(1)
             .single();
@@ -167,7 +179,8 @@ async function verifierDisponibiliteAdmin() {
         return {
             available: true,
             url: data.download_url,
-            version: data.version
+            version: data.version,
+            id: data.id // 🔥 NOUVEAU : Retourner l'ID
         };
     } catch (err) {
         console.error('Erreur vérification:', err);
@@ -387,20 +400,14 @@ document.addEventListener('DOMContentLoaded', () => {
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
     
-    // Attendre que database.js soit chargé
     setTimeout(() => {
-        // ✅ CORRECTION : On vérifie TOUJOURS l'état admin.
-        // On ne vérifie plus si le countdown existe ou non.
-        // La volonté de l'Admin (BDD) est prioritaire sur l'affichage du compteur.
         verifierDisponibiliteAdmin().then(state => {
             if (state && state.available) {
-                console.log("✅ Admin force l'ouverture du téléchargement (Priority Override)");
-                window.updateDownloadState(true, state.url, state.version);
+                console.log("✅ Admin force l'ouverture du téléchargement");
+                window.updateDownloadState(true, state.url, state.version, state.id); // 🔥 Passer l'ID
             } else {
-                // Si l'admin a désactivé, on s'assure que updateDownloadState reçoit l'info
-                // Utile si le bouton était ouvert par défaut ou par cache
                 if(window.jeuDispo) {
-                     window.updateDownloadState(false, '#', '');
+                     window.updateDownloadState(false, '#', '', null);
                 }
             }
         });
