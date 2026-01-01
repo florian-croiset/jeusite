@@ -1,0 +1,376 @@
+        #telecharger {
+            position: relative;
+            /*min-height: 100vh;*/
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, #010b19 0%, #021d27 50%, #010b19 100%);
+            overflow: hidden;
+        }
+
+        /* Grille cyber animée */
+        .cyber-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 208, 198, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 208, 198, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridPulse 4s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Cercles lumineux d'arrière-plan */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .glow-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 208, 198, 0.15), transparent);
+            top: 10%;
+            left: -10%;
+        }
+
+        .glow-orb-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(135, 53, 185, 0.15), transparent);
+            bottom: 20%;
+            right: -5%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(30px, -30px); }
+            50% { transform: translate(-20px, 20px); }
+            75% { transform: translate(20px, 30px); }
+        }
+
+        .container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        /*h2 {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #00d0c6, #60f4d7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 30px rgba(0, 208, 198, 0.5));
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 30px rgba(0, 208, 198, 0.5)); }
+            50% { filter: drop-shadow(0 0 50px rgba(0, 208, 198, 0.8)); }
+        }*/
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #60f4d7;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            opacity: 0.9;
+        }
+
+        /* Carte principale de téléchargement */
+        .download-main-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(1, 61, 70, 0.3), rgba(24, 27, 43, 0.5));
+            border: 2px solid rgba(0, 208, 198, 0.3);
+            border-radius: 30px;
+            padding: 4rem 3rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 20px 60px rgba(0, 208, 198, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+
+        .download-main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 208, 198, 0.1), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        .download-icon-main {
+            text-align: center;
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            color: #00d0c6;
+            text-shadow: 
+                0 0 20px #00d0c6,
+                0 0 40px #00d0c6,
+                0 0 60px rgba(0, 208, 198, 0.5);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .download-title-main {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 208, 198, 0.3);
+        }
+
+        .download-description {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Section étapes */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(3, 119, 120, 0.2), rgba(24, 27, 43, 0.4));
+            border: 1px solid rgba(0, 208, 198, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 208, 198, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 208, 198, 0.2);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00d0c6, #037778);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #010b19;
+            box-shadow: 0 4px 15px rgba(0, 208, 198, 0.5);
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            color: #60f4d7;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px rgba(96, 244, 215, 0.5);
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            color: #00d0c6;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .step-text {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Informations système */
+        .system-info {
+            background: linear-gradient(145deg, rgba(135, 53, 185, 0.1), rgba(1, 61, 70, 0.2));
+            border: 1px solid rgba(135, 53, 185, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .system-info-title {
+            font-size: 1.4rem;
+            color: #8735b9;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .system-info-title i {
+            font-size: 1.8rem;
+        }
+
+        /*.system-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }*/
+
+        .spec-item {
+            /*display: flex;
+            align-items: center;
+            gap: 0.8rem;*/
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .spec-item i {
+            color: #60f4d7;
+            font-size: 1.2rem;
+        }
+
+        /* ALIGNEMENT HORIZONTAL SYSTEM INFO */
+.system-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+/* Titre à gauche */
+.system-info-title {
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Specs sur une seule ligne à droite */
+.system-specs {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: nowrap;
+}
+
+/* Chaque item reste en ligne */
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+/* Responsive : repasse en colonne sur mobile */
+@media (max-width: 768px) {
+    .system-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .system-specs {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+        /* Zone du bouton - NE PAS MODIFIER */
+        .button-zone {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        /* Indicateurs de sécurité */
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 208, 198, 0.1);
+            border: 1px solid rgba(0, 208, 198, 0.3);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: #60f4d7;
+        }
+
+        .badge i {
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .download-main-card {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .download-icon-main {
+                font-size: 4rem;
+            }
+
+            .download-title-main {
+                font-size: 1.6rem;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .security-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* MASQUER LA SECTION INSTALL SUR MOBILE */
+@media (max-width: 768px) {
+    .instalmobile {
+        display: none !important;
+    }
+    .installversion {
+        padding-bottom: 0!important;
+        margin-bottom: -40px !important;
+    }
+}

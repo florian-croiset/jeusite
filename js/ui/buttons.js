@@ -117,6 +117,8 @@ function appliquerDisponibiliteBouton(bouton) {
 
 const btnHero = document.querySelector('.hero .btn-primary');
 const btnTelecharger = document.querySelector('#telecharger .btn-primary');
+const btnInstaller = document.querySelector('#install .btn-primary');
+
 
 // ---------------------------------------------------------
 // 4. CONNECTION AVEC LA DATABASE
@@ -142,6 +144,7 @@ window.updateDownloadState = function(isAvailable, url, version, versionId = nul
     
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
+    appliquerDisponibiliteBouton(btnInstaller);
 };
 
 // ---------------------------------------------------------
@@ -279,6 +282,7 @@ window.finishCountdown = async function(isTest = false) {
     // 4. Mettre à jour les boutons
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
+    appliquerDisponibiliteBouton(btnInstaller);
 
     // 5. Animation de célébration si activé
     if (window.jeuDispo) {
@@ -372,6 +376,7 @@ if (sablierBtn) {
     window.jeuDispo = false;
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
+    appliquerDisponibiliteBouton(btnInstaller);
 
     sablierBtn.style.color = 'var(--cyan)';
     sablierBtn.style.transform = 'rotate(180deg)';
@@ -399,6 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
+    appliquerDisponibiliteBouton(btnInstaller);
     
     setTimeout(() => {
         verifierDisponibiliteAdmin().then(state => {

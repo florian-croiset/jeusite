@@ -32,7 +32,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="description" content="Découvrez Echo, un metroidvania intense signé Team Nightberry : exploration, plateformes et secrets dans un monde envoûtant.">
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">-->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/install.css">
+    <link rel="stylesheet" href="css/lore.css">
+    <link rel="stylesheet" href="css/gameplay.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <style>
+        @media (max-width: 768px) {
+            .mobile{
+                display: none!important;
+            }
+        }
+    </style>
 <!-- Google tag (gtag.js) -->
     <!-- Remplacer le script actuel par -->
 <script>
@@ -125,8 +135,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <ul class="nav-links" id="nav-links">
                 <!--<li><a href="#accueil">Accueil</a></li>-->
                 <li><a href="#team">Team Nightberry</a></li>
-                <li><a href="#telecharger">Télécharger le jeu</a></li>
-                <li><a href="#install">Installer / désinstaller le jeu</a></li>
+                <!--<li><a href="#telecharger">Télécharger le jeu</a></li>-->
+                <li><a href="#install">Installer<!-- / désinstaller--> le jeu</a></li>
                 <li><a href="#gameplay">Gameplay</a></li>
                 <li><a href="#lore">Lore</a></li><!--<li>Thème</li>-->
                 <li><a href="https://ink-bonobo-1b6.notion.site/ebd//2cd1f3f0470c80f4a04fe4ee7194cee0" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Donner mon avis sur le jeu</a></li>
@@ -177,25 +187,393 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="about-visual" style="overflow: hidden; background: rgba(102, 126, 234, 0.6); background-size:cover; background-position:center; background-image: url('assets/arriere.png');"> </div>
         </div>
     </section>
-    <section id="telecharger" class="features">
+    <!--<section id="telecharger" class="features">
         <h2>Télécharger</h2><div class="contact-form"><div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div></div>
-    </section>
-    <section id="install" class="community">
+    </section>-->
+    <!--<section id="install" class="community">
         <h2>Installer le jeu en <strong>5 étapes</strong></h2><p style="font-size: 1.2rem; color: #b0b0b0; margin-bottom: 3rem;">1ère étape : ___</p>
+    </section>-->
+    <section id="install" class="installversion">
+        <div class="cyber-grid"></div>
+        <div class="glow-orb glow-orb-1"></div>
+        <div class="glow-orb glow-orb-2"></div>
+
+        <div class="container">
+            <h2>Télécharger</h2>
+            <p class="subtitle">Lancez votre aventure dans l'univers d'Echo</p>
+
+            <!-- Carte principale -->
+            <div class="download-main-card" style="padding-bottom: 20px;">
+                <div class="download-icon-main">
+                    <i class="fa-solid fa-download"></i>
+                </div>
+                <h3 class="download-title-main">Version <span id="version-display" class="highlight-text">1.5</span></h3>
+                <p class="download-description">
+                    Téléchargez l'exécutable du jeu. Un simple clic suffit pour lancer l'installation et plonger dans l'univers sombre et mystérieux d'Echo.
+                </p>
+
+                <!-- ZONE DU BOUTON - NE PAS MODIFIER -->
+                <!--<div class="button-zone">-->
+                  <div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div>
+                <!--</div>-->
+
+                <!--<div class="security-badges">
+                    <div class="badge">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Fichier sécurisé</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Installation rapide</span>
+                    </div>
+                    <div class="badge">
+                        <i class="fa-solid fa-gamepad"></i>
+                        <span>Prêt à jouer</span>
+                    </div>
+                </div>-->
+            </div>
+
+            <!-- Étapes d'installation -->
+            <div class="steps-container instalmobile">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fa-solid fa-download"></i>
+                    </div>
+                    <h4 class="step-title">Téléchargement</h4>
+                    <p class="step-text">
+                        Cliquez sur le bouton de téléchargement. Le fichier .exe sera enregistré dans votre dossier Téléchargements.
+                    </p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fa-solid fa-file-zipper"></i>
+                    </div>
+                    <h4 class="step-title">Localisation</h4>
+                    <p class="step-text">
+                        Retrouvez le fichier "<span id="filename-display" class="highlight-text">Echo_TeamNightberry.exe</span>" dans votre dossier de téléchargements.
+                    </p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <h4 class="step-title">Lancement</h4>
+                    <p class="step-text">
+                        Double-cliquez sur l'exécutable pour lancer le jeu immédiatement. Aucune installation complexe requise.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Configuration système -->
+            <div class="system-info instalmobile">
+                <h3 class="system-info-title">
+                    <i class="fa-solid fa-microchip"></i>
+                    Configuration requise
+                </h3>
+                <span class="system-specs"><!--div-->
+                    <span class="spec-item">
+                        <i class="fa-brands fa-windows"></i>
+                        <span>Windows<!-- 10/11--></span>
+                    </span>
+                    <span class="spec-item">
+                        <i class="fa-solid fa-memory"></i>
+                        <span><!--4-->1 GB RAM minimum</span>
+                    </span>
+                    <span class="spec-item">
+                        <i class="fa-solid fa-hard-drive"></i>
+                        <span><!--500-->35 MB d'espace disque</span>
+                    </span>
+                    <!--<div class="spec-item">
+                        <i class="fa-solid fa-display"></i>
+                        <span>Résolution 1280x720 minimum</span>
+                    </div>-->
+                </span>
+            </div>
+        </div>
     </section>
     <section id="gameplay">
-        <h2>Gameplay</h2><div class="contact-form"></div>
+        <div class="cyber-grid-gameplay"></div>
+        <div class="glow-orb-gameplay glow-orb-gameplay-1"></div>
+        <div class="glow-orb-gameplay glow-orb-gameplay-2"></div>
+
+        <div class="container-gameplay">
+            <h2>Gameplay</h2>
+            <p class="subtitle-gameplay">Maîtrisez les contrôles et explorez l'univers d'Echo</p>
+
+            <!-- Contrôles principaux -->
+            <div class="controls-section mobile">
+                <h3 class="section-title">Contrôles</h3>
+                
+                <div class="controls-grid">
+                    <div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-person-running"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">Z</span>
+                            <span class="key">Q</span>
+                            <span class="key">S</span>
+                            <span class="key">D</span>
+                        </div>
+                        <p class="control-description">Déplacement</p>
+                    </div>
+
+                    <div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">Space</span>
+                        </div>
+                        <p class="control-description">Sauter</p>
+                    </div>
+
+                    <!--<div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">Shift</span>
+                        </div>
+                        <p class="control-description">Dash / Sprint</p>
+                    </div>-->
+
+                    <div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-gun"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">Clic G</span>
+                        </div>
+                        <p class="control-description">Attaque</p>
+                    </div>
+
+                    <div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-shield"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">Clic D</span>
+                        </div>
+                        <p class="control-description">Défense</p>
+                    </div>
+
+                    <!--<div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">E</span>
+                        </div>
+                        <p class="control-description">Interagir</p>
+                    </div>-->
+
+                    <!--<div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-suitcase"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">Tab</span>
+                        </div>
+                        <p class="control-description">Inventaire</p>
+                    </div>-->
+
+                    <!--<div class="control-card">
+                        <div class="control-icon">
+                            <i class="fa-solid fa-map"></i>
+                        </div>
+                        <div class="key-display">
+                            <span class="key">M</span>
+                        </div>
+                        <p class="control-description">Carte</p>
+                    </div>-->
+                </div>
+            </div>
+
+            <!-- Clavier visuel -->
+            <div id="keyboardContainer" class="keyboard-visual mobile">
+                <div class="keyboard-header" id="toggleKeyboard">
+<h3 class="section-title" style="margin-bottom: 0;">Configuration Clavier</h3>
+        <button class="toggle-kb-btn">
+            <i class="fa-solid fa-chevron-down"></i>
+        </button>            </div>
+        <div class="keyboard-collapse-content">
+                <div class="keyboard-layout">
+                    <div class="keyboard-row">
+                        <div class="kb-key">ESC</div>
+                        <div class="kb-key">1</div>
+                        <div class="kb-key">2</div>
+                        <div class="kb-key">3</div>
+                        <div class="kb-key">4</div>
+                        <div class="kb-key">5</div>
+                        <div class="kb-key">6</div>
+                        <div class="kb-key">7</div>
+                        <div class="kb-key">8</div>
+                        <div class="kb-key">9</div>
+                        <div class="kb-key">0</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="kb-key">TAB</div>
+                        <div class="kb-key active">Q</div>
+                        <div class="kb-key active">Z</div>
+                        <div class="kb-key active">E</div>
+                        <div class="kb-key">R</div>
+                        <div class="kb-key">T</div>
+                        <div class="kb-key">Y</div>
+                        <div class="kb-key">U</div>
+                        <div class="kb-key">I</div>
+                        <div class="kb-key">O</div>
+                        <div class="kb-key">P</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="kb-key">CAPS</div>
+                        <div class="kb-key active">Q</div>
+                        <div class="kb-key active">S</div>
+                        <div class="kb-key active">D</div>
+                        <div class="kb-key">F</div>
+                        <div class="kb-key">G</div>
+                        <div class="kb-key">H</div>
+                        <div class="kb-key">J</div>
+                        <div class="kb-key">K</div>
+                        <div class="kb-key">L</div>
+                        <div class="kb-key active">M</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="kb-key shift active">SHIFT</div>
+                        <div class="kb-key">W</div>
+                        <div class="kb-key">X</div>
+                        <div class="kb-key">C</div>
+                        <div class="kb-key">V</div>
+                        <div class="kb-key">B</div>
+                        <div class="kb-key">N</div>
+                    </div>
+                    <div class="keyboard-row">
+                        <div class="kb-key">CTRL</div>
+                        <div class="kb-key">ALT</div>
+                        <div class="kb-key spacebar active">SPACE</div>
+                        <div class="kb-key">ALT</div>
+                        <div class="kb-key">CTRL</div>
+                    </div>
+                </div>
+                <div class="keyboard-legend">
+                    <div class="legend-item">
+                        <div class="legend-color"></div>
+                        <span>Touches actives</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Mécaniques de jeu -->
+            <div class="controls-section">
+                <h3 class="section-title">Mécaniques de jeu</h3>
+                
+                <div class="mechanics-grid">
+                    <div class="mechanic-card">
+                        <div class="mechanic-icon">
+                            <i class="fa-solid fa-compass"></i>
+                        </div>
+                        <h4 class="mechanic-title">Exploration</h4>
+                        <p class="mechanic-description">
+                            Explorez des environnements interconnectés et découvrez des secrets cachés
+                        </p>
+                    </div>
+
+                    <div class="mechanic-card">
+                        <div class="mechanic-icon">
+                            <i class="fa-solid fa-wrench"></i>
+                        </div>
+                        <h4 class="mechanic-title">Progression</h4>
+                        <p class="mechanic-description">
+                            Débloquez de nouvelles capacités pour accéder à des zones inexplorées
+                        </p>
+                    </div>
+
+                    <div class="mechanic-card">
+                        <div class="mechanic-icon">
+                            <i class="fa-solid fa-dragon"></i>
+                        </div>
+                        <h4 class="mechanic-title">Combats</h4>
+                        <p class="mechanic-description">
+                            Affrontez des ennemis redoutables et des boss épiques dans des combats intenses
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <section id="lore">
-        <h2>Lore</h2>
-        <div class="features-grid">
-            <div class="feature-card"><div class="feature-icon">Présentation</div><br>Dans un futur où le monde est plongé dans une obscurité totale, une guerre silencieuse fait rage entre ceux qui luttent pour la vérité et ceux qui profitent de cette nuit sans fin. "Kaelen : L'Ombre du Soleil" vous plonge dans une aventure intense, où vengeance et espoir s'entrelacent dans un combat contre une mégacorporation toute-puissante, Solaris. Découvrez l’histoire de Kaelen, un ancien militaire qui se bat non seulement pour venger la mort de son fils, mais aussi pour libérer l’humanité d’une tyrannie technologique impitoyable.</div><!--🗺️👥-->
+        <div class="lore-background"></div>
+        <div class="cyber-grid-lore"></div>
+        <div class="glow-orb-lore glow-orb-lore-1"></div>
+        <div class="glow-orb-lore glow-orb-lore-2"></div>
+        <div class="glow-orb-lore glow-orb-lore-3"></div>
+
+        <div class="container-lore">
+            <h2>Lore</h2>
+
+            <div class="lore-intro">
+                <h3>Kaelen : L'Ombre du Soleil</h3>
+                <p>
+                    Dans un futur où le monde est plongé dans une obscurité totale, une guerre silencieuse fait rage entre ceux qui luttent pour la vérité et ceux qui profitent de cette nuit sans fin. Découvrez l'histoire de Kaelen, un ancien militaire qui se bat pour venger son fils et libérer l'humanité d'une tyrannie technologique impitoyable.
+                </p>
+            </div>
+
+            <div class="acts-grid">
+    <!-- Acte I -->
+    <div class="act-card">
+        <i class="fa-solid fa-city act-badge"></i>
+        <div class="act-header">
+            <div class="act-number">I</div>
+            <h3 class="act-title">Les Ombres de la Cité-Dôme</h3>
         </div>
-        <div class="features-grid">
-            <div class="feature-card"><div class="feature-icon"><!--🤖-->Acte I : Les Ombres de la Cité-Dôme</div><br><span class="feature-text">L'histoire débute dans les bas-fonds du Secteur 9, où Kaelen, ancien Nettoyeur, découvre la planque de son fils Jonas dévastée et ce dernier exécuté par les forces de Solaris. En découvrant un implant de données caché, Kaelen apprend que Jonas avait découvert la vérité : le soleil brille toujours derrière le voile noir. Brisé, mais déterminé, Kaelen jure de venger son fils et de dévoiler la vérité à l'humanité.</span></div><!--🗺️👥-->
-            <div class="feature-card"><div class="feature-icon"><!--📖-->Acte II : La Traversée du Noir</div><br><span class="feature-text">Pour atteindre la Tour Zénith, le siège de Solaris, Kaelen traverse la Zone Morte, une ville plongée dans l’obscurité où il doit faire face à des créatures terrifiantes, les Nocturnes, ainsi qu’à un assassin implacable, le Capitaine Vex, responsable de la mort de Jonas. Alors qu'il rallie les lieutenants de Jonas, une alliance se forme et Kaelen prend d'assaut la ville, luttant pour atteindre son objectif tout en affrontant une menace double et omniprésente.<!--<h3>-</h3><p>-</p>--></span></div>
-            <div class="feature-card"><div class="feature-icon"><!--⚙️-->Acte III : La Lumière Artificielle</div><!--<h3>-</h3><p>-</p>--><br><span class="feature-text">Dans la Ville Haute, Kaelen se fraye un chemin au cœur du luxe et de la lumière artificielle, sabordant les systèmes de sécurité de Solaris tout en contournant les civils. Alors qu'il se rapproche du sommet de la tour, il affronte Vex dans un combat intense, utilisant l’obscurité pour triompher. Avant de mourir, Vex révèle que le PDG de Solaris détient le code qui pourrait libérer le monde de l'obscurité. Kaelen se prépare à l'ultime confrontation.</span></div>
-            <div class="feature-card"><div class="feature-icon"><!--🔗-->Acte IV : Le Lever du Jour</div><!--<h3>-</h3><p>-</p>--><br><span class="feature-text">Au sommet de la Tour Zénith, Kaelen se retrouve face au PDG de Solaris, un homme qui a choisi de maintenir le voile noir pour conserver son pouvoir. Après avoir rejeté une offre de collaboration, Kaelen active le virus de Jonas, ce qui déclenche un ultime combat pour survivre. Alors que le système de Solaris s'effondre, un rayon de soleil percera enfin le voile, marquant la victoire de Kaelen et le renouveau de l'espoir pour l'humanité.</span></div>
+        <p class="act-text">
+            Kaelen, ancien Nettoyeur, découvre la planque de son fils Jonas ravagée et apprend sa mort aux mains de Solaris. <!--Parmi les débris, il met la main sur des données révélant une vérité interdite sur le monde. -->Dévasté, il décide de s’opposer au système qui lui a tout pris.
+        </p>
+    </div>
+
+    <!-- Acte II -->
+    <div class="act-card">
+        <i class="fa-solid fa-skull-crossbones act-badge"></i>
+        <div class="act-header">
+            <div class="act-number">II</div>
+            <h3 class="act-title">La Traversée du Noir</h3>
+        </div>
+        <p class="act-text">
+            Pour atteindre le cœur de Solaris, Kaelen traverse des zones abandonnées et dangereuses. Il affronte de nouvelles menaces, retrouve des alliés liés à Jonas et se rapproche de l’homme responsable de sa mort.
+        </p>
+    </div>
+
+    <!-- Acte III -->
+    <div class="act-card">
+        <i class="fa-solid fa-building act-badge"></i>
+        <div class="act-header">
+            <div class="act-number">III</div>
+            <h3 class="act-title">La Lumière Artificielle</h3>
+        </div>
+        <p class="act-text">
+            Dans les quartiers supérieurs baignés de lumière, Kaelen infiltre les installations de Solaris. Après un affrontement décisif, il découvre qu’un dernier code pourrait faire basculer le destin de l’humanité.
+        </p>
+    </div>
+
+    <!-- Acte IV -->
+    <div class="act-card">
+        <i class="fa-solid fa-sun act-badge"></i>
+        <div class="act-header">
+            <div class="act-number">IV</div>
+            <h3 class="act-title">Le Lever du Jour</h3>
+        </div>
+        <p class="act-text">
+            Au sommet de la Tour Zénith, Kaelen affronte le dirigeant de Solaris. Son choix déclenche l’effondrement du système et permet à la lumière de percer le voile, ravivant l’espoir d’un monde nouveau.
+        </p>
+    </div>
+</div>
+
         </div>
     </section>
 <footer>
@@ -289,4 +667,69 @@ document.getElementById('musicBtn').addEventListener('click', function() {
 <script type="module" src="js/config/supabase.js"></script>
 <script type="module" src="js/database.js"></script>
 <script type="module" src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const kbHeader = document.getElementById('toggleKeyboard');
+    const kbContainer = document.getElementById('keyboardContainer');
+
+    kbHeader.addEventListener('click', function() {
+        kbContainer.classList.toggle('is-open');
+    });
+});
+</script>
+    <script>
+        // Mettre à jour les informations de version depuis la DB
+        async function updateVersionInfo() {
+            try {
+                // Récupérer depuis window si disponible (mis à jour par buttons.js)
+                if (window.jeuVersion) {
+                    const versionDisplay = document.getElementById('version-display');
+                    if (versionDisplay) {
+                        /* versionDisplay.textContent = `v${window.jeuVersion}`;*/
+                        versionDisplay.textContent = `${window.jeuVersion}`;
+                    }
+                }
+
+                // Récupérer le nom du fichier depuis l'URL
+                if (window.jeuUrl) {
+                    const filenameDisplay = document.getElementById('filename-display');
+                    if (filenameDisplay && window.jeuUrl !== '#') {
+                        const filename = window.jeuUrl.split('/').pop();
+                        filenameDisplay.textContent = filename;
+                    }
+                }
+
+                // Si EchoDB est disponible, récupérer directement depuis la DB
+                if (typeof window.EchoDB !== 'undefined') {
+                    const latestVersion = await window.EchoDB.GameVersions.getLatest();
+                    
+                    if (latestVersion) {
+                        const versionDisplay = document.getElementById('version-display');
+                        const filenameDisplay = document.getElementById('filename-display');
+                        
+                        if (versionDisplay) {
+                            versionDisplay.textContent = `v${latestVersion.version}`;
+                        }
+                        
+                        if (filenameDisplay && latestVersion.download_url) {
+                            const filename = latestVersion.download_url.split('/').pop();
+                            filenameDisplay.textContent = filename;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log('Informations de version par défaut conservées');
+            }
+        }
+
+        // Exécuter au chargement
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateVersionInfo);
+        } else {
+            updateVersionInfo();
+        }
+
+        // Écouter les changements de window.jeuVersion
+        setInterval(updateVersionInfo, 2000);
+    </script>
 </html>
