@@ -365,9 +365,9 @@ if (sablierBtn) {
         sectionCountdown.innerHTML = `
             <div class="countdown-title"><i class="fa-solid fa-vial fa-beat"></i> Simulation de lancement...</div>
             <div class="countdown-timer">
-                <div class="countdown-item"><span class="countdown-value" id="days">00</span><span class="countdown-label">Jours</span></div>
-                <div class="countdown-item"><span class="countdown-value" id="hours">00</span><span class="countdown-label">Heures</span></div>
-                <div class="countdown-item"><span class="countdown-value" id="minutes">00</span><span class="countdown-label">Minutes</span></div>
+                <div class="countdown-item"><span class="countdown-value" id="days">0</span><span class="countdown-label">Jours</span></div>
+                <div class="countdown-item"><span class="countdown-value" id="hours">0</span><span class="countdown-label">Heures</span></div>
+                <div class="countdown-item"><span class="countdown-value" id="minutes">0</span><span class="countdown-label">Minutes</span></div>
                 <div class="countdown-item"><span class="countdown-value" id="seconds">10</span><span class="countdown-label">Secondes</span></div>
             </div>
         `;
