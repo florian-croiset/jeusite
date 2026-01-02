@@ -11,6 +11,294 @@
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+    /* Aperçu du pack */
+.pack-preview {
+    background: rgba(24, 27, 43, 0.6);
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 3rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pack-preview h3 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem;
+    background: rgba(0, 208, 198, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 208, 198, 0.2);
+    transition: all 0.3s;
+}
+
+.preview-item:hover {
+    background: rgba(0, 208, 198, 0.1);
+    transform: translateX(5px);
+}
+
+.preview-item i {
+    color: var(--primary);
+    font-size: 1.2rem;
+    min-width: 20px;
+}
+
+.preview-item span {
+    color: var(--primary-light);
+    font-size: 0.9rem;
+}
+
+/* Promo éditeur de documents */
+.doc-editor-promo {
+    background: linear-gradient(135deg, rgba(0, 208, 198, 0.1), rgba(3, 119, 120, 0.1));
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+    padding: 2.5rem;
+    margin-top: 3rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 1. On garde l'alignement en haut pour l'icône dans la grille */
+.promo-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: start; /* L'icône reste en haut */
+}
+
+/* 2. On supprime l'absolute pour que l'icône reprenne sa place dans la grille */
+.promo-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--primary);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--bg-dark);
+    box-shadow: 0 5px 20px rgba(0, 208, 198, 0.4);
+    /* Supprimez position: absolute si elle y est encore */
+}
+
+/* 3. C'est ici que la magie opère pour le texte */
+.promo-text {
+    overflow: hidden; /* Sécurité anti-débordement */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.promo-text h3 {
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.promo-text p {
+    color: var(--primary-light);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* Permet de revenir à la ligne AVANT de casser le cadre */
+    gap: 0.5rem;     /* Espace réduit entre les éléments */
+    width: 100%;
+}
+
+.feature-list li {
+    color: var(--accent);
+    font-size: 0.8rem; /* On diminue la taille pour que ça tienne */
+    padding: 0.4rem 0.6rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary);
+    white-space: nowrap; /* Empêche le texte de se couper en deux dans un badge */
+    flex: 0 1 auto;      /* Empêche les badges de grossir inutilement */
+}
+
+.btn-promo {
+    background: linear-gradient(135deg, var(--primary), var(--secondary-1));
+    color: var(--bg-dark);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    align-self: center;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 208, 198, 0.4);
+}
+
+.btn-promo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 208, 198, 0.6);
+}
+
+/* Bouton désactivé */
+.download-btn:disabled {
+    background: linear-gradient(135deg, #666, #444);
+    cursor: not-allowed;
+    opacity: 0.6;
+    position: relative;
+}
+
+.download-btn:disabled::after {
+    content: '⚠️ Temporairement indisponible';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 0, 85, 0.9);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.download-btn:disabled:hover::after {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .promo-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .promo-icon {
+        margin: 0 auto;
+    }
+    
+    .preview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .feature-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Header du module de preview */
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(0, 208, 198, 0.2);
+    padding-bottom: 1rem;
+}
+
+.preview-header h3 {
+    margin: 0;
+    text-align: left;
+    font-size: 1.3rem;
+    color: var(--primary);
+}
+
+/* Onglets de navigation interne */
+.preview-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(0,0,0,0.3);
+    padding: 4px;
+    border-radius: 50px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: var(--primary-light);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: var(--bg-dark);
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 208, 198, 0.3);
+}
+
+/* Gestion de l'affichage des items */
+.preview-item {
+    /* Vos styles existants ici... */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Classe utilitaire pour cacher les éléments filtrés */
+.preview-item.hidden {
+    display: none; 
+    /* Note: on utilise display:none pour réorganiser la grille, 
+       mais on peut utiliser opacity/transform si on préfère 
+       garder les trous dans la grille */
+}
+
+/* Animation d'apparition */
+@keyframes fadeInItem {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.preview-item:not(.hidden) {
+    animation: fadeInItem 0.4s ease forwards;
+}
+
+/* Responsive pour le header */
+@media (max-width: 600px) {
+    .preview-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .preview-header h3 {
+        text-align: center;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -68,8 +356,8 @@
                 <span></span>
             </div>
             <ul class="nav-links" id="nav-links">
-                <li><a href="#couleurs">Palette de couleur</a></li>
-                <li><a href="#typographie">Typographie</a></li>
+                <li><a href="#couleurs"><i class="fa-solid fa-palette"></i> Couleurs</a></li>
+                <li><a href="#typographie"><i class="fa-solid fa-font"></i> Typo</a></li>
                 <li><a href="#logo">Logo</a></li>
                 <li><a href="#sprites">Sprites</a></li>
                 <li><a href="#decor">Décors</a></li>
@@ -200,7 +488,7 @@
     <!--<section id="telecharger" class="features">
         <h2>Télécharger</h2><div class="contact-form"><div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div></div>
     </section>-->
-    <section id="telechargement" class="download-section">
+    <!--<section id="telechargement" class="download-section">
         <h2>Téléchargement</h2>
         <p style="color: var(--primary-light); font-size: 1.2rem; margin-bottom: 2rem;">
             Téléchargez l'intégralité de la charte graphique
@@ -216,7 +504,87 @@
                 🎨 Assets Pack
             </button>
         </div>
-    </section>
+    </section>-->
+    <section id="telechargement" class="download-section">
+    <h2>Téléchargement</h2>
+    <p style="color: var(--primary-light); font-size: 1.2rem; margin-bottom: 2rem;">
+        Téléchargez l'intégralité de la charte graphique
+    </p>
+    
+    <div class="btn-group" id="download-buttons">
+        <!-- Les boutons seront injectés dynamiquement -->
+    </div>
+    
+<div class="pack-preview">
+        <div class="preview-header">
+            <h3>Contenu du pack : <span id="pack-title" style="color:var(--white);">Complet</span></h3>
+            
+            <div class="preview-tabs">
+                <button class="tab-btn active" onclick="filterPack('complet')" data-target="complet">Tout</button>
+                <button class="tab-btn" onclick="filterPack('pdf')" data-target="pdf">Docs</button>
+                <button class="tab-btn" onclick="filterPack('assets')" data-target="assets">Assets</button>
+            </div>
+        </div>
+
+        <div class="preview-grid" id="previewGrid">
+            <div class="preview-item" data-category="assets">
+                <i class="fa-solid fa-palette"></i>
+                <span>Palette complète (9 couleurs)</span>
+            </div>
+            <div class="preview-item" data-category="assets">
+                <i class="fa-solid fa-image"></i>
+                <span>8 variations de logos</span>
+            </div>
+            <div class="preview-item" data-category="assets">
+                <i class="fa-solid fa-gamepad"></i>
+                <span>3 sprites de personnages</span>
+            </div>
+            <div class="preview-item" data-category="assets">
+                <i class="fa-solid fa-mountain"></i>
+                <span>3 décors d'arrière-plan</span>
+            </div>
+            <div class="preview-item" data-category="assets">
+                <i class="fa-solid fa-photo-film"></i>
+                <span>Vidéo + musique de fond</span>
+            </div>
+
+            <div class="preview-item" data-category="pdf">
+                <i class="fa-solid fa-font"></i>
+                <span>Guide typographique</span>
+            </div>
+            <div class="preview-item" data-category="pdf">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Documentation PDF complète</span>
+            </div>
+            <div class="preview-item" data-category="pdf">
+                <i class="fa-solid fa-code"></i>
+                <span>Exemples de code CSS</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Nouvelle section : Éditeur de documents -->
+    <div class="doc-editor-promo">
+        <div class="promo-content">
+            <div class="promo-icon">
+                <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <div class="promo-text">
+                <h3>📝 Echo Docs - Éditeur Markdown</h3>
+                <p>Créez et exportez des documents <!--professionnels -->avec mise en page automatique aux couleurs d'Echo.</p>
+                <ul class="feature-list">
+                    <li>✍️ Édition Markdown en temps réel</li>
+                    <li>📄 Export PDF avec charte graphique Echo</li>
+                    <li>🎨 Styles prédéfinis (titres, listes, citations)</li>
+                    <li>📊 Insertion de liens, d'images et de tableaux</li>
+                </ul>
+            </div>
+        </div>
+        <a href="doc.html" class="btn-promo">
+            <i class="fa-solid fa-arrow-right"></i> Accéder à l'éditeur
+        </a>
+    </div>
+</section>
 
     <footer>
         <p>&copy; 2025 Echo. Tous droits réservés • 
@@ -307,6 +675,43 @@
     </div>
 </body>
 <script type="module" src="js/design.js"></script>
+    <script>
+// On attache la fonction à "window" pour qu'elle soit visible par le HTML
+window.filterPack = function(packType) {
+    const items = document.querySelectorAll('.preview-item');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const titleSpan = document.getElementById('pack-title');
+    
+    // 1. Mettre à jour le titre
+    const titles = {
+        'complet': 'Complet',
+        'pdf': 'Documents & PDF',
+        'assets': 'Assets & Médias'
+    };
+    // Petite sécurité si le titre n'existe pas dans la liste
+    titleSpan.textContent = titles[packType] || 'Complet';
+
+    // 2. Mettre à jour l'état actif des onglets internes
+    tabs.forEach(tab => {
+        if(tab.dataset.target === packType) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+
+    // 3. Filtrer la grille
+    items.forEach(item => {
+        const category = item.getAttribute('data-category');
+        
+        if (packType === 'complet' || category === packType) {
+            item.classList.remove('hidden');
+        } else {
+            item.classList.add('hidden');
+        }
+    });
+};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="js/config/supabase.js"></script>
 <script type="module" src="js/database.js"></script>

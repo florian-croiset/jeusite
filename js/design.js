@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
+/*document.addEventListener("DOMContentLoaded", () => {
     const sprites = [
         { symbol: "🚀", title: "Vaisseau Principal", desc: "Sprite 32x32 pixels" },
         { symbol: "👾", title: "Ennemi Type A", desc: "Sprite animé 64x64" },
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         grid.appendChild(card);
     });
-});
+});*/
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -563,7 +563,132 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+// Charger l'état des téléchargements et afficher les boutons
+document.addEventListener("DOMContentLoaded", async () => {
+    // Attendre que EchoDB soit prêt avant de charger les boutons
+    await waitForEchoDB();
+    await loadDownloadButtonsState();
+});
 
+async function loadDownloadButtonsState() {
+    const container = document.getElementById('download-buttons');
+    if (!container) return;
+
+    try {
+        // Vérifier que EchoDB est chargé
+        if (!window.EchoDB || !window.EchoDB.supabase) {
+            console.error('EchoDB non disponible');
+            // Afficher les boutons par défaut (tous activés)
+            container.innerHTML = `
+                <button class="download-btn" data-pack="complet" onclick="downloadCharter()">📦 Kit Complet (.zip)</button>
+                <button class="download-btn" data-pack="pdf" onclick="downloadPDF()">📄 PDF Charte Graphique</button>
+                <button class="download-btn" data-pack="assets" onclick="downloadAssets()">🎨 Assets Pack</button>
+            `;
+            return;
+        }
+
+        const { data, error } = await EchoDB.supabase
+            .from('download_packs')
+            .select('*')
+            .single();
+
+        if (error) {
+            console.error('Erreur DB:', error);
+            // En cas d'erreur, afficher les boutons activés par défaut
+            container.innerHTML = `
+                <button class="download-btn" data-pack="complet" onclick="downloadCharter()">📦 Kit Complet (.zip)</button>
+                <button class="download-btn" data-pack="pdf" onclick="downloadPDF()">📄 PDF Charte Graphique</button>
+                <button class="download-btn" data-pack="assets" onclick="downloadAssets()">🎨 Assets Pack</button>
+            `;
+            return;
+        }
+
+        console.log('Settings chargés:', data); // Debug
+
+        const buttons = [
+            {
+                id: 'kit',
+                enabled: data.complete_kit_enabled,
+                icon: '📦',
+                text: 'Kit Complet (.zip)',
+                onclick: 'downloadCharter()',
+                // AJOUT :
+                dataPack: 'complet',
+                onhover: "filterPack('complet')" 
+            },
+            {
+                id: 'pdf',
+                enabled: data.pdf_charter_enabled,
+                icon: '📄',
+                text: 'PDF Charte Graphique',
+                onclick: 'downloadPDF()',
+                // AJOUT :
+                dataPack: 'pdf',
+                onhover: "filterPack('pdf')"
+            },
+            {
+                id: 'assets',
+                enabled: data.assets_pack_enabled,
+                icon: '🎨',
+                text: 'Assets Pack',
+                onclick: 'downloadAssets()',
+                // AJOUT :
+                dataPack: 'assets',
+                onhover: "filterPack('assets')"
+            }
+        ];
+
+        // On injecte les attributs data-pack et onmouseenter ici
+        container.innerHTML = buttons.map(btn => `
+            <button 
+                class="download-btn" 
+                onclick="${btn.onclick}" 
+                data-pack="${btn.dataPack}"
+                onmouseenter="${btn.onhover}"
+                ${!btn.enabled ? 'disabled' : ''}
+            >
+                ${btn.icon} ${btn.text}
+            </button>
+        `).join('');
+
+        console.log('Boutons générés avec succès'); // Debug
+
+    } catch (error) {
+        console.error('Erreur chargement boutons:', error);
+        // Afficher les boutons par défaut AVEC LE SURVOL
+        container.innerHTML = `
+            <button class="download-btn" data-pack="complet" onmouseenter="filterPack('complet')" onclick="downloadCharter()">📦 Kit Complet (.zip)</button>
+            <button class="download-btn" data-pack="pdf" onmouseenter="filterPack('pdf')" onclick="downloadPDF()">📄 PDF Charte Graphique</button>
+            <button class="download-btn" data-pack="assets" onmouseenter="filterPack('assets')" onclick="downloadAssets()">🎨 Assets Pack</button>
+        `;
+    }
+}
+
+// Fonction helper pour attendre EchoDB (si pas déjà définie)
+function waitForEchoDB() {
+    return new Promise((resolve) => {
+        if (window.EchoDB && window.EchoDB.supabase) {
+            console.log('EchoDB déjà disponible');
+            resolve();
+        } else {
+            console.log('Attente de EchoDB...');
+            const checkInterval = setInterval(() => {
+                if (window.EchoDB && window.EchoDB.supabase) {
+                    console.log('EchoDB maintenant disponible');
+                    clearInterval(checkInterval);
+                    resolve();
+                }
+            }, 100);
+            
+            // Timeout après 10 secondes
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                console.error('Timeout: EchoDB non chargé après 10s');
+                resolve(); // Résoudre quand même pour éviter le blocage
+            }, 10000);
+        }
+    });
+}
 
 window.copyColor = function (color, element) {
     navigator.clipboard.writeText(color).then(() => {

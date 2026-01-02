@@ -410,18 +410,27 @@ class SettingsManager {
      * Gestion des onglets
      */
     initTabs() {
-        const tabs = document.querySelectorAll('.tab-btn');
-        const contents = document.querySelectorAll('.tab-content');
+        // CORRECTION : On ne cible que les boutons DANS la modale de paramètres (.settings-tabs)
+        const tabs = document.querySelectorAll('.settings-tabs .tab-btn');
+        const contents = document.querySelectorAll('.settings-content .tab-content');
         
+        if(tabs.length === 0) return; // Sécurité
+
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const target = tab.dataset.tab;
                 
+                // On retire 'active' seulement des onglets paramètres
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
                 
                 tab.classList.add('active');
-                document.querySelector(`[data-content="${target}"]`).classList.add('active');
+                
+                // Sécurité pour éviter le crash si la cible n'existe pas
+                const targetContent = document.querySelector(`.settings-content .tab-content[data-content="${target}"]`);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
             });
         });
     }
