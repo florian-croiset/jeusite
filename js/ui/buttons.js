@@ -386,7 +386,8 @@ if (sablierBtn) {
     window.testInterval = setInterval(() => {
         timeLeft--;
         const secElement = document.getElementById('seconds');
-        if(secElement) secElement.textContent = timeLeft.toString().padStart(2, '0');
+        if(secElement) secElement.textContent = timeLeft.toString();
+        // .padStart(2, '0')
         
         if (timeLeft <= 0) {
             clearInterval(window.testInterval);
