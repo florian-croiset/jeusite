@@ -247,8 +247,8 @@ window.finishCountdown = async function(isTest = false) {
     if (isTest) {
         console.log('🧪 Mode test : activation immédiate');
         window.jeuDispo = true;
-        window.jeuUrl = 'executable/Echo_Setup_Test.exe';
-        window.jeuVersion = 'TEST';
+        window.jeuUrl = 'executable/Echo_TeamNightberry_v1.exe';
+        window.jeuVersion = '*test*';
         
         const statusMsg = document.getElementById('countdown-status-message');
         if (statusMsg) {
