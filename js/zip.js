@@ -87,7 +87,7 @@ window.downloadCharter = async function() {
         const readme = `╔════════════════════════════════════════════════════════════════════╗
 ║                 ECHO - KIT CHARTE GRAPHIQUE                        ║
 ║                    Par Team Nightberry                             ║
-║                      Version 1.5 Beta                              ║
+║                      Version 2.1 Beta                              ║
 ╚════════════════════════════════════════════════════════════════════╝
 
 Bienvenue dans le kit complet de la charte graphique Echo !
@@ -157,7 +157,7 @@ Date de génération: ${new Date().toLocaleDateString('fr-FR')}
         // couleurs.css
         const colorsCss = `/* ═══════════════════════════════════════════════════════════════════
    ECHO - Variables CSS Charte Graphique
-   Par Team Nightberry - Version 1.5 Beta
+   Par Team Nightberry - Version 2.1 Beta
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -1909,7 +1909,7 @@ Document officiel certifié
 ║                  ECHO - HISTORIQUE DES VERSIONS                    ║
 ╚════════════════════════════════════════════════════════════════════╝
 
-VERSION 1.5 BETA - ${new Date().toLocaleDateString('fr-FR')}
+VERSION 2.1 BETA - ${new Date().toLocaleDateString('fr-FR')}
 ═══════════════════════════════════════════════════════════════════════
 ✨ Nouveau:
   • Kit complet de la charte graphique

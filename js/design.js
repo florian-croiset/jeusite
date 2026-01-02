@@ -687,7 +687,7 @@ window.downloadPDF = async function () {
         // Version et date
         doc.setFontSize(12);
         doc.setTextColor(...colors.primaryLight);
-        doc.text('Version 1.5 Beta', pageWidth / 2, 250, { align: 'center' });
+        doc.text('Version 2.1 Beta', pageWidth / 2, 250, { align: 'center' });
         doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, pageWidth / 2, 260, { align: 'center' });
 
         // Crédit
