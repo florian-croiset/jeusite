@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo - Liens</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <style>
+        html, body {
+            overflow: hidden !important;
+            height: 100% !important;
+        }
+        .hero-content {
+            z-index: 150!important;
+        }
+        .hero {
+            opacity: 1!important;
+        }
+        .hero h1 {
+            opacity: 1!important;
+            transform: none !important;
+            animation: fadeInUp 1s ease-out forwards, glow 3s ease-in-out infinite;
+        }
+        .hero p {
+            opacity: 1!important;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+            z-index: 151!important;
+        }
+        .nav-links {
+            margin-left: 70px!important;
+        }
+        /* Container principal pour les liens */
+        .links-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            /*background: rgba(10, 10, 10, 0.95);*/
+        }
+
+        /* Titre central */
+        .central-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 101;
+        }
+
+        .central-title h1 {
+            font-size: clamp(3rem, 10vw, 7rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 40px rgba(0, 208, 198, 0.3);
+        }
+
+        .central-title .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: var(--debut);
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* Grille de liens éparpillés */
+        .scattered-links {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Carte de lien individuel */
+        .link-card {
+            position: absolute;
+            width: clamp(200px, 25vw, 280px);
+            padding: clamp(15px, 2vw, 25px);
+            background: rgba(0, 86, 103, 0.1);
+            border: 2px solid rgba(0, 208, 198, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: block;
+        }
+
+        .link-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            border-color: var(--debut);
+            background: rgba(0, 208, 198, 0.15);
+            box-shadow: 0 15px 40px rgba(0, 208, 198, 0.4),
+                        0 0 60px rgba(135, 53, 185, 0.3);
+        }
+
+        /* Hover spécifique pour les cartes centrales (3 et 4) */
+        .link-card:nth-child(3):hover,
+        .link-card:nth-child(4):hover {
+            transform: translateY(-50%) translateY(-8px) scale(1.05);
+        }
+
+        .link-card .icon {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            margin-bottom: 10px;
+            display: block;
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .link-card .title {
+            font-size: clamp(1rem, 1.5vw, 1.3rem);
+            font-weight: 600;
+            color: var(--text-light, #e0e0e0);
+            margin-bottom: 8px;
+        }
+
+        .link-card .description {
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+            color: rgba(224, 224, 224, 0.7);
+            line-height: 1.4;
+        }
+
+        /* Positions des cartes (disposition éparpillée) */
+        .link-card:nth-child(1) {
+            top: 13%;
+            left: 8%;
+        }
+
+        .link-card:nth-child(2) {
+            top: 13%;
+            right: 8%;
+        }
+
+        .link-card:nth-child(3) {
+            top: 53%;
+            left: 5%;
+            transform: translateY(-50%);
+        }
+
+        .link-card:nth-child(4) {
+            top: 53%;
+            right: 5%;
+            transform: translateY(-50%);
+        }
+
+        .link-card:nth-child(5) {
+            bottom: 10%;
+            left: 18%;
+        }
+
+        .link-card:nth-child(6) {
+            bottom: 10%;
+            right: 18%;
+        }
+
+        /* Particules d'arrière-plan */
+        .particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Responsive - Tablettes */
+        @media (max-width: 1024px) {
+            .link-card:nth-child(1) { 
+                top: 8%; 
+                left: 4%; 
+            }
+            .link-card:nth-child(2) { 
+                top: 8%; 
+                right: 4%; 
+            }
+            .link-card:nth-child(3) { 
+                top: 48%; 
+                left: 2%;
+                transform: translateY(-50%);
+            }
+            .link-card:nth-child(4) { 
+                top: 48%; 
+                right: 2%;
+                transform: translateY(-50%);
+            }
+            .link-card:nth-child(5) { 
+                bottom: 8%; 
+                left: 12%; 
+            }
+            .link-card:nth-child(6) { 
+                bottom: 8%; 
+                right: 12%; 
+            }
+        }
+
+        /* Responsive - Petits écrans */
+        @media (max-width: 900px) {
+            .hero h1 {
+                font-size: clamp(4rem, 12vw, 8rem) !important;
+            }
+            
+            .hero p {
+                font-size: clamp(1rem, 3vw, 1.5rem) !important;
+                display: none;
+            }
+
+            .link-card {
+                width: clamp(180px, 30vw, 240px);
+            }
+
+            .link-card:nth-child(1) { 
+                top: 5%; 
+                left: 2%; 
+            }
+            .link-card:nth-child(2) { 
+                top: 5%; 
+                right: 2%; 
+            }
+            .link-card:nth-child(3) { 
+                top: 47%; 
+                left: 1%;
+            }
+            .link-card:nth-child(4) { 
+                top: 47%; 
+                right: 1%;
+            }
+            .link-card:nth-child(5) { 
+                bottom: 5%; 
+                left: 8%; 
+            }
+            .link-card:nth-child(6) { 
+                bottom: 5%; 
+                right: 8%; 
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+            }
+
+            .hero {
+                min-height: 60vh;
+                padding-bottom: 40px;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            .hero p {
+                font-size: 1.1rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .hero-content {
+                transform: scale(1) !important;
+                padding: 1rem !important;
+            }
+
+            .nav-links {
+                margin-left: 0px !important;
+                background: none!important;
+            }
+
+            .links-container {
+                position: relative;
+                height: auto;
+                min-height: auto;
+                margin-top: 0;
+                padding: 40px 20px 60px;
+                background: transparent;
+            }
+
+            .scattered-links {
+                position: relative;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 20px;
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            .link-card {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: none !important;
+                width: 100% !important;
+                /*max-width: 100%;*/
+            }
+    .link-card {
+        max-width: 80% !important;
+        margin: 0 auto !important;
+    }
+
+            .link-card:hover {
+                transform: translateY(-5px) scale(1.02) !important;
+            }
+        }
+
+        /* Responsive - Très petits mobiles */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem !important;
+            }
+
+            .hero p {
+                font-size: 0.9rem !important;
+            }
+
+            .link-card .title {
+                font-size: 1.1rem;
+            }
+
+            .link-card .description {
+                font-size: 0.85rem;
+            }
+
+            .link-card .icon {
+                font-size: 2rem;
+            }
+
+            .btn-hidden-access {
+                display: none;
+            }
+            .btn-share-access {
+                bottom: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .link-card {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .link-card:nth-child(1) { animation-delay: 0.1s; }
+        .link-card:nth-child(2) { animation-delay: 0.2s; }
+        .link-card:nth-child(3) { animation-delay: 0.3s; }
+        .link-card:nth-child(4) { animation-delay: 0.4s; }
+        .link-card:nth-child(5) { animation-delay: 0.5s; }
+        .link-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="customCursor"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo"><a href="https://florian-croiset.github.io/jeusite/index.html" style="text-decoration:none;">Echo</a></div>
+            </div>
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html">Principal</a></li>
+                <li><a href="design.html">Design & Médias</a></li>
+                <li><a href="admin.html">Admin</a></li>
+                <li><a href="versions.html">Versions</a></li>
+                <li><a href="doc.html">Echo Docs</a></li>
+                <li><a href="liens.html">Liens</a></li>
+                <li><a href="test.html">Tests</a></li>
+                <li><a href="https://ink-bonobo-1b6.notion.site/ebd//2cd1f3f0470c80f4a04fe4ee7194cee0" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Donner mon avis sur le jeu</a></li>
+                <li><a href="diapo.html" class="btn-login">▶ Diaporama</a></li>
+            </ul>
+        </div>
+    </nav>
+<section class="hero">
+        <video autoplay muted loop playsinline class="background-video">
+            <source src="assets/anim.mp4" type="video/mp4">Votre navigateur ne supporte pas la
+            lecture vidéo.
+        </video>
+        <div class="arriere" id="accueil"></div>
+        <div class="particles" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1><span></span>Echo</h1>
+            <p class="nav-links" style="gap:inherit!important; place-items: center; margin-left: 135px;"><span
+                    style="display: inline-block; text-align: center; margin-top: -30px;">par la&nbsp;<a href="https://florian-croiset.github.io/jeusite/"
+                        style="font-size: 2rem;">Team Nightberry</a></span></p>   
+        </div> 
+    </section>
+<div class="links-container">
+        <!-- Liens éparpillés -->
+        <div class="scattered-links">
+            <a href="#" class="link-card" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-external-link-alt icon"></i>
+                <div class="title" style="color: red;">Ressources externes</div>
+                <div class="description">Accéder aux ressources et outils externes</div>
+            </a>
+
+            <a href="https://github.com/florian-croiset/projetjeu" class="link-card" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-code icon"></i>
+                <div class="title">Code source</div>
+                <div class="description">Consulter le code source du projet</div>
+            </a>
+
+            <a href="https://florian-croiset.github.io/jeusite/index.html#install" class="link-card" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-download icon"></i>
+                <div class="title">Jeu</div>
+                <div class="description">Télécharger le jeu</div>
+            </a>
+
+            <a href="https://florian-croiset.github.io/jeusite/" class="link-card" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-globe icon"></i>
+                <div class="title">Site web</div>
+                <div class="description">Visiter le site web principal d'Echo</div>
+            </a>
+
+            <a href="#" class="link-card" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-file-pdf icon"></i>
+                <div class="title" style="color: red;">Rapport de soutenance</div>
+                <div class="description">Télécharger le rapport complet</div>
+            </a>
+
+            <a href="diapo.html" class="link-card" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-presentation icon"></i>
+                <div class="title">Diaporama</div>
+                <div class="description">Voir la présentation du projet</div>
+            </a>
+        </div>
+    </div>    
+
+    <button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
+        <i class="fa-solid fa-circle-dot"></i>
+    </button>
+    <div class="floating-buttons">
+        <button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+        </button>
+        <button class="floating-btn btn-music" id="musicBtn" title="Lecture/Pause musique">
+            <i class="fa-solid fa-music"></i>
+        </button>
+    </div>
+
+    <audio id="backgroundMusic" src="assets/musique.mp3" loop preload="auto"></audio>
+
+    <div id="secretModal" class="secret-modal">
+        <div class="secret-box">
+            <h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i
+                        class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock"
+                    title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
+            <p>Entrez le code d’accès :</p>
+            <div class="input-paste-container">
+                <input type="password" id="secretInput" placeholder="Code..." />
+                <button id="clearBtn" class="btn-paste" title="Effacer le code"><i
+                        class="fa-solid fa-xmark"></i></button>
+                <button id="pasteBtn" class="btn-paste" title="Coller le code"><i
+                        class="fa-solid fa-paste"></i></button>
+            </div>
+            <div class="secret-actions">
+                <button id="cancelSecret" class="btn-cancel">Annuler</button>
+                <button id="confirmSecret" class="btn-confirm">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-buttons">
+        <button class="floating-btn btn-share-access" id="shareBtn"  data-allow-share="true" title="Partager le site"><!--data-allow...-->
+            <i class="fa-solid fa-share-nodes"></i>
+        </button>
+    </div>
+
+<div id="shareModal" class="secret-modal">
+  <div class="secret-box share-box">
+    <h3><i class="fa-solid fa-share-nodes"></i> Partager Echo</h3>
+    
+    <div class="qr-container">
+      <img id="qrCodeImg" src="" alt="QR Code du site">
+      <p style="font-size: 0.8rem; color: #b0b0b0; margin-top: 10px;">Scannez pour ouvrir sur mobile</p>
+    </div>
+
+    <div class="link-share-area">
+      <input type="text" id="shareLinkInput" readonly>
+      <button id="copyLinkBtn" class="btn-confirm">Copier</button>
+    </div>
+
+    <div class="secret-actions">
+      <button id="closeShare" class="btn-cancel">Fermer</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="js/config/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
+<script type="module" src="js/liens.js"></script>
+    <script>
+        // Génération de particules animées
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles-bg');
+            if (!particlesContainer) return;
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+                particle.style.background = 'var(--debut)';
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = Math.random() * 0.5;
+                particle.style.animation = `float ${5 + Math.random() * 10}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>

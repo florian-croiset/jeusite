@@ -116,12 +116,13 @@
         }
 
         .btn {
-            padding: 12px 24px;
+            /*padding: 12px 24px;*/
+            padding: 8px 12px;
             background: linear-gradient(135deg, var(--cyan), var(--purple));
             border: none;
             border-radius: 8px;
             color: white;
-            font-size: 16px;
+            font-size: 14px; /* 16 */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -400,7 +401,7 @@
             font-size: 42px;
             font-weight: bold;
             color: var(--cyan);
-            margin: 10px 0;
+            /*margin: 10px 0;*/
             text-shadow: 0 0 15px var(--cyan-glow);
             position: relative;
         }
@@ -422,9 +423,10 @@
 
         th,
         td {
-            padding: 15px;
+            padding: 9px; /* 15 */
             text-align: left;
             border-bottom: 1px solid rgba(157, 0, 255, 0.3);
+            font-size: 13px;
         }
 
         th {
@@ -432,7 +434,7 @@
             color: var(--cyan);
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 13px;
+            font-size: 12px;/* 13 */
             letter-spacing: 1px;
         }
 
@@ -533,6 +535,12 @@
             font-size: 20px;
         }
 
+                .version-down h3 {
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 20px;
+        }
         .close-modal {
             cursor: pointer;
             font-size: 28px;
@@ -580,7 +588,7 @@
             align-items: center;
             margin-bottom: 25px;
             flex-wrap: wrap;
-            gap: 15px;
+            /*gap: 15px;*/
         }
 
         .btn-group {
@@ -776,7 +784,7 @@
                     <label>Mot de passe</label>
                     <input type="password" id="password" required>
                 </div>
-                <button type="submit" class="btn" style="width: 100%;">Connexion</button>
+                <button type="submit" class="btn" style="font-size: 16px; padding: 12px 24px; width: 100%;">Connexion</button>
             </form>
         </div>
     </div>
@@ -794,14 +802,14 @@
 
         <div class="dashboard-content">
             <div class="sidebar" id="sidebar">
-                <div class="sidebar-item active" data-section="overview">📊 Vue d'ensemble</div>
-                <div class="sidebar-item" data-section="versions">🎮 Versions du jeu</div>
-                <div class="sidebar-item" data-section="downloads-manage">📥 Téléchargements</div>
-                <div class="sidebar-item" data-section="content">📝 Contenu du site</div>
-                <div class="sidebar-item" data-section="media">🎨 Médias</div>
-                <div class="sidebar-item" data-section="forms">📋 Formulaires</div>
-                <div class="sidebar-item" data-section="notifications">📢 Notifications</div>
-                <div class="sidebar-item" data-section="users">👥 Utilisateurs</div>
+                <div class="sidebar-item active" data-section="overview" style="position: fixed; top: 100px;">📊 Vue d'ensemble</div>
+                <div class="sidebar-item" data-section="versions" style="position: fixed; top: 175px;">🎮 Versions du jeu</div>
+                <div class="sidebar-item" data-section="downloads-manage" style="position: fixed; top: 250px;">📥 Téléchargements</div>
+                <div class="sidebar-item" data-section="content" style="position: fixed; top: 325px;">📝 Contenu du site</div>
+                <div class="sidebar-item" data-section="media" style="position: fixed; top: 400px;">🎨 Médias</div>
+                <div class="sidebar-item" data-section="forms" style="position: fixed; top: 475px;">📋 Formulaires</div>
+                <div class="sidebar-item" data-section="notifications" style="position: fixed; top: 550px;">📢 Notifications</div>
+                <div class="sidebar-item" data-section="users" style="position: fixed; top: 625px;">👥 Utilisateurs</div>
             </div>
 
             <div class="main-content">
@@ -1002,13 +1010,13 @@ tr:has(.status-scheduled) {
 
                 <!-- Versions du jeu -->
                 <div class="section" id="versions">
-                    <div class="stat-card" style="border: 1px solid var(--cyan);">
-                        <div class="stat-icon" style="color: var(--cyan);">
+                    <div class="stat-card" style="border: 1px solid var(--cyan); margin-bottom: 20px;">
+                        <span class="stat-icon" style="color: var(--cyan);">
                             <i class="fa-solid fa-power-off"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Téléchargement Public</h3>
-                            <p>Activer/Désactiver l'accès</p>
+                        </span>
+                        <span class="stat-info">
+                            <span class="version-down">Téléchargement Public</span>
+                            <p style="font-size: 10px;">(Activer/Désactiver l'accès)</p>
 
                             <label class="switch"
                                 style="margin-top: 10px; display: inline-block; position: relative; width: 50px; height: 24px;">
@@ -1018,21 +1026,21 @@ tr:has(.status-scheduled) {
 
                             </label>
                             <span id="switchStatusText" style="font-size: 12px; margin-left: 10px;">Chargement...</span>
-                        </div>
+                        </span>
                     </div>
                     <div id="versions-dashboard"></div>
- <div class="card">
+ <div class="card" style="margin-bottom: 0;">
         <div class="version-header-actions">
             <h2>🎮 Gestion des Versions</h2>
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="openVersionModal()">
-                    <i class="fa-solid fa-plus"></i> Nouvelle Version
+                    <i class="fa-solid fa-plus"></i> Créer une v.
                 </button>
                 <button class="btn btn-success" onclick="publishNextVersion()">
-                    <i class="fa-solid fa-rocket"></i> Publier Prochaine
+                    <i class="fa-solid fa-rocket"></i> Publier Proch.
                 </button>
                 <button class="btn btn-warning" onclick="openCountdownModal()">
-                    <i class="fa-solid fa-clock"></i> Config Countdown
+                    <i class="fa-solid fa-clock"></i> Countdown
                 </button>
                 <!-- NOUVEAU : Bouton Archives -->
                 <button class="btn" style="background: var(--warning);" onclick="showArchives()">

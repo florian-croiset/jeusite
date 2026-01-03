@@ -1,87 +1,116 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Supabase - Echo</title>
-    <link rel="stylesheet" href="css/database-styles.css">
+    <title>🔬 Echo Test -Database & Files</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
+        /* --- VARIABLES & RESET --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --debut: #00d0c6;
+            --fin: #005867;
+            --finn: #8735b9;
+            --bg-dark: #0a0a0f;
+            --success: #00ff88;
+            --error: #ff0055;
+            --warning: #ffaa00;
+            --info: #00d0c6;
+        }
+
         body {
             font-family: 'Courier New', monospace;
-            background: #0a0a0f;
-            color: #00ffff;
+            background: var(--bg-dark);
+            color: var(--debut);
             padding: 20px;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
+        /* --- TITRES & HEADER --- */
         h1 {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 36px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            font-size: clamp(24px, 5vw, 48px);
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite;
         }
-
-        .test-section {
-            background: #1a1a2e;
-            border: 2px solid #00ffff;
-            border-radius: 8px;
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(0, 208, 198, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(135, 53, 185, 0.8); }
+        }
+        .header-info {
+            background: rgba(0, 208, 198, 0.1);
+            border: 2px solid var(--debut);
+            border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .test-section h2 {
-            color: #9d00ff;
-            margin-bottom: 15px;
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+.info-item i {
+            font-size: 20px;
+            color: var(--finn);
         }
 
-        .test-result {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
+        .info-item .label {
+            color: var(--debut);
+        }
+
+        .info-item .value {
+            color: var(--success);
             font-weight: bold;
         }
-
-        .test-result.success {
-            background: rgba(0, 255, 136, 0.2);
-            border-left: 4px solid #00ff88;
-            color: #00ff88;
+        .liengit {
+            color: var(--success);
+            transition: color 0.3s ease;
+            text-decoration: none;
         }
 
-        .test-result.error {
-            background: rgba(255, 0, 85, 0.2);
-            border-left: 4px solid #ff0055;
-            color: #ff0055;
+        .liengit:hover {
+            color: #8735b9 !important;
         }
 
-        .test-result.pending {
-            background: rgba(255, 255, 0, 0.2);
-            border-left: 4px solid #ffff00;
-            color: #ffff00;
+        /* --- CONTROLES --- */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         button {
-            background: linear-gradient(135deg, #00ffff, #9d00ff);
+            background: linear-gradient(135deg, var(--debut), var(--finn));
             border: none;
             padding: 12px 24px;
             color: #fff;
-            font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            margin: 5px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
 
         button:hover {
@@ -89,363 +118,759 @@
             box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
         }
 
-        pre {
-            background: #0a0a0f;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin: 10px 0;
-            border: 1px solid #9d00ff;
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .config-info {
-            background: rgba(157, 0, 255, 0.1);
-            padding: 15px;
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 208, 198, 0.2);
             border-radius: 4px;
-            margin: 10px 0;
+            overflow: hidden;
+            margin: 15px 0;
         }
 
-        .loading {
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--debut), var(--finn));
+            transition: width 0.3s ease;
+        }
+
+        /* --- GRILLE PRINCIPALE (REMISE COMME AVANT) --- */
+
+
+        /* Fixer 3 colonnes strictes sans mélange */
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1.5fr;
+            /* Gauche / Centre / Droite */
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* Forcer l'empilement vertical dans chaque colonne */
+        .test-grid>div {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .test-section {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid var(--debut);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        /* Modifier la section pour qu'elle s'adapte aux colonnes */
+        .test-section {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(0, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #00ffff;
-            animation: spin 1s ease-in-out infinite;
+            width: 100%;
+            break-inside: avoid;
+            margin-bottom: 20px;
+            /* ... garder le reste (background, border) ... */
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .test-section h2 {
+            color: var(--finn);
+            margin-bottom: 15px;
+            font-size: 18px;
         }
+
+        /* --- CONTENU DES TESTS (LA DEMANDE 2 PAR LIGNE) --- */
+
+        /* Tables et Fichiers : STRICTEMENT 2 COLONNES */
+        #main-tables-tests,
+        #stats-tables-tests,
+        #github-files-tests {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            /* Force le 50% / 50% */
+            gap: 10px;
+        }
+
+        /* Configuration et Info Data : STRICTEMENT 1 COLONNE */
+        #config-tests,
+        #db-data-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* --- STYLE DES RESULTATS INDIVIDUELS --- */
+        .test-result {
+            /* margin: 0 !important; Pas de marge externe */
+            /*padding: 2px 10px;*/
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(26, 26, 46, 0.4);
+            border: 1px solid rgba(0, 208, 198, 0.1);
+            /*min-height: 50px;*/
+        }
+
+        .test-result {
+            margin: 0 0 8px 0 !important;
+            /* Marge uniquement en bas */
+            min-height: 45px;
+            height: auto;
+        }
+
+        .test-info-content {
+            /*display: flex;
+        flex-direction: column;
+        justify-content: center;*/
+            overflow: hidden;
+            /* Empêche de casser la largeur */
+        }
+
+.test-info-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap; /* Ajoute ceci pour que le message descende si besoin */
+    gap: 5px;
+}
+
+        .test-name {
+            font-weight: bold;
+            font-size: 13px;
+            color: #fff;
+            /*white-space: nowrap;*/
+            word-break: break-all;
+        }
+
+        .test-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 13px;
+        }
+
+        .test-msg {
+            margin-left: 10px;
+            margin-top: 0 !important;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .test-result {
+            min-height: 45px;
+            height: auto;
+            padding: 4px 8px;
+            margin: 0 !important;
+        }
+
+        .test-result.success {
+            border-left: 4px solid var(--success);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .test-result.error {
+            border-left: 4px solid var(--error);
+            background: rgba(255, 0, 85, 0.05);
+        }
+
+        .test-result.info {
+            border-left: 4px solid var(--info);
+            background: rgba(0, 208, 198, 0.05);
+        }
+
+        .badge {
+            margin-left: 6px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 9px;
+            background: rgba(255, 170, 0, 0.3);
+            color: var(--warning);
+        }
+
+                .badge.unrestricted {
+            background: rgba(255, 170, 0, 0.3);
+            color: var(--warning);
+        }
+
+        .badge.restricted {
+            background: rgba(0, 255, 136, 0.3);
+            color: var(--success);
+        }
+
+        /* Stats et Console */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(135, 53, 185, 0.1);
+            border: 1px solid var(--finn);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--debut);
+        }
+                .stat-card .label {
+            font-size: 12px;
+            color: rgba(0, 208, 198, 0.7);
+            text-transform: uppercase;
+        }
+
+        .console-log {
+            margin-top: 30px;
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .console-log pre {
+            max-height: 200px;
+            overflow-y: auto;
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        /* MOBILE : Tout en 1 colonne si écran < 768px */
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #main-tables-tests,
+            #stats-tables-tests,
+            #github-files-tests {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 1200px) {
+
+            /* La première colonne (Config) sera naturellement plus étroite */
+            .test-grid {
+                column-count: 3;
+            }
+        }
+
+
+        
+        pre {
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 12px;
+            border: 1px solid var(--debut);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>🔍 Test Supabase Echo</h1>
+        <h1>🔬 Echo DB & Files - Test Complet</h1>
 
-        <!-- Configuration -->
-        <div class="test-section">
-            <h2>📝 Configuration</h2>
-            <div class="config-info">
-                <p><strong>URL Supabase:</strong> <span id="config-url">Non configuré</span></p>
-                <p><strong>Clé API:</strong> <span id="config-key">Non configuré</span></p>
+        <!-- Informations header -->
+        <div class="header-info">
+            <div class="info-item">
+                <i class="fas fa-database"></i>
+                <span class="label">Supabase:</span>
+                <span class="value" id="supabase-status">...</span>
+            </div>
+            <div class="info-item">
+                <i class="fab fa-github"></i>
+                <span class="label">GitHub:</span>
+                <span class="value"><a class="liengit"
+                        href="https://github.com/florian-croiset/jeusite">jeusite</a></span>
+            </div>
+            <style>
+                .liengit {
+                    color: var(--success);
+                    transition: color 0.2s ease-in-out;
+                }
+
+                .liengit:hover {
+                    color: purple !important;
+                }
+            </style>
+            <div class="info-item">
+                <i class="fas fa-table"></i>
+                <span class="label">Tables:</span>
+                <span class="value" id="tables-count">0/20</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-file"></i>
+                <span class="label">Fichiers testés:</span>
+                <span class="value" id="files-tested">0</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <span class="label">Durée:</span>
+                <span class="value" id="test-duration">0s</span>
             </div>
         </div>
 
-        <!-- Tests automatiques -->
-        <div class="test-section">
-            <h2>🧪 Tests automatiques</h2>
-            <button onclick="runAllTests()">▶️ Lancer tous les tests</button>
+        <!-- Contrôles -->
+        <div class="controls">
+            <button onclick="runAllTests()" id="btn-run-all">
+                <i class="fas fa-play"></i> Lancer tous les tests
+            </button>
+            <button onclick="testDatabase()" id="btn-db">
+                <i class="fas fa-database"></i> Tester base de données
+            </button>
+            <button onclick="testGitHubFiles()" id="btn-github">
+                <i class="fab fa-github"></i> Tester fichiers GitHub
+            </button>
+            <button onclick="clearLogs()">
+                <i class="fas fa-trash"></i> Effacer les logs
+            </button>
+        </div>
+
+        <!-- Barre de progression -->
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+        </div>
+
+        <!-- Grille de tests -->
+        <div class="test-grid">
+            <!-- Configuration -->
+            <div>
+                <div class="test-section">
+                    <h2><i class="fas fa-cog"></i> Configuration</h2>
+                    <div id="config-tests"></div>
+                </div>
+                <!-- Fichiers GitHub -->
+                <div class="test-section">
+                    <h2><i class="fab fa-github"></i> Fichiers GitHub</h2>
+                    <div id="github-files-tests"></div>
+                </div>
+
+
+                
+            </div>
+                        <div>
+                <!-- Tables principales -->
+                <div class="test-section">
+                    <h2><i class="fas fa-table"></i> Tables principales</h2>
+                    <div id="main-tables-tests"></div>
+                </div>
+<!-- Statistiques -->
+
+                <div class="test-section">
+                    <h2><i class="fas fa-chart-pie"></i> Statistiques</h2>
+                    <div class="stats-grid" id="stats-grid">
+                        <div class="stat-card">
+                            <div class="label">Tests réussis</div>
+                            <div class="number" id="stat-success">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">Tests échoués</div>
+                            <div class="number" id="stat-error">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">Taux réussite</div>
+                            <div class="number" id="stat-rate">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div><div>
+                            <!-- Tables de stats -->
+                <div class="test-section">
+                    <h2><i class="fas fa-chart-line"></i> Tables statistiques</h2>
+                    <div id="stats-tables-tests"></div>
+                </div>
             
-            <div id="test-1" class="test-result pending">
-                <span class="loading"></span> Test 1 : SDK Supabase chargé
-            </div>
-            <div id="test-2" class="test-result pending">
-                <span class="loading"></span> Test 2 : Configuration valide
-            </div>
-            <div id="test-3" class="test-result pending">
-                <span class="loading"></span> Test 3 : EchoDB initialisé
-            </div>
-            <div id="test-4" class="test-result pending">
-                <span class="loading"></span> Test 4 : Connexion à la base
-            </div>
-            <div id="test-5" class="test-result pending">
-                <span class="loading"></span> Test 5 : Tables créées
-            </div>
-        </div>
 
-        <!-- Tests manuels -->
-        <div class="test-section">
-            <h2>🎮 Tests manuels</h2>
-            <button onclick="testGetContent()">Récupérer contenu</button>
-            <button onclick="testGetVersions()">Récupérer versions</button>
-            <button onclick="testGetCountdown()">Récupérer countdown</button>
-            <button onclick="testAuth()">Tester auth</button>
-            
-            <div id="manual-results"></div>
-        </div>
+                <!-- Données DB -->
+                <div class="test-section">
+                    <h2><i class="fas fa-database"></i> Données détectées</h2>
+                    <div id="db-data-info"></div>
+                </div>
+            </div>
 
-        <!-- Logs console -->
-        <div class="test-section">
-            <h2>📋 Logs</h2>
-            <pre id="console-log">En attente des tests...</pre>
-        </div>
     </div>
-
-
-<div id="feedback-container"></div>
-    <!-- 1. Supabase SDK -->
+        <!-- Console de logs -->
+        <div class="console-log">
+            <h2><i class="fas fa-terminal"></i> Console de logs</h2>
+            <pre id="console-output">En attente du lancement des tests...</pre>
+        </div>
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- 2. Configuration Supabase -->
     <script type="module" src="js/config/supabase.js"></script>
-
-    <!-- 3. Intégration database complète -->
     <script type="module" src="js/database.js"></script>
-    <script type="module" src="js/database-complete.js"></script>
 
     <script>
-        // Fonction de log personnalisée
+        // Variables globales
+        let startTime;
+        let testResults = { success: 0, error: 0, total: 0 };
+        let currentProgress = 0;
+
+        // Tables à tester
+        const TABLES = {
+            main: ['countdown', 'download_packs', 'downloads', 'form_responses', 'forms',
+                'game_versions', 'media', 'news', 'notifications', 'profiles',
+                'role_changes', 'site_content'],
+            stats: ['download_settings', 'download_stats', 'downloads_by_version',
+                'recent_activity', 'stats_overview', 'user_permissions', 'version_stats']
+        };
+
+        // Fichiers GitHub à tester
+        const GITHUB_FILES = [
+            'https://florian-croiset.github.io/jeusite/assets/anim.mp4',
+            'https://florian-croiset.github.io/jeusite/assets/favicon.ico',
+            'https://florian-croiset.github.io/jeusite/css/style.css',
+            'https://florian-croiset.github.io/jeusite/executable/Echo_TeamNightberry_v1.exe'
+        ];
+
+        // Logging
         function log(message, type = 'info') {
-            const logElement = document.getElementById('console-log');
+            const output = document.getElementById('console-output');
             const timestamp = new Date().toLocaleTimeString();
-            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
-            logElement.textContent += `\n[${timestamp}] ${prefix} ${message}`;
-            logElement.scrollTop = logElement.scrollHeight;
+            const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
+            const icon = icons[type] || 'ℹ️';
+
+            output.textContent += `\n[${timestamp}] ${icon} ${message}`;
+            output.scrollTop = output.scrollHeight;
         }
 
-        // Afficher la configuration
-        function displayConfig() {
-            try {
-                const urlElement = document.getElementById('config-url');
-                const keyElement = document.getElementById('config-key');
-                
-                if (window.SUPABASE_URL) {
-                    urlElement.textContent = window.SUPABASE_URL;
-                    urlElement.style.color = '#00ff88';
-                }
-                
-                if (window.SUPABASE_ANON_KEY) {
-                    const maskedKey = window.SUPABASE_ANON_KEY.substring(0, 20) + '...';
-                    keyElement.textContent = maskedKey;
-                    keyElement.style.color = '#00ff88';
-                }
-            } catch (e) {
-                log('Erreur affichage config: ' + e.message, 'error');
+        function clearLogs() {
+            document.getElementById('console-output').textContent = 'Logs effacés. Prêt pour de nouveaux tests.';
+            log('Logs effacés', 'info');
+        }
+
+        // Mise à jour de la progression
+        function updateProgress(percent) {
+            currentProgress = percent;
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        function displayTestResult(containerId, name, status, message = '', badge = null) {
+            const container = document.getElementById(containerId);
+            const resultClass = status === true ? 'success' : (status === false ? 'error' : 'info');
+            const icon = status === true ? '✅' : (status === false ? '❌' : 'ℹ️');
+
+            // Calcul pour savoir si on doit passer en pleine largeur
+            const isLong = (name.length + (message ? message.toString().length : 0)) > 35;
+            const widthClass = isLong ? 'full-width' : '';
+
+            const badgeHtml = badge ? `<span class="badge ${badge}">${badge.toUpperCase()}</span>` : '';
+
+            const html = `
+        <div class="test-result ${resultClass} ${widthClass}">
+            <div style="font-size: 17pxpx; flex-shrink: 0;">${icon}</div>
+            <span class="test-info-content" style="flex: 1; display: flex; justify-content: space-between; flex-wrap: wrap;">
+                <span class="test-name" style="word-break: break-word; min-width: 120px;">${name}${badgeHtml}</span>
+                ${message ? `<span class="test-msg" style="margin-left: auto;">${message}</span>` : ''}
+            </span>
+        </div>
+    `;
+
+
+            container.insertAdjacentHTML('beforeend', html);
+
+            // Ne pas compter les "info" dans les stats de succès/échec
+            if (status !== 'info') {
+                testResults.total++;
+                if (status) testResults.success++;
+                else testResults.error++;
+                updateStats();
             }
         }
 
-        // Test 1 : SDK Supabase
-        async function test1() {
-            const element = document.getElementById('test-1');
-            try {
-                if (typeof window.supabase !== 'undefined') {
-                    element.className = 'test-result success';
-                    element.textContent = '✅ Test 1 : SDK Supabase chargé';
-                    log('SDK Supabase détecté', 'success');
-                    return true;
-                } else {
-                    throw new Error('window.supabase non défini');
-                }
-            } catch (e) {
-                element.className = 'test-result error';
-                element.textContent = '❌ Test 1 : SDK Supabase NON chargé';
-                log('Erreur: ' + e.message, 'error');
-                return false;
-            }
+        // Mise à jour des statistiques
+        function updateStats() {
+            document.getElementById('stat-success').textContent = testResults.success;
+            document.getElementById('stat-error').textContent = testResults.error;
+            const rate = testResults.total > 0
+                ? Math.round((testResults.success / testResults.total) * 100)
+                : 0;
+            document.getElementById('stat-rate').textContent = rate + '%';
         }
 
-        // Test 2 : Configuration
-        async function test2() {
-            const element = document.getElementById('test-2');
-            try {
-                if (window.EchoSupabase) {
-                    element.className = 'test-result success';
-                    element.textContent = '✅ Test 2 : Configuration valide';
-                    log('Client Supabase initialisé', 'success');
-                    return true;
-                } else {
-                    throw new Error('EchoSupabase non initialisé');
-                }
-            } catch (e) {
-                element.className = 'test-result error';
-                element.textContent = '❌ Test 2 : Configuration invalide - ' + e.message;
-                log('Erreur config: ' + e.message, 'error');
-                return false;
+        // Test 1: Configuration
+        async function testConfiguration() {
+            const container = document.getElementById('config-tests');
+            container.innerHTML = '';
+
+            log('Test de la configuration...');
+
+            // SDK Supabase
+            const hasSupabase = typeof window.supabase !== 'undefined';
+            displayTestResult('config-tests', 'SDK Supabase', hasSupabase);
+            log(`SDK Supabase: ${hasSupabase ? 'OK' : 'MANQUANT'}`, hasSupabase ? 'success' : 'error');
+
+            // EchoDB
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const hasEchoDB = typeof window.EchoDB !== 'undefined';
+            displayTestResult('config-tests', 'EchoDB initialisé', hasEchoDB);
+            log(`EchoDB: ${hasEchoDB ? 'OK' : 'MANQUANT'}`, hasEchoDB ? 'success' : 'error');
+
+            // Modules EchoDB
+            if (hasEchoDB) {
+                const modules = ['Auth', 'Content', 'Media', 'GameVersions', 'Countdown', 'Forms', 'News'];
+                let allModules = true;
+                modules.forEach(mod => {
+                    if (!window.EchoDB[mod]) allModules = false;
+                });
+                displayTestResult('config-tests', 'Modules EchoDB', allModules, modules.length + ' modules');
+                log(`Modules: ${allModules ? 'TOUS OK' : 'INCOMPLET'}`, allModules ? 'success' : 'error');
             }
+
+            // Status
+            document.getElementById('supabase-status').textContent = hasSupabase && hasEchoDB ? 'Connecté ✅' : 'Erreur ❌';
+
+            return hasSupabase && hasEchoDB;
         }
 
-        // Test 3 : EchoDB
-        async function test3() {
-            const element = document.getElementById('test-3');
-            try {
-                if (window.EchoDB && window.EchoDB.Auth && window.EchoDB.Content) {
-                    element.className = 'test-result success';
-                    element.textContent = '✅ Test 3 : EchoDB initialisé avec tous les modules';
-                    log('Modules disponibles: ' + Object.keys(window.EchoDB).join(', '), 'success');
-                    return true;
-                } else {
-                    throw new Error('EchoDB incomplet ou non défini');
-                }
-            } catch (e) {
-                element.className = 'test-result error';
-                element.textContent = '❌ Test 3 : EchoDB NON initialisé - ' + e.message;
-                log('Erreur EchoDB: ' + e.message, 'error');
-                return false;
-            }
-        }
+        // Test 2: Tables principales
+        async function testMainTables() {
+            const container = document.getElementById('main-tables-tests');
+            container.innerHTML = '';
 
-        // Test 4 : Connexion DB
-        async function test4() {
-            const element = document.getElementById('test-4');
-            try {
-                const { error } = await window.EchoDB.supabase
-                    .from('profiles')
-                    .select('id', { count: 'exact', head: true });
-                
-                if (!error) {
-                    element.className = 'test-result success';
-                    element.textContent = '✅ Test 4 : Connexion à la base réussie';
-                    log('Base de données accessible', 'success');
-                    return true;
-                } else {
-                    throw error;
-                }
-            } catch (e) {
-                element.className = 'test-result error';
-                element.textContent = '❌ Test 4 : Erreur connexion - ' + e.message;
-                log('Erreur DB: ' + e.message, 'error');
-                return false;
-            }
-        }
+            log('Test des tables principales...');
 
-        // Test 5 : Tables
-        async function test5() {
-            const element = document.getElementById('test-5');
-            try {
-                const tables = ['profiles', 'site_content', 'media', 'game_versions', 'forms', 'countdown', 'news'];
-                const results = [];
-                
-                for (const table of tables) {
-                    const { error } = await window.EchoDB.supabase
+            let successCount = 0; // Nouveau compteur spécifique
+
+            for (const table of TABLES.main) {
+                try {
+                    const { data, error, count } = await window.EchoDB.supabase
                         .from(table)
-                        .select('id', { head: true });
-                    
-                    if (error) {
-                        results.push(`❌ ${table}`);
-                        log(`Table ${table} : ERREUR`, 'error');
-                    } else {
-                        results.push(`✅ ${table}`);
-                        log(`Table ${table} : OK`, 'success');
-                    }
+                        .select('*', { count: 'exact', head: false })
+                        .limit(1);
+
+                    const success = !error;
+                    if (success) successCount++; // Incrémenter si succès
+
+                    // --> const message = success ? `${count || 0} entrées` : error.message.substring(0, 30);
+                    const message = success ? `${count || 0}` : error.message.substring(0, 30);
+                    displayTestResult('main-tables-tests', table, success, message);
+                    log(`Table ${table}: ${success ? 'OK' : 'ERREUR'}`, success ? 'success' : 'error');
+
+                } catch (e) {
+                    displayTestResult('main-tables-tests', table, false, e.message.substring(0, 30));
+                    log(`Table ${table}: ERREUR - ${e.message}`, 'error');
                 }
-                
-                const allOk = results.every(r => r.startsWith('✅'));
-                
-                if (allOk) {
-                    element.className = 'test-result success';
-                    element.textContent = '✅ Test 5 : Toutes les tables créées (' + tables.length + ')';
-                    return true;
-                } else {
-                    element.className = 'test-result error';
-                    element.textContent = '⚠️ Test 5 : Certaines tables manquantes';
-                    element.innerHTML += '<br><small>' + results.join(' | ') + '</small>';
-                    return false;
-                }
-            } catch (e) {
-                element.className = 'test-result error';
-                element.textContent = '❌ Test 5 : Erreur vérification tables - ' + e.message;
-                log('Erreur tables: ' + e.message, 'error');
-                return false;
+                await new Promise(r => setTimeout(r, 100));
             }
+            return successCount; // On retourne le nombre de tables réussies
+        }
+
+        // Test 3: Tables de stats
+        async function testStatsTables() {
+            const container = document.getElementById('stats-tables-tests');
+            container.innerHTML = '';
+
+            log('Test des tables statistiques...');
+
+            let successCount = 0; // Nouveau compteur spécifique
+
+            for (const table of TABLES.stats) {
+                try {
+                    const { error, count } = await window.EchoDB.supabase
+                        .from(table)
+                        .select('*', { count: 'exact', head: true });
+
+                    const success = !error;
+                    if (success) successCount++; // Incrémenter si succès
+
+                    // --> const message = success ? `${count || 0} entrées` : '';
+                    const message = success ? `${count || 0}` : '';
+                    const badge = table.includes('unrestricted') || ['download_settings', 'downloads_by_version', 'recent_activity', 'stats_overview', 'user_permissions', 'version_stats'].includes(table) ? '🔒' : '';
+                    // 'unrestricted' : null
+
+                    displayTestResult('stats-tables-tests', table, success, message, badge);
+                    log(`Table ${table}: ${success ? 'OK' : 'ERREUR'}`, success ? 'success' : 'error');
+                } catch (e) {
+                    displayTestResult('stats-tables-tests', table, false, e.message.substring(0, 30), 'unrestricted');
+                    log(`Table ${table}: ERREUR - ${e.message}`, 'error');
+                }
+                await new Promise(r => setTimeout(r, 100));
+            }
+            return successCount; // On retourne le nombre de tables réussies
+        }
+
+        // Test 4: Fichiers GitHub
+        async function testGitHubFiles() {
+            const container = document.getElementById('github-files-tests');
+            container.innerHTML = '';
+
+            log('Test des fichiers GitHub...');
+
+            let testedFiles = 0;
+            for (const fileUrl of GITHUB_FILES) {
+                const fileName = fileUrl.split('/').pop();
+                try {
+                    const response = await fetch(fileUrl, { method: 'HEAD' });
+                    const success = response.ok;
+                    const size = response.headers.get('content-length');
+                    const message = success ? `${(size / 1024).toFixed(2)} KB` : `${response.status}`;
+
+                    displayTestResult('github-files-tests', fileName, success, message);
+                    log(`Fichier ${fileName}: ${success ? 'OK' : 'ERREUR ' + response.status}`, success ? 'success' : 'error');
+                    testedFiles++;
+                } catch (e) {
+                    displayTestResult('github-files-tests', fileName, false, 'Inaccessible');
+                    log(`Fichier ${fileName}: ERREUR - ${e.message}`, 'error');
+                }
+                await new Promise(r => setTimeout(r, 200));
+            }
+
+            document.getElementById('files-tested').textContent = testedFiles;
+        }
+
+        async function testDatabaseData() {
+            const container = document.getElementById('db-data-info');
+            container.innerHTML = '';
+            log('Récupération des données...');
+
+            try {
+                const countdown = await window.EchoDB.Countdown.getActive();
+                displayTestResult('db-data-info', 'Countdown', 'info', countdown ? countdown.event_name : 'Aucune version prévue.');
+
+                const version = await window.EchoDB.GameVersions.getLatest();
+                displayTestResult('db-data-info', 'Version', 'info', version ? version.version : 'Inconnue');
+
+                const { count: profils } = await window.EchoDB.supabase.from('profiles').select('*', { count: 'exact', head: true });
+                displayTestResult('db-data-info', 'Profils', 'info', `${profils || 0} utilisateurs`);
+
+                const { count: medias } = await window.EchoDB.supabase.from('media').select('*', { count: 'exact', head: true });
+                displayTestResult('db-data-info', 'Médias', 'info', `${medias || 0} fichiers`);
+
+                log('Données récupérées avec succès', 'success');
+            } catch (e) {
+                displayTestResult('db-data-info', 'Erreur critique', false, e.message);
+            }
+        }
+
+        // Test complet de la base de données
+        async function testDatabase() {
+            log('=== DÉBUT TEST DATABASE ===');
+            testResults = { success: 0, error: 0, total: 0 };
+
+            document.getElementById('btn-db').disabled = true;
+
+            await testConfiguration();
+            updateProgress(25);
+
+            // On récupère les succès spécifiques
+            const mainSuccess = await testMainTables();
+            updateProgress(50);
+
+            const statsSuccess = await testStatsTables();
+            updateProgress(75);
+
+            await testDatabaseData();
+            updateProgress(100);
+
+            const totalTables = TABLES.main.length + TABLES.stats.length;
+            const totalSuccess = mainSuccess + statsSuccess;
+
+            // Affichage correct : Succès Tables / Total Tables
+            document.getElementById('tables-count').textContent = `${totalSuccess}/${totalTables}`;
+
+            document.getElementById('btn-db').disabled = false;
+            log('=== FIN TEST DATABASE ===', 'success');
         }
 
         // Lancer tous les tests
         async function runAllTests() {
-            log('=== DÉBUT DES TESTS ===');
-            document.getElementById('console-log').textContent = '';
-            
-            const results = [];
-            results.push(await test1());
-            await new Promise(r => setTimeout(r, 500));
-            
-            if (results[0]) {
-                results.push(await test2());
-                await new Promise(r => setTimeout(r, 500));
-            }
-            
-            if (results[1]) {
-                results.push(await test3());
-                await new Promise(r => setTimeout(r, 500));
-            }
-            
-            if (results[2]) {
-                results.push(await test4());
-                await new Promise(r => setTimeout(r, 500));
-            }
-            
-            if (results[3]) {
-                results.push(await test5());
-            }
-            
-            const allPassed = results.every(r => r === true);
-            const passedCount = results.filter(r => r === true).length;
-            
-            log('=== RÉSULTAT ===');
-            log(`Tests réussis : ${passedCount}/${results.length}`, allPassed ? 'success' : 'error');
-            
-            if (allPassed) {
-                log('🎉 Tous les tests sont passés ! Votre configuration est correcte.', 'success');
+            log('');
+            log('🚀 DÉBUT DES TESTS COMPLETS');
+            log('============================');
+
+            startTime = Date.now();
+            testResults = { success: 0, error: 0, total: 0 };
+
+            // Désactiver les boutons
+            document.getElementById('btn-run-all').disabled = true;
+            document.getElementById('btn-db').disabled = true;
+            document.getElementById('btn-github').disabled = true;
+
+            // Tests
+            await testConfiguration();
+            updateProgress(15);
+
+            // On récupère les résultats spécifiques aux tables
+            const mainSuccess = await testMainTables();
+            updateProgress(40);
+
+            const statsSuccess = await testStatsTables();
+            updateProgress(65);
+
+            await testDatabaseData();
+            updateProgress(80);
+
+            await testGitHubFiles();
+            updateProgress(100);
+
+            // Durée
+            const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+            document.getElementById('test-duration').textContent = duration + 's';
+
+            // Résultat final CORRIGÉ pour les tables uniquement
+            const totalTables = TABLES.main.length + TABLES.stats.length;
+            const totalTableSuccess = mainSuccess + statsSuccess;
+            document.getElementById('tables-count').textContent = `${totalTableSuccess}/${totalTables}`;
+
+            log('============================');
+            log(`✅ Tests terminés en ${duration}s`);
+            // Le taux global reste calculé sur l'ensemble des tests (config + tables + fichiers)
+            log(`📊 Réussite globale: ${testResults.success}/${testResults.total} (${Math.round((testResults.success / testResults.total) * 100)}%)`);
+
+            if (testResults.error === 0) {
+                log('🎉 TOUS LES TESTS SONT PASSÉS !', 'success');
             } else {
-                log('⚠️ Certains tests ont échoué. Consultez le guide de dépannage.', 'error');
+                log(`⚠️ ${testResults.error} test(s) échoué(s)`, 'warning');
             }
+
+            // Réactiver les boutons
+            document.getElementById('btn-run-all').disabled = false;
+            document.getElementById('btn-db').disabled = false;
+            document.getElementById('btn-github').disabled = false;
         }
 
-        // Tests manuels
-        async function testGetContent() {
-            const resultsDiv = document.getElementById('manual-results');
-            try {
-                log('Récupération du contenu...');
-                const content = await window.EchoDB.Content.getSection('hero');
-                resultsDiv.innerHTML = '<pre>' + JSON.stringify(content, null, 2) + '</pre>';
-                log('Contenu récupéré : ' + content.length + ' éléments', 'success');
-            } catch (e) {
-                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
-                log('Erreur récupération contenu: ' + e.message, 'error');
-            }
-        }
-
-        async function testGetVersions() {
-            const resultsDiv = document.getElementById('manual-results');
-            try {
-                log('Récupération des versions...');
-                const versions = await window.EchoDB.GameVersions.getAll();
-                resultsDiv.innerHTML = '<pre>' + JSON.stringify(versions, null, 2) + '</pre>';
-                log('Versions récupérées : ' + versions.length, 'success');
-            } catch (e) {
-                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
-                log('Erreur récupération versions: ' + e.message, 'error');
-            }
-        }
-
-        async function testGetCountdown() {
-            const resultsDiv = document.getElementById('manual-results');
-            try {
-                log('Récupération du countdown...');
-                const countdown = await window.EchoDB.Countdown.getActive();
-                resultsDiv.innerHTML = '<pre>' + JSON.stringify(countdown, null, 2) + '</pre>';
-                log('Countdown récupéré', 'success');
-            } catch (e) {
-                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
-                log('Erreur récupération countdown: ' + e.message, 'error');
-            }
-        }
-
-        async function testAuth() {
-            const resultsDiv = document.getElementById('manual-results');
-            try {
-                log('Test authentification...');
-                const user = await window.EchoDB.Auth.getCurrentUser();
-                if (user) {
-                    resultsDiv.innerHTML = '<div class="test-result success">Utilisateur connecté : ' + user.email + '</div>';
-                    log('Utilisateur connecté : ' + user.email, 'success');
+        // Attendre EchoDB
+        function waitForEchoDB() {
+            return new Promise((resolve) => {
+                if (window.EchoDB) {
+                    resolve();
                 } else {
-                    resultsDiv.innerHTML = '<div class="test-result pending">Aucun utilisateur connecté</div>';
-                    log('Aucun utilisateur connecté (normal si pas encore de compte)');
+                    const checkInterval = setInterval(() => {
+                        if (window.EchoDB) {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
                 }
-            } catch (e) {
-                resultsDiv.innerHTML = '<div class="test-result error">Erreur: ' + e.message + '</div>';
-                log('Erreur auth: ' + e.message, 'error');
-            }
+            });
         }
 
-        // Initialisation au chargement
-        window.addEventListener('load', () => {
-            displayConfig();
+        // Initialisation
+        window.addEventListener('load', async () => {
             log('Page de test chargée');
-            log('Attendez quelques secondes puis cliquez sur "Lancer tous les tests"');
-            
+            log('Attente de l\'initialisation EchoDB...');
+
+            await waitForEchoDB();
+            log('EchoDB détecté !', 'success');
+
             // Auto-lancement après 2 secondes
             setTimeout(() => {
                 runAllTests();
@@ -453,4 +878,5 @@
         });
     </script>
 </body>
+
 </html>
