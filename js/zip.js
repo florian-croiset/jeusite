@@ -28,8 +28,22 @@ const assetFiles = [
 // ECHO - KIT COMPLET CHARTE GRAPHIQUE - FONCTION COMPLÈTE
 // Par Team Nightberry
 // ═══════════════════════════════════════════════════════════════════
+let siteVersion = '2.0'; // Version par défaut
+try {
+    const { data } = await window.EchoDB.supabase
+        .from('site_settings')
+        .select('setting_value')
+        .eq('setting_key', 'site_version')
+        .single();
 
-window.downloadCharter = async function() {
+    if (data) siteVersion = data.setting_value;
+} catch (error) {
+    console.warn('Version par défaut utilisée');
+}
+
+const currentYear = new Date().getFullYear();
+
+window.downloadCharter = async function () {
     try {
         if (typeof JSZip === 'undefined') {
             alert('Erreur : Bibliothèque JSZip non chargée. Veuillez actualiser la page.');
@@ -37,7 +51,7 @@ window.downloadCharter = async function() {
         }
 
         const zip = new JSZip();
-        
+
         // Message de chargement
         const progressMsg = document.createElement('div');
         progressMsg.style.cssText = `
@@ -63,7 +77,7 @@ window.downloadCharter = async function() {
         // ═══════════════════════════════════════════════════════════════
         updateProgress('📦 Chargement des assets...');
         const assetsFolder = zip.folder("assets");
-        
+
         for (const filePath of assetFiles) {
             try {
                 const response = await fetch(filePath);
@@ -87,7 +101,7 @@ window.downloadCharter = async function() {
         const readme = `╔════════════════════════════════════════════════════════════════════╗
 ║                 ECHO - KIT CHARTE GRAPHIQUE                        ║
 ║                    Par Team Nightberry                             ║
-║                      Version 2.1 Beta                              ║
+║                      Version ${siteVersion.padEnd(20)}                              ║
 ╚════════════════════════════════════════════════════════════════════╝
 
 Bienvenue dans le kit complet de la charte graphique Echo !
@@ -148,8 +162,8 @@ Team Nightberry
 Site web: https://florian-croiset.github.io/jeusite/
 GitHub: [Votre GitHub]
 
-© 2025 Team Nightberry - Tous droits réservés
-Version: 1.5 Beta
+© ${currentYear} Team Nightberry - Tous droits réservés
+Version ${siteVersion}
 Date de génération: ${new Date().toLocaleDateString('fr-FR')}
 `;
         zip.file("README.txt", readme);
@@ -157,7 +171,7 @@ Date de génération: ${new Date().toLocaleDateString('fr-FR')}
         // couleurs.css
         const colorsCss = `/* ═══════════════════════════════════════════════════════════════════
    ECHO - Variables CSS Charte Graphique
-   Par Team Nightberry - Version 2.1 Beta
+   Par Team Nightberry - Version ${siteVersion}
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -1764,7 +1778,7 @@ COMMUNICATION
                 ECHO - CHARTE GRAPHIQUE & ASSETS
 ═══════════════════════════════════════════════════════════════════════
 
-© 2025 Team Nightberry - Tous droits réservés
+© ${currentYear} Team Nightberry - Tous droits réservés
 
 Cette charte graphique et l'ensemble des assets inclus dans ce kit 
 sont la propriété exclusive de la Team Nightberry.
@@ -1837,7 +1851,7 @@ Document officiel Team Nightberry
         // Certificat d'authenticité
         const hashString = `${Date.now()}-${Math.random()}`;
         const fakeHash = btoa(hashString).substring(0, 32);
-        
+
         const certificat = `╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
 ║              CERTIFICAT D'AUTHENTICITÉ OFFICIEL                    ║
@@ -1897,7 +1911,7 @@ Téléchargez uniquement depuis les sources officielles Team Nightberry.
 
 ═══════════════════════════════════════════════════════════════════════
 
-© 2025 Team Nightberry - Tous droits réservés
+© ${currentYear} Team Nightberry - Tous droits réservés
 Document officiel certifié
 
 ═══════════════════════════════════════════════════════════════════════
@@ -1909,7 +1923,7 @@ Document officiel certifié
 ║                  ECHO - HISTORIQUE DES VERSIONS                    ║
 ╚════════════════════════════════════════════════════════════════════╝
 
-VERSION 2.1 BETA - ${new Date().toLocaleDateString('fr-FR')}
+Version ${siteVersion} - ${new Date().toLocaleDateString('fr-FR')}
 ═══════════════════════════════════════════════════════════════════════
 ✨ Nouveau:
   • Kit complet de la charte graphique

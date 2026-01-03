@@ -810,6 +810,7 @@
                 <div class="sidebar-item" data-section="forms" style="position: fixed; top: 475px;">📋 Formulaires</div>
                 <div class="sidebar-item" data-section="notifications" style="position: fixed; top: 550px;">📢 Notifications</div>
                 <div class="sidebar-item" data-section="users" style="position: fixed; top: 625px;">👥 Utilisateurs</div>
+                <div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 700px;">⚙️ Paramètres</div>
             </div>
 
             <div class="main-content">
@@ -1054,7 +1055,30 @@ tr:has(.status-scheduled) {
         </div>
     </div>
                 </div>
-
+<div class="section" id="site-settings">
+    <div class="card">
+        <h2>⚙️ Paramètres du site</h2>
+        
+        <div class="form-group">
+            <label>Version du site *</label>
+            <input type="text" id="site-version-input" placeholder="2.1 Beta">
+            <small style="color: var(--accent); display: block; margin-top: 5px;">
+                Format recommandé : "X.X Beta" ou "X.X"
+            </small>
+        </div>
+        
+        <button class="btn btn-success" onclick="saveSiteVersion()">
+            💾 Enregistrer la version
+        </button>
+        
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--primary);">
+            <strong>Version actuelle :</strong>
+            <span id="current-site-version" style="color: var(--cyan); font-size: 1.1rem; margin-left: 10px;">
+                Chargement...
+            </span>
+        </div>
+    </div>
+</div>
                 <!-- Autres sections -->
                 <div class="section" id="content">
                     <div class="card">
@@ -1728,7 +1752,64 @@ document.getElementById('version-form').addEventListener('submit', async (e) => 
         }
 
 
+// AJOUTER ce script dans admin.html (dans la section <script>)
 
+// Charger la version du site
+async function loadSiteVersion() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('site_settings')
+            .select('setting_value')
+            .eq('setting_key', 'site_version')
+            .single();
+        
+        if (error) throw error;
+        
+        const versionDisplay = document.getElementById('current-site-version');
+        const versionInput = document.getElementById('site-version-input');
+        
+        if (versionDisplay) versionDisplay.textContent = data.setting_value;
+        if (versionInput) versionInput.value = data.setting_value;
+    } catch (error) {
+        console.error('Erreur chargement version:', error);
+    }
+}
+
+// Sauvegarder la version du site
+window.saveSiteVersion = async function() {
+    const newVersion = document.getElementById('site-version-input').value.trim();
+    
+    if (!newVersion) {
+        alert('⚠️ Veuillez entrer une version');
+        return;
+    }
+    
+    try {
+        const user = await supabaseClient.auth.getUser();
+        
+        const { error } = await supabaseClient
+            .from('site_settings')
+            .update({
+                setting_value: newVersion,
+                updated_at: new Date().toISOString(),
+                updated_by: user.data.user?.id
+            })
+            .eq('setting_key', 'site_version');
+        
+        if (error) throw error;
+        
+        alert('✅ Version mise à jour avec succès !');
+        loadSiteVersion();
+    } catch (error) {
+        console.error('Erreur sauvegarde version:', error);
+        alert('❌ Erreur : ' + error.message);
+    }
+};
+
+// Charger au clic sur la section
+document.querySelector('[data-section="site-settings"]')?.addEventListener('click', () => {
+    loadSiteVersion();
+});
 // ===== SWITCH GLOBAL =====
 async function initDownloadSwitch() {
     try {

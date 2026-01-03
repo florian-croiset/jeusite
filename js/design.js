@@ -1,3 +1,17 @@
+        // ✅ AJOUTER : Récupérer la version depuis la DB
+        let siteVersion = '2.1 Beta'; // Version par défaut
+        try {
+            const { data } = await window.EchoDB.supabase
+                .from('site_settings')
+                .select('setting_value')
+                .eq('setting_key', 'site_version')
+                .single();
+            
+            if (data) siteVersion = data.setting_value;
+        } catch (error) {
+            console.warn('Version par défaut utilisée dans le PDF');
+        }
+
 document.addEventListener("DOMContentLoaded", () => {
     const colors = [
         { name: "Cyan Primaire", hex: "#00d0c6" },
@@ -812,10 +826,9 @@ window.downloadPDF = async function () {
         // Version et date
         doc.setFontSize(12);
         doc.setTextColor(...colors.primaryLight);
-        doc.text('Version 2.1 Beta', pageWidth / 2, 250, { align: 'center' });
+        doc.text(`Version ${siteVersion}`, pageWidth / 2, 250, { align: 'center' }); // ← ICI
         doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, pageWidth / 2, 260, { align: 'center' });
 
-        // Crédit
         // Crédit
         doc.setFontSize(10);
         doc.setTextColor(...colors.accent);

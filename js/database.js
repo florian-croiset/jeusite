@@ -501,6 +501,68 @@ async function loadNews(limit = 5) {
   }
 }
 
+// AJOUTER au début du fichier (après les imports)
+
+// Charger et afficher la version du site
+async function loadSiteVersionFooter() {
+    try {
+        // Attendre que EchoDB soit disponible
+        if (!window.EchoDB) {
+            await waitForEchoDB();
+        }
+        
+        const { data, error } = await window.EchoDB.supabase
+            .from('site_settings')
+            .select('setting_value')
+            .eq('setting_key', 'site_version')
+            .single();
+        
+        if (error) throw error;
+        
+        const versionElement = document.getElementById('site-version-footer');
+        if (versionElement && data) {
+            versionElement.textContent = `Version ${data.setting_value}`;
+        }
+    } catch (error) {
+        console.error('Erreur chargement version footer:', error);
+        // Garder la version par défaut en cas d'erreur
+    }
+}
+
+// Mettre à jour l'année automatiquement
+function updateFooterYear() {
+    const yearElement = document.getElementById('current-year');
+    if (yearElement) {
+        const currentYear = new Date().getFullYear();
+        yearElement.textContent = currentYear;
+    }
+}
+
+// Initialiser au chargement de la page
+document.addEventListener('DOMContentLoaded', () => {
+    updateFooterYear();
+    loadSiteVersionFooter();
+});
+
+// AJOUTER cette fonction dans database.js (export dans window.EchoSite)
+
+async function getSiteSetting(key, defaultValue = null) {
+    try {
+        const { data, error } = await EchoDB.supabase
+            .from('site_settings')
+            .select('setting_value')
+            .eq('setting_key', key)
+            .single();
+        
+        if (error) throw error;
+        return data.setting_value;
+    } catch (error) {
+        console.warn(`Setting "${key}" non trouvé, valeur par défaut utilisée`);
+        return defaultValue;
+    }
+}
+
+
 // =============================================
 // STATISTIQUES ET ANALYTICS
 // =============================================
@@ -540,7 +602,8 @@ window.EchoSite = {
   logout: window.logout,
   submitContactForm,
   loadNews,
-  showNotification
+  showNotification,
+  getSiteSetting
 };
 
 console.log('✅ Echo Site initialisé avec base de données');
