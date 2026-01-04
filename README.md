@@ -1,7 +1,3 @@
-C'est noté. Je reprends l'intégralité de ton document original en conservant **chaque détail** (effets visuels, raccourcis, fichiers spécifiques) et j'y intègre toutes les nouveautés des versions **2.0 à 2.3**.
-
----
-
 # 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
 
 ## 📖 Présentation
