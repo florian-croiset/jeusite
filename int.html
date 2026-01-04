@@ -12,9 +12,14 @@
       media="print" 
       onload="this.media='all'">
       <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-      <script type="module" src="js/discord-webhook.js"></script>
-    <script src="js/notifications.js"></script>
-    <script src="js/database-complete.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="js/config/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
+<script src="js/ip-detection.js"></script>
+<script type="module" src="js/discord-webhook.js"></script>
+<script src="js/discord-tracker.js"></script>
+<script type="module" src="js/main.js"></script>
+<script src="js/notifications.js"></script>    
     <style>        
         /*.demo-section {
             padding: 60px 20px;

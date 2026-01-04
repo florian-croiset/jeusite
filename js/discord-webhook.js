@@ -164,20 +164,6 @@ class DiscordWebhookManager {
 
   createEmbed(type, data) {
     const embeds = {
-      'external_link_click': {
-    title: this.isKnownUser 
-        ? `🔗 ${this.userName} clique sur un lien externe` 
-        : '🔗 Clic sur un lien externe',
-    description: `Sortie vers : **${data.url}**`,
-    color: 0x00d0c6,
-    fields: [
-        { name: '🌐 URL', value: data.url.substring(0, 100), inline: false },
-        { name: '📝 Texte du lien', value: data.text || 'Sans texte', inline: true },
-        { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
-        { name: '🔗 IP', value: this.userIP, inline: true }
-    ],
-    timestamp: new Date().toISOString()
-},
       'new_version': {
         title: '🎮 Nouvelle version disponible !',
         description: `Version **${data.version}** vient d'être publiée`,
@@ -204,6 +190,21 @@ class DiscordWebhookManager {
         ],
         timestamp: new Date().toISOString()
       },
+'external_link_click': {
+    title: this.isKnownUser 
+        ? `🔗 ${this.userName} clique sur un lien externe` 
+        : '🔗 Clic sur un lien externe',
+    description: `Sortie vers : **${data.url || 'Inconnue'}**`,
+    color: 0x00d0c6,
+    fields: [
+        // Correction ici : on ajoute (data.url || '') pour éviter le crash si url est undefined
+        { name: '🌐 URL', value: (data.url || '').substring(0, 100), inline: false },
+        { name: '📝 Texte du lien', value: (data.text || 'Sans texte').substring(0, 100), inline: true }, // Sécurisé aussi
+        { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
+        { name: '🔗 IP', value: this.userIP, inline: true }
+    ],
+    timestamp: new Date().toISOString()
+},
       'new_download': {
         title: this.isKnownUser
           ? `🎮 ${this.userName} télécharge Echo !`

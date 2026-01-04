@@ -285,7 +285,7 @@ class AdvancedDiscordTracker {
             });
         });
 
-        // Tracking des clics externes (liens sortants)
+    // Tracking des clics externes (liens sortants)
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (link && link.href) {

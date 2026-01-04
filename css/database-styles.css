@@ -151,9 +151,9 @@
 
 .rating-stars .star {
   cursor: pointer;
-  opacity: 0.3;
+  /*opacity: 0.3;*/
   transition: all 0.3s;
-  filter: grayscale(100%);
+  /*filter: grayscale(100%);*/
 }
 
 .rating-stars .star:hover,

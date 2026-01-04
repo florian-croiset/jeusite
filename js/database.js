@@ -27,23 +27,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function initDatabase() {
   try {
-    // Détecter si on est sur la page admin
     const isAdminPage = window.location.pathname.includes('admin.html');
     
     if (!isAdminPage) {
-      // 1. Charger le compte à rebours depuis la base (seulement sur la page principale)
       await loadCountdown();
-      
-      // 2. Charger les versions du jeu
       await loadGameVersions();
-      
-      // 3. Charger le contenu dynamique des sections
       await loadDynamicContent();
       
-      // 4. Gérer l'authentification utilisateur
+      // AJOUTE CETTE LIGNE :
+      await createFeedbackForm(); 
+      
       initAuth();
     }
-    
     console.log('✅ Echo Site initialisé avec base de données');
   } catch (error) {
     console.error('❌ Erreur initialisation database:', error);
@@ -587,6 +582,210 @@ async function getSiteSetting(key, defaultValue = null) {
 if (window.EchoDB && !window.location.pathname.includes('admin.html')) {
   trackPageView().catch(() => {});
 }*/
+
+// =============================================
+// AJOUT : GESTION DU FEEDBACK (Manquant dans database.js)
+// =============================================
+
+// =============================================
+// GESTION DES FEEDBACKS (CORRIGÉ AVEC NOUVEAU WEBHOOK)
+// =============================================
+
+async function createFeedbackForm() {
+    const container = document.getElementById('feedback-container');
+    if (!container) return;
+
+    container.innerHTML = `
+    <div class="feedback-form">
+      <h3>💬 Donnez votre avis sur Echo</h3>
+      <form id="feedback-form-element">
+        <div class="form-group">
+          <label>Votre nom (optionnel)</label>
+          <input type="text" id="feedback-name" placeholder="Votre pseudo">
+        </div>
+        
+        <div class="form-group">
+          <label>Email (optionnel)</label>
+          <input type="email" id="feedback-email" placeholder="votre@email.com">
+        </div>
+        
+        <div class="form-group">
+          <label>Note globale *</label>
+          <div class="rating-stars" id="rating-stars-container" style="cursor:pointer; font-size: 1.5rem; margin: 10px 0;">
+            ${[1, 2, 3, 4, 5].map(n => `<span class="star" data-rating="${n}">☆</span>`).join('')}
+          </div>
+          <input type="hidden" id="feedback-rating" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Qu'avez-vous aimé ? *</label>
+          <textarea id="feedback-positive" rows="3" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Points à améliorer</label>
+          <textarea id="feedback-negative" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Suggestions</label>
+          <textarea id="feedback-suggestions" rows="3"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Envoyer mon avis</button>
+      </form>
+    </div>`;
+
+    initFeedbackFormLogic();
+}
+
+async function initFeedbackFormLogic() {
+  const starsContainer = document.getElementById('rating-stars-container');
+  const stars = starsContainer.querySelectorAll('.star');
+  const ratingInput = document.getElementById('feedback-rating');
+
+  stars.forEach(star => {
+    star.onclick = () => {
+      const val = star.dataset.rating;
+      ratingInput.value = val;
+      stars.forEach(s => s.innerHTML = s.dataset.rating <= val ? '⭐' : '☆');
+    };
+  });
+
+  document.getElementById('feedback-form-element').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      name: document.getElementById('feedback-name').value || 'Anonyme',
+      email: document.getElementById('feedback-email').value || 'Non renseigné',
+      rating: ratingInput.value,
+      positive: document.getElementById('feedback-positive').value,
+      negative: document.getElementById('feedback-negative').value,
+      suggestions: document.getElementById('feedback-suggestions').value
+    };
+
+    try {
+      // 1. Sauvegarde en base de données Supabase
+      await window.EchoDB.supabase.from('form_responses').insert([{ 
+        responses: formData, 
+        submitted_at: new Date().toISOString() 
+      }]);
+
+      // 2. ENVOI FORCÉ VERS TON NOUVEAU WEBHOOK (Indépendant du reste)
+      const feedbackWebhook = "https://discord.com/api/webhooks/1457453565256663113/vFnITSyWP9-3Z4v4GoxnjPh4ZhYa6U7cpTieh7IqK3UCb4sAmI5GtcQ3qLeE9omiYWOw";
+      const userIP = window.webhookManager?.userIP || "IP non détectée";
+      const discordPayload = {
+        username: "Echo Feedback Manager",
+        avatar_url: "https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png",
+        embeds: [{
+          title: `🌟 Nouveau Feedback : ${formData.rating}/5`,
+          color: 0x00FF88, // Vert Émeraude
+          fields: [
+            { name: "👤 Utilisateur", value: formData.name, inline: true },
+            { name: "📧 Email", value: formData.email, inline: true },
+            /*{ name: "🌐 Adresse IP", value: `\`${userIP}\``, inline: true },*/
+            { name: "✅ Ce qu'il a aimé", value: formData.positive || "Rien précisé" },
+            { name: "❌ À améliorer", value: formData.negative || "Rien précisé" },
+            { name: "💡 Suggestions", value: formData.suggestions || "Aucune" }
+          ],
+          footer: { text: `Envoyé depuis Echo Site • IP: ${window.webhookManager?.userIP || 'Inconnue'}` },
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      // On utilise fetch direct pour bypasser le manager global qui envoie ailleurs
+      const response = await fetch(feedbackWebhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(discordPayload)
+      });
+
+      if (response.ok) {
+        document.getElementById('feedback-container').innerHTML = `
+          <div style="text-align:center; padding: 20px; color: #00ff88;">
+            <h3>✅ Merci !</h3>
+            <p>Votre avis a été transmis à l'équipe sur Discord.</p>
+          </div>`;
+      } else {
+        throw new Error("Erreur Webhook");
+      }
+
+    } catch (err) {
+      console.error('Erreur envoi feedback:', err);
+      alert("Désolé, l'envoi a échoué. Vérifiez votre connexion.");
+    }
+  };
+}
+
+function initFeedbackForm() {
+  const stars = document.querySelectorAll('.star');
+  const ratingInput = document.getElementById('feedback-rating');
+  
+  // Gestion des étoiles
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const rating = star.dataset.rating;
+      ratingInput.value = rating;
+      stars.forEach((s, i) => {
+        if (i < rating) s.classList.add('active');
+        else s.classList.remove('active');
+      });
+    });
+  });
+  
+  // Soumission
+  document.getElementById('feedback-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = {
+      name: document.getElementById('feedback-name').value || 'Anonyme',
+      email: document.getElementById('feedback-email').value,
+      rating: parseInt(document.getElementById('feedback-rating').value),
+      positive: document.getElementById('feedback-positive').value,
+      negative: document.getElementById('feedback-negative').value,
+      suggestions: document.getElementById('feedback-suggestions').value
+    };
+    await submitFeedback(formData);
+  });
+}
+
+async function submitFeedback(formData) {
+  try {
+    const user = await EchoDB.Auth.getCurrentUser();
+    
+    // Récupérer ou créer l'ID du formulaire
+    let formId;
+    const { data: existing } = await EchoDB.supabase.from('forms').select('id').eq('name', 'feedback_echo').single();
+    if (existing) formId = existing.id;
+    else {
+        const { data: newForm } = await EchoDB.supabase.from('forms').insert({ name: 'feedback_echo', title: 'Feedback Echo', is_active: true }).select('id').single();
+        formId = newForm.id;
+    }
+
+    // Insérer la réponse
+    const { error } = await EchoDB.supabase
+      .from('form_responses')
+      .insert({
+        form_id: formId,
+        user_id: user?.id,
+        responses: formData,
+        submitted_at: new Date().toISOString()
+      });
+
+    if (error) throw error;
+    
+    showNotification('✅ Merci pour votre feedback!', 'success');
+    document.getElementById('feedback-form').reset();
+
+    // Envoi Discord
+    if (window.sendDiscordNotification) {
+      await window.sendDiscordNotification('new_feedback', formData);
+    }
+    
+  } catch (error) {
+    console.error('Erreur feedback:', error);
+    showNotification('❌ Erreur lors de l\'envoi', 'error');
+  }
+}
 
 // =============================================
 // EXPORT DES FONCTIONS
