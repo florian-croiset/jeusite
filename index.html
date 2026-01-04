@@ -662,20 +662,6 @@ s0.parentNode.insertBefore(s1,s0);
     // Initialiser le tracker
     window.discordTracker = new DiscordTracker(WEBHOOK_URL);
 </script>
-<script src="js/channel-manager.js"></script>
-<script>
-    // REMPLACER PAR L'URL DE VOTRE DÉPLOIEMENT RAILWAY
-    const API_URL = 'https://votre-app.railway.app';
-    window.channelManager = new UserChannelManager(API_URL);
-    
-    // Logger les événements importants
-    window.addEventListener('load', () => {
-        window.channelManager?.logActivity('Page visitée', {
-            page: window.location.pathname,
-            referrer: document.referrer || 'Direct'
-        });
-    });
-</script>
 </body>
 <script>
 // Charger l'audio seulement quand l'utilisateur interagit
