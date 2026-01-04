@@ -803,14 +803,15 @@
         <div class="dashboard-content">
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-item active" data-section="overview" style="position: fixed; top: 100px;">📊 Vue d'ensemble</div>
-                <div class="sidebar-item" data-section="versions" style="position: fixed; top: 175px;">🎮 Versions du jeu</div>
-                <div class="sidebar-item" data-section="downloads-manage" style="position: fixed; top: 250px;">📥 Téléchargements</div>
-                <div class="sidebar-item" data-section="content" style="position: fixed; top: 325px;">📝 Contenu du site</div>
-                <div class="sidebar-item" data-section="media" style="position: fixed; top: 400px;">🎨 Médias</div>
-                <div class="sidebar-item" data-section="forms" style="position: fixed; top: 475px;">📋 Formulaires</div>
-                <div class="sidebar-item" data-section="notifications" style="position: fixed; top: 550px;">📢 Notifications</div>
-                <div class="sidebar-item" data-section="users" style="position: fixed; top: 625px;">👥 Utilisateurs</div>
-                <div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 700px;">⚙️ Paramètres</div>
+<div class="sidebar-item" data-section="versions" style="position: fixed; top: 175px;">🎮 Versions du jeu</div>
+<div class="sidebar-item" data-section="roadmap" style="position: fixed; top: 250px;">🗺️ Roadmap</div>
+<div class="sidebar-item" data-section="downloads-manage" style="position: fixed; top: 325px;">📥 Téléchargements</div>
+<div class="sidebar-item" data-section="content" style="position: fixed; top: 400px;">📝 Contenu du site</div>
+<div class="sidebar-item" data-section="media" style="position: fixed; top: 475px;">🎨 Médias</div>
+<div class="sidebar-item" data-section="forms" style="position: fixed; top: 550px;">📋 Formulaires</div>
+<div class="sidebar-item" data-section="notifications" style="position: fixed; top: 625px;">📢 Notifications</div>
+<div class="sidebar-item" data-section="users" style="position: fixed; top: 700px;">👥 Utilisateurs</div>
+<div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 775px;">⚙️ Paramètres</div>
             </div>
 
             <div class="main-content">
@@ -1079,6 +1080,20 @@ tr:has(.status-scheduled) {
         </div>
     </div>
 </div>
+<!-- Section Roadmap -->
+<div class="section" id="roadmap">
+    <div class="card">
+        <div class="version-header-actions">
+            <h2>🗺️ Gestion de la Roadmap</h2>
+            <button class="btn btn-primary" onclick="openRoadmapModal()">
+                <i class="fas fa-plus"></i> Ajouter un élément
+            </button>
+        </div>
+        <div id="roadmap-container">
+            <p class="loading">Chargement...</p>
+        </div>
+    </div>
+</div>
                 <!-- Autres sections -->
                 <div class="section" id="content">
                     <div class="card">
@@ -1146,6 +1161,78 @@ tr:has(.status-scheduled) {
             </div>
         </div>
     </div>
+<!-- MODAL ROADMAP -->
+<div id="roadmap-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="roadmap-modal-title">Nouvel élément Roadmap</h3>
+            <span class="close-modal" onclick="closeRoadmapModal()">&times;</span>
+        </div>
+        <form id="roadmap-form">
+            <input type="hidden" id="r-id">
+
+            <div class="form-section">
+                <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations de base</h4>
+                
+                <div class="form-group">
+                    <label>Titre *</label>
+                    <input type="text" id="r-title" required placeholder="Nouvelle fonctionnalité...">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="r-description" rows="3" placeholder="Détails de l'élément..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Catégorie *</label>
+                        <select id="r-category" required>
+                            <option value="feature">⭐ Feature</option>
+                            <option value="bug">🐛 Bug</option>
+                            <option value="design">🎨 Design</option>
+                            <option value="other">📦 Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Statut *</label>
+                        <select id="r-status" required>
+                            <option value="planned">📋 Planifié</option>
+                            <option value="in_progress">⚙️ En cours</option>
+                            <option value="completed">✅ Terminé</option>
+                            <option value="cancelled">❌ Annulé</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Priorité</label>
+                        <select id="r-priority">
+                            <option value="0">🟢 Basse</option>
+                            <option value="1">🟡 Moyenne</option>
+                            <option value="2">🔴 Haute</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Progression (%)</label>
+                        <input type="number" id="r-progress" min="0" max="100" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Date estimée</label>
+                    <input type="date" id="r-estimated-date">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="closeRoadmapModal()">❌ Annuler</button>
+                <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- MODAL VERSION SIMPLIFIÉE -->
 <div id="version-modal" class="modal-overlay" style="display: none;">
@@ -2396,7 +2483,188 @@ window.unpublishVersion = async function(id) {
         };
 
 
+// =============================================
+// GESTION DE LA ROADMAP
+// =============================================
 
+// Charger la roadmap
+async function loadRoadmap() {
+    const container = document.getElementById('roadmap-container');
+    container.innerHTML = '<p class="loading">Chargement...</p>';
+
+    try {
+        const { data: items, error } = await supabaseClient
+            .from('roadmap_items')
+            .select('*')
+            .order('order_index', { ascending: true });
+
+        if (error) throw error;
+
+        if (!items || items.length === 0) {
+            container.innerHTML = '<p style="color: var(--purple);">Aucun élément dans la roadmap</p>';
+            return;
+        }
+
+        const grouped = {
+            planned: items.filter(i => i.status === 'planned'),
+            in_progress: items.filter(i => i.status === 'in_progress'),
+            completed: items.filter(i => i.status === 'completed'),
+            cancelled: items.filter(i => i.status === 'cancelled')
+        };
+
+        const statusLabels = {
+            planned: '📋 Planifié',
+            in_progress: '⚙️ En cours',
+            completed: '✅ Terminé',
+            cancelled: '❌ Annulé'
+        };
+
+        const categoryColors = {
+            feature: 'var(--success)',
+            bug: 'var(--danger)',
+            design: 'var(--warning)',
+            other: 'var(--purple)'
+        };
+
+        const priorityLabels = {
+            0: '🟢 Basse',
+            1: '🟡 Moyenne',
+            2: '🔴 Haute'
+        };
+
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
+
+        Object.entries(grouped).forEach(([status, statusItems]) => {
+            if (status === 'cancelled' && statusItems.length === 0) return;
+
+            html += `
+                <div class="card" style="background: rgba(0, 0, 0, 0.2); padding: 20px;">
+                    <h3 style="color: var(--cyan); margin-bottom: 15px;">
+                        ${statusLabels[status]}
+                        <span class="role-badge" style="background: rgba(0, 208, 198, 0.2); color: var(--cyan);">
+                            ${statusItems.length}
+                        </span>
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+            `;
+
+            statusItems.forEach(item => {
+                html += `
+                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid ${categoryColors[item.category]}; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; color: var(--text); margin-bottom: 5px;">${item.title}</div>
+                                ${item.description ? `<div style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">${item.description}</div>` : ''}
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                                    <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; background: rgba(${item.category === 'feature' ? '0, 255, 136' : item.category === 'bug' ? '255, 0, 85' : item.category === 'design' ? '255, 170, 0' : '135, 53, 185'}, 0.2); color: ${categoryColors[item.category]}; border: 1px solid ${categoryColors[item.category]};">${item.category}</span>
+                                    <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; background: rgba(255, 255, 255, 0.05); color: var(--text-dim);">${priorityLabels[item.priority]}</span>
+                                    ${item.estimated_date ? `<span style="padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; background: rgba(255, 255, 255, 0.05); color: var(--text-dim);">📅 ${new Date(item.estimated_date).toLocaleDateString('fr-FR')}</span>` : ''}
+                                </div>
+                                <div style="margin-bottom: 5px;">
+                                    <div style="background: rgba(255, 255, 255, 0.1); height: 6px; border-radius: 3px; overflow: hidden;">
+                                        <div style="background: linear-gradient(90deg, var(--cyan), var(--purple)); height: 100%; width: ${item.progress}%; transition: width 0.3s;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 3px;">${item.progress}% complété</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 5px; color: var(--cyan); font-size: 0.9rem;"><i class="fas fa-thumbs-up"></i> <span>${item.votes || 0} votes</span></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                            <button class="action-btn btn-edit" onclick='editRoadmapItem(${JSON.stringify(item).replace(/'/g, "&#39;")})'>✏️ Modifier</button>
+                            <button class="action-btn btn-delete" onclick="deleteRoadmapItem('${item.id}')">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error('Erreur chargement roadmap:', error);
+        container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
+    }
+}
+
+window.openRoadmapModal = function() {
+    document.getElementById('roadmap-form').reset();
+    document.getElementById('r-id').value = '';
+    document.getElementById('roadmap-modal-title').textContent = 'Nouvel élément Roadmap';
+    document.getElementById('r-progress').value = 0;
+    document.getElementById('roadmap-modal').style.display = 'flex';
+};
+
+window.closeRoadmapModal = function() {
+    document.getElementById('roadmap-modal').style.display = 'none';
+};
+
+window.editRoadmapItem = function(item) {
+    document.getElementById('r-id').value = item.id;
+    document.getElementById('r-title').value = item.title;
+    document.getElementById('r-description').value = item.description || '';
+    document.getElementById('r-category').value = item.category;
+    document.getElementById('r-status').value = item.status;
+    document.getElementById('r-priority').value = item.priority;
+    document.getElementById('r-progress').value = item.progress;
+    if (item.estimated_date) {
+        document.getElementById('r-estimated-date').value = item.estimated_date;
+    }
+    document.getElementById('roadmap-modal-title').textContent = 'Modifier l\'élément';
+    document.getElementById('roadmap-modal').style.display = 'flex';
+};
+
+document.getElementById('roadmap-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('r-id').value;
+    const data = {
+        title: document.getElementById('r-title').value,
+        description: document.getElementById('r-description').value || null,
+        category: document.getElementById('r-category').value,
+        status: document.getElementById('r-status').value,
+        priority: parseInt(document.getElementById('r-priority').value),
+        progress: parseInt(document.getElementById('r-progress').value),
+        estimated_date: document.getElementById('r-estimated-date').value || null,
+        updated_at: new Date().toISOString()
+    };
+
+    try {
+        if (id) {
+            const { error } = await supabaseClient.from('roadmap_items').update(data).eq('id', id);
+            if (error) throw error;
+        } else {
+            const user = await supabaseClient.auth.getUser();
+            data.created_by = user.data.user?.id;
+            const { error } = await supabaseClient.from('roadmap_items').insert([data]);
+            if (error) throw error;
+        }
+        closeRoadmapModal();
+        loadRoadmap();
+        alert('✅ Élément enregistré !');
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('❌ Erreur : ' + error.message);
+    }
+});
+
+window.deleteRoadmapItem = async function(id) {
+    if (!confirm('⚠️ Supprimer définitivement cet élément de la roadmap ?')) return;
+    try {
+        const { error } = await supabaseClient.from('roadmap_items').delete().eq('id', id);
+        if (error) throw error;
+        loadRoadmap();
+        alert('✅ Élément supprimé !');
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('❌ Erreur : ' + error.message);
+    }
+};
+
+document.querySelector('[data-section="roadmap"]')?.addEventListener('click', () => {
+    loadRoadmap();
+});
 
         // =============================================
         // ANALYTICS AVANCÉES POUR LES NOTIFICATIONS

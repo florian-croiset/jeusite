@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
@@ -6,9 +7,9 @@
     <title>Echo – Historique des versions</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="js/discord-webhook.js"></script>
     <style>
-        /* === Design général === */
         * {
             margin: 0;
             padding: 0;
@@ -20,33 +21,32 @@
             background: #0a0a0a;
             color: #e0e0e0;
             overflow-x: hidden;
-        }
-
-        body {
-            /* === Désactiver la sélection de texte === */
             -webkit-user-select: none;
-            /* Chrome, Safari, Opera */
             -moz-user-select: none;
-            /* Firefox */
             -ms-user-select: none;
-            /* Internet Explorer/Edge */
             user-select: none;
-            /* Standard */
         }
 
         :root {
             --debut: #00d0c6;
             --fin: #005867;
             --finn: #8735b9;
+            --bug: #ff0055;
+            --feature: #00ff88;
+            --design: #ffaa00;
         }
 
-        /* === En-tête (Header) === */
+        /* Header */
         header {
             text-align: center;
             padding: 3rem 1rem 1rem;
             background: rgba(255, 255, 255, 0.02);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         header h1 {
@@ -57,12 +57,6 @@
             -webkit-text-fill-color: transparent;
             background-size: 300%;
             animation: headerGradient 6s linear infinite;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
-        }
-
-        header p {
-            color: #b0b0b0;
-            margin-top: .8rem;
         }
 
         @keyframes headerGradient {
@@ -75,14 +69,323 @@
             }
         }
 
-        /* === Contenu principal (Main) === */
-        main {
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem auto;
+            flex-wrap: wrap;
             max-width: 900px;
-            margin: 3rem auto 6rem auto;
-            padding: 0 1.5rem;
+            padding: 0 1rem;
         }
 
-        /* === Cartes de version === */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--debut);
+            background: rgba(0, 208, 198, 0.1);
+            color: var(--debut);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--debut);
+            color: #0a0a0a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 208, 198, 0.4);
+        }
+
+        .btn.active {
+            background: var(--debut);
+            color: #0a0a0a;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem auto;
+            flex-wrap: wrap;
+            max-width: 900px;
+            padding: 0 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+            color: #b0b0b0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--debut);
+            color: var(--debut);
+        }
+
+        .filter-btn.active {
+            border-color: var(--debut);
+            background: rgba(0, 208, 198, 0.2);
+            color: var(--debut);
+        }
+
+        .filter-btn.bug {
+            border-color: var(--bug);
+        }
+
+        .filter-btn.bug.active {
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--bug);
+        }
+
+        .filter-btn.feature {
+            border-color: var(--feature);
+        }
+
+        .filter-btn.feature.active {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--feature);
+        }
+
+        .filter-btn.design {
+            border-color: var(--design);
+        }
+
+        .filter-btn.design.active {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--design);
+        }
+
+        /* Stats Dashboard */
+        .stats-dashboard {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: none;
+        }
+
+        .stats-dashboard.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--debut);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Comparator */
+        .comparator {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .comparator.active {
+            display: block;
+        }
+
+        .compare-selects {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .compare-selects select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--debut);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .compare-result {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .compare-column h3 {
+            color: var(--debut);
+            margin-bottom: 1rem;
+        }
+
+        /* Timeline View */
+        .timeline-container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+            position: relative;
+            display: none;
+        }
+
+        .timeline-container.active {
+            display: block;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--debut), var(--finn));
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.4s;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--debut);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 208, 198, 0.3);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--debut);
+            border-radius: 50%;
+            border: 4px solid #0a0a0a;
+            z-index: 10;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -35px);
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #0a0a0a;
+            z-index: 11;
+        }
+
+        .timeline-content h3 {
+            color: var(--debut);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .timeline-content .date {
+            color: #808080;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-content .changes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .change-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .change-badge.bug {
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--bug);
+            border: 1px solid var(--bug);
+        }
+
+        .change-badge.feature {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--feature);
+            border: 1px solid var(--feature);
+        }
+
+        .change-badge.design {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--design);
+            border: 1px solid var(--design);
+        }
+
+        /* Classic View */
+        .classic-container {
+            max-width: 900px;
+            margin: 3rem auto 6rem;
+            padding: 0 1.5rem;
+            display: block;
+        }
+
+        .classic-container.hidden {
+            display: none;
+        }
+
         .version-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -91,30 +394,17 @@
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
-            /* -> Retiré pour assurer que la bordure/box-shadow est visible sur le hover */
             transition: all 0.4s ease;
             animation: fadeInUp 0.7s ease forwards;
         }
 
+        .version-card.hidden-filter {
+            display: none;
+        }
+
         .version-card:hover {
-            /*transform: translateY(-6px) scale(1.02);*/
             border-color: var(--debut);
             box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
-        }
-
-        .version-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left .6s;
-        }
-
-        .version-card:hover::before {
-            left: 100%;
         }
 
         .version-title {
@@ -123,7 +413,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: .5rem;
+            margin-bottom: 0.5rem;
         }
 
         .version-date {
@@ -132,45 +422,57 @@
             margin-bottom: 1rem;
         }
 
-        /* === Liste des changements (UL/LI) === */
         .version-content ul {
             list-style: none;
-            margin-left: 0;
         }
 
         .version-content li {
-            margin-bottom: .5rem;
+            margin-bottom: 0.5rem;
             color: #b0b0b0;
-
-            /* Pour gérer le wrapping du texte et l'alignement de la puce */
             display: flex;
             align-items: flex-start;
-            white-space: normal;
-            word-break: normal;
-            overflow-wrap: break-word;
+            gap: 0.5rem;
         }
 
-        .version-content li::before {
-            content: "• ";
-            color: var(--debut);
-            margin-right: 5px;
+        .version-content li .icon {
+            margin-top: 0.2rem;
             flex-shrink: 0;
-            /* Empêche la puce de se rétrécir */
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .version-content li .icon.bug {
+            color: var(--bug);
         }
 
-        /* === Footer === */
+        .version-content li .icon.feature {
+            color: var(--feature);
+        }
+
+        .version-content li .icon.design {
+            color: var(--design);
+        }
+
+        .latest-version {
+            box-shadow: 0 0 40px rgba(0, 208, 198, 0.6);
+            border: 2px solid var(--debut);
+            position: relative;
+        }
+
+        .latest-version::after {
+            content: "Version actuelle";
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            padding: 5px 10px;
+            background: var(--debut);
+            color: #0a0a0a;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 15px 0 15px 0;
+            z-index: 10;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Footer */
         footer {
             text-align: center;
             padding: 2rem;
@@ -179,7 +481,7 @@
             color: #808080;
         }
 
-        /* === Bouton de retour (Back-Btn) === */
+        /* Back Button */
         a.back-btn {
             position: fixed;
             bottom: 2rem;
@@ -194,291 +496,616 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            transition: all .3s ease;
-            text-decoration: none !important;
-        }
-
-        a.back-btn:after {
-            display: none !important;
+            transition: all 0.3s;
+            text-decoration: none;
+            z-index: 1000;
         }
 
         a.back-btn i {
             color: var(--debut);
             font-size: 1.4rem;
-            transition: color .3s ease, transform .3s ease;
         }
 
         a.back-btn:hover {
-            transform: scale(1.1) translateY(-4px);
-            border-color: var(--fin);
+            transform: scale(1.1);
+            border-color: var(--finn);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-            background: rgba(102, 126, 234, 0.1);
         }
 
-        a.back-btn:hover i {
-            color: var(--finn);
-            transform: rotate(-15deg);
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* ======================================= */
-        /* ======  OPTIMISATION POUR MOBILE ====== */
-        /* ======================================= */
+        /* Mobile */
         @media (max-width: 768px) {
-
             header h1 {
                 font-size: 2.5rem;
             }
 
-            main {
-                padding: 0 1rem;
-                margin: 2rem auto 5rem auto;
+            .timeline-line {
+                left: 30px;
             }
 
-            /*.version-card {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
+            .timeline-item {
+                flex-direction: row !important;
+                padding-left: 70px;
             }
 
-            .version-card:hover {
-                transform: none;
-                border-color: rgba(255, 255, 255, 0.1);
-                box-shadow: none;
+            .timeline-content {
+                width: 100%;
             }
 
-            .version-card:hover::before {
-                left: -100%;
-            }*/
-
-            .version-title {
-                font-size: 1.5rem;
+            .timeline-dot {
+                left: 30px;
             }
 
-            .version-content li {
-                font-size: 0.95rem;
+            .timeline-icon {
+                left: 30px;
             }
 
-            a.back-btn {
-                width: 50px;
-                height: 50px;
-                bottom: 1rem;
-                right: 1rem;
+            .compare-selects,
+            .compare-result {
+                grid-template-columns: 1fr;
             }
 
-            a.back-btn i {
-                font-size: 1.2rem;
+            .controls,
+            .filters {
+                padding: 0 0.5rem;
             }
 
-            footer {
-                padding: 1.5rem 1rem;
-                font-size: 0.8rem;
-            }
-        }
-
-
-        /* === Mise en évidence de la version actuelle (1.4) === */
-        .latest-version {
-            /* Augmente la force du halo pour l'attirer l'oeil */
-            box-shadow: 0 0 40px rgba(0, 208, 198, 0.6), 0 0 15px rgba(135, 53, 185, 0.4);
-
-            /* Double bordure subtile (l'une solide, l'autre par box-shadow) */
-            border: 2px solid var(--debut);
-
-            /* Annule l'animation initiale fadeInUp pour ne pas surcharger la mise en page */
-            animation: none;
-        }
-
-        /* Force la bordure et le glow au survol pour qu'ils soient plus intenses */
-        .latest-version:hover {
-            /*transform: translateY(-8px) scale(1.03);*/
-            border-color: var(--finn);
-            box-shadow: 0 0 50px rgba(0, 208, 198, 0.9), 0 0 20px rgba(135, 53, 185, 0.6);
-        }
-
-        /* Modifie la couleur du titre pour un gradient plus vif */
-        .latest-version .version-title {
-            background: linear-gradient(135deg, var(--debut), var(--finn));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 8px rgba(0, 208, 198, 0.3);
-        }
-
-        /* Met en évidence les puces de la dernière version */
-        .latest-version .version-content li::before {
-            color: var(--finn);
-            /* Utilise la couleur secondaire pour le contraste */
-        }
-
-        /* === Correction Mobile pour la version actuelle === */
-        @media (max-width: 768px) {
-
-            /* Restaure les effets d'animation de la carte pour la version la plus récente sur mobile */
-            .latest-version {
-                transform: translateY(-4px);
-                /* Petit décalage pour attirer l'oeil sans être intrusif */
-                box-shadow: 0 0 20px rgba(0, 208, 198, 0.4);
-            }
-
-            /* On maintient un petit effet au tap/hover sur mobile (même si c'est rare) */
-            .latest-version:hover {
-                transform: translateY(-4px);
-            }
-        }
-
-
-
-        /* Le nouveau style pour l'étiquette "Version actuelle" */
-        .latest-version {
-            /* ... (styles déjà définis : box-shadow, border, etc.) ... */
-
-            position: relative;
-            /* NÉCESSAIRE pour positionner l'étiquette */
-            overflow: hidden;
-            /* Assure que l'étiquette sort légèrement de la carte : visible*/
-        }
-
-        .latest-version::after {
-            content: "Version actuelle";
-            position: absolute;
-            top: -1px;
-            /* Légèrement décalé du haut */
-            left: -1px;
-            /* Légèrement décalé de la gauche (à cause du border) */
-            padding: 5px 10px;
-            background-color: var(--debut);
-            /* Couleur de fond cyan/bleu */
-            color: #0a0a0a;
-            /* Texte noir sur fond clair pour un contraste max */
-            font-size: 0.75rem;
-            font-weight: bold;
-            border-radius: 15px 0 15px 0;
-            /* Coins arrondis en haut à gauche et en bas à droite */
-            z-index: 10;
-
-            /* Ajout d'une ombre portée pour un effet de relief */
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Ajustement mobile pour l'étiquette */
-        @media (max-width: 768px) {
-            .latest-version::after {
-                font-size: 0.7rem;
-                padding: 4px 8px;
-                top: 0;
-                left: 0;
+            .btn,
+            .filter-btn {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
             }
         }
     </style>
 </head>
 
-<body oncontextmenu="return false;">
-
+<body>
     <header>
         <h1>Historique des Versions</h1>
         <p><i class="fa-solid fa-code-branch"></i> Journal des améliorations du site <strong>Echo</strong></p>
     </header>
 
-    <main>
-        <div class="version-card  latest-version">
-            <div class="version-title">Version 1.5</div>
-            <div class="version-date">16 décembre 2025</div>
-            <div class="version-content">
-                <ul>
-                    <li>Amélioration du menu burger : fermeture au scroll, touche Échap, clic en dehors</li>
-                    <li>Ajout de la page "Design" avec logos, couleurs, sprites, emojis… (page non terminée)</li>
-                    <li>Ajout de la page "Liens" pour un accès facile aux ressources externes</li>
-                    <li>Correction de bugs mineurs pour améliorer la stabilité</li>
-                    <li>Ajout de la version mobile sur la page "Versions" du site web</li>
-                </ul>
-            </div>
-        </div>
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn active" id="btn-classic" onclick="switchView('classic')">
+            <i class="fas fa-list"></i> Vue Classique
+        </button>
+        <button class="btn" id="btn-timeline" onclick="switchView('timeline')">
+            <i class="fas fa-stream"></i> Timeline
+        </button>
+        <button class="btn" id="btn-stats" onclick="switchView('stats')">
+            <i class="fas fa-chart-bar"></i> Statistiques
+        </button>
+        <button class="btn" id="btn-compare" onclick="switchView('compare')">
+            <i class="fas fa-code-compare"></i> Comparer
+        </button>
+    </div>
 
-        <div class="version-card">
-            <div class="version-title">Version 1.4</div>
-            <div class="version-date">13 décembre 2025</div>
-            <div class="version-content">
-                <ul>
-                    <li>Ajout du favicon 🪶</li>
-                    <li>Bouton 「Télécharger」 redirige vers le fichier exécutable</li>
-                    <li>Icône fusée 🚀 animée dans le titre du compte à rebours</li>
-                    <li>Nouveau bouton sablier 🕒 pour accélérer le compte à rebours (de 10 s en mode test)</li>
-                    <li>Déblocage automatique du téléchargement à la fin du compte à rebours</li>
-                    <li>Raccourci clavier P pour lecture / pause musique 🎵</li>
-                    <li>Modale d’accès secret améliorée : coller 📋, effacer ❌, Entrée = valider / Échap = fermer</li>
-                    <li>Nouveau bouton flottant de partage 🔗 (API nat + QR Code + copie du lien)</li>
-                    <li>Section 「Lore」 complétée : présentation + 4 actes narratifs (Kaelen : L’Ombre du Soleil)</li>
-                    <li>Fermeture auto du menu burger après clic sur un lien</li>
-                    <li>Améliorations visuelles et interface plus fluide sur mobile et desktop</li>
-                </ul>
-            </div>
-        </div>
-        <div class="version-card">
-            <div class="version-title">Version 1.3</div>
-            <div class="version-date">9 décembre 2025</div>
-            <div class="version-content">
-                <ul>
-                    <li>Menu burger pour mobile 📱</li>
-                    <li>Feuille de style mobile (mobile.css) ajoutée</li>
-                    <li>Boutons « Télécharger » adaptés au mobile (non cliquables + texte spécifique)</li>
-                    <li>Texte et icônes du bouton Télécharger améliorés (selon disponibilité)</li>
-                    <li>Code JS du bouton refactorisé et plus lisible</li>
-                    <li>Détection auto des appareils (window.innerWidth <= 768px)</li>
-                    <li>Ré‑adapatation au redimensionnement de la fenêtre</li>
-                    <li>Lien « Team Nightberry » plus grand dans l’en‑tête</li>
-                    <li>Structure de navigation simplifiée et plus claire</li>
-                    <li>Mise à jour générale du script pour plus de stabilité et compatibilité</li>
-                </ul>
-            </div>
-        </div>
-        <div class="version-card">
-            <div class="version-title">Version 1.2</div>
-            <div class="version-date">5 décembre 2025</div>
-            <div class="version-content">
-                <ul>
-                    <li>Logo animé (gradient + effet holographique)</li>
-                    <li>Barre de navigation adoucie au scroll</li>
-                    <li>Particules et filaments d’énergie dans le fond</li>
-                    <li>Soulignement liquide des liens</li>
-                    <li>Bouton musique 🎵 / ⏸️ flottant + lecture automatique après interaction</li>
-                    <li>Texte de version animé dans le footer</li>
-                    <li>Fenêtre modale d’accès secret (stylisée)</li>
-                </ul>
-            </div>
-        </div>
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all" onclick="filterByType('all')">
+            <i class="fas fa-border-all"></i> Tout
+        </button>
+        <button class="filter-btn bug" data-filter="bug" onclick="filterByType('bug')">
+            <i class="fas fa-bug"></i> Bugs
+        </button>
+        <button class="filter-btn feature" data-filter="feature" onclick="filterByType('feature')">
+            <i class="fas fa-star"></i> Features
+        </button>
+        <button class="filter-btn design" data-filter="design" onclick="filterByType('design')">
+            <i class="fas fa-palette"></i> Design
+        </button>
+    </div>
 
-        <div class="version-card">
-            <div class="version-title">Version 1.1</div>
-            <div class="version-date">2 décembre 2025</div>
-            <div class="version-content">
-                <ul>
-                    <li>Ajout du système de compte à rebours (Hero)</li>
-                    <li>Ajout du bouton 「Remonter en haut」 flottant</li>
-                    <li>Optimisations de scroll et animations des sections</li>
-                </ul>
+    <!-- Stats Dashboard -->
+    <div class="stats-dashboard" id="stats-dashboard">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="stat-total-versions">0</h3>
+                <p>Versions publiées</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-total-changes">0</h3>
+                <p>Changements totaux</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-bugs-fixed">0</h3>
+                <p>Bugs corrigés</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-features-added">0</h3>
+                <p>Features ajoutées</p>
             </div>
         </div>
+        <div class="chart-container">
+            <canvas id="versionsChart"></canvas>
+        </div>
+    </div>
 
-        <div class="version-card">
-            <div class="version-title">Version 1.0</div>
-            <div class="version-date">1er décembre 2025</div>
-            <div class="version-content">
-                <ul>
-                    <li>Première mise en ligne du site Echo</li>
-                    <li>Section Team, Gameplay, Lore, Téléchargement</li>
-                    <li>Design principal dark / néon cyan–violet</li>
-                </ul>
+    <!-- Comparator -->
+    <div class="comparator" id="comparator">
+        <h2 style="color: var(--debut); margin-bottom: 1.5rem; text-align: center;">
+            <i class="fas fa-code-compare"></i> Comparer deux versions
+        </h2>
+        <div class="compare-selects">
+            <div>
+                <label style="color: #b0b0b0; display: block; margin-bottom: 0.5rem;">Version A</label>
+                <select id="compare-version-a"></select>
+            </div>
+            <div>
+                <label style="color: #b0b0b0; display: block; margin-bottom: 0.5rem;">Version B</label>
+                <select id="compare-version-b"></select>
             </div>
         </div>
+        <button class="btn" onclick="compareVersions()" style="margin: 0 auto; display: flex;">
+            <i class="fas fa-exchange-alt"></i> Comparer
+        </button>
+        <div class="compare-result" id="compare-result"></div>
+    </div>
+
+    <!-- Timeline View -->
+    <div class="timeline-container" id="timeline-container">
+        <div class="timeline-line"></div>
+        <div id="timeline-content"></div>
+    </div>
+
+    <!-- Classic View -->
+    <main class="classic-container" id="classic-container">
+        <!-- Les versions seront injectées ici -->
     </main>
 
     <footer>
-        <p>&copy; 2025 Echo – Historique des versions</p>
+        <p>&copy; <span id="current-year">2025</span> Echo – Historique des versions</p>
     </footer>
 
     <a href="index.html" class="back-btn" title="Retour au site principal">
         <i class="fa-solid fa-arrow-left"></i>
     </a>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="js/config/supabase.js"></script>
+    <script>
+        // Données des versions (à remplacer par appel DB plus tard)
+        const versions = [
+            {
+                version: "2.3",
+                date: "5 janvier 2026",
+                changes: [
+                    { type: "feature", text: "Lancement de la page Roadmap (version bêta) : suivi interactif du développement avec système de vote et d'affichage" },
+                    { type: "feature", text: "Refonte de la page Versions : ajout des catégories de modifications, outils de comparaison et nouveaux modes d'affichage" },
+                    { type: "feature", text: "Dashboard Admin : intégration complète de la gestion de la Roadmap (Ajout, Modification, Suppression)" },
+                    { type: "design", text: "Optimisation de l'interface utilisateur pour la navigation entre les différentes versions et la roadmap" }
+                ],
+                isLatest: true
+            },
+            {
+                version: "2.2",
+                date: "4 janvier 2026",
+                changes: [
+                    { type: "feature", text: "Lancement du Bot Discord en version bêta (suivi des vues, stats, actions et téléchargements)" },
+                    { type: "feature", text: "Modification groupée du site (version dans le footer) : mises à jour de l'interface admin et des pages" },
+                    { type: "feature", text: "Système de notifications (en cours de développement)" },
+                    { type: "design", text: "Optimisations globales de l'affichage des pages" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "2.1",
+                date: "3 janvier 2026",
+                changes: [
+                    { type: "feature", text: "Ajout d'un compteur de téléchargement et correction du bouton associé" },
+                    { type: "feature", text: "Refonte complète de la page de test (test.html) et modifications du panel admin" },
+                    { type: "feature", text: "Possibilité de désactiver le téléchargement depuis la section Design (+ ajout de Echo Docs)" },
+                    { type: "feature", text: "Création de liens spécifiques pour les soutenances" },
+                    { type: "feature", text: "Amélioration et correction du mode sablier (liens et logique de fonctionnement)" },
+                    { type: "design", text: "Mise à jour visuelle des sections : Télécharger, Gameplay et Lore" },
+                    { type: "design", text: "Homogénéisation de l'affichage du compteur sablier ('0' au lieu de '00')" },
+                    { type: "bug", text: "Correction de l'icône FontAwesome pour les PDF (affichait une icône PNG)" },
+                    { type: "bug", text: "Corrections générales sur le système de settings et la stabilité du téléchargement" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "2.0",
+                date: "29 décembre 2025",
+                changes: [
+                    { type: "feature", text: "Refonte complète du back-end et création de la base de données avec système de comptes" },
+                    { type: "feature", text: "Dashboard Admin : gestion centralisée (activation téléchargement, versions, countdown, infos)" },
+                    { type: "feature", text: "Ajout de la page Settings pour la configuration globale" },
+                    { type: "feature", text: "Système d'exports sur la page Design : téléchargement du ZIP, PDF charte graphique et pack assets" },
+                    { type: "feature", text: "Ajout de l'exécutable et des fonctions de téléchargement associées" },
+                    { type: "feature", text: "Intégration de Google Tag pour l'analyse d'audience" },
+                    { type: "bug", text: "Correction du bug sur le bouton musique et résolution des problèmes d'import (design.js)" },
+                    { type: "bug", text: "Correction des erreurs et bugs sur le splash screen" },
+                    { type: "design", text: "Amélioration visuelle du splash screen et optimisation de la structure index.html" },
+                    { type: "feature", text: "Préparation des formulaires reliés à la base de données (non implémentés)" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "1.5",
+                date: "16 décembre 2025",
+                changes: [
+                    { type: "feature", text: "Amélioration du menu burger : fermeture au scroll, touche Échap, clic en dehors" },
+                    { type: "feature", text: "Ajout de la page Design avec logos, couleurs, sprites, emojis… (page non terminée)" },
+                    { type: "feature", text: "Ajout de la page Liens pour un accès facile aux ressources externes" },
+                    { type: "bug", text: "Correction de bugs mineurs pour améliorer la stabilité" },
+                    { type: "design", text: "Ajout de la version mobile sur la page Versions du site web" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "1.4",
+                date: "13 décembre 2025",
+                changes: [
+                    { type: "feature", text: "Ajout du favicon 🪶" },
+                    { type: "feature", text: "Bouton 「Télécharger」 redirige vers le fichier exécutable" },
+                    { type: "design", text: "Icône fusée 🚀 animée dans le titre du compte à rebours" },
+                    { type: "feature", text: "Nouveau bouton sablier 🕒 pour accélérer le compte à rebours (de 10 s en mode test)" },
+                    { type: "feature", text: "Déblocage automatique du téléchargement à la fin du compte à rebours" },
+                    { type: "feature", text: "Raccourci clavier P pour lecture / pause musique 🎵" },
+                    { type: "feature", text: "Modale d’accès secret améliorée : coller 📋, effacer ❌, Entrée = valider / Échap = fermer" },
+                    { type: "feature", text: "Nouveau bouton flottant de partage 🔗 (API nat + QR Code + copie du lien)" },
+                    { type: "feature", text: "Section 「Lore」 complétée : présentation + 4 actes narratifs (Kaelen : L’Ombre du Soleil)" },
+                    { type: "feature", text: "Fermeture auto du menu burger après clic sur un lien" },
+                    { type: "design", text: "Améliorations visuelles et interface plus fluide sur mobile et desktop" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "1.3",
+                date: "9 décembre 2025",
+                changes: [
+                    { type: "feature", text: "Menu burger pour mobile 📱" },
+                    { type: "design", text: "Feuille de style mobile (mobile.css) ajoutée" },
+                    { type: "design", text: "Boutons « Télécharger » adaptés au mobile (non cliquables + texte spécifique)" },
+                    { type: "design", text: "Texte et icônes du bouton Télécharger améliorés (selon disponibilité)" },
+                    { type: "feature", text: "Code JS du bouton refactorisé et plus lisible" },
+                    { type: "feature", text: "Détection auto des appareils (window.innerWidth <= 768px)" },
+                    { type: "feature", text: "Ré‑adapatation au redimensionnement de la fenêtre" },
+                    { type: "design", text: "Lien « Team Nightberry » plus grand dans l’en‑tête" },
+                    { type: "design", text: "Structure de navigation simplifiée et plus claire" },
+                    { type: "bug", text: "Mise à jour générale du script pour plus de stabilité et compatibilité" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "1.2",
+                date: "5 décembre 2025",
+                changes: [
+                    { type: "design", text: "Logo animé (gradient + effet holographique)" },
+                    { type: "design", text: "Barre de navigation adoucie au scroll" },
+                    { type: "design", text: "Particules et filaments d’énergie dans le fond" },
+                    { type: "design", text: "Soulignement liquide des liens" },
+                    { type: "feature", text: "Bouton musique 🎵 / ⏸️ flottant + lecture automatique après interaction" },
+                    { type: "design", text: "Texte de version animé dans le footer" },
+                    { type: "feature", text: "Fenêtre modale d’accès secret (stylisée)" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "1.1",
+                date: "2 décembre 2025",
+                changes: [
+                    { type: "feature", text: "Ajout du système de compte à rebours (Hero)" },
+                    { type: "feature", text: "Ajout du bouton 「Remonter en haut」 flottant" },
+                    { type: "design", text: "Optimisations de scroll et animations des sections" }
+                ],
+                isLatest: false
+            },
+            {
+                version: "1.0",
+                date: "1er décembre 2025",
+                changes: [
+                    { type: "feature", text: "Première mise en ligne du site Echo" },
+                    { type: "feature", text: "Section Team, Gameplay, Lore, Téléchargement" },
+                    { type: "design", text: "Design principal dark / néon cyan–violet" }
+                ],
+                isLatest: false
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentView = 'classic';
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            renderClassicView();
+            renderTimeline();
+            populateCompareSelects();
+            calculateStats();
+            updateYear();
+        });
+
+        function updateYear() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        }
+
+        // Switch View
+        function switchView(view) {
+            currentView = view;
+
+            // Update buttons
+            document.querySelectorAll('.controls .btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${view}`).classList.add('active');
+
+            // Hide all views
+            document.getElementById('classic-container').classList.toggle('hidden', view !== 'classic');
+            document.getElementById('timeline-container').classList.toggle('active', view === 'timeline');
+            document.getElementById('stats-dashboard').classList.toggle('active', view === 'stats');
+            document.getElementById('comparator').classList.toggle('active', view === 'compare');
+        }
+
+        // Filter by type
+        function filterByType(type) {
+            currentFilter = type;
+
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-filter="${type}"]`).classList.add('active');
+
+            // Apply filter
+            if (currentView === 'classic') {
+                applyFilterClassic();
+            } else if (currentView === 'timeline') {
+                applyFilterTimeline();
+            }
+        }
+
+        // Render Classic View
+        function renderClassicView() {
+            const container = document.getElementById('classic-container');
+            container.innerHTML = versions.map(v => `
+                <div class="version-card ${v.isLatest ? 'latest-version' : ''}" data-version="${v.version}">
+                    <div class="version-title">Version ${v.version}</div>
+                    <div class="version-date">${v.date}</div>
+                    <div class="version-content">
+                        <ul>
+                            ${v.changes.map(c => `
+                                <li data-type="${c.type}">
+                                    <span class="icon ${c.type}">
+                                        ${c.type === 'bug' ? '<i class="fas fa-bug"></i>' :
+                    c.type === 'feature' ? '<i class="fas fa-star"></i>' :
+                        '<i class="fas fa-palette"></i>'}
+                                    </span>
+                                    <span>${c.text}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function applyFilterClassic() {
+            document.querySelectorAll('.version-card').forEach(card => {
+                if (currentFilter === 'all') {
+                    card.classList.remove('hidden-filter');
+                } else {
+                    const hasType = Array.from(card.querySelectorAll('li')).some(li =>
+                        li.dataset.type === currentFilter
+                    );
+                    card.classList.toggle('hidden-filter', !hasType);
+                }
+            });
+        }
+
+        // Render Timeline
+        function renderTimeline() {
+            const container = document.getElementById('timeline-content');
+            const icons = {
+                bug: 'fa-bug',
+                feature: 'fa-star',
+                design: 'fa-palette'
+            };
+
+            container.innerHTML = versions.map((v, index) => {
+                const mainType = getMostFrequentType(v.changes);
+                return `
+                    <div class="timeline-item" data-version="${v.version}">
+                        <div class="timeline-content">
+                            <h3>Version ${v.version}</h3>
+                            <div class="date">${v.date}</div>
+                            <ul style="list-style: none; padding: 0;">
+                                ${v.changes.map(c => `
+                                    <li data-type="${c.type}" style="margin-bottom: 0.5rem; color: #b0b0b0;">
+                                        • ${c.text}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                            <div class="changes">
+                                ${getChangesSummary(v.changes)}
+                            </div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-icon">
+                            <i class="fas ${icons[mainType]}"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function applyFilterTimeline() {
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                if (currentFilter === 'all') {
+                    item.style.display = 'flex';
+                } else {
+                    const hasType = Array.from(item.querySelectorAll('li')).some(li =>
+                        li.dataset.type === currentFilter
+                    );
+                    item.style.display = hasType ? 'flex' : 'none';
+                }
+            });
+        }
+
+        function getMostFrequentType(changes) {
+            const counts = { bug: 0, feature: 0, design: 0 };
+            changes.forEach(c => counts[c.type]++);
+            return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+        }
+
+        function getChangesSummary(changes) {
+            const counts = { bug: 0, feature: 0, design: 0 };
+            changes.forEach(c => counts[c.type]++);
+
+            return `
+                ${counts.bug > 0 ? `<span class="change-badge bug"><i class="fas fa-bug"></i> ${counts.bug} Bugs</span>` : ''}
+                ${counts.feature > 0 ? `<span class="change-badge feature"><i class="fas fa-star"></i> ${counts.feature} Features</span>` : ''}
+                ${counts.design > 0 ? `<span class="change-badge design"><i class="fas fa-palette"></i> ${counts.design} Design</span>` : ''}
+            `;
+        }
+
+        // Stats
+        function calculateStats() {
+            const totalVersions = versions.length;
+            const allChanges = versions.flatMap(v => v.changes);
+            const totalChanges = allChanges.length;
+            const bugsFixed = allChanges.filter(c => c.type === 'bug').length;
+            const featuresAdded = allChanges.filter(c => c.type === 'feature').length;
+
+            document.getElementById('stat-total-versions').textContent = totalVersions;
+            document.getElementById('stat-total-changes').textContent = totalChanges;
+            document.getElementById('stat-bugs-fixed').textContent = bugsFixed;
+            document.getElementById('stat-features-added').textContent = featuresAdded;
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('versionsChart').getContext('2d');
+            const chartData = versions.reverse().map(v => {
+                const changes = { bug: 0, feature: 0, design: 0 };
+                v.changes.forEach(c => changes[c.type]++);
+                return changes;
+            });
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: versions.map(v => `v${v.version}`),
+                    datasets: [
+                        {
+                            label: 'Bugs',
+                            data: chartData.map(d => d.bug),
+                            backgroundColor: 'rgba(255, 0, 85, 0.6)',
+                            borderColor: '#ff0055',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Features',
+                            data: chartData.map(d => d.feature),
+                            backgroundColor: 'rgba(0, 255, 136, 0.6)',
+                            borderColor: '#00ff88',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Design',
+                            data: chartData.map(d => d.design),
+                            backgroundColor: 'rgba(255, 170, 0, 0.6)',
+                            borderColor: '#ffaa00',
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e0e0e0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#e0e0e0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#e0e0e0' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+
+            versions.reverse(); // Restore order
+        }
+
+        // Comparator
+        function populateCompareSelects() {
+            const selectA = document.getElementById('compare-version-a');
+            const selectB = document.getElementById('compare-version-b');
+
+            const options = versions.map(v =>
+                `<option value="${v.version}">Version ${v.version} (${v.date})</option>`
+            ).join('');
+
+            selectA.innerHTML = options;
+            selectB.innerHTML = options;
+            selectB.selectedIndex = 1;
+        }
+
+        function compareVersions() {
+            const versionA = versions.find(v => v.version === document.getElementById('compare-version-a').value);
+            const versionB = versions.find(v => v.version === document.getElementById('compare-version-b').value);
+
+            if (!versionA || !versionB) return;
+
+            const result = document.getElementById('compare-result');
+            result.innerHTML = `
+                <div class="compare-column">
+                    <h3>Version ${versionA.version}</h3>
+                    <p style="color: #808080; margin-bottom: 1rem;">${versionA.date}</p>
+                    <ul style="list-style: none; padding: 0;">
+                        ${versionA.changes.map(c => `
+                            <li style="margin-bottom: 0.5rem; color: #b0b0b0;">
+                                <span class="icon ${c.type}">
+                                    ${c.type === 'bug' ? '<i class="fas fa-bug"></i>' :
+                    c.type === 'feature' ? '<i class="fas fa-star"></i>' :
+                        '<i class="fas fa-palette"></i>'}
+                                </span>
+                                ${c.text}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <div style="margin-top: 1rem;">
+                        ${getChangesSummary(versionA.changes)}
+                    </div>
+                </div>
+                <div class="compare-column">
+                    <h3>Version ${versionB.version}</h3>
+                    <p style="color: #808080; margin-bottom: 1rem;">${versionB.date}</p>
+                    <ul style="list-style: none; padding: 0;">
+                        ${versionB.changes.map(c => `
+                            <li style="margin-bottom: 0.5rem; color: #b0b0b0;">
+                                <span class="icon ${c.type}">
+                                    ${c.type === 'bug' ? '<i class="fas fa-bug"></i>' :
+                                c.type === 'feature' ? '<i class="fas fa-star"></i>' :
+                                    '<i class="fas fa-palette"></i>'}
+                                </span>
+                                ${c.text}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <div style="margin-top: 1rem;">
+                        ${getChangesSummary(versionB.changes)}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
 </body>
 
 </html>

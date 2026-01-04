@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo - Roadmap</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <script type="module" src="js/discord-webhook.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --debut: #00d0c6;
+            --fin: #005867;
+            --finn: #8735b9;
+            --feature: #00ff88;
+            --bug: #ff0055;
+            --design: #ffaa00;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--debut), var(--fin), var(--finn));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            color: #b0b0b0;
+            font-size: 1.1rem;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem auto;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            padding: 0 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            color: #b0b0b0;
+            border-radius: 25px;
+            /*cursor: pointer;*/
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--debut);
+            color: var(--debut);
+        }
+
+        .filter-btn.active {
+            border-color: var(--debut);
+            background: rgba(0, 208, 198, 0.2);
+            color: var(--debut);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        /* Status Columns */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .status-column {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .status-column h2 {
+            color: var(--debut);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        .status-column h2 .count {
+            background: rgba(0, 208, 198, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Roadmap Item */
+        .roadmap-item {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            /*cursor: pointer;*/
+            transition: all 0.3s;
+        }
+
+        .roadmap-item:hover {
+            border-color: var(--debut);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 208, 198, 0.3);
+        }
+
+        .roadmap-item.priority-high {
+            border-left: 4px solid #ff0055;
+        }
+
+        .roadmap-item.priority-medium {
+            border-left: 4px solid #ffaa00;
+        }
+
+        .roadmap-item.priority-low {
+            border-left: 4px solid #00ff88;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+        }
+
+        .item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e0e0e0;
+            flex: 1;
+        }
+
+        .item-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 0.3rem 0.7rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.feature {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--feature);
+            border: 1px solid var(--feature);
+        }
+
+        .badge.bug {
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--bug);
+            border: 1px solid var(--bug);
+        }
+
+        .badge.design {
+            background: rgba(255, 170, 0, 0.2);
+            color: var(--design);
+            border: 1px solid var(--design);
+        }
+
+        .badge.other {
+            background: rgba(135, 53, 185, 0.2);
+            color: var(--finn);
+            border: 1px solid var(--finn);
+        }
+
+        .item-description {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--debut), var(--finn));
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: #808080;
+            margin-top: 0.3rem;
+        }
+
+        .vote-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 208, 198, 0.1);
+            border: 1px solid var(--debut);
+            border-radius: 8px;
+            color: var(--debut);
+            /*cursor: pointer;*/
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+
+        .vote-btn:hover {
+            background: var(--debut);
+            color: #0a0a0a;
+        }
+
+        .vote-btn.voted {
+            background: var(--debut);
+            color: #0a0a0a;
+        }
+
+        /* Back Button */
+        a.back-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        a.back-btn i {
+            color: var(--debut);
+            font-size: 1.4rem;
+        }
+
+        a.back-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--finn);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations pour les votes */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-40px);
+            }
+        }
+
+        .vote-btn {
+            position: relative;
+            overflow: visible;
+        }
+
+        .vote-btn i {
+            transition: all 0.3s ease;
+        }
+
+        .vote-btn:active i {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-cursor" id="customCursor"></div>
+    <header>
+        <h1><i class="fas fa-map-signs"></i> Roadmap</h1>
+        <p>Suivez l'évolution du projet Echo et votez pour vos features préférées</p>
+    </header>
+
+    <!-- Filters -->
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all" onclick="filterItems('all')">
+            <i class="fas fa-border-all"></i> Tout
+        </button>
+        <button class="filter-btn" data-filter="feature" onclick="filterItems('feature')">
+            <i class="fas fa-star"></i> Features
+        </button>
+        <button class="filter-btn" data-filter="bug" onclick="filterItems('bug')">
+            <i class="fas fa-bug"></i> Bugs
+        </button>
+        <button class="filter-btn" data-filter="design" onclick="filterItems('design')">
+            <i class="fas fa-palette"></i> Design
+        </button>
+        <button class="filter-btn" data-filter="other" onclick="filterItems('other')">
+            <i class="fas fa-ellipsis-h"></i> Autre
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="status-grid" id="roadmap-container">
+            <!-- Content will be injected here -->
+        </div>
+    </div>
+
+    <a href="index.html" class="back-btn" title="Retour au site">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="js/config/supabase.js"></script>
+    <script type="module" src="js/database.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let roadmapData = [];
+        let userVotes = new Set();
+
+        // Attendre EchoDB
+        async function waitForEchoDB() {
+            return new Promise((resolve) => {
+                const check = setInterval(() => {
+                    if (window.EchoDB) {
+                        clearInterval(check);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+
+        // Load roadmap
+        async function loadRoadmap() {
+            await waitForEchoDB();
+
+            try {
+                const { data, error } = await window.EchoDB.supabase
+                    .from('roadmap_items')
+                    .select('*')
+                    .order('order_index', { ascending: true });
+
+                if (error) {
+                    console.error('Erreur Supabase:', error);
+                    throw error;
+                }
+
+                roadmapData = data || [];
+                await loadUserVotes();
+                renderRoadmap();
+            } catch (error) {
+                console.error('Erreur chargement roadmap:', error);
+                // Réessayer après 2 secondes en cas d'erreur réseau
+                setTimeout(loadRoadmap, 2000);
+            }
+        }
+
+        // Load user votes
+        async function loadUserVotes() {
+            try {
+                const user = await window.EchoDB.Auth.getCurrentUser();
+                if (!user) return;
+
+                const { data } = await window.EchoDB.supabase
+                    .from('roadmap_votes')
+                    .select('roadmap_item_id')
+                    .eq('user_id', user.id);
+
+                userVotes = new Set(data?.map(v => v.roadmap_item_id) || []);
+            } catch (error) {
+                console.log('Non connecté');
+            }
+        }
+
+        // Render roadmap
+        function renderRoadmap() {
+            const statuses = {
+                planned: { title: '📋 Planifié', icon: 'clipboard-list' },
+                in_progress: { title: '⚙️ En cours', icon: 'cog' },
+                completed: { title: '✅ Terminé', icon: 'check-circle' }
+            };
+
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = '';
+
+            Object.keys(statuses).forEach(status => {
+                const items = roadmapData.filter(item =>
+                    item.status === status &&
+                    (currentFilter === 'all' || item.category === currentFilter)
+                );
+
+                const column = document.createElement('div');
+                column.className = 'status-column';
+                column.innerHTML = `
+                    <h2>
+                        <i class="fas fa-${statuses[status].icon}"></i>
+                        ${statuses[status].title}
+                        <span class="count">${items.length}</span>
+                    </h2>
+                    <div class="items-container">
+                        ${items.map(item => renderItem(item)).join('')}
+                    </div>
+                `;
+
+                container.appendChild(column);
+            });
+        }
+
+        // Render single item
+        function renderItem(item) {
+            const hasVoted = userVotes.has(item.id);
+            const priority = item.priority === 2 ? 'high' : item.priority === 1 ? 'medium' : 'low';
+
+            return `
+                <div class="roadmap-item priority-${priority}" data-id="${item.id}" data-category="${item.category}">
+                    <div class="item-header">
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-badges">
+                            <span class="badge ${item.category}">${item.category}</span>
+                        </div>
+                    </div>
+                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                    <div class="item-footer">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width: ${item.progress}%"></div>
+                            </div>
+                            <div class="progress-text">${item.progress}% complété</div>
+                        </div>
+                        <button class="vote-btn ${hasVoted ? 'voted' : ''}" onclick="voteForItem('${item.id}', event)">
+                            <i class="fas fa-thumbs-up"></i>
+                            ${item.votes || 0}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Filter items
+        function filterItems(category) {
+            currentFilter = category;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-filter="${category}"]`).classList.add('active');
+
+            renderRoadmap();
+        }
+
+        // Vote for item
+        // Vote for item (VERSION AMÉLIORÉE)
+        // Vote for item avec effet visuel
+        window.voteForItem = async function (itemId, event) {
+            event.stopPropagation();
+
+            const button = event.currentTarget;
+            const voteCountSpan = button.querySelector('span') || button.lastChild;
+            const currentCount = parseInt(voteCountSpan.textContent) || 0;
+            const hasVoted = userVotes.has(itemId);
+
+            // Effet visuel immédiat
+            button.style.transform = 'scale(1.2)';
+            button.style.transition = 'all 0.3s ease';
+
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 300);
+
+            // Animation du compteur
+            const icon = button.querySelector('i');
+            icon.style.animation = 'pulse 0.5s ease';
+            setTimeout(() => {
+                icon.style.animation = '';
+            }, 500);
+
+            // Mise à jour optimiste de l'UI
+            if (hasVoted) {
+                button.classList.remove('voted');
+                voteCountSpan.textContent = currentCount - 1;
+            } else {
+                button.classList.add('voted');
+                voteCountSpan.textContent = currentCount + 1;
+
+                // Animation "+1" qui flotte
+                const plusOne = document.createElement('div');
+                plusOne.textContent = '+1';
+                plusOne.style.cssText = `
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--debut);
+            font-weight: bold;
+            font-size: 1.2rem;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 1000;
+        `;
+                button.style.position = 'relative';
+                button.appendChild(plusOne);
+
+                setTimeout(() => plusOne.remove(), 1000);
+            }
+
+            try {
+                const user = await window.EchoDB.Auth.getCurrentUser();
+                if (!user) {
+                    alert('Vous devez être connecté pour voter');
+                    // Annuler la mise à jour optimiste
+                    if (hasVoted) {
+                        button.classList.add('voted');
+                        voteCountSpan.textContent = currentCount;
+                    } else {
+                        button.classList.remove('voted');
+                        voteCountSpan.textContent = currentCount;
+                    }
+                    return;
+                }
+
+                // Vérifier l'IP
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const { ip } = await ipResponse.json();
+
+                // Vérifier si cette IP a déjà voté pour cet item
+                const { data: ipVote } = await window.EchoDB.supabase
+                    .from('roadmap_votes')
+                    .select('id')
+                    .eq('roadmap_item_id', itemId)
+                    .eq('ip_address', ip)
+                    .maybeSingle();
+
+                if (ipVote && !hasVoted) {
+                    alert('⚠️ Vous avez déjà voté pour cet élément depuis cette connexion');
+                    // Annuler la mise à jour optimiste
+                    button.classList.remove('voted');
+                    voteCountSpan.textContent = currentCount;
+                    return;
+                }
+
+                // Vérifier si l'utilisateur a déjà voté
+                const { data: existingVote } = await window.EchoDB.supabase
+                    .from('roadmap_votes')
+                    .select('id')
+                    .eq('roadmap_item_id', itemId)
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
+                if (existingVote) {
+                    // Retirer le vote
+                    const { error: deleteError } = await window.EchoDB.supabase
+                        .from('roadmap_votes')
+                        .delete()
+                        .eq('id', existingVote.id);
+
+                    if (deleteError) throw deleteError;
+
+                    // Décrémenter
+                    const { error: rpcError } = await window.EchoDB.supabase
+                        .rpc('decrement_votes', { item_id: itemId });
+
+                    if (rpcError) throw rpcError;
+
+                    userVotes.delete(itemId);
+                } else {
+                    // Ajouter le vote avec IP
+                    const { error: insertError } = await window.EchoDB.supabase
+                        .from('roadmap_votes')
+                        .insert({
+                            roadmap_item_id: itemId,
+                            user_id: user.id,
+                            ip_address: ip
+                        });
+
+                    if (insertError) throw insertError;
+
+                    // Incrémenter
+                    const { error: rpcError } = await window.EchoDB.supabase
+                        .rpc('increment_votes', { item_id: itemId });
+
+                    if (rpcError) throw rpcError;
+
+                    userVotes.add(itemId);
+                }
+
+                // Recharger pour synchroniser
+                await loadRoadmap();
+            } catch (error) {
+                console.error('Erreur vote:', error);
+                alert('Erreur lors du vote: ' + (error.message || 'Erreur réseau'));
+
+                // Annuler la mise à jour optimiste en cas d'erreur
+                if (hasVoted) {
+                    button.classList.add('voted');
+                    voteCountSpan.textContent = currentCount;
+                } else {
+                    button.classList.remove('voted');
+                    voteCountSpan.textContent = currentCount;
+                }
+            }
+        };
+
+        // Init
+        document.addEventListener('DOMContentLoaded', loadRoadmap);
+    </script>
+    <script src="js/ui/cursor.js"></script>
+</body>
+
+</html>
