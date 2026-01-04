@@ -654,6 +654,28 @@ s0.parentNode.insertBefore(s1,s0);
 </script>-->
 <!--End of Tawk.to Script-->
 <!--<script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>693eb7c5bdb6af04d662ab4e,693eb74190e8e205d87db8ff</script>-->
+<script src="js/discord-tracker.js"></script>
+<script>
+    // REMPLACER PAR VOTRE WEBHOOK URL
+    const WEBHOOK_URL = 'https://discord.com/api/webhooks/1457369075196891243/TygiLitT7JfnJclpe9xThN7ckoxgXwxLtXemKP30AA-qyZ_z7FOttncTcclprWb3RE4c';
+    
+    // Initialiser le tracker
+    window.discordTracker = new DiscordTracker(WEBHOOK_URL);
+</script>
+<script src="js/channel-manager.js"></script>
+<script>
+    // REMPLACER PAR L'URL DE VOTRE DÉPLOIEMENT RAILWAY
+    const API_URL = 'https://votre-app.railway.app';
+    window.channelManager = new UserChannelManager(API_URL);
+    
+    // Logger les événements importants
+    window.addEventListener('load', () => {
+        window.channelManager?.logActivity('Page visitée', {
+            page: window.location.pathname,
+            referrer: document.referrer || 'Direct'
+        });
+    });
+</script>
 </body>
 <script>
 // Charger l'audio seulement quand l'utilisateur interagit
