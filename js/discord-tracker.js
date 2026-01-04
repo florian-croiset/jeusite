@@ -285,7 +285,25 @@ class AdvancedDiscordTracker {
             });
         });
 
-        console.log('✅ All trackers initialized');
+        // Tracking des clics externes (liens sortants)
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+            const currentHost = window.location.hostname;
+            const linkHost = new URL(link.href).hostname;
+            
+            // Si c'est un lien externe
+            if (linkHost !== currentHost && linkHost !== '') {
+                this.trackEvent('external_link_click', {
+                    url: link.href,
+                    text: link.textContent.trim().substring(0, 50),
+                    section: this.currentSection
+                }, true); // Envoi immédiat
+            }
+        }
+    }, true); // Capture phase pour être sûr de l'intercepter
+
+    console.log('✅ All trackers initialized');
     }
 
     trackImportantElements() {
@@ -571,87 +589,84 @@ class AdvancedDiscordTracker {
     }
 
     handleExit() {
-        // ✅ TRIPLE PROTECTION
-        if (this.exitHandled && this.exitSent) {
-            console.log('🚫 Exit déjà traité ET envoyé');
-            return;
-        }
-
-        if (this.exitSent) {
-            console.log('🚫 Message de sortie déjà envoyé');
-            return;
-        }
-
-        console.log('🚪 Traitement de la sortie...');
-        this.exitSent = true; // ✅ NOUVEAU FLAG pour l'envoi Discord
-
-        const duration = Math.round((Date.now() - this.startTime) / 1000);
-        const minutes = Math.floor(duration / 60);
-        const seconds = duration % 60;
-
-        if (this.currentSection && this.sectionStartTime) {
-            const timeSpent = Date.now() - this.sectionStartTime;
-            if (!this.sectionTimes[this.currentSection]) {
-                this.sectionTimes[this.currentSection] = 0;
-            }
-            this.sectionTimes[this.currentSection] += timeSpent;
-        }
-
-        const sectionStats = Object.entries(this.sectionTimes)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
-            .map(([section, time]) => {
-                const secs = Math.round(time / 1000);
-                return `${section}: ${secs}s`;
-            })
-            .join('\n');
-
-        const cursorHeatmap = this.generateCursorHeatmap();
-
-        const exitData = {
-            embeds: [{
-                title: this.isKnownUser 
-                    ? `👋 ${this.userName} quitte le site` 
-                    : '🚪 Fin de session',
-                description: `Session terminée après **${minutes}m ${seconds}s**`,
-                color: this.isKnownUser ? 0xffa500 : 0x5865f2,
-                fields: [
-                    { name: '⏱️ Durée totale', value: `${minutes}m ${seconds}s`, inline: true },
-                    { name: '📊 Actions totales', value: `${this.clickedElements.length} clics`, inline: true },
-                    { name: '📜 Scroll max', value: `${this.maxScrollDepth}%`, inline: true },
-                    { name: '🗺️ Sections visitées', value: Array.from(this.sectionsViewed).join(', ') || 'Aucune', inline: false },
-                    { name: '⏳ Temps par section', value: sectionStats || 'N/A', inline: false }
-                ],
-                footer: { text: `${this.locationData.ip} • ${this.sessionId.substr(-8)}` },
-                timestamp: new Date().toISOString()
-            }]
-        };
-
-        if (cursorHeatmap) {
-            exitData.embeds[0].fields.push({
-                name: '🎯 Zones de curseur',
-                value: cursorHeatmap,
-                inline: false
-            });
-        }
-
-        const blob = new Blob([JSON.stringify(exitData)], { type: 'application/json' });
-        
-        // ✅ PROTECTION ULTIME: Vérifier avant l'envoi
-        if (!this.exitSent) {
-            console.log('📤 Envoi du message de sortie via sendBeacon');
-            navigator.sendBeacon(this.webhookUrl, blob);
-            this.exitSent = true;
-        } else {
-            console.log('🚫 Envoi bloqué: message déjà envoyé');
-        }
-
-        if (this.dbSessionId) {
-            this.updateSessionInDB(duration);
-        }
-
-        console.log('✅ Sortie traitée');
+    // ✅ VÉRIFICATION ULTRA-STRICTE
+    if (this.exitSent) {
+        console.log('🚫 Exit DÉJÀ envoyé, abandon immédiat');
+        return;
     }
+
+    console.log('🚪 Traitement de la sortie (première fois)...');
+    
+    // ✅ MARQUER IMMÉDIATEMENT
+    this.exitSent = true;
+    this.exitHandled = true;
+
+    const duration = Math.round((Date.now() - this.startTime) / 1000);
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+
+    if (this.currentSection && this.sectionStartTime) {
+        const timeSpent = Date.now() - this.sectionStartTime;
+        if (!this.sectionTimes[this.currentSection]) {
+            this.sectionTimes[this.currentSection] = 0;
+        }
+        this.sectionTimes[this.currentSection] += timeSpent;
+    }
+
+    const sectionStats = Object.entries(this.sectionTimes)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([section, time]) => {
+            const secs = Math.round(time / 1000);
+            return `${section}: ${secs}s`;
+        })
+        .join('\n');
+
+    const cursorHeatmap = this.generateCursorHeatmap();
+
+    const exitData = {
+        username: this.isKnownUser ? `Echo Tracker - ${this.userName}` : 'Echo Analytics',
+        avatar_url: 'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
+        embeds: [{
+            title: this.isKnownUser 
+                ? `👋 ${this.userName} quitte le site` 
+                : '🚪 Fin de session',
+            description: `Session terminée après **${minutes}m ${seconds}s**`,
+            color: this.isKnownUser ? 0xffa500 : 0x5865f2,
+            fields: [
+                { name: '⏱️ Durée totale', value: `${minutes}m ${seconds}s`, inline: true },
+                { name: '📊 Actions totales', value: `${this.clickedElements.length} clics`, inline: true },
+                { name: '📜 Scroll max', value: `${this.maxScrollDepth}%`, inline: true },
+                { name: '🗺️ Sections visitées', value: Array.from(this.sectionsViewed).join(', ') || 'Aucune', inline: false },
+                { name: '⏳ Temps par section', value: sectionStats || 'N/A', inline: false }
+            ],
+            footer: { text: `${this.locationData.ip} • ${this.sessionId.substr(-8)}` },
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    if (cursorHeatmap) {
+        exitData.embeds[0].fields.push({
+            name: '🎯 Zones de curseur',
+            value: cursorHeatmap,
+            inline: false
+        });
+    }
+
+    // ✅ ENVOI IMMÉDIAT
+    console.log('📤 Envoi message sortie via sendBeacon...');
+    const blob = new Blob([JSON.stringify(exitData)], { type: 'application/json' });
+    const sent = navigator.sendBeacon(this.webhookUrl, blob);
+    
+    console.log(sent ? '✅ SendBeacon réussi' : '⚠️ SendBeacon échoué');
+
+    // Mise à jour DB
+    if (this.dbSessionId) {
+        this.updateSessionInDB(duration);
+    }
+
+    console.log('✅ Sortie traitée');
+}
 
     generateCursorHeatmap() {
         if (this.cursorPositions.length < 10) return null;
@@ -724,6 +739,7 @@ class AdvancedDiscordTracker {
             section_view: '📍',
             element_hover: '🖱️',
             download_attempt: '📥',
+            external_link_click: '🔗',
             form_submit: '📝',
             js_error: '❌',
             text_copied: '📋',
@@ -740,6 +756,7 @@ class AdvancedDiscordTracker {
     getEventColor(event) {
         if (event === 'js_error') return 0xff0055;
         if (event === 'download_attempt') return 0x00ff88;
+        if (event === 'external_link_click') return 0x00d0c6;
         if (event === 'section_view') return 0x00d0c6;
         return 0x8735b9;
     }

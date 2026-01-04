@@ -164,6 +164,20 @@ class DiscordWebhookManager {
 
   createEmbed(type, data) {
     const embeds = {
+      'external_link_click': {
+    title: this.isKnownUser 
+        ? `🔗 ${this.userName} clique sur un lien externe` 
+        : '🔗 Clic sur un lien externe',
+    description: `Sortie vers : **${data.url}**`,
+    color: 0x00d0c6,
+    fields: [
+        { name: '🌐 URL', value: data.url.substring(0, 100), inline: false },
+        { name: '📝 Texte du lien', value: data.text || 'Sans texte', inline: true },
+        { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
+        { name: '🔗 IP', value: this.userIP, inline: true }
+    ],
+    timestamp: new Date().toISOString()
+},
       'new_version': {
         title: '🎮 Nouvelle version disponible !',
         description: `Version **${data.version}** vient d'être publiée`,
@@ -364,33 +378,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await window.webhookManager.init();
 
-  // Gestion des clics sortants
-  document.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      if (link.hostname !== window.location.hostname) {
-        window.sendDiscordNotification('exit_site', {
-          version: link.href,
-          ip: window.webhookManager.userIP,
-          page: window.location.pathname
-        });
-      }
-    });
-  });
+  document.addEventListener('DOMContentLoaded', async () => {
+  if (window.location.pathname.includes('admin.html')) return;
 
-  // Détection des téléchargements
-  const downloadPaths = ['executable/', 'assets/', '.exe', '.zip', '.rar'];
-  document.querySelectorAll('a').forEach(link => {
-    const href = link.href;
-    if (downloadPaths.some(path => href.includes(path))) {
-      link.addEventListener('click', () => {
-        window.sendDiscordNotification('new_download', {
-          version: href.split('/').pop(),
-          ip: window.webhookManager.userIP,
-          path: href
-        });
-      });
-    }
-  });
+  await window.webhookManager.init();
+});
+
+console.log('✅ Discord Webhook Manager loaded');
 });
 
 console.log('✅ Discord Webhook Manager loaded');
