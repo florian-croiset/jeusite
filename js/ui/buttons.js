@@ -235,6 +235,11 @@ window.finishCountdown = async function(isTest = false) {
                     .eq('id', countdown.version_id);
                 
                 console.log("✅ Version publiée automatiquement");
+
+                // ⭐ AJOUTER CES LIGNES
+            if (window.sendDiscordNotification) {
+                await window.sendDiscordNotification('countdown_finished', {});
+            }
             }
         } catch (err) {
             console.error("❌ Erreur auto-publication:", err);
@@ -254,6 +259,7 @@ window.finishCountdown = async function(isTest = false) {
         if (statusMsg) {
             statusMsg.innerHTML = '<i class="fa-solid fa-check-circle"></i> Le jeu est prêt à être téléchargé !';
         }
+
     } else {
         const adminState = await verifierDisponibiliteAdmin();
         const statusMsg = document.getElementById('countdown-status-message');

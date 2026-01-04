@@ -110,6 +110,10 @@ async function addGameVersion(versionData) {
     if (error) throw error;
     
     showNotification('✅ Version ajoutée avec succès!', 'success');
+    // ⭐ AJOUTE CES 2 LIGNES
+    if (window.sendDiscordNotification) {
+      await window.sendDiscordNotification('new_version', versionData);
+    }
     return { success: true, data };
   } catch (error) {
     console.error('Erreur ajout version:', error);
@@ -466,6 +470,11 @@ async function submitFeedback(formData) {
     
     showNotification('✅ Merci pour votre feedback!', 'success');
     document.getElementById('feedback-form').reset();
+
+    // ⭐ AJOUTER CES LIGNES
+    if (window.sendDiscordNotification) {
+      await window.sendDiscordNotification('new_feedback', formData);
+    }
     
     return { success: true, data };
   } catch (error) {
@@ -711,7 +720,7 @@ async function updateUserUI(user) {
       <div class="user-info">
         <span>👤 ${profile?.display_name || profile?.username || user.email}</span>
         <button onclick="logout()" class="btn-small">Déconnexion</button>
-        ${profile?.role === 'admin' ? '<a href="/admin.html" class="btn-small">Admin</a>' : ''}
+        ${profile?.role === 'admin' ? '<a href="/admin.html" class="btn-small">Dashboard</a>' : ''}
       </div>
     `;
   }
@@ -846,6 +855,11 @@ async function trackDownload(version, downloadUrl) {
     if (error) throw error;
     
     console.log('✅ Téléchargement enregistré:', version);
+
+    // ⭐ AJOUTER CES LIGNES
+    if (window.sendDiscordNotification) {
+      await window.sendDiscordNotification('new_download', { version });
+    }
     return { success: true, data };
   } catch (error) {
     console.error('Erreur tracking download:', error);
@@ -1052,32 +1066,43 @@ function showRealtimeNotification(notification) {
   }, 5000);
 }
 
-// Envoyer une notification (admin)
-async function sendNotification(title, message, icon = '🔔') {
-  try {
-    const user = await EchoDB.Auth.getCurrentUser();
-    if (!user) throw new Error('Non authentifié');
-    
-    const { data, error } = await EchoDB.supabase
-      .from('notifications')
-      .insert({
-        title,
-        message,
-        icon,
-        created_by: user.id,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
-    
-    if (error) throw error;
-    
-    return { success: true, data };
-  } catch (error) {
-    console.error('Erreur envoi notification:', error);
-    return { success: false, error: error.message };
-  }
-}
+// Fonction d'envoi simplifiée (Global, pas de destinataire)
+    /*async function sendNotification(event) {
+        event.preventDefault();
+        
+        const title = document.getElementById('notif-title').value;
+        const message = document.getElementById('notif-message').value;
+        const btn = event.target.querySelector('button');
+
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+
+            const supabase = await waitForSupabase();
+
+            const { error } = await supabase
+                .from('notifications')
+                .insert([{
+                    title: title,
+                    message: message,
+                    is_read: false
+                    // Pas de recipient_id
+                }]);
+
+            if (error) throw error;
+
+            alert('Notification envoyée avec succès !');
+            document.getElementById('notification-form').reset();
+            loadNotificationHistory(); // Recharger la liste
+
+        } catch (error) {
+            console.error('Erreur envoi:', error);
+            alert('Erreur: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer la notification';
+        }
+    }*/
 
 // =============================================
 // UTILITAIRES

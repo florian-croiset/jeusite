@@ -562,7 +562,7 @@ class NotificationSystem {
                     event: 'INSERT', 
                     schema: 'public', 
                     table: 'notifications',
-                    filter: this.userId ? `recipient_id=eq.${this.userId}` : undefined
+                    //filter: this.userId ? `recipient_id=eq.${this.userId}` : undefined
                 }, 
                 (payload) => {
                     console.log('🔔 Nouvelle notification reçue:', payload.new);
@@ -583,12 +583,12 @@ class NotificationSystem {
                 .limit(50);
 
             // Si utilisateur connecté, charger ses notifications
-            if (this.userId) {
+            /*if (this.userId) {
                 query = query.or(`recipient_id.eq.${this.userId},is_global.eq.true`);
-            } else {
+            } else {*/
                 // Sinon, seulement les notifications globales
-                query = query.eq('is_global', true);
-            }
+                //query = query.eq('is_global', true);
+            //}
 
             const { data, error } = await query;
 

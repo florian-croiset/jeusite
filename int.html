@@ -12,6 +12,7 @@
       media="print" 
       onload="this.media='all'">
       <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+      <script type="module" src="js/discord-webhook.js"></script>
     <script src="js/notifications.js"></script>
     <script src="js/database-complete.js"></script>
     <style>        
@@ -99,20 +100,10 @@
             z-index: 1000;
         }
     </style>
-<script type="module" src="js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="module" src="js/config/supabase.js"></script>
-<script type="module" src="js/database.js"></script>
 </head>
 <body>
-            <div id="splash-screen">
-        <!-- Grille cyberpunk -->
+        <div id="splash-screen">
         <div class="cyber-grid"></div>
-
-        <!-- Particules d'arrière-plan -->
-        <!--<div class="splash-particles" id="splashParticles"></div>-->
-
-        <!-- Contenu principal -->
         <div class="splash-content">
             <div class="logo-decoration">
                 <div class="splash-logo"><h1><span></span>Echo</h1></div>
@@ -147,7 +138,6 @@
     <div class="scroll-progress" id="scrollProgress"></div><div class="custom-cursor" id="customCursor"></div>
     <nav class="navbar">
         <div class="nav-container">
-            <!--<div class="logo">Echo</div>-->
             <div class="logo-container"><div class="logo"><a href="#accueil" style="text-decoration:none;">Echo</a></div></div>
             <div class="burger" id="burger">
                 <span></span>
@@ -155,7 +145,6 @@
                 <span></span>
             </div>
             <ul class="nav-links" id="nav-links">
-                <!--<li><a href="#accueil">Accueil</a></li>-->
                 <li><a href="#team">Team Nightberry</a></li>
                 <li><a href="#telecharger">Télécharger le jeu</a></li>
                 <li><a href="#install">Installer / désinstaller le jeu</a></li>
@@ -435,65 +424,18 @@
     margin: 5px 0;
 }
 </style>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// =============================================
-// VÉRIFIER LA SESSION AU CHARGEMENT
-// =============================================
-
-document.addEventListener('DOMContentLoaded', async () => {
-    // Attendre que Supabase soit disponible
-    await new Promise(resolve => {
-        const check = setInterval(() => {
-            if (window.supabase) {
-                clearInterval(check);
-                resolve();
-            }
-        }, 100);
-    });
-    
-    // Vérifier la session
-    const { data: { session } } = await window.supabase.auth.getSession();
-    
-    if (session?.user) {
-        updateUIAfterLogin(session.user);
-        console.log('✅ Utilisateur connecté:', session.user.email);
-    }
-    
-    // Écouter les changements d'authentification
-    window.supabase.auth.onAuthStateChange((event, session) => {
-        console.log('Auth event:', event);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-            updateUIAfterLogin(session.user);
-        } else if (event === 'SIGNED_OUT') {
-            // Restaurer les boutons
-            const userMenu = document.getElementById('user-menu');
-            if (userMenu) {
-                userMenu.innerHTML = `
-                    <button onclick="openLoginModal()" class="btn-small">Connexion</button>
-                    <button onclick="openSignupModal()" class="btn-small">Inscription</button>
-                `;
-            }
-        }
-    });
-});
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="js/config/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
+<script type="module" src="js/main.js"></script>
+<script>
 async function checkGameAvailability() {
     try {
-        // ✅ VÉRIFIER SI LE COMPTE À REBOURS A DÉJÀ DÉFINI L'ÉTAT
         if (window.jeuDispo === true || window.jeuDispo === false) {
-            console.log('⏭️ État déjà défini par le compte à rebours, skip de la vérification');
-            return;
+             return;
         }
-
         const now = new Date().toISOString();
-        const { data, error } = await supabase
+        const { data, error } = await window.supabase
             .from('game_versions')
             .select('*')
             .eq('is_active', true)
@@ -524,11 +466,9 @@ async function checkGameAvailability() {
         console.error("Erreur check version:", err);
     }
 }
-</script>
-<script>
+
 // Initialiser les notifications
 document.addEventListener('DOMContentLoaded', async () => {
-    // Attendre EchoDB
     await new Promise(resolve => {
         const check = setInterval(() => {
             if (window.EchoDB) {
@@ -544,65 +484,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-/*<script src="js/auth.js">*/
-
-    // =============================================
-// INITIALISATION GLOBALE DE SUPABASE
-// =============================================
-/*import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-*/
-window.supabase = supabase;
-
-// Vérifier l'état de connexion
-async function checkConnection() {
-    try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) {
-            console.error('❌ Erreur Supabase:', error);
-        } else {
-            console.log('✅ Supabase connecté et fonctionnel');
-            if (data.session) {
-                console.log('👤 Utilisateur connecté:', data.session.user.email);
-            }
-        }
-    } catch (err) {
-        console.error('❌ Erreur de connexion Supabase:', err);
-    }
-}
-
-// Attendre que le DOM soit prêt
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkConnection);
-} else {
-    checkConnection();
-}
-
 console.log('✅ Client Supabase initialisé et exposé à window.supabase');
-
-// Ce script vérifie que Supabase est bien disponible
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        if (window.supabase) {
-            console.log('✅ window.supabase est disponible');
-            console.log('✅ window.supabase.auth est:', window.supabase.auth ? 'DISPONIBLE' : 'UNDEFINED');
-            
-            // Tester une fonction simple
-            if (window.supabase.auth) {
-                console.log('✅ Supabase Auth fonctionnel');
-            } else {
-                console.error('❌ Supabase Auth est undefined');
-            }
-        } else {
-            console.error('❌ window.supabase n\'est pas défini');
-            console.log('💡 Vérifiez que le script module Supabase est bien chargé');
-        }
-    }, 1000);
-});
-
 
         // Charger les versions pour la démo
         async function loadVersionsDemo() {
@@ -943,48 +825,6 @@ Contact : team@nightberry.echo
     
     alert(terms);
 }
-
-// =============================================
-// VÉRIFIER LA SESSION AU CHARGEMENT
-// =============================================
-
-document.addEventListener('DOMContentLoaded', async () => {
-    // Attendre que Supabase soit disponible
-    await new Promise(resolve => {
-        const check = setInterval(() => {
-            if (window.supabase) {
-                clearInterval(check);
-                resolve();
-            }
-        }, 100);
-    });
-    
-    // Vérifier la session
-    const { data: { session } } = await window.supabase.auth.getSession();
-    
-    if (session?.user) {
-        updateUIAfterLogin(session.user);
-        console.log('✅ Utilisateur connecté:', session.user.email);
-    }
-    
-    // Écouter les changements d'authentification
-    window.supabase.auth.onAuthStateChange((event, session) => {
-        console.log('Auth event:', event);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-            updateUIAfterLogin(session.user);
-        } else if (event === 'SIGNED_OUT') {
-            // Restaurer les boutons
-            const userMenu = document.getElementById('user-menu');
-            if (userMenu) {
-                userMenu.innerHTML = `
-                    <button onclick="openLoginModal()" class="btn-small">Connexion</button>
-                    <button onclick="openSignupModal()" class="btn-small">Inscription</button>
-                `;
-            }
-        }
-    });
-});
 </script>
 </body>
 </html>
