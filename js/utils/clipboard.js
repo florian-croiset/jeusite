@@ -19,6 +19,12 @@ if (pasteBtn && secretInp) {
     try {
       const pasteText = await navigator.clipboard.readText();
       secretInp.value = pasteText || '';
+      // 📊 Tracking: Code collé
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('secret_code_pasted', {
+        length: pasteText.length
+    });
+}
 
       // feedback visuel
       pasteBtn.style.color = 'var(--finn)';
@@ -39,6 +45,10 @@ if (pasteBtn && secretInp) {
 if (clearBtn && secretInp) {
   clearBtn.addEventListener('click', () => {
     secretInp.value = '';
+    // 📊 Tracking: Code effacé
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('secret_code_cleared', {});
+}
 
     clearBtn.style.color = 'red';
     setTimeout(() => { clearBtn.style.color = 'var(--debut)'; }, 300);

@@ -526,6 +526,13 @@ class SettingsManager {
         this.settings.language = lang;
         this.currentLang = lang;
         this.saveSettings();
+        // 📊 Tracking: Changement de langue
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('language_changed', {
+        from: this.currentLang,
+        to: lang
+    });
+}
         
         // Mettre à jour tous les textes
         document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -619,9 +626,21 @@ class SettingsManager {
     toggleFullscreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
-        } else {
+        } 
+        // 📊 Tracking: Plein écran
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('fullscreen_toggled', {
+        enabled: !document.fullscreenElement
+    });
+}else {
             document.exitFullscreen();
         }
+        // 📊 Tracking: Plein écran
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('fullscreen_toggled', {
+        enabled: !document.fullscreenElement
+    });
+}
     }
     
     /**
@@ -632,6 +651,10 @@ class SettingsManager {
         if (modal) {
             this.modalStack.push('settingsModal');
             modal.classList.add('active');
+            // 📊 Tracking: Ouverture des paramètres
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('settings_opened', {});
+}
             modal.style.display = 'flex';
         }
     }
@@ -798,6 +821,10 @@ class SettingsManager {
     resetSettings() {
         localStorage.removeItem('echoSettings');
         localStorage.removeItem('echoShortcuts');
+        // 📊 Tracking: Réinitialisation des paramètres
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('settings_reset', {});
+}
         location.reload();
     }
     

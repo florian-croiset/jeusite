@@ -65,23 +65,36 @@ function appliquerDisponibiliteBouton(bouton) {
       bouton.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.5)';
       bouton.style.animation = 'pulse 2s infinite';
 
-      // 🔥 NOUVEAU : Ajouter tracking au clic
-      if (bouton.tagName === 'A') {
-          bouton.href = window.jeuUrl;
-          bouton.setAttribute('download', '');
-          bouton.onclick = () => {
-              if (currentVersionId && typeof window.trackVersionDownload === 'function') {
-                  window.trackVersionDownload(currentVersionId);
-              }
-          };
-      } else {
-          bouton.onclick = () => {
-              if (currentVersionId && typeof window.trackVersionDownload === 'function') {
-                  window.trackVersionDownload(currentVersionId);
-              }
-              window.location.href = window.jeuUrl;
-          };
-      }
+// 📥 Gestion du clic de téléchargement
+const handleDownloadClick = () => {
+    // 📊 TRACKING SPÉCIAL : Téléchargement du jeu
+    if (typeof window.sendDiscordNotification === 'function') {
+        window.sendDiscordNotification('new_download', {
+            version: window.jeuVersion,
+            url: window.jeuUrl,
+            versionId: currentVersionId
+        });
+    }
+    
+    // Tracking DB si disponible
+    if (currentVersionId && typeof window.trackVersionDownload === 'function') {
+        window.trackVersionDownload(currentVersionId);
+    }
+};
+
+if (bouton.tagName === 'A') {
+    bouton.href = window.jeuUrl;
+    bouton.setAttribute('download', '');
+    bouton.onclick = handleDownloadClick;
+} else {
+    bouton.onclick = () => {
+        handleDownloadClick();
+        // Rediriger après le tracking
+        setTimeout(() => {
+            window.location.href = window.jeuUrl;
+        }, 100);
+    };
+}
     } else {
       bouton.innerHTML = '<i class="fa-solid fa-lock"></i> Télécharger le jeu';
       infoSpan.innerHTML = '<i class="fa-solid fa-ban fa-fade"></i> Temporairement désactivé';
@@ -360,6 +373,12 @@ const sablierBtn = document.getElementById('sablierBtn');
 if (sablierBtn) {
   sablierBtn.addEventListener('click', () => {
     console.log("🧪 Lancement du Mode Test");
+    // 📊 Tracking: Mode test activé
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('test_mode_activated', {
+        countdown: 10
+    });
+}
     
     window.isTestMode = true;
 

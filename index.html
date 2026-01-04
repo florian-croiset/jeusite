@@ -2,11 +2,20 @@
 <html lang="fr"><!-- Sortie de la version 1.4 -->
 <head>
   <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-KWP7WV3B');</script>
+<!-- Google tag (gtag.js) -->
+<script>
+    window.addEventListener('load', function() {
+        const script = document.createElement('script');
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-JHJEB1CE3S';
+        script.async = true;
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JHJEB1CE3S');
+    });
+</script>
 <!-- End Google Tag Manager -->
   <!-- Préconnexion aux domaines externes -->
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -43,24 +52,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         }
     </style>
-<!-- Google tag (gtag.js) -->
-    <!-- Remplacer le script actuel par -->
-<script>
-    window.addEventListener('load', function() {
-        const script = document.createElement('script');
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-JHJEB1CE3S';
-        script.async = true;
-        document.head.appendChild(script);
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-JHJEB1CE3S');
-    });
-</script>
+
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
+<!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWP7WV3B"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
@@ -94,8 +89,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="splash-logo"><h1><span></span>Echo</h1></div>
             </div>
             <div class="splash-subtitle">Par la Team Nightberry</div>
-
-            <!-- Loader -->
             <div class="splash-loader-container">
                 <div class="splash-loader">
                     <div class="loader-circle"></div>
@@ -109,12 +102,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </div>
 
-                <!-- Barre de progression -->
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
-
-                <!-- Texte de chargement -->
                 <div class="loading-text">
                     Chargement
                     <span class="loading-percentage" id="loadingPercentage">0%</span>
@@ -135,7 +125,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <ul class="nav-links" id="nav-links">
                 <!--<li><a href="#accueil">Accueil</a></li>-->
                 <li><a href="#team">Team Nightberry</a></li>
-                <!--<li><a href="#telecharger">Télécharger le jeu</a></li>-->
                 <li><a href="#install">Installer<!-- / désinstaller--> le jeu</a></li>
                 <li><a href="#gameplay">Gameplay</a></li>
                 <li><a href="#lore">Lore</a></li><!--<li>Thème</li>-->
@@ -187,12 +176,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="about-visual" style="overflow: hidden; background: rgba(102, 126, 234, 0.6); background-size:cover; background-position:center; background-image: url('assets/arriere.png');"> </div>
         </div>
     </section>
-    <!--<section id="telecharger" class="features">
-        <h2>Télécharger</h2><div class="contact-form"><div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div></div>
-    </section>-->
-    <!--<section id="install" class="community">
-        <h2>Installer le jeu en <strong>5 étapes</strong></h2><p style="font-size: 1.2rem; color: #b0b0b0; margin-bottom: 3rem;">1ère étape : ___</p>
-    </section>-->
     <section id="install" class="installversion">
         <div class="cyber-grid"></div>
         <div class="glow-orb glow-orb-1"></div>
@@ -585,7 +568,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <button id="versionAccessBtn" class="btn-hidden-access" title="Accès version">
   <i class="fa-solid fa-circle-dot"></i>
 </button>
-<!-- ===== BOUTONS FLOTTANTS ===== -->
 <div class="floating-buttons">
   <button class="floating-btn btn-scroll-top" id="scrollTopBtn" title="Remonter en haut">
     <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
@@ -595,10 +577,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </button>
 </div>
 
-<!-- ===== AUDIO ===== -->
 <audio id="backgroundMusic" src="assets/mp3compressmusique.mp3" loop preload="none"></audio>
 
-<!-- ===== MODALE D’ACCÈS SECRET ===== -->
 <div id="secretModal" class="secret-modal">
   <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3><!-- Bouton Sablier pour changer la durée du compte à rebours -->
     <!--<h3>🔒 Accès restreint</h3>-->
@@ -654,14 +634,6 @@ s0.parentNode.insertBefore(s1,s0);
 </script>-->
 <!--End of Tawk.to Script-->
 <!--<script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>693eb7c5bdb6af04d662ab4e,693eb74190e8e205d87db8ff</script>-->
-<script src="js/discord-tracker.js"></script>
-<script>
-    // REMPLACER PAR VOTRE WEBHOOK URL
-    const WEBHOOK_URL = 'https://discord.com/api/webhooks/1457369075196891243/TygiLitT7JfnJclpe9xThN7ckoxgXwxLtXemKP30AA-qyZ_z7FOttncTcclprWb3RE4c';
-    
-    // Initialiser le tracker
-    window.discordTracker = new DiscordTracker(WEBHOOK_URL);
-</script>
 </body>
 <script>
 // Charger l'audio seulement quand l'utilisateur interagit
@@ -674,9 +646,21 @@ document.getElementById('musicBtn').addEventListener('click', function() {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="js/config/supabase.js"></script>
+
+<!-- 2. Database -->
 <script type="module" src="js/database.js"></script>
-<script type="module" src="js/main.js"></script>
+
+<!-- 3. ✨ NOUVEAU : Service de détection IP (AVANT les autres) -->
+<script src="js/ip-detection.js"></script>
+
+<!-- 4. Discord Webhooks -->
 <script type="module" src="js/discord-webhook.js"></script>
+
+<!-- 5. Advanced Tracker -->
+<script src="js/discord-tracker.js"></script>
+
+<!-- 6. Main -->
+<script type="module" src="js/main.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const kbHeader = document.getElementById('toggleKeyboard');

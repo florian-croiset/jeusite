@@ -40,12 +40,22 @@ export function openShareModal() {
   if (qrImg) qrImg.src = qrApiUrl;
 
   modal.classList.add('active');
+  // 📊 Tracking: Ouverture modale de partage
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('share_modal_opened', {
+        page: window.location.pathname
+    });
+}
   document.body.style.overflow = 'hidden';
 }
 
 export function closeShareModal() {
   const modal = document.getElementById('shareModal');
   if (modal) modal.classList.remove('active');
+  // 📊 Tracking: Fermeture modale
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('share_modal_closed', {});
+}
   document.body.style.overflow = '';
 }
 
@@ -85,6 +95,12 @@ if (copyBtn) {
             const original = copyBtn.textContent;
             copyBtn.textContent = 'Copié !';
             copyBtn.classList.add('copied');
+            // 📊 Tracking: Lien copié
+if (typeof window.sendDiscordNotification === 'function') {
+    window.sendDiscordNotification('share_link_copied', {
+        url: siteUrl
+    });
+}
             setTimeout(() => {
                 copyBtn.textContent = original;
                 copyBtn.classList.remove('copied');
