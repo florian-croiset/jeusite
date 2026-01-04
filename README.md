@@ -1,132 +1,129 @@
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/florian-croiset/jeusite?utm_source=oss&utm_medium=github&utm_campaign=florian-croiset%2Fjeusite&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 # 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
 
 ## 📖 Présentation
-**Echo** est un jeu narratif développé par **Team Nightberry**, un collectif de cinq étudiants passionnés par le game design et les univers immersifs.  
-Ce site web sert de **vitrine officielle** du projet : présentation de l’équipe, téléchargement du jeu, aperçu du gameplay, du lore et suivi des mises à jour.  
 
-* * *
+**Echo** est un jeu narratif développé par **Team Nightberry**, un collectif de cinq étudiants passionnés par le game design et les univers immersifs.
+
+Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du projet : présentation de l’équipe, téléchargement du jeu, aperçu du gameplay, du lore, suivi des mises à jour, et désormais une roadmap interactive et un dashboard administrateur.
+
+---
 
 ## 👥 Équipe – Team Nightberry
-* **Amaury Giraud-Laforet** – Game Design / UI  
-* **Gaspard Sapin** – Programmation / Gestion Web  
-* **Florian Croiset** – Pixel Art / Visuels  
-* **Éric Sahakian** – Level Design  
-* **Jules Cohen** – Conception Sonore  
 
-* * *
+* **Amaury Giraud-Laforet** – Game Design / UI
+* **Gaspard Sapin** – Programmation / Gestion Web
+* **Florian Croiset** – Pixel Art / Visuels
+* **Éric Sahakian** – Level Design
+* **Jules Cohen** – Conception Sonore
+
+---
 
 ## 🕹️ Fonctionnalités principales du site
 
 ### Interface et navigation
-* **Design néon sombre** (cyan/violet) avec reflets animés  
-* **Effets dynamiques** : particules, filaments d’énergie, transitions scrollées  
-* **Navbar adaptative** (réduction et effet de transparence au scroll)  
-* **Curseur personnalisé** interactif  
-* **Barre de progression horizontale** indiquant la position dans la page  
-* **Scroll fluide** et transitions progressives entre sections  
 
-### Page d’accueil
-* **Hero section** avec **vidéo d’intro** (`anim.mp4`)  
-* **Compte à rebours interactif** vers la bêta (mode test accéléré)  
-* **Icône fusée 🚀** et **bouton sablier 🕒** pour tester la vitesse  
-* **Déblocage automatique du téléchargement** à la fin du compte à rebours  
-* **CTAs dynamiques** : 「Télécharger」, 「Découvrir le gameplay」  
+* **Design néon sombre** (cyan/violet) avec reflets animés
+* **Effets dynamiques** : particules, filaments d’énergie, transitions scrollées
+* **Navbar adaptative** (réduction et effet de transparence au scroll)
+* **Curseur personnalisé** interactif
+* **Barre de progression horizontale** indiquant la position dans la page
+* **Scroll fluide** et transitions progressives entre sections
+* **Logo animé** (gradient + effet holographique)
+* **Soulignement liquide** des liens de navigation
 
-### Sections dédiées
-* **Team Nightberry** : présentation visuelle et liens membres  
-* **Télécharger** : gestion dynamique de la disponibilité selon plateforme  
-* **Gameplay / Lore** : univers détaillé en plusieurs actes (nouveau contenu ajouté !)  
-* **Installation** : tutoriel prévu (install/désinstall du jeu)  
-* **Historique des versions** : affichage stylisé des changelogs  
+### Page d’accueil (Hero & Interaction)
+
+* **Hero section** avec **vidéo d’intro** (`anim.mp4`)
+* **Compte à rebours interactif** vers la bêta avec **icône fusée 🚀** animée
+* **Bouton sablier 🕒** pour tester la vitesse (accélération de 10s en mode test)
+* **Homogénéisation du compteur** (affichage '0' au lieu de '00' pour plus de clarté)
+* **Déblocage automatique du téléchargement** à la fin du compte à rebours
+* **CTAs dynamiques** : 「Télécharger」, 「Découvrir le gameplay」
+* **Splash screen** : Amélioration visuelle et correction des bugs d'affichage
+
+### Sections dédiées & Contenu
+
+* **Team Nightberry** : présentation visuelle et liens membres (agrandis dans l'en-tête)
+* **Télécharger** : gestion dynamique (bouton actif vers `.exe`, redirection ou texte spécifique selon la plateforme/disponibilité) avec **compteur de téléchargements intégré**
+* **Gameplay / Lore** : univers détaillé en **4 actes narratifs** (Kaelen : L’Ombre du Soleil)
+* **Installation** : tutoriel prévu (install/désinstall du jeu)
+* **Historique des versions** : affichage stylisé des changelogs avec **catégories de modifications**, outils de comparaison et modes d'affichage optimisés
+* **Roadmap (Nouveau)** : Suivi interactif du développement (version bêta) avec **système de vote** et d'affichage
+
+### Administration et Backend (Nouveau v2.0+)
+
+* **Dashboard Admin** : Gestion complète de la Roadmap (Ajout, Modification, Suppression), activation du téléchargement, gestion des versions et du countdown
+* **Système de comptes** : Refonte du back-end avec base de données
+* **Page Settings** : Configuration globale du site et du système
+* **Bot Discord (Bêta)** : Suivi en temps réel des vues, statistiques, actions et téléchargements
+* **Analyse** : Intégration de **Google Tag** pour le suivi d'audience
 
 ### Extras et accessibilité
-* **Musique de fond** contrôlable (`music.js`) – lecture/pause via bouton flottant ou raccourci `P`  
-* **Menu burger mobile** avec fermeture automatique après clic  
-* **Bouton “Remonter en haut”** fluide  
-* **Blocage du clic droit** pour protéger les visuels  
-* **Partage intégré** via l’API native (copie du lien + QR Code)  
-* **Compatibilité mobile complète** grâce à `responsive.css` & `mobile.css`  
 
-* * *
+* **Musique de fond** contrôlable (`music.js`) – lecture/pause via bouton flottant ou raccourci clavier `P` (lecture auto après interaction)
+* **Menu burger mobile** : fermeture automatique après clic, fermeture au scroll, touche `Échap` ou clic en dehors
+* **Bouton “Remonter en haut”** fluide et flottant
+* **Blocage du clic droit** pour protéger les visuels
+* **Partage intégré** via l’API native (copie du lien + QR Code)
+* **Page Design** : Système d'exports (ZIP du projet, PDF de la charte graphique, pack assets), logos, couleurs, sprites, et accès à **Echo Docs**
+* **Compatibilité mobile complète** grâce à `responsive.css` & `mobile.css`
+
+---
 
 ## 🧩 Structure et organisation du projet
+
 ```
 Echo/
 │
-├── index.html             → page principale (accueil)
-├── versions.html          → journal de versions
-├── diapo.html             → présentation interactive
-├── design.html            → charte graphique du jeu
-├── liens.html             → liste des liens interes
-│
-├── assets/                → fichiers multimédia
-|    ├── tous les médias
-│    ├── anim.mp4
-│    ├── arriere.png
-│    ├── musique.mp3
-│    └── favicon.ico
-│
-├── css/                   → styles découpés par composant
-│    ├── main.css
-│    ├── layout.css
-│    ├── design.css
-│    ├── hero.css
-│    ├── effects.css
-│    ├── modals.css
-│    ├── cursor.css
-│    ├── colours.css
-│    ├── components.css
-│    └── responsive.css
-│
+├── index.html
+├── executable/
+├── assets/
+├── css/
 ├── js/
-│    ├── main.js
-│    ├── design.js
-│    ├── ui/
-│    │    ├── navbar.js
-│    │    ├── buttons.js
-│    │    ├── cursor.js
-│    │    ├── modal.js
-│    │    └── music.js
-│    └── utils/
-│         ├── countdown.js
-│         ├── clipboard.js
-│         ├── share.js
-│         └── scroll.js
-│
 └── README.md
 ```
-* * *
 
-## 🗓️ Historique des versions
+---
+
+## 🗓️ Historique des versions (Complet)
 
 | Version | Date | Changements clés |
-| :-- | :-- | :-- |
-| **1.5** | 16 décembre 2025 | Amélioration menu burger ; ajout pages "Design" et "Liens" ; correction de bugs ; version mobile de versions |
-| **1.4** | 13 décembre 2025 | Favicon ajouté 🪶 ; bouton Téléchargement actif vers `.exe` ; sablier test compte à rebours ; raccourci `P` musique ; modale secrète enrichie (coller/effacer/entrée/échappement) ; bouton de partage (API + QR Code) ; Lore : 4 actes de l’histoire de Kaelen ; burger auto‑fermant ; performances améliorées mobile/desktop. |
-| **1.3** | 9 décembre 2025 | Menu burger mobile ; nouvelle feuille `mobile.css` ; boutons de téléchargement dynamiques ; refactor JS ; détection responsive automatique ; optimisations UI. |
-| **1.2** | 5 décembre 2025 | Logo animé holographique ; effets visuels étendus ; bouton musique ; footer animé ; modale secrète (v1). |
-| **1.1** | 2 décembre 2025 | Compte à rebours (Hero) ; bouton Back‑to‑top ; meilleures animations d’apparition. |
-| **1.0** | 1er décembre 2025 | Première version publique du site. |
+| --- | --- | --- |
+| **2.3** | 05 janv. 2026 | **Lancement Roadmap (bêta)** : suivi interactif + vote. Refonte page Versions (catégories/comparaison). **Dashboard Admin**. |
+| **2.2** | 04 janv. 2026 | **Bot Discord bêta** (stats/logs). Refonte des sections lore, gameplay et install. Modification groupée (footer). Système de notifications. |
+| **2.1** | 03 janv. 2026 | Compteur téléchargement. Refonte `test.html`. Désactivation téléchargement via admin. **Echo Docs**. Liens soutenances. Correction sablier & icônes PDF. |
+| **2.0** | 29 déc. 2025 | **Refonte Back-end & BDD**. Dashboard Admin centralisé. Page Settings. Exports ZIP/PDF/Assets. Google Tag. Correction bug musique et splash screen. |
+| **1.5** | 16 déc. 2025 | Amélioration menu burger (Échap/Scroll). Ajout pages **Design** et **Liens**. Version mobile de la page versions. |
+| **1.4** | 13 déc. 2025 | Favicon 🪶. Bouton Téléchargement vers `.exe`. Sablier test. Raccourci `P`. Modale secrète enrichie. Bouton partage (API/QR). Lore : 4 actes. |
+| **1.3** | 09 déc. 2025 | Menu burger mobile. `mobile.css`. Détection auto responsive. Refactor JS. UI optimisée. |
+| **1.2** | 05 déc. 2025 | Logo holographique. Effets particules/filaments. Bouton musique. Footer animé. Modale secrète v1. |
+| **1.1** | 02 déc. 2025 | Compte à rebours Hero. Bouton Back-to-top. Animations d'apparition. |
+| **1.0** | 01 déc. 2025 | Première version publique du site. |
 
-* * *
+---
 
 ## 🧠 Technologies utilisées
-* **HTML5 / CSS3 / JavaScript (ES6)**  
-* **Font Awesome 6** (icônes et animations)  
-* **Intersection Observer API** (apparition fluide des sections)  
-* **Web Share API & Clipboard API** (partage et copie de liens)  
-* **Gestion modulaire** du code (UI / Utils séparés)  
 
-* * *
+* **HTML5 / CSS3 / JavaScript (ES6)** * **Backend & BDD** : PHP/MySQL (ou Node/NoSQL selon ton stack) pour les comptes et la roadmap
+* **Font Awesome 6** (icônes et animations)
+* **Intersection Observer API** (apparition fluide)
+* **Web Share API & Clipboard API** (partage et copie)
+* **Google Tag Manager** (Analytique)
+* **Discord API** (Bot de tracking)
+
+---
 
 ## 🚀 À venir
-* **Système de comptes utilisateurs** avec sauvegarde de progression  
-* **Téléchargement actif** du jeu complet (bêta prévu courant 2026)  
-* **Pages gameplay / lore étendues**, avec intégration sonore dynamique  
-* **Effets sonores synchronisés** à la musique et aux transitions visuelles  
 
-* * *
+* **Système de notifications** en temps réel pour les mises à jour
+* **Finalisation de la page Design** (sprites et emojis manquants)
+* **Amélioration du bot discord**
+
+---
 
 ## 🪪 Licence
-© 2025 Team Nightberry – Tous droits réservés.  
-Le code source est consultable à des fins pédagogiques. Toute reproduction ou réutilisation du **design, visuels ou assets sonores** sans autorisation est strictement interdite.
+
+© 2025-2026 Team Nightberry – Tous droits réservés.
+
+Le code source est consultable à des fins pédagogiques. Toute reproduction du design, des visuels ou des assets sans autorisation est interdite.
