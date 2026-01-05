@@ -17,10 +17,11 @@ class AdvancedDiscordTracker {
         this.exitSent = false; // ✅ NOUVEAU: Flag pour empêcher l'envoi multiple à Discord
         
         // Tracking des sections
-        this.sectionsViewed = new Set();
-        this.sectionTimes = {};
-        this.currentSection = null;
-        this.sectionStartTime = null;
+            this.availableSections = []; // Sections détectées sur la page
+    this.sectionsViewed = new Set();
+    this.sectionTimes = {};
+    this.currentSection = null;
+    this.sectionStartTime = null;
         
         // Tracking du curseur
         this.cursorPositions = [];
@@ -36,7 +37,8 @@ class AdvancedDiscordTracker {
         
         // Temps d'inactivité
         this.lastActivityTime = Date.now();
-        this.inactivityThreshold = 30000;
+    this.inactivityThreshold = 30000;
+    this.inactivityNotificationSent = false; // ✅ NOUVEAU FLAG
         
         this.init();
     }
@@ -45,18 +47,23 @@ class AdvancedDiscordTracker {
         return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
 
-    async init() {
-        try {
-            console.log('🔄 Initialisation du tracker...');
-            
-            // 1. Récupérer l'IP et ATTENDRE l'enrichissement complet
-            await this.getIPAndLocation();
-            
-            // 2. Récupérer le webhook approprié depuis la DB
-            await this.loadWebhook();
-            
-            // 3. Setup des trackers
-            this.setupTracking();
+async init() {
+    try {
+        console.log('📡 Initialisation du tracker...');
+        
+        // 1. Récupérer l'IP et ATTENDRE l'enrichissement complet
+        await this.getIPAndLocation();
+        
+        // 2. Récupérer le webhook approprié depuis la DB
+        await this.loadWebhook();
+        
+        // ✅ 2.5. Détecter les sections disponibles
+        this.detectAvailableSections();
+        
+        // 3. Setup des trackers
+        this.setupTracking();
+        
+        // ... reste inchangé
             
             // 4. Envoyer la notification de visite
             await this.trackPageView();
@@ -202,33 +209,93 @@ class AdvancedDiscordTracker {
         });
     }
 
-    setupTracking() {
-        // ✅ CORRECTION DÉFINITIVE: Un seul gestionnaire qui gère tous les cas
-        const exitHandler = () => {
-            if (this.exitHandled) {
-                console.log('🚫 Exit déjà traité (flag actif)');
-                return;
-            }
-            console.log('🚪 Premier appel à exitHandler, traitement...');
-            this.exitHandled = true;
-            this.handleExit();
-        };
+setupTracking() {
+    // ✅ SOLUTION DÉFINITIVE : Ne déclencher que sur VRAIE fermeture
+    let visibilityTimeout = null;
+    let lastVisibilityChange = 0;
+    let isRealExit = false;
+    
+    const exitHandler = (source) => {
+        if (this.exitHandled) {
+            console.log('🚫 Exit déjà traité');
+            return;
+        }
+        console.log(`🚪 Traitement sortie via ${source}...`);
+        this.exitHandled = true;
+        isRealExit = true;
+        this.handleExit();
+    };
 
-        // Écouter les deux événements mais le flag empêchera le double appel
-        window.addEventListener('beforeunload', exitHandler);
-        window.addEventListener('pagehide', exitHandler);
+    // ✅ MÉTHODE 1 : beforeunload = VRAIE fermeture/navigation
+    window.addEventListener('beforeunload', (e) => {
+        console.log('⚠️ beforeunload = VRAIE sortie détectée');
+        exitHandler('beforeunload');
+    }, { capture: true });
+
+    // ✅ MÉTHODE 2 : pagehide = backup mobile
+    window.addEventListener('pagehide', (e) => {
+        console.log('⚠️ pagehide, persisted:', e.persisted);
+        if (!e.persisted && !this.exitHandled) {
+            exitHandler('pagehide');
+        }
+    }, { capture: true });
+
+    // ✅ MÉTHODE 3 : visibilitychange = UNIQUEMENT pour statistiques internes
+    // NE PLUS l'utiliser pour déclencher handleExit()
+    document.addEventListener('visibilitychange', () => {
+        const now = Date.now();
+        
+        if (document.visibilityState === 'hidden') {
+            lastVisibilityChange = now;
+            console.log('👁️ Page cachée (changement onglet probable)', new Date().toLocaleTimeString());
+            
+            // ⚠️ NE PAS appeler exitHandler() ici !
+            // On track juste l'événement
+            if (!isRealExit) {
+                this.trackEvent('tab_hidden', { 
+                    timestamp: now,
+                    section: this.currentSection 
+                });
+            }
+            
+            clearTimeout(visibilityTimeout);
+        } else {
+            const hiddenDuration = now - lastVisibilityChange;
+            console.log(`👁️ Page visible après ${hiddenDuration}ms`);
+            
+            // Si on revient après un "faux exit"
+            if (this.exitHandled && !isRealExit) {
+                console.log('🔄 Annulation fausse alerte');
+                this.exitHandled = false;
+                this.exitSent = false;
+            }
+            
+            // Track le retour
+            this.trackEvent('tab_visible', { 
+                duration: hiddenDuration,
+                section: this.currentSection 
+            });
+            
+            clearTimeout(visibilityTimeout);
+        }
+    }, { capture: true });
+
+    // ... reste du code setupTracking() inchangé
+
+
+    // ... reste du code setupTracking() inchangé
 
         document.addEventListener('click', (e) => this.handleClick(e));
 
-        let scrollTimeout;
-        window.addEventListener('scroll', () => {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                this.handleScroll();
-                this.detectCurrentSection();
-            }, 300);
-            this.updateActivity();
-        });
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            this.handleScroll();
+            this.detectCurrentSection();
+        }, 300);
+        this.updateActivity();
+    });
 
         document.addEventListener('mousemove', (e) => this.sampleCursor(e));
 
@@ -342,41 +409,63 @@ class AdvancedDiscordTracker {
         });
     }
 
-    detectCurrentSection() {
-        const sections = document.querySelectorAll('section[id]');
-        const scrollPos = window.scrollY + window.innerHeight / 2;
-
-        let newSection = null;
-
-        sections.forEach(section => {
-            const rect = section.getBoundingClientRect();
-            const sectionTop = window.scrollY + rect.top;
-            const sectionBottom = sectionTop + rect.height;
-
-            if (scrollPos >= sectionTop && scrollPos <= sectionBottom) {
-                newSection = section.id;
-            }
-        });
-
-        if (newSection && newSection !== this.currentSection) {
-            if (this.currentSection) {
-                const timeSpent = Date.now() - this.sectionStartTime;
-                if (!this.sectionTimes[this.currentSection]) {
-                    this.sectionTimes[this.currentSection] = 0;
-                }
-                this.sectionTimes[this.currentSection] += timeSpent;
-            }
-
-            this.currentSection = newSection;
-            this.sectionStartTime = Date.now();
-            this.sectionsViewed.add(newSection);
-
-            this.trackEvent('section_view', {
-                section: newSection,
-                timestamp: Date.now()
-            });
-        }
+detectCurrentSection() {
+    // ✅ Si pas de sections ID, ne rien faire
+    if (this.availableSections.length === 0 || 
+        (this.availableSections.length === 1 && this.availableSections[0] === 'page')) {
+        return;
     }
+
+    const sections = document.querySelectorAll('section[id]');
+    if (sections.length === 0) return;
+
+    const scrollPos = window.scrollY + window.innerHeight / 2;
+    let newSection = null;
+
+    sections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        const sectionTop = window.scrollY + rect.top;
+        const sectionBottom = sectionTop + rect.height;
+
+        if (scrollPos >= sectionTop && scrollPos <= sectionBottom) {
+            newSection = section.id;
+        }
+    });
+
+    if (newSection && newSection !== this.currentSection) {
+        // Sauvegarder le temps de l'ancienne section
+        if (this.currentSection) {
+            const timeSpent = Date.now() - this.sectionStartTime;
+            if (!this.sectionTimes[this.currentSection]) {
+                this.sectionTimes[this.currentSection] = 0;
+            }
+            this.sectionTimes[this.currentSection] += timeSpent;
+        }
+
+        this.currentSection = newSection;
+        this.sectionStartTime = Date.now();
+        this.sectionsViewed.add(newSection);
+
+        this.trackEvent('section_view', {
+            section: newSection,
+            timestamp: Date.now()
+        });
+    }
+}
+
+    detectAvailableSections() {
+    // ✅ Détecter dynamiquement les sections de la page
+    const sections = document.querySelectorAll('section[id]');
+    this.availableSections = Array.from(sections).map(s => s.id);
+    
+    console.log('📍 Sections disponibles sur cette page:', this.availableSections);
+    
+    // Si aucune section, utiliser une section par défaut
+    if (this.availableSections.length === 0) {
+        this.availableSections = ['page'];
+        this.currentSection = 'page';
+    }
+}
 
     handleClick(e) {
         this.updateActivity();
@@ -437,20 +526,23 @@ class AdvancedDiscordTracker {
         this.updateActivity();
     }
 
-    updateActivity() {
-        this.lastActivityTime = Date.now();
-    }
-
+updateActivity() {
+    this.lastActivityTime = Date.now();
+    this.inactivityNotificationSent = false; // ✅ Reset le flag quand l'user redevient actif
+}
     checkInactivity() {
-        const inactiveTime = Date.now() - this.lastActivityTime;
-        if (inactiveTime >= this.inactivityThreshold) {
-            this.trackEvent('user_inactive', {
-                duration: inactiveTime,
-                section: this.currentSection
-            });
-            this.updateActivity();
-        }
+    const inactiveTime = Date.now() - this.lastActivityTime;
+    
+    // ✅ N'envoyer qu'UNE SEULE notification jusqu'à ce que l'user redevienne actif
+    if (inactiveTime >= this.inactivityThreshold && !this.inactivityNotificationSent) {
+        this.trackEvent('user_inactive', {
+            duration: inactiveTime,
+            section: this.currentSection
+        });
+        this.inactivityNotificationSent = true; // ✅ Marquer comme envoyé
+        console.log('😴 Notification inactivité envoyée (une seule fois)');
     }
+}
 
     getElementDescription(el) {
         let desc = el.tagName.toLowerCase();

@@ -8,22 +8,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <style>
-
         .form-section {
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-.form-section:last-of-type {
-    border-bottom: none;
-}
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
 
-.form-section h4 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+        .form-section h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -122,7 +122,8 @@
             border: none;
             border-radius: 8px;
             color: white;
-            font-size: 14px; /* 16 */
+            font-size: 14px;
+            /* 16 */
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -423,7 +424,8 @@
 
         th,
         td {
-            padding: 9px; /* 15 */
+            padding: 9px;
+            /* 15 */
             text-align: left;
             border-bottom: 1px solid rgba(157, 0, 255, 0.3);
             font-size: 13px;
@@ -434,7 +436,8 @@
             color: var(--cyan);
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 12px;/* 13 */
+            font-size: 12px;
+            /* 13 */
             letter-spacing: 1px;
         }
 
@@ -535,12 +538,13 @@
             font-size: 20px;
         }
 
-                .version-down h3 {
+        .version-down h3 {
             color: var(--cyan);
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 20px;
         }
+
         .close-modal {
             cursor: pointer;
             font-size: 28px;
@@ -711,61 +715,61 @@
 
 
         .download-controls {
-    display: grid;
-    gap: 20px;
-    margin-top: 20px;
-}
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-.control-item {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid var(--purple);
-}
+        .control-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--purple);
+        }
 
-.switch-label {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    cursor: pointer;
-}
+        .switch-label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
 
-.switch-label input[type="checkbox"] {
-    position: relative;
-    width: 60px;
-    height: 30px;
-    appearance: none;
-    background: var(--danger);
-    border-radius: 30px;
-    transition: all 0.3s;
-    cursor: pointer;
-}
+        .switch-label input[type="checkbox"] {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            appearance: none;
+            background: var(--danger);
+            border-radius: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
 
-.switch-label input[type="checkbox"]:checked {
-    background: var(--success);
-}
+        .switch-label input[type="checkbox"]:checked {
+            background: var(--success);
+        }
 
-.switch-label input[type="checkbox"]::before {
-    content: '';
-    position: absolute;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: white;
-    top: 2px;
-    left: 2px;
-    transition: all 0.3s;
-}
+        .switch-label input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
 
-.switch-label input[type="checkbox"]:checked::before {
-    left: 32px;
-}
+        .switch-label input[type="checkbox"]:checked::before {
+            left: 32px;
+        }
 
-.control-text {
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--cyan);
-}
+        .control-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--cyan);
+        }
     </style>
 </head>
 
@@ -784,7 +788,8 @@
                     <label>Mot de passe</label>
                     <input type="password" id="password" required>
                 </div>
-                <button type="submit" class="btn" style="font-size: 16px; padding: 12px 24px; width: 100%;">Connexion</button>
+                <button type="submit" class="btn"
+                    style="font-size: 16px; padding: 12px 24px; width: 100%;">Connexion</button>
             </form>
         </div>
     </div>
@@ -802,16 +807,23 @@
 
         <div class="dashboard-content">
             <div class="sidebar" id="sidebar">
-                <div class="sidebar-item active" data-section="overview" style="position: fixed; top: 100px;">📊 Vue d'ensemble</div>
-<div class="sidebar-item" data-section="versions" style="position: fixed; top: 175px;">🎮 Versions du jeu</div>
-<div class="sidebar-item" data-section="roadmap" style="position: fixed; top: 250px;">🗺️ Roadmap</div>
-<div class="sidebar-item" data-section="downloads-manage" style="position: fixed; top: 325px;">📥 Téléchargements</div>
-<div class="sidebar-item" data-section="content" style="position: fixed; top: 400px;">📝 Contenu du site</div>
-<div class="sidebar-item" data-section="media" style="position: fixed; top: 475px;">🎨 Médias</div>
-<div class="sidebar-item" data-section="forms" style="position: fixed; top: 550px;">📋 Formulaires</div>
-<div class="sidebar-item" data-section="notifications" style="position: fixed; top: 625px;">📢 Notifications</div>
-<div class="sidebar-item" data-section="users" style="position: fixed; top: 700px;">👥 Utilisateurs</div>
-<div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 775px;">⚙️ Paramètres</div>
+                <div class="sidebar-item active" data-section="overview" style="position: fixed; top: 100px;">📊 Vue
+                    d'ensemble</div>
+                <div class="sidebar-item" data-section="versions" style="position: fixed; top: 175px;">🎮 Versions du
+                    jeu</div>
+                <div class="sidebar-item" data-section="roadmap" style="position: fixed; top: 250px;">🗺️ Roadmap</div>
+                <div class="sidebar-item" data-section="downloads-manage" style="position: fixed; top: 325px;">📥
+                    Téléchargements</div>
+                <div class="sidebar-item" data-section="content" style="position: fixed; top: 400px;">📝 Contenu du site
+                </div>
+                <div class="sidebar-item" data-section="media" style="position: fixed; top: 475px;">🎨 Médias</div>
+                <div class="sidebar-item" data-section="forms" style="position: fixed; top: 550px;">📋 Formulaires</div>
+                <div class="sidebar-item" data-section="notifications" style="position: fixed; top: 625px;">📢
+                    Notifications</div>
+                <div class="sidebar-item" data-section="users" style="position: fixed; top: 700px;">👥 Utilisateurs
+                </div>
+                <div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 775px;">⚙️
+                    Paramètres</div>
             </div>
 
             <div class="main-content">
@@ -835,7 +847,12 @@
                             <div class="stat-value" id="stats-responses">-</div>
                         </div>
                     </div>
-
+                    <div class="card">
+                        <h2>Refresh</h2>
+                        <div>
+                            <p>await forceRefreshAllClients('Nouvelle version disponible !');</p>
+                        </div>
+                    </div>
                     <div class="card">
                         <h2>Dernières activités</h2>
                         <div id="recent-activity">
@@ -953,62 +970,63 @@
                         </div>
                     </div>
                 </div>
-                                <style>
-                                    /* Style rapide pour le switch si pas déjà présent */
-                                    input:checked+.slider {
-                                        background-color: var(--cyan);
-                                    }
+                <style>
+                    /* Style rapide pour le switch si pas déjà présent */
+                    input:checked+.slider {
+                        background-color: var(--cyan);
+                    }
 
-                                    input:checked+.slider:before {
-                                        transform: translateX(26px);
-                                    }
+                    input:checked+.slider:before {
+                        transform: translateX(26px);
+                    }
 
-                                    .slider:before {
-                                        position: absolute;
-                                        content: "";
-                                        height: 16px;
-                                        width: 16px;
-                                        left: 4px;
-                                        bottom: 4px;
-                                        background-color: white;
-                                        transition: .4s;
-                                        border-radius: 50%;
-                                    }
-                                </style>
+                    .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 16px;
+                        width: 16px;
+                        left: 4px;
+                        bottom: 4px;
+                        background-color: white;
+                        transition: .4s;
+                        border-radius: 50%;
+                    }
+                </style>
 
-                                <style>
-/* Animation pour le compteur de téléchargements */
-@keyframes countUp {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
+                <style>
+                    /* Animation pour le compteur de téléchargements */
+                    @keyframes countUp {
+                        from {
+                            transform: scale(0.8);
+                            opacity: 0;
+                        }
 
-td strong {
-    animation: countUp 0.3s ease;
-}
+                        to {
+                            transform: scale(1);
+                            opacity: 1;
+                        }
+                    }
 
-/* Style pour les badges de statut */
-.status-scheduled {
-    background: rgba(255, 170, 0, 0.2);
-    color: var(--warning);
-    border: 1px solid var(--warning);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: bold;
-}
+                    td strong {
+                        animation: countUp 0.3s ease;
+                    }
 
-/* Highlight pour versions programmées */
-tr:has(.status-scheduled) {
-    background: rgba(255, 170, 0, 0.05);
-}
-</style>
+                    /* Style pour les badges de statut */
+                    .status-scheduled {
+                        background: rgba(255, 170, 0, 0.2);
+                        color: var(--warning);
+                        border: 1px solid var(--warning);
+                        padding: 4px 10px;
+                        border-radius: 20px;
+                        font-size: 11px;
+                        font-weight: bold;
+                    }
+
+                    /* Highlight pour versions programmées */
+                    tr:has(.status-scheduled) {
+                        background: rgba(255, 170, 0, 0.05);
+                    }
+                </style>
 
                 <!-- Versions du jeu -->
                 <div class="section" id="versions">
@@ -1031,69 +1049,71 @@ tr:has(.status-scheduled) {
                         </span>
                     </div>
                     <div id="versions-dashboard"></div>
- <div class="card" style="margin-bottom: 0;">
-        <div class="version-header-actions">
-            <h2>🎮 Gestion des Versions</h2>
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="openVersionModal()">
-                    <i class="fa-solid fa-plus"></i> Créer une v.
-                </button>
-                <button class="btn btn-success" onclick="publishNextVersion()">
-                    <i class="fa-solid fa-rocket"></i> Publier Proch.
-                </button>
-                <button class="btn btn-warning" onclick="openCountdownModal()">
-                    <i class="fa-solid fa-clock"></i> Countdown
-                </button>
-                <!-- NOUVEAU : Bouton Archives -->
-                <button class="btn" style="background: var(--warning);" onclick="showArchives()">
-                    <i class="fa-solid fa-archive"></i> Archives
-                </button>
-            </div>
-        </div>
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="version-header-actions">
+                            <h2>🎮 Gestion des Versions</h2>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="openVersionModal()">
+                                    <i class="fa-solid fa-plus"></i> Créer une v.
+                                </button>
+                                <button class="btn btn-success" onclick="publishNextVersion()">
+                                    <i class="fa-solid fa-rocket"></i> Publier Proch.
+                                </button>
+                                <button class="btn btn-warning" onclick="openCountdownModal()">
+                                    <i class="fa-solid fa-clock"></i> Countdown
+                                </button>
+                                <!-- NOUVEAU : Bouton Archives -->
+                                <button class="btn" style="background: var(--warning);" onclick="showArchives()">
+                                    <i class="fa-solid fa-archive"></i> Archives
+                                </button>
+                            </div>
+                        </div>
 
-        <div id="versions-container">
-            <p class="loading">Chargement des versions</p>
-        </div>
-    </div>
+                        <div id="versions-container">
+                            <p class="loading">Chargement des versions</p>
+                        </div>
+                    </div>
                 </div>
-<div class="section" id="site-settings">
-    <div class="card">
-        <h2>⚙️ Paramètres du site</h2>
-        
-        <div class="form-group">
-            <label>Version du site *</label>
-            <input type="text" id="site-version-input" placeholder="2.1 Beta">
-            <small style="color: var(--accent); display: block; margin-top: 5px;">
-                Format recommandé : "X.X Beta" ou "X.X"
-            </small>
-        </div>
-        
-        <button class="btn btn-success" onclick="saveSiteVersion()">
-            💾 Enregistrer la version
-        </button>
-        
-        <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--primary);">
-            <strong>Version actuelle :</strong>
-            <span id="current-site-version" style="color: var(--cyan); font-size: 1.1rem; margin-left: 10px;">
-                Chargement...
-            </span>
-        </div>
-    </div>
-</div>
-<!-- Section Roadmap -->
-<div class="section" id="roadmap">
-    <div class="card">
-        <div class="version-header-actions">
-            <h2>🗺️ Gestion de la Roadmap</h2>
-            <button class="btn btn-primary" onclick="openRoadmapModal()">
-                <i class="fas fa-plus"></i> Ajouter un élément
-            </button>
-        </div>
-        <div id="roadmap-container">
-            <p class="loading">Chargement...</p>
-        </div>
-    </div>
-</div>
+                <div class="section" id="site-settings">
+                    <div class="card">
+                        <h2>⚙️ Paramètres du site</h2>
+
+                        <div class="form-group">
+                            <label>Version du site *</label>
+                            <input type="text" id="site-version-input" placeholder="2.1 Beta">
+                            <small style="color: var(--accent); display: block; margin-top: 5px;">
+                                Format recommandé : "X.X Beta" ou "X.X"
+                            </small>
+                        </div>
+
+                        <button class="btn btn-success" onclick="saveSiteVersion()">
+                            💾 Enregistrer la version
+                        </button>
+
+                        <div
+                            style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--primary);">
+                            <strong>Version actuelle :</strong>
+                            <span id="current-site-version"
+                                style="color: var(--cyan); font-size: 1.1rem; margin-left: 10px;">
+                                Chargement...
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Section Roadmap -->
+                <div class="section" id="roadmap">
+                    <div class="card">
+                        <div class="version-header-actions">
+                            <h2>🗺️ Gestion de la Roadmap</h2>
+                            <button class="btn btn-primary" onclick="openRoadmapModal()">
+                                <i class="fas fa-plus"></i> Ajouter un élément
+                            </button>
+                        </div>
+                        <div id="roadmap-container">
+                            <p class="loading">Chargement...</p>
+                        </div>
+                    </div>
+                </div>
                 <!-- Autres sections -->
                 <div class="section" id="content">
                     <div class="card">
@@ -1113,7 +1133,9 @@ tr:has(.status-scheduled) {
                     <div class="card">
                         <h2>Réponses aux formulaires</h2>
                         <!--<p class="loading">En développement</p>-->
-                        <div id="forms-list"><p class="loading">Chargement...</p></div>
+                        <div id="forms-list">
+                            <p class="loading">Chargement...</p>
+                        </div>
                     </div>
                 </div>
 
@@ -1126,207 +1148,211 @@ tr:has(.status-scheduled) {
                     </div>
                 </div>
                 <!-- NOUVELLE SECTION : Gestion des téléchargements -->
-<div class="section" id="downloads-manage">
-    <div class="card">
-        <h2>🔧 Gestion des téléchargements</h2>
-        
-        <div class="download-controls">
-            <div class="control-item">
-                <label class="switch-label">
-                    <input type="checkbox" id="toggle-kit" class="download-toggle">
-                    <span class="switch-slider"></span>
-                    <span class="control-text">Kit Complet</span>
-                </label>
-            </div>            
-            <div class="control-item">
-                <label class="switch-label">
-                    <input type="checkbox" id="toggle-pdf" class="download-toggle">
-                    <span class="switch-slider"></span>
-                    <span class="control-text">PDF Charte Graphique</span>
-                </label>
-            </div>
-            <div class="control-item">
-                <label class="switch-label">
-                    <input type="checkbox" id="toggle-assets" class="download-toggle">
-                    <span class="switch-slider"></span>
-                    <span class="control-text">Assets Pack</span>
-                </label>
-            </div>            
-        </div>   
-        <button class="btn btn-success" onclick="saveDownloadSettings()" style="margin-top: 20px;">
-            💾 Enregistrer les modifications
-        </button>
-    </div>
-</div>
+                <div class="section" id="downloads-manage">
+                    <div class="card">
+                        <h2>🔧 Gestion des téléchargements</h2>
+
+                        <div class="download-controls">
+                            <div class="control-item">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="toggle-kit" class="download-toggle">
+                                    <span class="switch-slider"></span>
+                                    <span class="control-text">Kit Complet</span>
+                                </label>
+                            </div>
+                            <div class="control-item">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="toggle-pdf" class="download-toggle">
+                                    <span class="switch-slider"></span>
+                                    <span class="control-text">PDF Charte Graphique</span>
+                                </label>
+                            </div>
+                            <div class="control-item">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="toggle-assets" class="download-toggle">
+                                    <span class="switch-slider"></span>
+                                    <span class="control-text">Assets Pack</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="saveDownloadSettings()" style="margin-top: 20px;">
+                            💾 Enregistrer les modifications
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-<!-- MODAL ROADMAP -->
-<div id="roadmap-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="roadmap-modal-title">Nouvel élément Roadmap</h3>
-            <span class="close-modal" onclick="closeRoadmapModal()">&times;</span>
+    <!-- MODAL ROADMAP -->
+    <div id="roadmap-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="roadmap-modal-title">Nouvel élément Roadmap</h3>
+                <span class="close-modal" onclick="closeRoadmapModal()">&times;</span>
+            </div>
+            <form id="roadmap-form">
+                <input type="hidden" id="r-id">
+
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations de base</h4>
+
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="r-title" required placeholder="Nouvelle fonctionnalité...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="r-description" rows="3" placeholder="Détails de l'élément..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Catégorie *</label>
+                            <select id="r-category" required>
+                                <option value="feature">⭐ Feature</option>
+                                <option value="bug">🐛 Bug</option>
+                                <option value="design">🎨 Design</option>
+                                <option value="other">📦 Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Statut *</label>
+                            <select id="r-status" required>
+                                <option value="planned">📋 Planifié</option>
+                                <option value="in_progress">⚙️ En cours</option>
+                                <option value="completed">✅ Terminé</option>
+                                <option value="cancelled">❌ Annulé</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Priorité</label>
+                            <select id="r-priority">
+                                <option value="0">🟢 Basse</option>
+                                <option value="1">🟡 Moyenne</option>
+                                <option value="2">🔴 Haute</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Progression (%)</label>
+                            <input type="number" id="r-progress" min="0" max="100" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date estimée</label>
+                        <input type="date" id="r-estimated-date">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeRoadmapModal()">❌ Annuler</button>
+                    <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                </div>
+            </form>
         </div>
-        <form id="roadmap-form">
-            <input type="hidden" id="r-id">
-
-            <div class="form-section">
-                <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations de base</h4>
-                
-                <div class="form-group">
-                    <label>Titre *</label>
-                    <input type="text" id="r-title" required placeholder="Nouvelle fonctionnalité...">
-                </div>
-
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="r-description" rows="3" placeholder="Détails de l'élément..."></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Catégorie *</label>
-                        <select id="r-category" required>
-                            <option value="feature">⭐ Feature</option>
-                            <option value="bug">🐛 Bug</option>
-                            <option value="design">🎨 Design</option>
-                            <option value="other">📦 Autre</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Statut *</label>
-                        <select id="r-status" required>
-                            <option value="planned">📋 Planifié</option>
-                            <option value="in_progress">⚙️ En cours</option>
-                            <option value="completed">✅ Terminé</option>
-                            <option value="cancelled">❌ Annulé</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Priorité</label>
-                        <select id="r-priority">
-                            <option value="0">🟢 Basse</option>
-                            <option value="1">🟡 Moyenne</option>
-                            <option value="2">🔴 Haute</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Progression (%)</label>
-                        <input type="number" id="r-progress" min="0" max="100" value="0">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Date estimée</label>
-                    <input type="date" id="r-estimated-date">
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="closeRoadmapModal()">❌ Annuler</button>
-                <button type="submit" class="btn btn-success">💾 Enregistrer</button>
-            </div>
-        </form>
     </div>
-</div>
 
-<!-- MODAL VERSION SIMPLIFIÉE -->
-<div id="version-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modal-title">Nouvelle Version</h3>
-            <span class="close-modal" onclick="closeVersionModal()">&times;</span>
+    <!-- MODAL VERSION SIMPLIFIÉE -->
+    <div id="version-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nouvelle Version</h3>
+                <span class="close-modal" onclick="closeVersionModal()">&times;</span>
+            </div>
+            <form id="version-form">
+                <input type="hidden" id="v-id">
+
+                <!-- SECTION 1 : INFOS DE BASE -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations</h4>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Numéro de version *</label>
+                            <input type="text" id="v-number" required placeholder="1.5.0">
+                        </div>
+                        <div class="form-group">
+                            <label>Date de sortie *</label>
+                            <input type="datetime-local" id="v-date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="v-title" required placeholder="Grande mise à jour">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description courte</label>
+                        <textarea id="v-description" rows="2" placeholder="Résumé en 1-2 lignes..."></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION 2 : CHANGELOG -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📝 Notes de mise à jour</h4>
+
+                    <div class="form-group">
+                        <textarea id="v-notes" rows="6"
+                            placeholder="- Ajout de...&#10;- Correction de...&#10;- Amélioration de..."></textarea>
+                        <small style="color: var(--text-dim);">Une ligne = un point de changelog</small>
+                    </div>
+                </div>
+
+                <!-- SECTION 3 : TÉLÉCHARGEMENT -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📥 Fichiers</h4>
+
+                    <div class="form-group">
+                        <label>Lien de téléchargement (URL) *</label>
+                        <input type="url" id="v-url" required placeholder="https://...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Taille du fichier</label>
+                        <input type="text" id="v-size" placeholder="150 MB">
+                        <small style="color: var(--text-dim);">Optionnel, pour l'affichage</small>
+                    </div>
+                </div>
+
+                <!-- SECTION 4 : PUBLICATION -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">🚀 Publication</h4>
+
+                    <div class="checkbox-group"
+                        style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--success);">
+                        <input type="checkbox" id="v-published">
+                        <label for="v-published">
+                            <strong>Publier cette version immédiatement</strong>
+                            <br>
+                            <small style="color: var(--text-dim);">Si décoché, reste en brouillon</small>
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary"
+                    onclick="scheduleVersion(document.getElementById('v-id').value)">
+                    ⏰ Programmer
+                </button>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeVersionModal()">❌ Annuler</button>
+
+                    <!-- NOUVEAU : Bouton Programmer -->
+                    <button type="button" class="btn btn-primary"
+                        onclick="scheduleVersion(document.getElementById('v-id').value)" id="btn-schedule"
+                        style="display: none;">
+                        ⏰ Programmer
+                    </button>
+
+                    <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                </div>
+            </form>
         </div>
-        <form id="version-form">
-            <input type="hidden" id="v-id">
-
-            <!-- SECTION 1 : INFOS DE BASE -->
-            <div class="form-section">
-                <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations</h4>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Numéro de version *</label>
-                        <input type="text" id="v-number" required placeholder="1.5.0">
-                    </div>
-                    <div class="form-group">
-                        <label>Date de sortie *</label>
-                        <input type="datetime-local" id="v-date" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Titre *</label>
-                    <input type="text" id="v-title" required placeholder="Grande mise à jour">
-                </div>
-
-                <div class="form-group">
-                    <label>Description courte</label>
-                    <textarea id="v-description" rows="2" placeholder="Résumé en 1-2 lignes..."></textarea>
-                </div>
-            </div>
-
-            <!-- SECTION 2 : CHANGELOG -->
-            <div class="form-section">
-                <h4 style="color: var(--cyan); margin-bottom: 15px;">📝 Notes de mise à jour</h4>
-                
-                <div class="form-group">
-                    <textarea id="v-notes" rows="6" placeholder="- Ajout de...&#10;- Correction de...&#10;- Amélioration de..."></textarea>
-                    <small style="color: var(--text-dim);">Une ligne = un point de changelog</small>
-                </div>
-            </div>
-
-            <!-- SECTION 3 : TÉLÉCHARGEMENT -->
-            <div class="form-section">
-                <h4 style="color: var(--cyan); margin-bottom: 15px;">📥 Fichiers</h4>
-                
-                <div class="form-group">
-                    <label>Lien de téléchargement (URL) *</label>
-                    <input type="url" id="v-url" required placeholder="https://...">
-                </div>
-
-                <div class="form-group">
-                    <label>Taille du fichier</label>
-                    <input type="text" id="v-size" placeholder="150 MB">
-                    <small style="color: var(--text-dim);">Optionnel, pour l'affichage</small>
-                </div>
-            </div>
-
-            <!-- SECTION 4 : PUBLICATION -->
-            <div class="form-section">
-                <h4 style="color: var(--cyan); margin-bottom: 15px;">🚀 Publication</h4>
-                
-                <div class="checkbox-group" style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--success);">
-                    <input type="checkbox" id="v-published">
-                    <label for="v-published">
-                        <strong>Publier cette version immédiatement</strong>
-                        <br>
-                        <small style="color: var(--text-dim);">Si décoché, reste en brouillon</small>
-                    </label>
-                </div>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="scheduleVersion(document.getElementById('v-id').value)">
-    ⏰ Programmer
-</button>
-
-<div class="modal-footer">
-    <button type="button" class="btn btn-danger" onclick="closeVersionModal()">❌ Annuler</button>
-    
-    <!-- NOUVEAU : Bouton Programmer -->
-    <button type="button" class="btn btn-primary" onclick="scheduleVersion(document.getElementById('v-id').value)" 
-            id="btn-schedule" style="display: none;">
-        ⏰ Programmer
-    </button>
-    
-    <button type="submit" class="btn btn-success">💾 Enregistrer</button>
-</div>
-        </form>
     </div>
-</div>
 
     <!-- MODAL COUNTDOWN -->
     <div id="countdown-modal" class="modal-overlay" style="display: none;">
@@ -1376,25 +1402,25 @@ tr:has(.status-scheduled) {
 
         let currentUserProfile = null;
 
-function getSupabase() {
-        // On cherche le client partout où il pourrait être défini
-        return window.EchoSupabase || window.supabaseClient || (window.EchoDB ? window.EchoDB.supabase : null);
-    }
+        function getSupabase() {
+            // On cherche le client partout où il pourrait être défini
+            return window.EchoSupabase || window.supabaseClient || (window.EchoDB ? window.EchoDB.supabase : null);
+        }
 
-    async function waitForSupabase() {
-        return new Promise(resolve => {
-            const client = getSupabase();
-            if (client) return resolve(client);
+        async function waitForSupabase() {
+            return new Promise(resolve => {
+                const client = getSupabase();
+                if (client) return resolve(client);
 
-            const interval = setInterval(() => {
-                const clientNow = getSupabase();
-                if (clientNow) {
-                    clearInterval(interval);
-                    resolve(clientNow);
-                }
-            }, 100);
-        });
-    }
+                const interval = setInterval(() => {
+                    const clientNow = getSupabase();
+                    if (clientNow) {
+                        clearInterval(interval);
+                        resolve(clientNow);
+                    }
+                }, 100);
+            });
+        }
 
         // ===== AUTHENTIFICATION =====
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -1534,149 +1560,149 @@ function getSupabase() {
                 console.error('Erreur activités:', error);
             }
         }
-function toggleScheduleButton() {
-    const isPublished = document.getElementById('v-published').checked;
-    const scheduleBtn = document.getElementById('btn-schedule');
-    const versionId = document.getElementById('v-id').value;
-    
-    if (scheduleBtn) {
-        scheduleBtn.style.display = !isPublished && versionId ? 'inline-block' : 'none';
-    }
-}
+        function toggleScheduleButton() {
+            const isPublished = document.getElementById('v-published').checked;
+            const scheduleBtn = document.getElementById('btn-schedule');
+            const versionId = document.getElementById('v-id').value;
 
-// Charger l'état des téléchargements
-async function loadDownloadSettings() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('download_packs')
-            .select('*')
-            .single();
-
-        if (error) throw error;
-
-        document.getElementById('toggle-assets').checked = data.assets_pack_enabled;
-        document.getElementById('toggle-pdf').checked = data.pdf_charter_enabled;
-        document.getElementById('toggle-kit').checked = data.complete_kit_enabled;
-    } catch (error) {
-        console.error('Erreur chargement settings:', error);
-    }
-}
-
-// Sauvegarder les paramètres
-window.saveDownloadSettings = async function() {
-    try {
-        const settings = {
-            assets_pack_enabled: document.getElementById('toggle-assets').checked,
-            pdf_charter_enabled: document.getElementById('toggle-pdf').checked,
-            complete_kit_enabled: document.getElementById('toggle-kit').checked,
-            updated_at: new Date().toISOString()
-        };
-
-        const user = await supabaseClient.auth.getUser();
-        if (user.data.user) {
-            settings.updated_by = user.data.user.id;
+            if (scheduleBtn) {
+                scheduleBtn.style.display = !isPublished && versionId ? 'inline-block' : 'none';
+            }
         }
 
-        const { error } = await supabaseClient
-            .from('download_packs')
-            .update(settings)
-            .eq('id', '00000000-0000-0000-0000-000000000001');
+        // Charger l'état des téléchargements
+        async function loadDownloadSettings() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('download_packs')
+                    .select('*')
+                    .single();
 
-        if (error) throw error;
+                if (error) throw error;
 
-        alert('✅ Paramètres sauvegardés avec succès !');
-    } catch (error) {
-        console.error('Erreur sauvegarde:', error);
-        alert('❌ Erreur : ' + error.message);
-    }
-};
+                document.getElementById('toggle-assets').checked = data.assets_pack_enabled;
+                document.getElementById('toggle-pdf').checked = data.pdf_charter_enabled;
+                document.getElementById('toggle-kit').checked = data.complete_kit_enabled;
+            } catch (error) {
+                console.error('Erreur chargement settings:', error);
+            }
+        }
 
-// Charger au clic sur la section
-document.querySelector('[data-section="downloads-manage"]')?.addEventListener('click', () => {
-    loadDownloadSettings();
-});
+        // Sauvegarder les paramètres
+        window.saveDownloadSettings = async function () {
+            try {
+                const settings = {
+                    assets_pack_enabled: document.getElementById('toggle-assets').checked,
+                    pdf_charter_enabled: document.getElementById('toggle-pdf').checked,
+                    complete_kit_enabled: document.getElementById('toggle-kit').checked,
+                    updated_at: new Date().toISOString()
+                };
+
+                const user = await supabaseClient.auth.getUser();
+                if (user.data.user) {
+                    settings.updated_by = user.data.user.id;
+                }
+
+                const { error } = await supabaseClient
+                    .from('download_packs')
+                    .update(settings)
+                    .eq('id', '00000000-0000-0000-0000-000000000001');
+
+                if (error) throw error;
+
+                alert('✅ Paramètres sauvegardés avec succès !');
+            } catch (error) {
+                console.error('Erreur sauvegarde:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
+        };
+
+        // Charger au clic sur la section
+        document.querySelector('[data-section="downloads-manage"]')?.addEventListener('click', () => {
+            loadDownloadSettings();
+        });
 
 
         // ===== MODAL VERSION (CORRIGÉ) =====
-// Ouvrir le modal
-window.openVersionModal = function () {
-    document.getElementById('version-form').reset();
-    document.getElementById('v-id').value = '';
-    document.getElementById('modal-title').textContent = 'Nouvelle Version';
-    document.getElementById('v-date').valueAsDate = new Date();
-    document.getElementById('v-published').checked = false; // Par défaut : brouillon
-    document.getElementById('version-modal').style.display = 'flex';
-    document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
-};
+        // Ouvrir le modal
+        window.openVersionModal = function () {
+            document.getElementById('version-form').reset();
+            document.getElementById('v-id').value = '';
+            document.getElementById('modal-title').textContent = 'Nouvelle Version';
+            document.getElementById('v-date').valueAsDate = new Date();
+            document.getElementById('v-published').checked = false; // Par défaut : brouillon
+            document.getElementById('version-modal').style.display = 'flex';
+            document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
+        };
 
-window.closeVersionModal = function () {
-    document.getElementById('version-modal').style.display = 'none';
-};
+        window.closeVersionModal = function () {
+            document.getElementById('version-modal').style.display = 'none';
+        };
 
-// Éditer une version existante
-window.editVersion = function (version) {
-    document.getElementById('v-id').value = version.id;
-    document.getElementById('v-number').value = version.version;
-    document.getElementById('v-title').value = version.title || '';
-    document.getElementById('v-description').value = version.description || '';
-    
-    if (version.changelog && Array.isArray(version.changelog)) {
-        document.getElementById('v-notes').value = version.changelog.join('\n');
-    } else {
-        document.getElementById('v-notes').value = '';
-    }
-    
-    document.getElementById('v-url').value = version.download_url || '';
-    document.getElementById('v-size').value = version.file_size || '';
-    document.getElementById('v-date').value = version.release_date ? version.release_date.slice(0, 16) : '';
-    document.getElementById('v-published').checked = version.is_published || false;
+        // Éditer une version existante
+        window.editVersion = function (version) {
+            document.getElementById('v-id').value = version.id;
+            document.getElementById('v-number').value = version.version;
+            document.getElementById('v-title').value = version.title || '';
+            document.getElementById('v-description').value = version.description || '';
 
-    document.getElementById('modal-title').textContent = 'Modifier la Version';
-    document.getElementById('version-modal').style.display = 'flex';
-    document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
-};
+            if (version.changelog && Array.isArray(version.changelog)) {
+                document.getElementById('v-notes').value = version.changelog.join('\n');
+            } else {
+                document.getElementById('v-notes').value = '';
+            }
 
-// Soumettre le formulaire
-document.getElementById('version-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const id = document.getElementById('v-id').value;
-    const notesText = document.getElementById('v-notes').value;
-    const changelog = notesText ? notesText.split('\n').filter(line => line.trim()) : null;
+            document.getElementById('v-url').value = version.download_url || '';
+            document.getElementById('v-size').value = version.file_size || '';
+            document.getElementById('v-date').value = version.release_date ? version.release_date.slice(0, 16) : '';
+            document.getElementById('v-published').checked = version.is_published || false;
 
-    const data = {
-        version: document.getElementById('v-number').value,
-        title: document.getElementById('v-title').value,
-        description: document.getElementById('v-description').value,
-        changelog: changelog,
-        download_url: document.getElementById('v-url').value || null,
-        file_size: document.getElementById('v-size').value || null,
-        release_date: document.getElementById('v-date').value,
-        is_published: document.getElementById('v-published').checked
-    };
+            document.getElementById('modal-title').textContent = 'Modifier la Version';
+            document.getElementById('version-modal').style.display = 'flex';
+            document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
+        };
 
-    try {
-        if (id) {
-            const { error } = await supabaseClient
-                .from('game_versions')
-                .update(data)
-                .eq('id', id);
-            if (error) throw error;
-        } else {
-            const { error } = await supabaseClient
-                .from('game_versions')
-                .insert([data]);
-            if (error) throw error;
-        }
+        // Soumettre le formulaire
+        document.getElementById('version-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        closeVersionModal();
-        loadVersions();
-        alert('✅ Version enregistrée !');
-    } catch (error) {
-        console.error('Erreur:', error);
-        alert('❌ Erreur : ' + error.message);
-    }
-});
+            const id = document.getElementById('v-id').value;
+            const notesText = document.getElementById('v-notes').value;
+            const changelog = notesText ? notesText.split('\n').filter(line => line.trim()) : null;
+
+            const data = {
+                version: document.getElementById('v-number').value,
+                title: document.getElementById('v-title').value,
+                description: document.getElementById('v-description').value,
+                changelog: changelog,
+                download_url: document.getElementById('v-url').value || null,
+                file_size: document.getElementById('v-size').value || null,
+                release_date: document.getElementById('v-date').value,
+                is_published: document.getElementById('v-published').checked
+            };
+
+            try {
+                if (id) {
+                    const { error } = await supabaseClient
+                        .from('game_versions')
+                        .update(data)
+                        .eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await supabaseClient
+                        .from('game_versions')
+                        .insert([data]);
+                    if (error) throw error;
+                }
+
+                closeVersionModal();
+                loadVersions();
+                alert('✅ Version enregistrée !');
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
+        });
 
         // ===== MARQUER COMME PROCHAINE VERSION =====
         window.setAsNext = async function (id) {
@@ -1858,153 +1884,153 @@ document.getElementById('version-form').addEventListener('submit', async (e) => 
         }
 
 
-// AJOUTER ce script dans admin.html (dans la section <script>)
+        // AJOUTER ce script dans admin.html (dans la section <script>)
 
-// Charger la version du site
-async function loadSiteVersion() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('site_settings')
-            .select('setting_value')
-            .eq('setting_key', 'site_version')
-            .single();
-        
-        if (error) throw error;
-        
-        const versionDisplay = document.getElementById('current-site-version');
-        const versionInput = document.getElementById('site-version-input');
-        
-        if (versionDisplay) versionDisplay.textContent = data.setting_value;
-        if (versionInput) versionInput.value = data.setting_value;
-    } catch (error) {
-        console.error('Erreur chargement version:', error);
-    }
-}
+        // Charger la version du site
+        async function loadSiteVersion() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('site_settings')
+                    .select('setting_value')
+                    .eq('setting_key', 'site_version')
+                    .single();
 
-// Sauvegarder la version du site
-window.saveSiteVersion = async function() {
-    const newVersion = document.getElementById('site-version-input').value.trim();
-    
-    if (!newVersion) {
-        alert('⚠️ Veuillez entrer une version');
-        return;
-    }
-    
-    try {
-        const user = await supabaseClient.auth.getUser();
-        
-        const { error } = await supabaseClient
-            .from('site_settings')
-            .update({
-                setting_value: newVersion,
-                updated_at: new Date().toISOString(),
-                updated_by: user.data.user?.id
-            })
-            .eq('setting_key', 'site_version');
-        
-        if (error) throw error;
-        
-        alert('✅ Version mise à jour avec succès !');
-        loadSiteVersion();
-    } catch (error) {
-        console.error('Erreur sauvegarde version:', error);
-        alert('❌ Erreur : ' + error.message);
-    }
-};
+                if (error) throw error;
 
-// Charger au clic sur la section
-document.querySelector('[data-section="site-settings"]')?.addEventListener('click', () => {
-    loadSiteVersion();
-});
-// ===== SWITCH GLOBAL =====
-async function initDownloadSwitch() {
-    try {
-        const { data } = await supabaseClient
-            .from('download_settings')
-            .select('*')
-            .single();
+                const versionDisplay = document.getElementById('current-site-version');
+                const versionInput = document.getElementById('site-version-input');
 
-        if (data) {
-            const switchEl = document.getElementById('globalDownloadSwitch');
+                if (versionDisplay) versionDisplay.textContent = data.setting_value;
+                if (versionInput) versionInput.value = data.setting_value;
+            } catch (error) {
+                console.error('Erreur chargement version:', error);
+            }
+        }
+
+        // Sauvegarder la version du site
+        window.saveSiteVersion = async function () {
+            const newVersion = document.getElementById('site-version-input').value.trim();
+
+            if (!newVersion) {
+                alert('⚠️ Veuillez entrer une version');
+                return;
+            }
+
+            try {
+                const user = await supabaseClient.auth.getUser();
+
+                const { error } = await supabaseClient
+                    .from('site_settings')
+                    .update({
+                        setting_value: newVersion,
+                        updated_at: new Date().toISOString(),
+                        updated_by: user.data.user?.id
+                    })
+                    .eq('setting_key', 'site_version');
+
+                if (error) throw error;
+
+                alert('✅ Version mise à jour avec succès !');
+                loadSiteVersion();
+            } catch (error) {
+                console.error('Erreur sauvegarde version:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
+        };
+
+        // Charger au clic sur la section
+        document.querySelector('[data-section="site-settings"]')?.addEventListener('click', () => {
+            loadSiteVersion();
+        });
+        // ===== SWITCH GLOBAL =====
+        async function initDownloadSwitch() {
+            try {
+                const { data } = await supabaseClient
+                    .from('download_settings')
+                    .select('*')
+                    .single();
+
+                if (data) {
+                    const switchEl = document.getElementById('globalDownloadSwitch');
+                    const labelEl = document.getElementById('switchStatusText');
+
+                    switchEl.checked = data.enabled;
+                    labelEl.textContent = data.enabled
+                        ? "✅ ACTIF (Téléchargement autorisé)"
+                        : "🚫 INACTIF (Téléchargements bloqués)";
+                    labelEl.style.color = data.enabled ? "var(--success)" : "var(--danger)";
+                }
+            } catch (err) {
+                console.error("Erreur switch:", err);
+            }
+        }
+
+        window.toggleDownloadState = async function (checkbox) {
+            const newState = checkbox.checked;
             const labelEl = document.getElementById('switchStatusText');
+            labelEl.textContent = "⏳ Mise à jour...";
 
-            switchEl.checked = data.enabled;
-            labelEl.textContent = data.enabled 
-                ? "✅ ACTIF (Téléchargement autorisé)" 
-                : "🚫 INACTIF (Téléchargements bloqués)";
-            labelEl.style.color = data.enabled ? "var(--success)" : "var(--danger)";
-        }
-    } catch (err) {
-        console.error("Erreur switch:", err);
-    }
-}
+            try {
+                const { error } = await supabaseClient
+                    .from('download_settings')
+                    .update({ enabled: newState, updated_at: new Date().toISOString() })
+                    .eq('id', (await supabaseClient.from('download_settings').select('id').single()).data.id);
 
-window.toggleDownloadState = async function(checkbox) {
-    const newState = checkbox.checked;
-    const labelEl = document.getElementById('switchStatusText');
-    labelEl.textContent = "⏳ Mise à jour...";
+                if (error) throw error;
 
-    try {
-        const { error } = await supabaseClient
-            .from('download_settings')
-            .update({ enabled: newState, updated_at: new Date().toISOString() })
-            .eq('id', (await supabaseClient.from('download_settings').select('id').single()).data.id);
+                labelEl.textContent = newState
+                    ? "✅ ACTIF (Téléchargement autorisé)"
+                    : "🚫 INACTIF (Téléchargements bloqués)";
+                labelEl.style.color = newState ? "var(--success)" : "var(--danger)";
 
-        if (error) throw error;
+                // ⭐ AJOUTER CES LIGNES
+                if (window.sendDiscordNotification) {
+                    await window.sendDiscordNotification(
+                        newState ? 'download_enabled' : 'download_disabled',
+                        {}
+                    );
+                }
 
-        labelEl.textContent = newState 
-            ? "✅ ACTIF (Téléchargement autorisé)" 
-            : "🚫 INACTIF (Téléchargements bloqués)";
-        labelEl.style.color = newState ? "var(--success)" : "var(--danger)";
+                alert(newState ? "✅ Téléchargements ACTIVÉS globalement" : "🚫 Téléchargements BLOQUÉS globalement");
+            } catch (err) {
+                console.error("Erreur:", err);
+                checkbox.checked = !newState;
+                labelEl.textContent = "❌ Erreur";
+            }
+        };
 
-        // ⭐ AJOUTER CES LIGNES
-        if (window.sendDiscordNotification) {
-            await window.sendDiscordNotification(
-                newState ? 'download_enabled' : 'download_disabled', 
-                {}
-            );
-        }
+        // =============================================
+        // CODE À AJOUTER DANS ADMIN.HTML <script>
+        // =============================================
 
-        alert(newState ? "✅ Téléchargements ACTIVÉS globalement" : "🚫 Téléchargements BLOQUÉS globalement");
-    } catch (err) {
-        console.error("Erreur:", err);
-        checkbox.checked = !newState;
-        labelEl.textContent = "❌ Erreur";
-    }
-};
+        // 1. WIDGET DASHBOARD DE STATUT
+        async function loadVersionsDashboard() {
+            try {
+                const { data: current } = await supabaseClient
+                    .from('game_versions')
+                    .select('*, download_stats(download_count)')
+                    .eq('is_published', true)
+                    .eq('is_archived', false)
+                    .order('release_date', { ascending: false })
+                    .limit(1)
+                    .single();
 
-// =============================================
-// CODE À AJOUTER DANS ADMIN.HTML <script>
-// =============================================
+                const { data: next } = await supabaseClient
+                    .from('game_versions')
+                    .select('*')
+                    .eq('is_published', false)
+                    .eq('is_archived', false)
+                    .order('scheduled_publish_at', { ascending: true })
+                    .limit(1)
+                    .maybeSingle();
 
-// 1. WIDGET DASHBOARD DE STATUT
-async function loadVersionsDashboard() {
-    try {
-        const { data: current } = await supabaseClient
-            .from('game_versions')
-            .select('*, download_stats(download_count)')
-            .eq('is_published', true)
-            .eq('is_archived', false)
-            .order('release_date', { ascending: false })
-            .limit(1)
-            .single();
+                const { data: drafts } = await supabaseClient
+                    .from('game_versions')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('is_published', false)
+                    .eq('is_archived', false);
 
-        const { data: next } = await supabaseClient
-            .from('game_versions')
-            .select('*')
-            .eq('is_published', false)
-            .eq('is_archived', false)
-            .order('scheduled_publish_at', { ascending: true })
-            .limit(1)
-            .maybeSingle();
-
-        const { data: drafts } = await supabaseClient
-            .from('game_versions')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_published', false)
-            .eq('is_archived', false);
-
-        const dashboardHTML = `
+                const dashboardHTML = `
             <div class="stats-grid" style="margin-bottom: 30px;">
                 <div class="stat-card" style="border-color: var(--success);">
                     <div class="stat-label">Version Actuelle</div>
@@ -2016,9 +2042,9 @@ async function loadVersionsDashboard() {
                     <div class="stat-label">Prochaine Sortie</div>
                     <div class="stat-value">${next?.version || 'N/A'}</div>
                     <div class="stat-detail">
-                        ${next?.scheduled_publish_at 
-                            ? new Date(next.scheduled_publish_at).toLocaleDateString('fr-FR')
-                            : 'Non programmée'}
+                        ${next?.scheduled_publish_at
+                        ? new Date(next.scheduled_publish_at).toLocaleDateString('fr-FR')
+                        : 'Non programmée'}
                     </div>
                 </div>
                 
@@ -2030,51 +2056,51 @@ async function loadVersionsDashboard() {
             </div>
         `;
 
-        const container = document.getElementById('versions-dashboard');
-        if (container) container.innerHTML = dashboardHTML;
-    } catch (error) {
-        console.error('Erreur dashboard:', error);
-    }
-}
+                const container = document.getElementById('versions-dashboard');
+                if (container) container.innerHTML = dashboardHTML;
+            } catch (error) {
+                console.error('Erreur dashboard:', error);
+            }
+        }
 
-// 2. STATS PAR VERSION
-async function loadVersionWithStats(versionId) {
-    const { data, error } = await supabaseClient
-        .from('game_versions')
-        .select(`
+        // 2. STATS PAR VERSION
+        async function loadVersionWithStats(versionId) {
+            const { data, error } = await supabaseClient
+                .from('game_versions')
+                .select(`
             *,
             download_stats(download_count)
         `)
-        .eq('id', versionId)
-        .single();
+                .eq('id', versionId)
+                .single();
 
-    if (error) {
-        console.error('Erreur stats version:', error);
-        return null;
-    }
-    return data;
-}
-
-// 3. MODIFICATION DU TABLEAU DES VERSIONS (remplace loadVersions)
-async function loadVersions() {
-    const container = document.getElementById('versions-container');
-    container.innerHTML = '<p class="loading">Chargement</p>';
-
-    try {
-        const { data: versions } = await supabaseClient
-            .from('version_stats')
-            .select('*')
-            .eq('is_archived', false)
-            .order('release_date', { ascending: false });
-
-        if (!versions || versions.length === 0) {
-            container.innerHTML = '<p>Aucune version.</p>';
-            return;
+            if (error) {
+                console.error('Erreur stats version:', error);
+                return null;
+            }
+            return data;
         }
 
-        const now = new Date();
+        // 3. MODIFICATION DU TABLEAU DES VERSIONS (remplace loadVersions)
+        async function loadVersions() {
+            const container = document.getElementById('versions-container');
+            container.innerHTML = '<p class="loading">Chargement</p>';
 
-        container.innerHTML = `
+            try {
+                const { data: versions } = await supabaseClient
+                    .from('version_stats')
+                    .select('*')
+                    .eq('is_archived', false)
+                    .order('release_date', { ascending: false });
+
+                if (!versions || versions.length === 0) {
+                    container.innerHTML = '<p>Aucune version.</p>';
+                    return;
+                }
+
+                const now = new Date();
+
+                container.innerHTML = `
             <table>
                 <thead>
                     <tr>
@@ -2088,18 +2114,18 @@ async function loadVersions() {
                 </thead>
                 <tbody>
                     ${versions.map(v => {
-                        const releaseDate = new Date(v.release_date);
-                        const scheduledDate = v.scheduled_publish_at ? new Date(v.scheduled_publish_at) : null;
-                        const isPast = releaseDate <= now;
-                        
-                        let status = '⚫ Brouillon';
-                        if (v.is_published) {
-                            status = isPast ? '🟢 Publiée' : '🔵 Planifiée';
-                        } else if (scheduledDate && scheduledDate > now) {
-                            status = `⏰ Programmée (${scheduledDate.toLocaleDateString('fr-FR')})`;
-                        }
+                    const releaseDate = new Date(v.release_date);
+                    const scheduledDate = v.scheduled_publish_at ? new Date(v.scheduled_publish_at) : null;
+                    const isPast = releaseDate <= now;
 
-                        return `
+                    let status = '⚫ Brouillon';
+                    if (v.is_published) {
+                        status = isPast ? '🟢 Publiée' : '🔵 Planifiée';
+                    } else if (scheduledDate && scheduledDate > now) {
+                        status = `⏰ Programmée (${scheduledDate.toLocaleDateString('fr-FR')})`;
+                    }
+
+                    return `
                             <tr>
                                 <td><strong>${v.version}</strong></td>
                                 <td>${v.title || '-'}</td>
@@ -2130,38 +2156,38 @@ async function loadVersions() {
                                 </td>
                             </tr>
                         `;
-                    }).join('')}
+                }).join('')}
                 </tbody>
             </table>
         `;
-    } catch (error) {
-        console.error('Erreur:', error);
-        container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
-    }
-}
+            } catch (error) {
+                console.error('Erreur:', error);
+                container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
+            }
+        }
 
-// 4. ARCHIVAGE
-window.archiveVersion = async function(id) {
-    if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
-    
-    try {
-        const { error } = await supabaseClient
-            .from('game_versions')
-            .update({ is_archived: true })
-            .eq('id', id);
+        // 4. ARCHIVAGE
+        window.archiveVersion = async function (id) {
+            if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
 
-        if (error) throw error;
-        loadVersions();
-        loadVersionsDashboard();
-        alert('✅ Version archivée !');
-    } catch (err) {
-        alert('❌ Erreur : ' + err.message);
-    }
-};
+            try {
+                const { error } = await supabaseClient
+                    .from('game_versions')
+                    .update({ is_archived: true })
+                    .eq('id', id);
 
-// 5. PROGRAMMATION INTELLIGENTE
-window.scheduleVersion = function(versionId) {
-    const modal = createModal('⏰ Programmer la publication', `
+                if (error) throw error;
+                loadVersions();
+                loadVersionsDashboard();
+                alert('✅ Version archivée !');
+            } catch (err) {
+                alert('❌ Erreur : ' + err.message);
+            }
+        };
+
+        // 5. PROGRAMMATION INTELLIGENTE
+        window.scheduleVersion = function (versionId) {
+            const modal = createModal('⏰ Programmer la publication', `
         <form id="schedule-form">
             <div class="form-group">
                 <label>Publication dans :</label>
@@ -2203,91 +2229,91 @@ window.scheduleVersion = function(versionId) {
         </form>
     `);
 
-    const form = document.getElementById('schedule-form');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        let scheduledDate;
-        const type = document.getElementById('schedule-type').value;
-        
-        if (type === 'custom') {
-            scheduledDate = document.getElementById('schedule-datetime').value;
-        } else {
-            const amount = parseInt(document.getElementById('schedule-amount').value);
-            const unit = document.getElementById('schedule-unit').value;
-            
-            const now = new Date();
-            if (unit === 'hours') {
-                now.setHours(now.getHours() + amount);
+            const form = document.getElementById('schedule-form');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                let scheduledDate;
+                const type = document.getElementById('schedule-type').value;
+
+                if (type === 'custom') {
+                    scheduledDate = document.getElementById('schedule-datetime').value;
+                } else {
+                    const amount = parseInt(document.getElementById('schedule-amount').value);
+                    const unit = document.getElementById('schedule-unit').value;
+
+                    const now = new Date();
+                    if (unit === 'hours') {
+                        now.setHours(now.getHours() + amount);
+                    } else {
+                        now.setDate(now.getDate() + amount);
+                    }
+                    scheduledDate = now.toISOString();
+                }
+
+                try {
+                    const { error } = await supabaseClient
+                        .from('game_versions')
+                        .update({
+                            scheduled_publish_at: scheduledDate,
+                            is_published: false
+                        })
+                        .eq('id', versionId);
+
+                    if (error) throw error;
+
+                    modal.remove();
+                    loadVersions();
+                    loadVersionsDashboard();
+                    alert('✅ Publication programmée !');
+                } catch (err) {
+                    alert('❌ Erreur : ' + err.message);
+                }
+            });
+        };
+
+        window.updateScheduleFields = function () {
+            const type = document.getElementById('schedule-type').value;
+            const customDiv = document.getElementById('schedule-custom');
+            const relativeDiv = document.getElementById('schedule-relative');
+            const unitSelect = document.getElementById('schedule-unit');
+
+            if (type === 'custom') {
+                customDiv.style.display = 'block';
+                relativeDiv.style.display = 'none';
             } else {
-                now.setDate(now.getDate() + amount);
+                customDiv.style.display = 'none';
+                relativeDiv.style.display = 'block';
+                unitSelect.value = type;
             }
-            scheduledDate = now.toISOString();
-        }
+        };
 
-        try {
-            const { error } = await supabaseClient
-                .from('game_versions')
-                .update({ 
-                    scheduled_publish_at: scheduledDate,
-                    is_published: false
-                })
-                .eq('id', versionId);
+        // 6. INCRÉMENTER TÉLÉCHARGEMENTS (appel depuis buttons.js)
+        window.trackVersionDownload = async function (versionId) {
+            try {
+                await supabaseClient.rpc('increment_download_count', {
+                    p_version_id: versionId
+                });
+            } catch (error) {
+                console.error('Erreur tracking:', error);
+            }
+        };
 
-            if (error) throw error;
-            
-            modal.remove();
-            loadVersions();
+        // 8. INITIALISATION AU CHARGEMENT DE LA SECTION VERSIONS
+        document.querySelector('[data-section="versions"]')?.addEventListener('click', () => {
             loadVersionsDashboard();
-            alert('✅ Publication programmée !');
-        } catch (err) {
-            alert('❌ Erreur : ' + err.message);
-        }
-    });
-};
-
-window.updateScheduleFields = function() {
-    const type = document.getElementById('schedule-type').value;
-    const customDiv = document.getElementById('schedule-custom');
-    const relativeDiv = document.getElementById('schedule-relative');
-    const unitSelect = document.getElementById('schedule-unit');
-    
-    if (type === 'custom') {
-        customDiv.style.display = 'block';
-        relativeDiv.style.display = 'none';
-    } else {
-        customDiv.style.display = 'none';
-        relativeDiv.style.display = 'block';
-        unitSelect.value = type;
-    }
-};
-
-// 6. INCRÉMENTER TÉLÉCHARGEMENTS (appel depuis buttons.js)
-window.trackVersionDownload = async function(versionId) {
-    try {
-        await supabaseClient.rpc('increment_download_count', { 
-            p_version_id: versionId 
+            loadVersions();
         });
-    } catch (error) {
-        console.error('Erreur tracking:', error);
-    }
-};
 
-// 8. INITIALISATION AU CHARGEMENT DE LA SECTION VERSIONS
-document.querySelector('[data-section="versions"]')?.addEventListener('click', () => {
-    loadVersionsDashboard();
-    loadVersions();
-});
+        // 9. VOIR LES ARCHIVES
+        window.showArchives = async function () {
+            const { data: archived } = await supabaseClient
+                .from('game_versions')
+                .select('*')
+                .eq('is_archived', true)
+                .order('release_date', { ascending: false });
 
-// 9. VOIR LES ARCHIVES
-window.showArchives = async function() {
-    const { data: archived } = await supabaseClient
-        .from('game_versions')
-        .select('*')
-        .eq('is_archived', true)
-        .order('release_date', { ascending: false });
-
-    const modal = createModal('📁 Versions archivées', `
+            const modal = createModal('📁 Versions archivées', `
         ${archived && archived.length > 0 ? `
             <table>
                 <thead>
@@ -2313,60 +2339,60 @@ window.showArchives = async function() {
             </table>
         ` : '<p style="text-align: center; color: var(--purple);">Aucune version archivée</p>'}
     `);
-};
+        };
 
-window.unarchiveVersion = async function(id) {
-    try {
-        const { error } = await supabaseClient
-            .from('game_versions')
-            .update({ is_archived: false })
-            .eq('id', id);
+        window.unarchiveVersion = async function (id) {
+            try {
+                const { error } = await supabaseClient
+                    .from('game_versions')
+                    .update({ is_archived: false })
+                    .eq('id', id);
 
-        if (error) throw error;
-        
-        const modal = document.querySelector('.custom-modal');
-        if (modal) modal.remove();
-        
-        loadVersions();
-        alert('✅ Version restaurée !');
-    } catch (err) {
-        alert('❌ Erreur : ' + err.message);
-    }
-};
-// ===== ACTIONS =====
-window.publishVersion = async function(id) {
-    if (!confirm('Publier cette version ?')) return;
-    
-    try {
-        const { error } = await supabaseClient
-            .from('game_versions')
-            .update({ is_published: true })
-            .eq('id', id);
+                if (error) throw error;
 
-        if (error) throw error;
-        loadVersions();
-        alert('✅ Version publiée !');
-    } catch (err) {
-        alert('❌ Erreur : ' + err.message);
-    }
-};
+                const modal = document.querySelector('.custom-modal');
+                if (modal) modal.remove();
 
-window.unpublishVersion = async function(id) {
-    if (!confirm('Dépublier cette version ?')) return;
-    
-    try {
-        const { error } = await supabaseClient
-            .from('game_versions')
-            .update({ is_published: false })
-            .eq('id', id);
+                loadVersions();
+                alert('✅ Version restaurée !');
+            } catch (err) {
+                alert('❌ Erreur : ' + err.message);
+            }
+        };
+        // ===== ACTIONS =====
+        window.publishVersion = async function (id) {
+            if (!confirm('Publier cette version ?')) return;
 
-        if (error) throw error;
-        loadVersions();
-        alert('✅ Version dépubliée !');
-    } catch (err) {
-        alert('❌ Erreur : ' + err.message);
-    }
-};
+            try {
+                const { error } = await supabaseClient
+                    .from('game_versions')
+                    .update({ is_published: true })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadVersions();
+                alert('✅ Version publiée !');
+            } catch (err) {
+                alert('❌ Erreur : ' + err.message);
+            }
+        };
+
+        window.unpublishVersion = async function (id) {
+            if (!confirm('Dépublier cette version ?')) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('game_versions')
+                    .update({ is_published: false })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadVersions();
+                alert('✅ Version dépubliée !');
+            } catch (err) {
+                alert('❌ Erreur : ' + err.message);
+            }
+        };
         // Lancer au chargement de la page
         document.addEventListener('DOMContentLoaded', initDownloadSwitch);
 
@@ -2483,61 +2509,61 @@ window.unpublishVersion = async function(id) {
         };
 
 
-// =============================================
-// GESTION DE LA ROADMAP
-// =============================================
+        // =============================================
+        // GESTION DE LA ROADMAP
+        // =============================================
 
-// Charger la roadmap
-async function loadRoadmap() {
-    const container = document.getElementById('roadmap-container');
-    container.innerHTML = '<p class="loading">Chargement...</p>';
+        // Charger la roadmap
+        async function loadRoadmap() {
+            const container = document.getElementById('roadmap-container');
+            container.innerHTML = '<p class="loading">Chargement...</p>';
 
-    try {
-        const { data: items, error } = await supabaseClient
-            .from('roadmap_items')
-            .select('*')
-            .order('order_index', { ascending: true });
+            try {
+                const { data: items, error } = await supabaseClient
+                    .from('roadmap_items')
+                    .select('*')
+                    .order('order_index', { ascending: true });
 
-        if (error) throw error;
+                if (error) throw error;
 
-        if (!items || items.length === 0) {
-            container.innerHTML = '<p style="color: var(--purple);">Aucun élément dans la roadmap</p>';
-            return;
-        }
+                if (!items || items.length === 0) {
+                    container.innerHTML = '<p style="color: var(--purple);">Aucun élément dans la roadmap</p>';
+                    return;
+                }
 
-        const grouped = {
-            planned: items.filter(i => i.status === 'planned'),
-            in_progress: items.filter(i => i.status === 'in_progress'),
-            completed: items.filter(i => i.status === 'completed'),
-            cancelled: items.filter(i => i.status === 'cancelled')
-        };
+                const grouped = {
+                    planned: items.filter(i => i.status === 'planned'),
+                    in_progress: items.filter(i => i.status === 'in_progress'),
+                    completed: items.filter(i => i.status === 'completed'),
+                    cancelled: items.filter(i => i.status === 'cancelled')
+                };
 
-        const statusLabels = {
-            planned: '📋 Planifié',
-            in_progress: '⚙️ En cours',
-            completed: '✅ Terminé',
-            cancelled: '❌ Annulé'
-        };
+                const statusLabels = {
+                    planned: '📋 Planifié',
+                    in_progress: '⚙️ En cours',
+                    completed: '✅ Terminé',
+                    cancelled: '❌ Annulé'
+                };
 
-        const categoryColors = {
-            feature: 'var(--success)',
-            bug: 'var(--danger)',
-            design: 'var(--warning)',
-            other: 'var(--purple)'
-        };
+                const categoryColors = {
+                    feature: 'var(--success)',
+                    bug: 'var(--danger)',
+                    design: 'var(--warning)',
+                    other: 'var(--purple)'
+                };
 
-        const priorityLabels = {
-            0: '🟢 Basse',
-            1: '🟡 Moyenne',
-            2: '🔴 Haute'
-        };
+                const priorityLabels = {
+                    0: '🟢 Basse',
+                    1: '🟡 Moyenne',
+                    2: '🔴 Haute'
+                };
 
-        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
+                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
 
-        Object.entries(grouped).forEach(([status, statusItems]) => {
-            if (status === 'cancelled' && statusItems.length === 0) return;
+                Object.entries(grouped).forEach(([status, statusItems]) => {
+                    if (status === 'cancelled' && statusItems.length === 0) return;
 
-            html += `
+                    html += `
                 <div class="card" style="background: rgba(0, 0, 0, 0.2); padding: 20px;">
                     <h3 style="color: var(--cyan); margin-bottom: 15px;">
                         ${statusLabels[status]}
@@ -2548,8 +2574,8 @@ async function loadRoadmap() {
                     <div style="display: flex; flex-direction: column; gap: 10px;">
             `;
 
-            statusItems.forEach(item => {
-                html += `
+                    statusItems.forEach(item => {
+                        html += `
                     <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid ${categoryColors[item.category]}; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
                             <div style="flex: 1;">
@@ -2575,96 +2601,96 @@ async function loadRoadmap() {
                         </div>
                     </div>
                 `;
-            });
+                    });
 
-            html += '</div></div>';
+                    html += '</div></div>';
+                });
+
+                html += '</div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erreur chargement roadmap:', error);
+                container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
+            }
+        }
+
+        window.openRoadmapModal = function () {
+            document.getElementById('roadmap-form').reset();
+            document.getElementById('r-id').value = '';
+            document.getElementById('roadmap-modal-title').textContent = 'Nouvel élément Roadmap';
+            document.getElementById('r-progress').value = 0;
+            document.getElementById('roadmap-modal').style.display = 'flex';
+        };
+
+        window.closeRoadmapModal = function () {
+            document.getElementById('roadmap-modal').style.display = 'none';
+        };
+
+        window.editRoadmapItem = function (item) {
+            document.getElementById('r-id').value = item.id;
+            document.getElementById('r-title').value = item.title;
+            document.getElementById('r-description').value = item.description || '';
+            document.getElementById('r-category').value = item.category;
+            document.getElementById('r-status').value = item.status;
+            document.getElementById('r-priority').value = item.priority;
+            document.getElementById('r-progress').value = item.progress;
+            if (item.estimated_date) {
+                document.getElementById('r-estimated-date').value = item.estimated_date;
+            }
+            document.getElementById('roadmap-modal-title').textContent = 'Modifier l\'élément';
+            document.getElementById('roadmap-modal').style.display = 'flex';
+        };
+
+        document.getElementById('roadmap-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('r-id').value;
+            const data = {
+                title: document.getElementById('r-title').value,
+                description: document.getElementById('r-description').value || null,
+                category: document.getElementById('r-category').value,
+                status: document.getElementById('r-status').value,
+                priority: parseInt(document.getElementById('r-priority').value),
+                progress: parseInt(document.getElementById('r-progress').value),
+                estimated_date: document.getElementById('r-estimated-date').value || null,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (id) {
+                    const { error } = await supabaseClient.from('roadmap_items').update(data).eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const user = await supabaseClient.auth.getUser();
+                    data.created_by = user.data.user?.id;
+                    const { error } = await supabaseClient.from('roadmap_items').insert([data]);
+                    if (error) throw error;
+                }
+                closeRoadmapModal();
+                loadRoadmap();
+                alert('✅ Élément enregistré !');
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
         });
 
-        html += '</div>';
-        container.innerHTML = html;
+        window.deleteRoadmapItem = async function (id) {
+            if (!confirm('⚠️ Supprimer définitivement cet élément de la roadmap ?')) return;
+            try {
+                const { error } = await supabaseClient.from('roadmap_items').delete().eq('id', id);
+                if (error) throw error;
+                loadRoadmap();
+                alert('✅ Élément supprimé !');
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
+        };
 
-    } catch (error) {
-        console.error('Erreur chargement roadmap:', error);
-        container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
-    }
-}
-
-window.openRoadmapModal = function() {
-    document.getElementById('roadmap-form').reset();
-    document.getElementById('r-id').value = '';
-    document.getElementById('roadmap-modal-title').textContent = 'Nouvel élément Roadmap';
-    document.getElementById('r-progress').value = 0;
-    document.getElementById('roadmap-modal').style.display = 'flex';
-};
-
-window.closeRoadmapModal = function() {
-    document.getElementById('roadmap-modal').style.display = 'none';
-};
-
-window.editRoadmapItem = function(item) {
-    document.getElementById('r-id').value = item.id;
-    document.getElementById('r-title').value = item.title;
-    document.getElementById('r-description').value = item.description || '';
-    document.getElementById('r-category').value = item.category;
-    document.getElementById('r-status').value = item.status;
-    document.getElementById('r-priority').value = item.priority;
-    document.getElementById('r-progress').value = item.progress;
-    if (item.estimated_date) {
-        document.getElementById('r-estimated-date').value = item.estimated_date;
-    }
-    document.getElementById('roadmap-modal-title').textContent = 'Modifier l\'élément';
-    document.getElementById('roadmap-modal').style.display = 'flex';
-};
-
-document.getElementById('roadmap-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('r-id').value;
-    const data = {
-        title: document.getElementById('r-title').value,
-        description: document.getElementById('r-description').value || null,
-        category: document.getElementById('r-category').value,
-        status: document.getElementById('r-status').value,
-        priority: parseInt(document.getElementById('r-priority').value),
-        progress: parseInt(document.getElementById('r-progress').value),
-        estimated_date: document.getElementById('r-estimated-date').value || null,
-        updated_at: new Date().toISOString()
-    };
-
-    try {
-        if (id) {
-            const { error } = await supabaseClient.from('roadmap_items').update(data).eq('id', id);
-            if (error) throw error;
-        } else {
-            const user = await supabaseClient.auth.getUser();
-            data.created_by = user.data.user?.id;
-            const { error } = await supabaseClient.from('roadmap_items').insert([data]);
-            if (error) throw error;
-        }
-        closeRoadmapModal();
-        loadRoadmap();
-        alert('✅ Élément enregistré !');
-    } catch (error) {
-        console.error('Erreur:', error);
-        alert('❌ Erreur : ' + error.message);
-    }
-});
-
-window.deleteRoadmapItem = async function(id) {
-    if (!confirm('⚠️ Supprimer définitivement cet élément de la roadmap ?')) return;
-    try {
-        const { error } = await supabaseClient.from('roadmap_items').delete().eq('id', id);
-        if (error) throw error;
-        loadRoadmap();
-        alert('✅ Élément supprimé !');
-    } catch (error) {
-        console.error('Erreur:', error);
-        alert('❌ Erreur : ' + error.message);
-    }
-};
-
-document.querySelector('[data-section="roadmap"]')?.addEventListener('click', () => {
-    loadRoadmap();
-});
+        document.querySelector('[data-section="roadmap"]')?.addEventListener('click', () => {
+            loadRoadmap();
+        });
 
         // =============================================
         // ANALYTICS AVANCÉES POUR LES NOTIFICATIONS
@@ -2733,7 +2759,7 @@ document.querySelector('[data-section="roadmap"]')?.addEventListener('click', ()
                     // Temps moyen de lecture
                     supabaseClient.from('notifications')
                         .select('created_at')
-                        //.not('read_at', 'is', null)
+                    //.not('read_at', 'is', null)
                 ]);
 
                 // Calculer le temps moyen de lecture
@@ -3249,28 +3275,28 @@ document.querySelector('[data-section="roadmap"]')?.addEventListener('click', ()
             }
         };
 
-async function loadNotificationHistory() {
-        const historyContainer = document.getElementById('notification-history-body');
-        if (!historyContainer) return;
+        async function loadNotificationHistory() {
+            const historyContainer = document.getElementById('notification-history-body');
+            if (!historyContainer) return;
 
-        try {
-            const supabase = await waitForSupabase(); // On attend d'être sûr d'avoir le client
+            try {
+                const supabase = await waitForSupabase(); // On attend d'être sûr d'avoir le client
 
-            // Requête simplifiée : pas de .select(profiles...)
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('id, title, message, created_at, is_read')
-                .order('created_at', { ascending: false })
-                .limit(20);
+                // Requête simplifiée : pas de .select(profiles...)
+                const { data, error } = await supabase
+                    .from('notifications')
+                    .select('id, title, message, created_at, is_read')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
 
-            if (error) throw error;
+                if (error) throw error;
 
-            if (data.length === 0) {
-                historyContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">Aucune notification</td></tr>';
-                return;
-            }
+                if (data.length === 0) {
+                    historyContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">Aucune notification</td></tr>';
+                    return;
+                }
 
-            historyContainer.innerHTML = data.map(notif => `
+                historyContainer.innerHTML = data.map(notif => `
                 <tr>
                     <td>${new Date(notif.created_at).toLocaleString('fr-FR')}</td>
                     <td>${notif.title}</td>
@@ -3283,52 +3309,52 @@ async function loadNotificationHistory() {
                 </tr>
             `).join('');
 
-        } catch (error) {
-            console.error('Erreur chargement historique:', error);
-            // CORRECTION: On utilise historyContainer, pas "container"
-            if (historyContainer) {
-                historyContainer.innerHTML = `<tr><td colspan="4" style="color:red;">Erreur: ${error.message}</td></tr>`;
+            } catch (error) {
+                console.error('Erreur chargement historique:', error);
+                // CORRECTION: On utilise historyContainer, pas "container"
+                if (historyContainer) {
+                    historyContainer.innerHTML = `<tr><td colspan="4" style="color:red;">Erreur: ${error.message}</td></tr>`;
+                }
             }
         }
-    }
 
-    // Fonction d'envoi simplifiée (Global, pas de destinataire)
-    async function sendNotification(event) {
-        event.preventDefault();
-        
-        const title = document.getElementById('notif-title').value;
-        const message = document.getElementById('notif-message').value;
-        const btn = event.target.querySelector('button');
+        // Fonction d'envoi simplifiée (Global, pas de destinataire)
+        async function sendNotification(event) {
+            event.preventDefault();
 
-        try {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+            const title = document.getElementById('notif-title').value;
+            const message = document.getElementById('notif-message').value;
+            const btn = event.target.querySelector('button');
 
-            const supabase = await waitForSupabase();
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
 
-            const { error } = await supabase
-                .from('notifications')
-                .insert([{
-                    title: title,
-                    message: message,
-                    is_read: false
-                    // Pas de recipient_id
-                }]);
+                const supabase = await waitForSupabase();
 
-            if (error) throw error;
+                const { error } = await supabase
+                    .from('notifications')
+                    .insert([{
+                        title: title,
+                        message: message,
+                        is_read: false
+                        // Pas de recipient_id
+                    }]);
 
-            alert('Notification envoyée avec succès !');
-            document.getElementById('notification-form').reset();
-            loadNotificationHistory(); // Recharger la liste
+                if (error) throw error;
 
-        } catch (error) {
-            console.error('Erreur envoi:', error);
-            alert('Erreur: ' + error.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer la notification';
+                alert('Notification envoyée avec succès !');
+                document.getElementById('notification-form').reset();
+                loadNotificationHistory(); // Recharger la liste
+
+            } catch (error) {
+                console.error('Erreur envoi:', error);
+                alert('Erreur: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer la notification';
+            }
         }
-    }
 
         // Supprimer une notification
         window.deleteNotificationAdmin = async function (id) {
@@ -3402,32 +3428,33 @@ async function loadNotificationHistory() {
             window.notificationSystem = new NotificationSystem();
         });
 
-// ==========================================
-    // 3. INITIALISATION
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', async () => {
-        console.log("⏳ Admin : Attente de Supabase...");
-        //await waitForSupabase();
-        console.log("✅ Admin : Supabase prêt !");
+        // ==========================================
+        // 3. INITIALISATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("⏳ Admin : Attente de Supabase...");
+            //await waitForSupabase();
+            console.log("✅ Admin : Supabase prêt !");
 
-        // Initialiser l'historique
-        loadNotificationHistory();
+            // Initialiser l'historique
+            loadNotificationHistory();
 
-        // Gérer le clic sur l'onglet Notifications
-        const notifTab = document.querySelector('[data-section="notifications"]');
-        if (notifTab) {
-            notifTab.addEventListener('click', () => {
-                loadNotificationHistory();
-            });
-        }
+            // Gérer le clic sur l'onglet Notifications
+            const notifTab = document.querySelector('[data-section="notifications"]');
+            if (notifTab) {
+                notifTab.addEventListener('click', () => {
+                    loadNotificationHistory();
+                });
+            }
 
-        // Attacher le formulaire
-        const form = document.getElementById('notification-form');
-        if (form) {
-            form.addEventListener('submit', sendNotification);
-        }
-    });
+            // Attacher le formulaire
+            const form = document.getElementById('notification-form');
+            if (form) {
+                form.addEventListener('submit', sendNotification);
+            }
+        });
     </script>
+    <script type="module" src="js/remote-refresh.js"></script>
 </body>
 
 </html>
