@@ -338,11 +338,6 @@ class DiscordWebhookManager {
         color: data.playing ? 0x00ff88 : 0x888888,
         timestamp: new Date().toISOString()
       },
-      'music_autoplay': {
-        title: '🎶 Lecture automatique démarrée',
-        color: 0x00d0c6,
-        timestamp: new Date().toISOString()
-      },
       'fullscreen_toggled': {
         title: data.enabled ? '🖥️ Plein écran activé' : '🪟 Plein écran désactivé',
         color: 0x8735b9,
