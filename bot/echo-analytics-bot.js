@@ -39,7 +39,7 @@ async function generateReport(period = 'week') {
   const { data: sessions, error } = await supabase
     .from('user_sessions')
     .select('*')
-    .gte('created_at', startDate.toISOString());
+    .gte('started_at', startDate.toISOString());
   
   if (error) throw error;
   
@@ -175,13 +175,13 @@ async function getLiveStats() {
   const { data: activeSessions } = await supabase
     .from('user_sessions')
     .select('*')
-    .gte('created_at', fiveMinutesAgo.toISOString())
+    .gte('started_at', fiveMinutesAgo.toISOString())
     .is('ended_at', null);
   
   const { data: todaySessions } = await supabase
     .from('user_sessions')
     .select('id')
-    .gte('created_at', new Date().setHours(0,0,0,0));
+    .gte('started_at', new Date().setHours(0,0,0,0));
   
   return {
     title: '⚡ Stats en temps réel',
@@ -220,7 +220,7 @@ async function searchUser(query) {
   }
   
   const userList = users.slice(0, 10).map(u => 
-    `**${u.first_name}**\n└ IP: \`${u.ip_address}\`\n└ Créé: ${new Date(u.created_at).toLocaleDateString('fr-FR')}`
+    `**${u.first_name}**\n└ IP: \`${u.ip_address}\`\n└ Créé: ${new Date(u.started_at).toLocaleDateString('fr-FR')}`
   ).join('\n\n');
   
   return {
@@ -236,7 +236,7 @@ async function getRecentSessions(limit = 5) {
   const { data: sessions } = await supabase
     .from('user_sessions')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('started_at', { ascending: false })
     .limit(limit);
   
   if (!sessions || sessions.length === 0) {
@@ -254,7 +254,7 @@ async function getRecentSessions(limit = 5) {
     return `**${s.location || 'Unknown'}** • ${s.device}\n` +
            `└ IP: \`${s.ip_address}\`\n` +
            `└ Durée: ${duration}\n` +
-           `└ ${new Date(s.created_at).toLocaleString('fr-FR')}`;
+           `└ ${new Date(s.started_at).toLocaleString('fr-FR')}`;
   }).join('\n\n');
   
   return {
