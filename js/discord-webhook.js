@@ -382,5 +382,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 console.log('✅ Discord Webhook Manager loaded');
 });
-
-console.log('✅ Discord Webhook Manager loaded');

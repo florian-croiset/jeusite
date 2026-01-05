@@ -1,0 +1,15 @@
+{
+  "name": "echo-analytics-bot",
+  "version": "2.3.0",
+  "main": "echo-analytics-bot.js",
+  "scripts": {
+    "start": "node echo-analytics-bot.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

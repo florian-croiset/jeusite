@@ -5,6 +5,7 @@
 
 class AdvancedDiscordTracker {
     constructor() {
+        this.version = "2.3";
         this.sessionId = this.generateSessionId();
         this.userIP = null;
         this.webhookUrl = null;
@@ -13,33 +14,33 @@ class AdvancedDiscordTracker {
         this.startTime = Date.now();
         this.eventQueue = [];
         this.isProcessing = false;
-        this.exitHandled = false; // Flag pour empêcher les appels multiples
-        this.exitSent = false; // ✅ NOUVEAU: Flag pour empêcher l'envoi multiple à Discord
-        
+        this.exitHandled = false;
+        this.exitSent = false;
+
         // Tracking des sections
-            this.availableSections = []; // Sections détectées sur la page
-    this.sectionsViewed = new Set();
-    this.sectionTimes = {};
-    this.currentSection = null;
-    this.sectionStartTime = null;
-        
+        this.availableSections = [];
+        this.sectionsViewed = new Set();
+        this.sectionTimes = {};
+        this.currentSection = null;
+        this.sectionStartTime = null;
+
         // Tracking du curseur
         this.cursorPositions = [];
         this.lastCursorSample = 0;
         this.cursorSampleInterval = 2000;
-        
+
         // Statistiques de scroll
         this.maxScrollDepth = 0;
         this.scrollDepths = [];
-        
+
         // Éléments cliqués
         this.clickedElements = [];
-        
+
         // Temps d'inactivité
         this.lastActivityTime = Date.now();
-    this.inactivityThreshold = 30000;
-    this.inactivityNotificationSent = false; // ✅ NOUVEAU FLAG
-        
+        this.inactivityThreshold = 60000;
+        this.inactivityNotificationSent = false; // ✅ NOUVEAU FLAG
+
         this.init();
     }
 
@@ -50,40 +51,72 @@ class AdvancedDiscordTracker {
 async init() {
     try {
         console.log('📡 Initialisation du tracker...');
-        
-        // 1. Récupérer l'IP et ATTENDRE l'enrichissement complet
+
         await this.getIPAndLocation();
-        
-        // 2. Récupérer le webhook approprié depuis la DB
+        this.networkInfo = await this.getNetworkType();
         await this.loadWebhook();
-        
-        // ✅ 2.5. Détecter les sections disponibles
         this.detectAvailableSections();
-        
-        // 3. Setup des trackers
         this.setupTracking();
+        await this.trackPageView();
         
-        // ... reste inchangé
-            
-            // 4. Envoyer la notification de visite
-            await this.trackPageView();
-            
-            // 5. Envoyer les événements groupés périodiquement
-            setInterval(() => this.flushQueue(), 15000);
-            
-            // 6. Vérifier l'inactivité
-            setInterval(() => this.checkInactivity(), 5000);
-            
-            console.log('✅ Advanced Discord Tracker initialized');
-        } catch (error) {
-            console.error('❌ Tracker init error:', error);
-        }
+        // ✅ SYSTÈME DE FLUSH DYNAMIQUE (SPAM PROTECTION)
+        this.startDynamicFlush();
+        
+        setInterval(() => this.checkInactivity(), 5000);
+
+        console.log('✅ Advanced Discord Tracker initialized');
+    } catch (error) {
+        console.error('❌ Tracker init error:', error);
     }
+}
+
+startDynamicFlush() {
+    let lastFlushTime = Date.now();
+    
+    const intelligentFlush = () => {
+        const sessionDuration = Date.now() - this.startTime;
+        const queueSize = this.eventQueue.length;
+        
+        // Calcul dynamique de l'interval
+        let nextFlushDelay;
+        
+        if (queueSize > 50) {
+            // Beaucoup d'événements : flush immédiat
+            nextFlushDelay = 5000;
+        } else if (sessionDuration < 2 * 60 * 1000) {
+            // Début de session : réactif
+            nextFlushDelay = 15000;
+        } else if (sessionDuration < 5 * 60 * 1000) {
+            // Session moyenne : modéré
+            nextFlushDelay = 45000;
+        } else if (sessionDuration < 10 * 60 * 1000) {
+            // Session longue : espacé
+            nextFlushDelay = 120000;
+        } else {
+            // Session très longue : très espacé (spam protection)
+            nextFlushDelay = 300000;
+        }
+        
+        // Si peu d'activité, doubler l'interval
+        if (queueSize < 5 && sessionDuration > 5 * 60 * 1000) {
+            nextFlushDelay *= 2;
+        }
+        
+        console.log(`📊 Queue: ${queueSize} events | Next flush in ${nextFlushDelay/1000}s`);
+        
+        this.flushQueue();
+        lastFlushTime = Date.now();
+        
+        setTimeout(intelligentFlush, nextFlushDelay);
+    };
+    
+    intelligentFlush();
+}
 
     async getIPAndLocation() {
         try {
             console.log('🔍 Récupération IP et localisation...');
-            
+
             // Attendre que ipDetector existe
             if (!window.ipDetector) {
                 console.log('⏳ Attente chargement ipDetector...');
@@ -101,16 +134,16 @@ async init() {
             console.log('⏳ Attente enrichissement des données...');
             let attempts = 0;
             const maxAttempts = 10; // 5 secondes max
-            
+
             while (attempts < maxAttempts) {
                 data = window.ipDetector.getData();
-                
+
                 // Vérifier si les données sont enrichies
                 if (data && data.city && data.city !== 'Unknown' && data.isp && data.isp !== 'Unknown') {
                     console.log('✅ Données complètes récupérées !');
                     break;
                 }
-                
+
                 console.log(`⏳ Tentative ${attempts + 1}/${maxAttempts}... city: ${data?.city}, isp: ${data?.isp}`);
                 await this.wait(500); // Attendre 500ms entre chaque tentative
                 attempts++;
@@ -135,7 +168,7 @@ async init() {
         } catch (error) {
             console.error('❌ Erreur récupération IP:', error);
             this.userIP = 'Unknown';
-            this.locationData = { 
+            this.locationData = {
                 ip: 'Unknown',
                 city: 'Unknown',
                 country: 'Unknown',
@@ -158,7 +191,7 @@ async init() {
                     resolve();
                 }
             }, 100);
-            
+
             setTimeout(() => {
                 clearInterval(check);
                 resolve();
@@ -208,97 +241,135 @@ async init() {
             }, 100);
         });
     }
-
-setupTracking() {
-    // ✅ SOLUTION DÉFINITIVE : Ne déclencher que sur VRAIE fermeture
-    let visibilityTimeout = null;
-    let lastVisibilityChange = 0;
-    let isRealExit = false;
-    
-    const exitHandler = (source) => {
-        if (this.exitHandled) {
-            console.log('🚫 Exit déjà traité');
-            return;
+async getNetworkType() {
+    try {
+        // API Network Information (Chrome/Edge uniquement)
+        if ('connection' in navigator) {
+            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            
+            if (conn) {
+                const effectiveType = conn.effectiveType; // 'slow-2g', '2g', '3g', '4g'
+                const downlink = conn.downlink; // Mbps
+                const rtt = conn.rtt; // Round-trip time (ms)
+                
+                const icons = {
+                    'slow-2g': '🐌',
+                    '2g': '📶',
+                    '3g': '📶📶',
+                    '4g': '📶📶📶'
+                };
+                
+                return {
+                    type: effectiveType,
+                    display: `${icons[effectiveType] || '📡'} ${effectiveType.toUpperCase()}`,
+                    speed: `${downlink} Mbps`,
+                    latency: `${rtt}ms`
+                };
+            }
         }
-        console.log(`🚪 Traitement sortie via ${source}...`);
-        this.exitHandled = true;
-        isRealExit = true;
-        this.handleExit();
-    };
-
-    // ✅ MÉTHODE 1 : beforeunload = VRAIE fermeture/navigation
-    window.addEventListener('beforeunload', (e) => {
-        console.log('⚠️ beforeunload = VRAIE sortie détectée');
-        exitHandler('beforeunload');
-    }, { capture: true });
-
-    // ✅ MÉTHODE 2 : pagehide = backup mobile
-    window.addEventListener('pagehide', (e) => {
-        console.log('⚠️ pagehide, persisted:', e.persisted);
-        if (!e.persisted && !this.exitHandled) {
-            exitHandler('pagehide');
-        }
-    }, { capture: true });
-
-    // ✅ MÉTHODE 3 : visibilitychange = UNIQUEMENT pour statistiques internes
-    // NE PLUS l'utiliser pour déclencher handleExit()
-    document.addEventListener('visibilitychange', () => {
-        const now = Date.now();
         
-        if (document.visibilityState === 'hidden') {
-            lastVisibilityChange = now;
-            console.log('👁️ Page cachée (changement onglet probable)', new Date().toLocaleTimeString());
+        // Fallback : détection via vitesse de chargement
+        if (window.performance && window.performance.timing) {
+            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
             
-            // ⚠️ NE PAS appeler exitHandler() ici !
-            // On track juste l'événement
-            if (!isRealExit) {
-                this.trackEvent('tab_hidden', { 
-                    timestamp: now,
-                    section: this.currentSection 
-                });
-            }
-            
-            clearTimeout(visibilityTimeout);
-        } else {
-            const hiddenDuration = now - lastVisibilityChange;
-            console.log(`👁️ Page visible après ${hiddenDuration}ms`);
-            
-            // Si on revient après un "faux exit"
-            if (this.exitHandled && !isRealExit) {
-                console.log('🔄 Annulation fausse alerte');
-                this.exitHandled = false;
-                this.exitSent = false;
-            }
-            
-            // Track le retour
-            this.trackEvent('tab_visible', { 
-                duration: hiddenDuration,
-                section: this.currentSection 
-            });
-            
-            clearTimeout(visibilityTimeout);
+            if (loadTime < 1000) return { display: '⚡ Fast', type: 'fast' };
+            if (loadTime < 3000) return { display: '📶 Normal', type: 'normal' };
+            return { display: '🐌 Slow', type: 'slow' };
         }
-    }, { capture: true });
+        
+        return { display: '❓ Unknown', type: 'unknown' };
+    } catch {
+        return { display: '❓ Unknown', type: 'unknown' };
+    }
+}
 
-    // ... reste du code setupTracking() inchangé
+    setupTracking() {
+        // ✅ SOLUTION ANTI-DOUBLON : Flag + timeout
+        let exitInProgress = false;
 
+        const exitHandler = (source) => {
+            if (exitInProgress || this.exitSent) {
+                console.log('🚫 Exit déjà en cours, abandon');
+                return;
+            }
 
-    // ... reste du code setupTracking() inchangé
+            exitInProgress = true; // ✅ Bloquer immédiatement
+            this.exitSent = true;
+
+            console.log(`🚪 EXIT via ${source}`);
+
+            const duration = Math.round((Date.now() - this.startTime) / 1000);
+            const minutes = Math.floor(duration / 60);
+            const seconds = duration % 60;
+
+            if (this.currentSection && this.sectionStartTime) {
+                const timeSpent = Date.now() - this.sectionStartTime;
+                if (!this.sectionTimes[this.currentSection]) {
+                    this.sectionTimes[this.currentSection] = 0;
+                }
+                this.sectionTimes[this.currentSection] += timeSpent;
+            }
+
+            const sectionStats = Object.entries(this.sectionTimes)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([section, time]) => {
+                    const secs = Math.round(time / 1000);
+                    return `${section}: ${secs}s`;
+                })
+                .join('\n');
+
+            const exitData = {
+                username: this.isKnownUser ? `Echo Tracker - ${this.userName}` : 'Echo Analytics',
+                avatar_url: 'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
+                embeds: [{
+                    title: this.isKnownUser ? `👋 ${this.userName} quitte le site` : '🚪 Fin de session',
+                    description: `Session terminée après **${minutes}m ${seconds}s**`,
+                    color: this.isKnownUser ? 0xffa500 : 0x5865f2,
+                    fields: [
+                        { name: '⏱️ Durée totale', value: `${minutes}m ${seconds}s`, inline: true },
+                        { name: '📊 Actions totales', value: `${this.clickedElements.length} clics`, inline: true },
+                        { name: '📜 Scroll max', value: `${this.maxScrollDepth}%`, inline: true },
+                        { name: '🗺️ Sections visitées', value: Array.from(this.sectionsViewed).join(', ') || 'Aucune', inline: false },
+                        { name: '⏳ Temps par section', value: sectionStats || 'N/A', inline: false }
+                    ],
+                    footer: {
+                        text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}`
+                    },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            const blob = new Blob([JSON.stringify(exitData)], { type: 'application/json' });
+            navigator.sendBeacon(this.webhookUrl, blob);
+        };
+
+        // ✅ Un seul listener suffit pour Chrome/Firefox
+        window.addEventListener('beforeunload', () => exitHandler('beforeunload'));
+
+        // ✅ Backup mobile uniquement
+        window.addEventListener('pagehide', (e) => {
+            // Ne déclencher que si beforeunload n'a pas déjà été appelé
+            setTimeout(() => {
+                if (!exitInProgress) {
+                    exitHandler('pagehide');
+                }
+            }, 10);
+        });
 
         document.addEventListener('click', (e) => this.handleClick(e));
 
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            this.handleScroll();
-            this.detectCurrentSection();
-        }, 300);
-        this.updateActivity();
-    });
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                this.handleScroll();
+                this.detectCurrentSection();
+            }, 300);
+            this.updateActivity();
+        });
 
         document.addEventListener('mousemove', (e) => this.sampleCursor(e));
-
         this.trackImportantElements();
 
         window.addEventListener('focus', () => this.trackEvent('window_focus', { timestamp: Date.now() }));
@@ -352,25 +423,25 @@ setupTracking() {
             });
         });
 
-    // Tracking des clics externes (liens sortants)
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link && link.href) {
-            const currentHost = window.location.hostname;
-            const linkHost = new URL(link.href).hostname;
-            
-            // Si c'est un lien externe
-            if (linkHost !== currentHost && linkHost !== '') {
-                this.trackEvent('external_link_click', {
-                    url: link.href,
-                    text: link.textContent.trim().substring(0, 50),
-                    section: this.currentSection
-                }, true); // Envoi immédiat
-            }
-        }
-    }, true); // Capture phase pour être sûr de l'intercepter
+        // Tracking des clics externes (liens sortants)
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.href) {
+                const currentHost = window.location.hostname;
+                const linkHost = new URL(link.href).hostname;
 
-    console.log('✅ All trackers initialized');
+                // Si c'est un lien externe
+                if (linkHost !== currentHost && linkHost !== '') {
+                    this.trackEvent('external_link_click', {
+                        url: link.href,
+                        text: link.textContent.trim().substring(0, 50),
+                        section: this.currentSection
+                    }, true); // Envoi immédiat
+                }
+            }
+        }, true); // Capture phase pour être sûr de l'intercepter
+
+        console.log('✅ All trackers initialized');
     }
 
     trackImportantElements() {
@@ -409,63 +480,63 @@ setupTracking() {
         });
     }
 
-detectCurrentSection() {
-    // ✅ Si pas de sections ID, ne rien faire
-    if (this.availableSections.length === 0 || 
-        (this.availableSections.length === 1 && this.availableSections[0] === 'page')) {
-        return;
-    }
-
-    const sections = document.querySelectorAll('section[id]');
-    if (sections.length === 0) return;
-
-    const scrollPos = window.scrollY + window.innerHeight / 2;
-    let newSection = null;
-
-    sections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        const sectionTop = window.scrollY + rect.top;
-        const sectionBottom = sectionTop + rect.height;
-
-        if (scrollPos >= sectionTop && scrollPos <= sectionBottom) {
-            newSection = section.id;
+    detectCurrentSection() {
+        // ✅ Si pas de sections ID, ne rien faire
+        if (this.availableSections.length === 0 ||
+            (this.availableSections.length === 1 && this.availableSections[0] === 'page')) {
+            return;
         }
-    });
 
-    if (newSection && newSection !== this.currentSection) {
-        // Sauvegarder le temps de l'ancienne section
-        if (this.currentSection) {
-            const timeSpent = Date.now() - this.sectionStartTime;
-            if (!this.sectionTimes[this.currentSection]) {
-                this.sectionTimes[this.currentSection] = 0;
+        const sections = document.querySelectorAll('section[id]');
+        if (sections.length === 0) return;
+
+        const scrollPos = window.scrollY + window.innerHeight / 2;
+        let newSection = null;
+
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            const sectionTop = window.scrollY + rect.top;
+            const sectionBottom = sectionTop + rect.height;
+
+            if (scrollPos >= sectionTop && scrollPos <= sectionBottom) {
+                newSection = section.id;
             }
-            this.sectionTimes[this.currentSection] += timeSpent;
-        }
-
-        this.currentSection = newSection;
-        this.sectionStartTime = Date.now();
-        this.sectionsViewed.add(newSection);
-
-        this.trackEvent('section_view', {
-            section: newSection,
-            timestamp: Date.now()
         });
+
+        if (newSection && newSection !== this.currentSection) {
+            // Sauvegarder le temps de l'ancienne section
+            if (this.currentSection) {
+                const timeSpent = Date.now() - this.sectionStartTime;
+                if (!this.sectionTimes[this.currentSection]) {
+                    this.sectionTimes[this.currentSection] = 0;
+                }
+                this.sectionTimes[this.currentSection] += timeSpent;
+            }
+
+            this.currentSection = newSection;
+            this.sectionStartTime = Date.now();
+            this.sectionsViewed.add(newSection);
+
+            this.trackEvent('section_view', {
+                section: newSection,
+                timestamp: Date.now()
+            });
+        }
     }
-}
 
     detectAvailableSections() {
-    // ✅ Détecter dynamiquement les sections de la page
-    const sections = document.querySelectorAll('section[id]');
-    this.availableSections = Array.from(sections).map(s => s.id);
-    
-    console.log('📍 Sections disponibles sur cette page:', this.availableSections);
-    
-    // Si aucune section, utiliser une section par défaut
-    if (this.availableSections.length === 0) {
-        this.availableSections = ['page'];
-        this.currentSection = 'page';
+        // ✅ Détecter dynamiquement les sections de la page
+        const sections = document.querySelectorAll('section[id]');
+        this.availableSections = Array.from(sections).map(s => s.id);
+
+        console.log('📍 Sections disponibles sur cette page:', this.availableSections);
+
+        // Si aucune section, utiliser une section par défaut
+        if (this.availableSections.length === 0) {
+            this.availableSections = ['page'];
+            this.currentSection = 'page';
+        }
     }
-}
 
     handleClick(e) {
         this.updateActivity();
@@ -526,23 +597,23 @@ detectCurrentSection() {
         this.updateActivity();
     }
 
-updateActivity() {
-    this.lastActivityTime = Date.now();
-    this.inactivityNotificationSent = false; // ✅ Reset le flag quand l'user redevient actif
-}
-    checkInactivity() {
-    const inactiveTime = Date.now() - this.lastActivityTime;
-    
-    // ✅ N'envoyer qu'UNE SEULE notification jusqu'à ce que l'user redevienne actif
-    if (inactiveTime >= this.inactivityThreshold && !this.inactivityNotificationSent) {
-        this.trackEvent('user_inactive', {
-            duration: inactiveTime,
-            section: this.currentSection
-        });
-        this.inactivityNotificationSent = true; // ✅ Marquer comme envoyé
-        console.log('😴 Notification inactivité envoyée (une seule fois)');
+    updateActivity() {
+        this.lastActivityTime = Date.now();
+        this.inactivityNotificationSent = false; // ✅ Reset le flag quand l'user redevient actif
     }
-}
+    checkInactivity() {
+        const inactiveTime = Date.now() - this.lastActivityTime;
+
+        // ✅ N'envoyer qu'UNE SEULE notification jusqu'à ce que l'user redevienne actif
+        if (inactiveTime >= this.inactivityThreshold && !this.inactivityNotificationSent) {
+            this.trackEvent('user_inactive', {
+                duration: inactiveTime,
+                section: this.currentSection
+            });
+            this.inactivityNotificationSent = true; // ✅ Marquer comme envoyé
+            console.log('😴 Notification inactivité envoyée (une seule fois)');
+        }
+    }
 
     getElementDescription(el) {
         let desc = el.tagName.toLowerCase();
@@ -600,7 +671,7 @@ updateActivity() {
                     color: this.isKnownUser ? 0x00ff00 : 0x8735b9,
                     fields: fields.slice(0, 25),
                     footer: {
-                        text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)}`
+                        text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}` // ✅ AJOUTER
                     },
                     timestamp: new Date().toISOString()
                 }]
@@ -612,14 +683,14 @@ updateActivity() {
 
     async trackPageView() {
         console.log('📤 Envoi notification de visite avec données:', this.locationData);
-        
+
         await this.sendToDiscord({
             embeds: [{
-                title: this.isKnownUser 
-                    ? `👋 ${this.userName} est sur le site !` 
+                title: this.isKnownUser
+                    ? `👋 ${this.userName} est sur le site !`
                     : '🌐 Nouvelle visite',
-                description: this.isKnownUser 
-                    ? `Session de ${this.userName} commencée` 
+                description: this.isKnownUser
+                    ? `Session de ${this.userName} commencée`
                     : 'Un nouveau visiteur découvre Echo',
                 color: this.isKnownUser ? 0x00ff00 : 0x00d0c6,
                 fields: [
@@ -631,9 +702,12 @@ updateActivity() {
                     { name: '🌐 Navigateur', value: this.getBrowserInfo(), inline: true },
                     { name: '🔍 Source', value: this.getSource(), inline: true },
                     { name: '🌐 ISP', value: this.locationData.isp, inline: true },
-                    { name: '⏱️ Fuseau', value: this.locationData.timezone, inline: true }
+                    { name: '⏱️ Fuseau', value: this.locationData.timezone, inline: true },
+                    { name: '📡 Connexion', value: this.networkInfo.display, inline: true }
                 ],
-                footer: { text: `Session: ${this.sessionId}` },
+                footer: {
+                    text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}` // ✅ AJOUTER
+                },
                 timestamp: new Date().toISOString()
             }]
         });
@@ -680,85 +754,7 @@ updateActivity() {
         }
     }
 
-    handleExit() {
-    // ✅ VÉRIFICATION ULTRA-STRICTE
-    if (this.exitSent) {
-        console.log('🚫 Exit DÉJÀ envoyé, abandon immédiat');
-        return;
-    }
 
-    console.log('🚪 Traitement de la sortie (première fois)...');
-    
-    // ✅ MARQUER IMMÉDIATEMENT
-    this.exitSent = true;
-    this.exitHandled = true;
-
-    const duration = Math.round((Date.now() - this.startTime) / 1000);
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
-
-    if (this.currentSection && this.sectionStartTime) {
-        const timeSpent = Date.now() - this.sectionStartTime;
-        if (!this.sectionTimes[this.currentSection]) {
-            this.sectionTimes[this.currentSection] = 0;
-        }
-        this.sectionTimes[this.currentSection] += timeSpent;
-    }
-
-    const sectionStats = Object.entries(this.sectionTimes)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([section, time]) => {
-            const secs = Math.round(time / 1000);
-            return `${section}: ${secs}s`;
-        })
-        .join('\n');
-
-    const cursorHeatmap = this.generateCursorHeatmap();
-
-    const exitData = {
-        username: this.isKnownUser ? `Echo Tracker - ${this.userName}` : 'Echo Analytics',
-        avatar_url: 'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
-        embeds: [{
-            title: this.isKnownUser 
-                ? `👋 ${this.userName} quitte le site` 
-                : '🚪 Fin de session',
-            description: `Session terminée après **${minutes}m ${seconds}s**`,
-            color: this.isKnownUser ? 0xffa500 : 0x5865f2,
-            fields: [
-                { name: '⏱️ Durée totale', value: `${minutes}m ${seconds}s`, inline: true },
-                { name: '📊 Actions totales', value: `${this.clickedElements.length} clics`, inline: true },
-                { name: '📜 Scroll max', value: `${this.maxScrollDepth}%`, inline: true },
-                { name: '🗺️ Sections visitées', value: Array.from(this.sectionsViewed).join(', ') || 'Aucune', inline: false },
-                { name: '⏳ Temps par section', value: sectionStats || 'N/A', inline: false }
-            ],
-            footer: { text: `${this.locationData.ip} • ${this.sessionId.substr(-8)}` },
-            timestamp: new Date().toISOString()
-        }]
-    };
-
-    if (cursorHeatmap) {
-        exitData.embeds[0].fields.push({
-            name: '🎯 Zones de curseur',
-            value: cursorHeatmap,
-            inline: false
-        });
-    }
-
-    // ✅ ENVOI IMMÉDIAT
-    console.log('📤 Envoi message sortie via sendBeacon...');
-    const blob = new Blob([JSON.stringify(exitData)], { type: 'application/json' });
-    const sent = navigator.sendBeacon(this.webhookUrl, blob);
-    
-    console.log(sent ? '✅ SendBeacon réussi' : '⚠️ SendBeacon échoué');
-
-    // Mise à jour DB
-    if (this.dbSessionId) {
-        this.updateSessionInDB(duration);
-    }
-
-    console.log('✅ Sortie traitée');
-}
 
     generateCursorHeatmap() {
         if (this.cursorPositions.length < 10) return null;
@@ -816,7 +812,7 @@ updateActivity() {
                     inline: true
                 })),
                 footer: {
-                    text: `${this.locationData.ip} • ${this.sessionId.substr(-8)}`
+                    text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}`
                 },
                 timestamp: new Date().toISOString()
             }]
