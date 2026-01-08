@@ -579,9 +579,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <audio id="backgroundMusic" src="assets/mp3compressmusique.mp3" loop preload="none"></audio>
 
-<div id="secretModal" class="secret-modal">
-  <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3><!-- Bouton Sablier pour changer la durée du compte à rebours -->
-    <!--<h3>🔒 Accès restreint</h3>-->
+<!--<div id="secretModal" class="secret-modal">
+  <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
     <p>Entrez le code d’accès :</p>
     <div class="input-paste-container">
       <input type="password" id="secretInput" placeholder="Code..." />
@@ -593,7 +592,477 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button id="confirmSecret" class="btn-confirm">Valider</button>
     </div>
   </div>
+</div>-->
+
+<!-- Bouton d'accès amélioré -->
+<button id="adminPanelBtn" class="admin-access-btn">
+  <i class="fa-solid fa-shield-halved"></i>
+  <span class="pulse-ring"></span>
+</button>
+<!-- À ajouter dans index.html, juste avant la fermeture de </body> -->
+<!-- Remplace ou complète le bloc <div id="secretModal"> existant -->
+
+<!-- MODALE SECRÈTE AVANCÉE -->
+<div id="secretModal" class="secret-modal">
+  <div class="secret-box">
+    <!-- Header avec oscilloscope -->
+    <div class="oscilloscope-container">
+      <canvas id="waveCanvas" width="400" height="80"></canvas>
+      <span class="oscilloscope-label">SECURE ACCESS</span>
+    </div>
+    
+    <h3>
+      <button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours">
+        <i class="fa-solid fa-hourglass-half"></i>&nbsp;
+      </button>
+      <span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>
+      &nbsp;Accès restreint
+    </h3>
+    
+    <!-- Compteur de tentatives -->
+    <div id="attemptsCounter" class="attempts-counter">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span id="attemptsText">3 tentatives restantes</span>
+    </div>
+    
+    <!-- Timer de cooldown (caché par défaut) -->
+    <div id="cooldownTimer" class="cooldown-timer hidden">
+      <i class="fa-solid fa-clock"></i>
+      <span>Verrouillé pendant <span id="cooldownTime">60</span>s</span>
+    </div>
+    
+    <!-- Message d'état -->
+    <p id="modalMessage" style="color: #b0b0b0; margin-bottom: 15px;">
+      Entrez le code d'accès :
+    </p>
+    
+    <!-- Input principal -->
+    <div class="input-paste-container">
+      <input type="password" id="secretInput" placeholder="Code..." />
+      <button id="clearBtn" class="btn-paste" title="Effacer le code">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button id="pasteBtn" class="btn-paste" title="Coller le code">
+        <i class="fa-solid fa-paste"></i>
+      </button>
+      <button id="typewriterBtn" class="btn-paste" title="Remplir automatiquement">
+        <i class="fa-solid fa-keyboard"></i>
+      </button>
+    </div>
+    
+    <!-- Section 2FA (cachée par défaut) -->
+    <div id="twofaSection" class="twofa-section hidden">
+      <p><i class="fa-solid fa-shield-halved"></i> Code d'authentification à deux facteurs :</p>
+      <input type="text" id="twofaInput" maxlength="6" placeholder="000000" />
+    </div>
+    
+    <!-- Progress bar déverrouillage -->
+    <div id="unlockProgress" class="unlock-progress hidden">
+      <div class="progress-bar-unlock">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <p class="progress-text">Déverrouillage en cours...</p>
+    </div>
+    
+    <!-- Actions -->
+    <div class="secret-actions">
+      <button id="cancelSecret" class="btn-cancel">Annuler</button>
+      <button id="confirmSecret" class="btn-confirm">Valider</button>
+    </div>
+  </div>
 </div>
+
+<!-- BADGE DEVELOPER (caché par défaut) -->
+<div id="devBadge" class="dev-badge hidden">
+  <i class="fa-solid fa-code"></i>
+  <span>Admin</span>
+</div>
+
+<!-- PANNEAU ADMIN (caché par défaut) -->
+<div id="adminPanel" class="admin-panel-overlay hidden">
+  <div class="admin-panel-content">
+    <div class="panel-header">
+      <h3>🛡️ Panneau Administrateur</h3>
+      <button id="closeAdminPanel" class="close-panel">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    
+    <div class="panel-body">
+      <p style="color: #00d0c6; margin-bottom: 20px;">
+        Bienvenue, <strong id="adminUsername">Admin</strong>
+      </p>
+      
+      <div id="adminSections" class="admin-section">
+        <!-- Les cartes seront générées dynamiquement par JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Styles déjà présents dans index.html - à vérifier qu'ils sont bien là */
+/* Si manquants, les ajouter dans la section <style> existante */
+
+.input-paste-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.input-paste-container input {
+  flex: 1;
+}
+
+.btn-paste {
+  background: rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  color: #00d0c6;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-paste:hover {
+  background: rgba(102, 126, 234, 0.4);
+  border-color: var(--debut);
+}
+
+.hidden {
+  display: none !important;
+}
+</style>
+<style>
+/* ========= BADGE DEVELOPER ========= */
+.dev-badge {
+  position: fixed;
+  top: 100px;
+  left: 20px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #0a0a0a;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 999;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  animation: slideInLeft 0.5s ease;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.dev-badge:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dev-badge i {
+  animation: pulse 2s infinite;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ========= OSCILLOSCOPE ========= */
+.oscilloscope-container {
+  background: rgba(0, 20, 40, 0.9);
+  border: 1px solid rgba(0, 208, 198, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+#waveCanvas {
+  width: 100%;
+  height: 80px;
+  display: block;
+}
+
+.oscilloscope-label {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 0.7rem;
+  color: #00d0c6;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+}
+
+/* ========= TENTATIVES ========= */
+.attempts-counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #00d0c6;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background: rgba(0, 208, 198, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 208, 198, 0.3);
+}
+
+.attempts-counter.warning {
+  color: #FFA500;
+  background: rgba(255, 165, 0, 0.1);
+  border-color: rgba(255, 165, 0, 0.3);
+}
+
+.attempts-counter.danger {
+  color: #ff0055;
+  background: rgba(255, 0, 85, 0.1);
+  border-color: rgba(255, 0, 85, 0.3);
+}
+
+/* ========= PROGRESS BAR DÉVERROUILLAGE ========= */
+.unlock-progress {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.progress-bar-unlock {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--debut), var(--finn));
+  width: 0%;
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(0, 208, 198, 0.6);
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  color: #00d0c6;
+}
+
+/* ========= COOLDOWN TIMER ========= */
+.cooldown-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ff0055;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 12px;
+  background: rgba(255, 0, 85, 0.1);
+  border: 2px solid rgba(255, 0, 85, 0.4);
+  border-radius: 10px;
+  margin: 15px 0;
+  animation: pulse 1.5s infinite;
+}
+
+/* ========= SHAKE ANIMATION ========= */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.secret-box.shake {
+  animation: shake 0.5s;
+  border-color: #ff0055 !important;
+}
+
+/* ========= 2FA SECTION ========= */
+.twofa-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: rgba(0, 208, 198, 0.05);
+  border: 1px solid rgba(0, 208, 198, 0.3);
+  border-radius: 10px;
+}
+
+.twofa-section p {
+  margin-bottom: 10px;
+  color: #00d0c6;
+}
+
+#twofaInput {
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  letter-spacing: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+}
+
+/* ========= ADMIN PANEL ========= */
+.admin-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.admin-panel-overlay:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.admin-panel-content {
+  background: rgba(15, 15, 30, 0.95);
+  border: 2px solid var(--debut);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 50px rgba(102, 126, 234, 0.5);
+  animation: fadeInScale 0.4s ease;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: var(--debut);
+}
+
+.close-panel {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-panel:hover {
+  color: #ff0055;
+}
+
+.panel-body {
+  padding: 20px;
+}
+
+.admin-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.admin-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.admin-card:hover {
+  border-color: var(--debut);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  transform: translateY(-5px);
+}
+
+.admin-card h4 {
+  color: var(--debut);
+  margin-bottom: 10px;
+}
+
+/* ========= UTILITIES ========= */
+.hidden {
+  display: none !important;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+/* Styles pour la modale récap */
+.recap-box {
+  animation: slideInUp 0.4s ease;
+}
+
+.recap-grid {
+  display: grid;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.recap-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.recap-item:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: var(--debut);
+  transform: translateX(5px);
+}
+
+.recap-item i {
+  font-size: 1.5rem;
+  color: var(--debut);
+  margin-top: 5px;
+}
+
+.recap-item strong {
+  display: block;
+  color: #00d0c6;
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+.recap-item p {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+
+
 
 <div class="floating-buttons">
   <button class="floating-btn btn-share-access" id="shareBtn" data-allow-share="true" title="Partager le site">
@@ -651,7 +1120,6 @@ document.getElementById('musicBtn').addEventListener('click', function() {
 <script type="module" src="js/discord-webhook.js"></script>
 <script src="js/discord-tracker.js"></script>
 <script type="module" src="js/main.js"></script>
-<script type="module" src="js/remote-refresh.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const kbHeader = document.getElementById('toggleKeyboard');

@@ -4,9 +4,14 @@
 // =============================================
 
 class DiscordWebhookManager {
-  constructor() {
-    this.mainWebhook = null;
-    this.userWebhook = null;
+constructor() {
+    this.webhooks = {
+      main: null,
+      twofa: null,
+      refresh: null,
+      user: null
+    };
+    this.adminRoleId = null; // Sera chargé depuis la DB
     this.userIP = null;
     this.isKnownUser = false;
     this.userName = null;
@@ -57,45 +62,6 @@ class DiscordWebhookManager {
     }
   }
 
-  async loadWebhooks() {
-    try {
-      // Attendre que EchoDB soit disponible
-      if (typeof window.EchoDB === 'undefined') {
-        await this.waitForEchoDB();
-      }
-
-      // 1. Charger le webhook principal
-      const { data: mainWebhookData } = await window.EchoDB.supabase
-        .from('webhook_settings')
-        .select('webhook_url')
-        .eq('setting_key', 'main_webhook')
-        .eq('is_active', true)
-        .single();
-
-      if (mainWebhookData) {
-        this.mainWebhook = mainWebhookData.webhook_url;
-      }
-
-      // 2. Vérifier si l'utilisateur est connu
-      const { data: trackedUser } = await window.EchoDB.supabase
-        .from('tracked_users')
-        .select('*')
-        .eq('ip_address', this.userIP)
-        .eq('is_active', true)
-        .single();
-
-      if (trackedUser) {
-        this.isKnownUser = true;
-        this.userName = trackedUser.first_name;
-        this.userWebhook = trackedUser.webhook_url;
-        console.log(`👤 Known user: ${this.userName} (${this.userIP})`);
-      }
-
-    } catch (error) {
-      console.error('Webhook load error:', error);
-    }
-  }
-
   waitForEchoDB() {
     return new Promise((resolve) => {
       const check = setInterval(() => {
@@ -107,48 +73,88 @@ class DiscordWebhookManager {
     });
   }
 
-  getWebhook() {
-    // Utiliser le webhook personnalisé si l'utilisateur est connu
-    return this.userWebhook || this.mainWebhook;
+// --- MODIFICATION : Chargement des nouveaux webhooks et du rôle ---
+  async loadWebhooks() {
+    if (typeof window.EchoDB === 'undefined') return;
+
+    try {
+      // 1. Charger les Webhooks réservés (2FA / Refresh)
+      const { data: settings } = await window.EchoDB.supabase
+        .from('webhook_settings')
+        .select('setting_key, webhook_url')
+        .eq('is_active', true);
+
+      if (settings) {
+        settings.forEach(s => {
+          if (s.setting_key === 'main_webhook') this.webhooks.main = s.webhook_url;
+          if (s.setting_key === 'twofa_webhook') this.webhooks.twofa = s.webhook_url;
+          if (s.setting_key === 'refresh_webhook') this.webhooks.refresh = s.webhook_url;
+        });
+      }
+
+      // 2. Charger l'ID du rôle pour le Ping
+      const { data: roleData } = await window.EchoDB.supabase
+        .from('site_settings')
+        .select('setting_value')
+        .eq('setting_key', 'discord_admin_role_id')
+        .single();
+      
+      if (roleData) this.adminRoleId = roleData.setting_value;
+
+      // 3. Charger le webhook utilisateur perso (Logique existante)
+      const { data: trackedUser } = await window.EchoDB.supabase
+        .from('tracked_users')
+        .select('*')
+        .eq('ip_address', this.userIP)
+        .eq('is_active', true)
+        .single();
+
+      if (trackedUser) {
+        this.isKnownUser = true;
+        this.userName = trackedUser.first_name;
+        this.webhooks.user = trackedUser.webhook_url;
+      }
+    } catch (e) { console.error("Erreur chargement webhooks DB:", e); }
   }
 
+  // --- MODIFICATION : Routage Prioritaire et Ping ---
   async sendNotification(type, data) {
-    if (!this.initialized) {
-      await this.init();
+    if (!this.initialized) await this.init();
+
+    // DÉTERMINATION DU WEBHOOK (ORDRE DE PRIORITÉ)
+    let targetUrl = this.webhooks.main;
+
+    if (type === '2fa_code') {
+      targetUrl = this.webhooks.twofa || this.webhooks.main;
+    } 
+    else if (type === 'remote_refresh_triggered') {
+      targetUrl = this.webhooks.refresh || this.webhooks.main;
+    } 
+    else if (this.isKnownUser && this.webhooks.user) {
+      targetUrl = this.webhooks.user;
     }
 
-    const webhook = this.getWebhook();
-    if (!webhook) {
-      console.error('No webhook available');
-      return;
-    }
+    if (!targetUrl) return;
 
     const embed = this.createEmbed(type, data);
-    if (!embed) {
-      console.error('Unknown notification type:', type);
-      return;
-    }
-
     const payload = {
-      username: this.isKnownUser ? `Echo - ${this.userName}` : 'Echo Analytics',
+      username: 'Echo System',
       avatar_url: 'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
       embeds: [embed]
     };
 
-    // Ajouter un ping pour les événements critiques d'utilisateurs connus
-    if (this.isKnownUser && this.shouldPing(type)) {
-      payload.content = `<@&1457164285162684516>`; // ID du rôle à pinger
+    // AJOUT DU PING (Seulement pour le refresh)
+    if (type === 'remote_refresh_triggered' && this.adminRoleId) {
+      payload.content = this.adminRoleId === 'everyone' ? '@everyone' : `<@&${this.adminRoleId}>`;
     }
 
     try {
-      await fetch(webhook, {
+      await fetch(targetUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-    } catch (error) {
-      console.error('Discord notification error:', error);
-    }
+    } catch (error) { console.error('Discord send error:', error); }
   }
 
   shouldPing(type) {
@@ -190,21 +196,21 @@ class DiscordWebhookManager {
         ],
         timestamp: new Date().toISOString()
       },
-'external_link_click': {
-    title: this.isKnownUser 
-        ? `🔗 ${this.userName} clique sur un lien externe` 
-        : '🔗 Clic sur un lien externe',
-    description: `Sortie vers : **${data.url || 'Inconnue'}**`,
-    color: 0x00d0c6,
-    fields: [
-        // Correction ici : on ajoute (data.url || '') pour éviter le crash si url est undefined
-        { name: '🌐 URL', value: (data.url || '').substring(0, 100), inline: false },
-        { name: '📝 Texte du lien', value: (data.text || 'Sans texte').substring(0, 100), inline: true }, // Sécurisé aussi
-        { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
-        { name: '🔗 IP', value: this.userIP, inline: true }
-    ],
-    timestamp: new Date().toISOString()
-},
+      'external_link_click': {
+        title: this.isKnownUser
+          ? `🔗 ${this.userName} clique sur un lien externe`
+          : '🔗 Clic sur un lien externe',
+        description: `Sortie vers : **${data.url || 'Inconnue'}**`,
+        color: 0x00d0c6,
+        fields: [
+          // Correction ici : on ajoute (data.url || '') pour éviter le crash si url est undefined
+          { name: '🌐 URL', value: (data.url || '').substring(0, 100), inline: false },
+          { name: '📝 Texte du lien', value: (data.text || 'Sans texte').substring(0, 100), inline: true }, // Sécurisé aussi
+          { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
+          { name: '🔗 IP', value: this.userIP, inline: true }
+        ],
+        timestamp: new Date().toISOString()
+      },
       'new_download': {
         title: this.isKnownUser
           ? `🎮 ${this.userName} télécharge Echo !`
@@ -277,6 +283,30 @@ class DiscordWebhookManager {
         color: 0x00ff88,
         timestamp: new Date().toISOString()
       },
+      '2fa_code': {
+        title: '🔐 Code 2FA généré',
+        description: `Code de vérification pour **${data.username}**`,
+        color: 0xFFA500,
+        fields: [
+          { name: '🔢 Code', value: `\`${data.code}\``, inline: true },
+          { name: '⏰ Validité', value: '5 minutes', inline: true },
+          { name: '🕐 Généré à', value: data.timestamp, inline: false }
+        ]
+      },
+      'admin_login': {
+        title: '✅ Connexion Admin',
+        description: `**${data.username}** s'est connecté au panel admin`,
+        color: 0x00ff88,
+        fields: [
+          { name: '🕐 Heure', value: data.timestamp, inline: true }
+        ]
+      },
+      'remote_refresh_triggered': {
+    title: '🔄 REFRESH GÉNÉRAL LANCÉ',
+    description: `Commande exécutée par : **${data.triggered_by}**\nMessage : *${data.username}*`,
+    color: 0xFF0000,
+    timestamp: new Date().toISOString()
+},
       'download_disabled': {
         title: '🚫 Téléchargements désactivés',
         description: 'Les téléchargements ont été bloqués',
@@ -324,6 +354,26 @@ class DiscordWebhookManager {
       },
       'settings_reset': {
         title: '🔄 Paramètres réinitialisés',
+        color: 0xff0055,
+        timestamp: new Date().toISOString()
+      },
+      'secret_code_try': {
+        title: '🔄 Tentative d\'envoi de code vide',
+        color: 0xff0055,
+        timestamp: new Date().toISOString()
+      },
+      'secret_code_false': {
+        title: '💥 Tentative d\'envoi d\'un code faux',
+        color: 0xff0055,
+        timestamp: new Date().toISOString()
+      },
+      'code_spam': {
+        title: '💥 Tentative d\'envoi répétée (+3x)',
+        color: 0xff0055,
+        timestamp: new Date().toISOString()
+      },
+      'secret_code_cleared': {
+        title: '🔄 Code secret nettoyé',
         color: 0xff0055,
         timestamp: new Date().toISOString()
       },
@@ -375,10 +425,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   await window.webhookManager.init();
 
   document.addEventListener('DOMContentLoaded', async () => {
-  if (window.location.pathname.includes('admin.html')) return;
+    if (window.location.pathname.includes('admin.html')) return;
 
-  await window.webhookManager.init();
-});
+    await window.webhookManager.init();
+  });
 
-console.log('✅ Discord Webhook Manager loaded');
+  console.log('✅ Discord Webhook Manager loaded');
 });

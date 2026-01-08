@@ -102,7 +102,7 @@ startDynamicFlush() {
             nextFlushDelay *= 2;
         }
         
-        console.log(`📊 Queue: ${queueSize} events | Next flush in ${nextFlushDelay/1000}s`);
+        //console.log(`📊 Queue: ${queueSize} events | Next flush in ${nextFlushDelay/1000}s`);
         
         this.flushQueue();
         lastFlushTime = Date.now();
@@ -163,7 +163,7 @@ startDynamicFlush() {
                 isp: data.isp || 'Unknown'
             };
 
-            console.log('✅ Données finales utilisées:', this.locationData);
+            //console.log('✅ Données finales utilisées:', this.locationData);
 
         } catch (error) {
             console.error('❌ Erreur récupération IP:', error);
@@ -222,7 +222,7 @@ startDynamicFlush() {
             if (trackedUser) {
                 this.isKnownUser = true;
                 this.userName = trackedUser.first_name;
-                console.log(`👤 Known user detected: ${this.userName}`);
+                //console.log(`👤 Known user detected: ${this.userName}`);
             }
 
         } catch (error) {
@@ -529,7 +529,7 @@ async getNetworkType() {
         const sections = document.querySelectorAll('section[id]');
         this.availableSections = Array.from(sections).map(s => s.id);
 
-        console.log('📍 Sections disponibles sur cette page:', this.availableSections);
+        //console.log('📍 Sections disponibles sur cette page:', this.availableSections);
 
         // Si aucune section, utiliser une section par défaut
         if (this.availableSections.length === 0) {

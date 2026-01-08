@@ -95,14 +95,14 @@ class IPDetectionService {
 
                 if (data.ip) {
                     this.ipData = data;
-                    console.log(`✅ IP détectée avec ${service.name}:`, data.ip);
+                    //console.log(`✅ IP détectée avec ${service.name}:`, data.ip);
                     
                     // ✅ CORRECTION: Enrichir IMMÉDIATEMENT si nécessaire
                     if (!data.city || service.name === 'ipify' || service.name === 'cloudflare') {
-                        console.log('🔄 Enrichissement immédiat en cours...');
+                        //console.log('🔄 Enrichissement immédiat en cours...');
                         await this.enrichData();
                     } else {
-                        console.log('✅ Données déjà complètes');
+                        //console.log('✅ Données déjà complètes');
                     }
                     
                     return this.ipData;
@@ -168,7 +168,7 @@ class IPDetectionService {
 
         for (const service of enrichmentServices) {
             try {
-                console.log(`🔄 Enrichissement via ${service.name}...`);
+                //console.log(`🔄 Enrichissement via ${service.name}...`);
                 
                 const response = await fetch(service.url);
                 if (response.ok) {
@@ -181,7 +181,7 @@ class IPDetectionService {
                         ...enrichedData
                     };
                     
-                    console.log('✅ Données enrichies:', this.ipData);
+                    //console.log('✅ Données enrichies:', this.ipData);
                     return;
                 }
             } catch (error) {

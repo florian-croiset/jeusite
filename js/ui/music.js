@@ -60,12 +60,6 @@ if (typeof window.sendDiscordNotification === 'function') {
     musique.play()
       .then(updateIcon)
       .catch(() => { /* aucun log si refus */ });
-      // 📊 Tracking: Démarrage automatique musique
-if (typeof window.sendDiscordNotification === 'function') {
-    window.sendDiscordNotification('music_autoplay', {
-        success: true
-    });
-}
 
     ['click', 'scroll', 'keydown', 'mousemove', 'touchstart']
       .forEach(evt => window.removeEventListener(evt, activerMusique));

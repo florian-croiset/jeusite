@@ -21,6 +21,7 @@ if (!window.EchoSupabase) {
   supabaseClient = window.EchoSupabase;
 }
 
+
 // =============================================
 // MODULE D'AUTHENTIFICATION
 // =============================================
@@ -485,6 +486,9 @@ class RemoteRefreshManager {
         const data = payload.new;
         
         // Afficher une notification avant le refresh
+        if (typeof window.sendDiscordNotification === 'function') {
+  window.sendDiscordNotification('remote_refresh_triggered', {});
+}
         this.showRefreshNotification(data.message || 'Mise à jour disponible');
 
         // Attendre 2 secondes puis refresh
@@ -555,17 +559,21 @@ class RemoteRefreshManager {
                     message: message,
                     triggered_by: 'admin',
                     triggered_at: new Date().toISOString()
-                })
-                .select();
+                });
 
             if (error) throw error;
 
-            console.log('✅ Commande de refresh envoyée à tous les clients');
-            return data;
+            // ✅ AJOUT : Envoi de la notif qui sera routée vers le webhook réservé avec PING
+            if (window.sendDiscordNotification) {
+                await window.sendDiscordNotification('remote_refresh_triggered', {
+                    message: message,
+                    triggered_by: 'Admin Panel'
+                });
+            }
 
+            return data;
         } catch (error) {
-            console.error('❌ Erreur lors du déclenchement du refresh:', error);
-            throw error;
+            console.error(error);
         }
     }
 
