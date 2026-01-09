@@ -591,7 +591,7 @@ if (window.EchoDB && !window.location.pathname.includes('admin.html')) {
 // GESTION DES FEEDBACKS (CORRIGÉ AVEC NOUVEAU WEBHOOK)
 // =============================================
 
-async function createFeedbackForm() {
+/*async function createFeedbackForm() {
     const container = document.getElementById('feedback-container');
     if (!container) return;
 
@@ -637,9 +637,9 @@ async function createFeedbackForm() {
     </div>`;
 
     initFeedbackFormLogic();
-}
+}*/
 
-async function initFeedbackFormLogic() {
+/*async function initFeedbackFormLogic() {
   const starsContainer = document.getElementById('rating-stars-container');
   const stars = starsContainer.querySelectorAll('.star');
   const ratingInput = document.getElementById('feedback-rating');
@@ -683,7 +683,7 @@ async function initFeedbackFormLogic() {
           fields: [
             { name: "👤 Utilisateur", value: formData.name, inline: true },
             { name: "📧 Email", value: formData.email, inline: true },
-            /*{ name: "🌐 Adresse IP", value: `\`${userIP}\``, inline: true },*/
+            /*{ name: "🌐 Adresse IP", value: `\`${userIP}\``, inline: true },*//*
             { name: "✅ Ce qu'il a aimé", value: formData.positive || "Rien précisé" },
             { name: "❌ À améliorer", value: formData.negative || "Rien précisé" },
             { name: "💡 Suggestions", value: formData.suggestions || "Aucune" }
@@ -692,8 +692,6 @@ async function initFeedbackFormLogic() {
           timestamp: new Date().toISOString()
         }]
       };
-
-      // On utilise fetch direct pour bypasser le manager global qui envoie ailleurs
       const response = await fetch(feedbackWebhook, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -716,6 +714,232 @@ async function initFeedbackFormLogic() {
     }
   };
 }
+*/
+
+// =============================================
+// GESTION DES FEEDBACKS (DESIGN & LOGIC MERGED)
+// =============================================
+
+async function createFeedbackForm() {
+    const container = document.getElementById('feedback-container');
+    if (!container) return;
+
+    // Insertion du HTML "Design-Rich"
+    container.innerHTML = `
+    <div class="feedback-form-wrapper">
+        <form id="feedbackForm" class="styled-feedback-form">
+            <div class="form-section">
+                <h3>
+                    <i class="fa-solid fa-star"></i>
+                    Note Générale <span class="required" style="color:#ff0055;">*</span>
+                </h3>
+                <div class="rating-stars" id="ratingStars" style="font-size: 1.5rem; margin: 10px 0; color: #444;">
+                    <i class="fa-solid fa-star" data-rating="1"></i>
+                    <i class="fa-solid fa-star" data-rating="2"></i>
+                    <i class="fa-solid fa-star" data-rating="3"></i>
+                    <i class="fa-solid fa-star" data-rating="4"></i>
+                    <i class="fa-solid fa-star" data-rating="5"></i>
+                </div>
+                <div class="rating-label" id="ratingLabel" style="font-size: 0.9rem; color: #b0b0b0;">Sélectionnez une note</div>
+                <input type="hidden" id="rating" name="rating" required>
+            </div>
+
+            <div class="form-section">
+                <h3>
+                    <i class="fa-solid fa-user"></i>
+                    Vos Informations
+                </h3>
+                
+                <div class="form-group">
+                    <label for="name">Nom / Pseudo <span class="required" style="color:#ff0055;">*</span></label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Comment souhaitez-vous être appelé ?" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email (optionnel)</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="votre@email.com">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>
+                    <i class="fa-solid fa-thumbs-up"></i>
+                    Ce qui vous a plu
+                </h3>
+                
+                <div class="form-group">
+                    <label for="positive">Points positifs</label>
+                    <textarea id="positive" name="positive" class="form-textarea" placeholder="Qu'avez-vous particulièrement apprécié dans Echo ?" maxlength="1000"></textarea>
+                    <div class="char-count" id="positiveCount" style="text-align: right; font-size: 0.8rem; color: #666;">0 / 1000</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>
+                    <i class="fa-solid fa-thumbs-down"></i>
+                    À améliorer
+                </h3>
+                
+                <div class="form-group">
+                    <label for="negative">Points à améliorer</label>
+                    <textarea id="negative" name="negative" class="form-textarea" placeholder="Qu'est-ce qui pourrait être amélioré selon vous ?" maxlength="1000"></textarea>
+                    <div class="char-count" id="negativeCount" style="text-align: right; font-size: 0.8rem; color: #666;">0 / 1000</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>
+                    <i class="fa-solid fa-lightbulb"></i>
+                    Suggestions
+                </h3>
+                
+                <div class="form-group">
+                    <label for="suggestions">Vos idées</label>
+                    <textarea id="suggestions" name="suggestions" class="form-textarea" placeholder="Avez-vous des suggestions pour améliorer le jeu ?" maxlength="1000"></textarea>
+                    <div class="char-count" id="suggestionsCount" style="text-align: right; font-size: 0.8rem; color: #666;">0 / 1000</div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn btn btn-primary" id="submitBtn" style="width: 100%; margin-top: 20px;">
+                <span>
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Envoyer mon avis
+                </span>
+            </button>
+        </form>
+    </div>`;
+
+    initFeedbackFormLogic();
+}
+
+async function initFeedbackFormLogic() {
+  const starsContainer = document.getElementById('ratingStars');
+  const stars = starsContainer.querySelectorAll('i'); // Cible les icônes FontAwesome
+  const ratingInput = document.getElementById('rating');
+  const ratingLabel = document.getElementById('ratingLabel');
+  
+  const labels = ["Pas terrible", "Bof", "Moyen", "Bien", "Excellent !"];
+
+  // 1. Logique des étoiles (Mise à jour pour FontAwesome)
+  stars.forEach(star => {
+    // Effet au survol (optionnel, mais sympa)
+    star.onmouseover = () => {
+        const val = star.dataset.rating;
+        stars.forEach(s => {
+            s.style.color = s.dataset.rating <= val ? '#ffaa00' : '#444'; // Or vs Gris foncé
+        });
+    };
+
+    // Remettre l'état sélectionné quand on quitte la zone
+    starsContainer.onmouseleave = () => {
+        const currentVal = ratingInput.value || 0;
+        stars.forEach(s => {
+            s.style.color = s.dataset.rating <= currentVal ? '#ffaa00' : '#444';
+        });
+    };
+
+    // Clic pour valider
+    star.onclick = () => {
+      const val = star.dataset.rating;
+      ratingInput.value = val;
+      ratingLabel.textContent = labels[val - 1];
+      ratingLabel.style.color = '#ffaa00';
+      
+      // Fixer la couleur
+      stars.forEach(s => {
+          s.style.color = s.dataset.rating <= val ? '#ffaa00' : '#444';
+      });
+    };
+  });
+
+  // 2. Logique des compteurs de caractères (Nouveau design)
+  ['positive', 'negative', 'suggestions'].forEach(id => {
+      const input = document.getElementById(id);
+      const counter = document.getElementById(id + 'Count');
+      if(input && counter) {
+          input.addEventListener('input', () => {
+              counter.textContent = `${input.value.length} / 1000`;
+              counter.style.color = input.value.length >= 900 ? '#ff0055' : '#666';
+          });
+      }
+  });
+
+  // 3. Soumission du formulaire (Logique Supabase + Discord conservée)
+  document.getElementById('feedbackForm').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('submitBtn');
+    const originalBtnContent = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
+    submitBtn.disabled = true;
+
+    // Récupération des valeurs avec les NOUVEAUX ID
+    const formData = {
+      name: document.getElementById('name').value || 'Anonyme',
+      email: document.getElementById('email').value || 'Non renseigné',
+      rating: ratingInput.value,
+      positive: document.getElementById('positive').value,
+      negative: document.getElementById('negative').value,
+      suggestions: document.getElementById('suggestions').value
+    };
+
+    try {
+      // A. Sauvegarde Supabase
+      if (window.EchoDB && window.EchoDB.supabase) {
+          await window.EchoDB.supabase.from('form_responses').insert([{ 
+            responses: formData, 
+            submitted_at: new Date().toISOString() 
+          }]);
+      }
+      const version = "2.4";
+      // B. Envoi Webhook Discord
+      const feedbackWebhook = "https://discord.com/api/webhooks/1457453565256663113/vFnITSyWP9-3Z4v4GoxnjPh4ZhYa6U7cpTieh7IqK3UCb4sAmI5GtcQ3qLeE9omiYWOw";
+      const discordPayload = {
+        
+        username: "Echo Feedback Manager",
+        avatar_url: "https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png",
+        embeds: [{
+          title: `🌟 Nouveau Feedback : ${formData.rating}/5`,
+          color: 0x00FF88,
+          fields: [
+            { name: "👤 Utilisateur", value: formData.name, inline: true },
+            { name: "📧 Email", value: formData.email, inline: true },
+            { name: "✅ Ce qu'il a aimé", value: formData.positive || "Rien précisé" },
+            { name: "❌ À améliorer", value: formData.negative || "Rien précisé" },
+            { name: "💡 Suggestions", value: formData.suggestions || "Aucune" }
+          ],
+          footer: {
+                        text: `v${version}`
+                    },
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      const response = await fetch(feedbackWebhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(discordPayload)
+      });
+
+      if (response.ok) {
+        document.getElementById('feedback-container').innerHTML = `
+          <div style="text-align:center; padding: 40px; background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 12px;">
+            <h3 style="color: #00ff88; font-size: 2rem; margin-bottom: 10px;"><i class="fa-solid fa-check-circle"></i> Merci !</h3>
+            <p style="color: #b0b0b0;">Votre avis est précieux pour la Team Nightberry.</p>
+          </div>`;
+      } else {
+        throw new Error("Erreur Webhook");
+      }
+
+    } catch (err) {
+      console.error('Erreur envoi feedback:', err);
+      alert("Désolé, l'envoi a échoué. Vérifiez votre connexion.");
+      submitBtn.innerHTML = originalBtnContent;
+      submitBtn.disabled = false;
+    }
+  };
+}
+
 
 function initFeedbackForm() {
   const stars = document.querySelectorAll('.star');

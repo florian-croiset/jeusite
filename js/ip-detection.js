@@ -70,7 +70,7 @@ class IPDetectionService {
         // Essayer chaque service dans l'ordre
         for (const service of this.services) {
             try {
-                console.log(`🔍 Tentative avec ${service.name}...`);
+                //console.log(`🔍 Tentative avec ${service.name}...`);
                 
                 const response = await fetch(service.url, {
                     method: 'GET',
@@ -80,7 +80,7 @@ class IPDetectionService {
                 });
 
                 if (!response.ok) {
-                    console.warn(`⚠️ ${service.name} failed: ${response.status}`);
+                    //console.warn(`⚠️ ${service.name} failed: ${response.status}`);
                     continue;
                 }
 
@@ -108,13 +108,13 @@ class IPDetectionService {
                     return this.ipData;
                 }
             } catch (error) {
-                console.warn(`❌ ${service.name} error:`, error.message);
+                //console.warn(`❌ ${service.name} error:`, error.message);
                 continue;
             }
         }
 
         // Si tous échouent, utiliser une IP par défaut
-        console.warn('⚠️ Tous les services ont échoué, utilisation IP par défaut');
+        //console.warn('⚠️ Tous les services ont échoué, utilisation IP par défaut');
         this.ipData = {
             ip: 'Unknown',
             city: 'Unknown',
@@ -129,12 +129,12 @@ class IPDetectionService {
     async enrichData() {
         // Si on a seulement l'IP (via ipify), essayer d'obtenir plus d'infos
         if (!this.ipData) {
-            console.warn('⚠️ Pas de données IP à enrichir');
+            //console.warn('⚠️ Pas de données IP à enrichir');
             return;
         }
 
         if (this.ipData.city && this.ipData.city !== 'Unknown' && this.ipData.isp && this.ipData.isp !== 'Unknown') {
-            console.log('✅ Données déjà enrichies');
+            //console.log('✅ Données déjà enrichies');
             return;
         }
 
@@ -185,12 +185,12 @@ class IPDetectionService {
                     return;
                 }
             } catch (error) {
-                console.warn(`❌ Enrichissement ${service.name} échoué:`, error.message);
+                //console.warn(`❌ Enrichissement ${service.name} échoué:`, error.message);
                 continue;
             }
         }
 
-        console.warn('⚠️ Enrichissement échoué pour tous les services');
+        //console.warn('⚠️ Enrichissement échoué pour tous les services');
     }
 
     getCountryEmoji(countryCode) {
@@ -231,7 +231,7 @@ window.ipDetector = new IPDetectionService();
 window.IPDetectionService = IPDetectionService;
 
 // ✅ AUTO-DÉMARRAGE: Détecter l'IP dès le chargement
-console.log('🚀 Démarrage auto de la détection IP...');
+//console.log('🚀 Démarrage auto de la détection IP...');
 window.ipDetector.detect().then(() => {
-    console.log('✅ Détection IP terminée au chargement');
+    //console.log('✅ Détection IP terminée au chargement');
 });

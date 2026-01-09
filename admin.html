@@ -1074,7 +1074,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="section" id="site-settings">
+<div class="section" id="site-settings">
                     <div class="card">
                         <h2>⚙️ Paramètres du site</h2>
 
@@ -1099,7 +1099,88 @@
                             </span>
                         </div>
                     </div>
+
+                    <div class="card" style="margin-top: 20px;">
+                        <h2>📊 Notifications de tracking</h2>
+                        <p style="color: var(--text-dim); margin-bottom: 20px;">
+                            Contrôlez la fréquence des notifications d'activité envoyées sur Discord
+                        </p>
+
+                        <div class="control-item" style="margin-bottom: 20px;">
+                            <label class="switch-label">
+                                <input type="checkbox" id="tracking-enabled">
+                                <span class="control-text">Activer les notifications d'activité</span>
+                            </label>
+                        </div>
+
+                        <div id="tracking-settings" style="display: none;">
+                            <div class="form-group">
+                                <label>Intervalle de notification (minutes)</label>
+                                <select id="tracking-interval">
+                                    <option value="1">1 minute (Test)</option>
+                                    <option value="5">5 minutes</option>
+                                    <option value="15">15 minutes</option>
+                                    <option value="30">30 minutes</option>
+                                    <option value="60">1 heure</option>
+                                    <option value="120">2 heures</option>
+                                    <option value="300">5 heures</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Événements à inclure</label>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="track-clicks" checked>
+                                    <label for="track-clicks">Clics</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="track-scroll" checked>
+                                    <label for="track-scroll">Scroll</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="track-sections" checked>
+                                    <label for="track-sections">Changements de section</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="track-hover" checked>
+                                    <label for="track-hover">Survol d'éléments</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="track-inactive" checked>
+                                    <label for="track-inactive">Inactivité</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Seuil minimum d'événements</label>
+                                <input type="number" id="tracking-threshold" min="1" max="100" value="5" 
+                                       placeholder="Nombre d'événements avant envoi">
+                                <small style="color: var(--text-dim); display: block; margin-top: 5px;">
+                                    Ne pas envoyer de notification s'il y a moins de X événements dans l'intervalle
+                                </small>
+                            </div>
+
+                            <div style="background: rgba(0, 208, 198, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--cyan); margin-top: 15px;">
+                                <p style="margin: 0; font-size: 0.9rem;">
+                                    ℹ️ <strong>Recommandation :</strong> Utilisez un intervalle de 30-60 minutes pour éviter le spam.
+                                    Les notifications de visite/sortie sont toujours envoyées immédiatement.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success" onclick="saveTrackingSettings()" style="margin-top: 20px;">
+                            💾 Enregistrer les paramètres
+                        </button>
+
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                            <strong>État actuel :</strong>
+                            <span id="tracking-status" style="margin-left: 10px;">Chargement...</span>
+                        </div>
+                    </div>
                 </div>
+
+
+
                 <!-- Section Roadmap -->
                 <div class="section" id="roadmap">
                     <div class="card">
@@ -3159,6 +3240,203 @@
     <script src="js/notifications.js"></script>
 
     <script>
+        // ========================================
+// GESTION DES PARAMÈTRES DE TRACKING
+// À ajouter dans admin.html
+// ========================================
+
+// Toggle des paramètres de tracking
+document.addEventListener('DOMContentLoaded', () => {
+    const trackingEnabledCheckbox = document.getElementById('tracking-enabled');
+    if (trackingEnabledCheckbox) {
+        trackingEnabledCheckbox.addEventListener('change', (e) => {
+            const settingsDiv = document.getElementById('tracking-settings');
+            if (settingsDiv) {
+                settingsDiv.style.display = e.target.checked ? 'block' : 'none';
+            }
+        });
+    }
+});
+
+// Charger les paramètres de tracking
+async function loadTrackingSettings() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('site_settings')
+            .select('setting_value')
+            .eq('setting_key', 'tracking_settings')
+            .single();
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        // Paramètres par défaut
+        let settings = {
+            enabled: true,
+            interval: 30,
+            threshold: 5,
+            events: {
+                clicks: true,
+                scroll: true,
+                sections: true,
+                hover: true,
+                inactive: true
+            }
+        };
+
+        // Si des paramètres existent, les charger
+        if (data && data.setting_value) {
+            settings = typeof data.setting_value === 'string' 
+                ? JSON.parse(data.setting_value) 
+                : data.setting_value;
+        }
+
+        // Appliquer les valeurs aux champs
+        const trackingEnabled = document.getElementById('tracking-enabled');
+        const trackingInterval = document.getElementById('tracking-interval');
+        const trackingThreshold = document.getElementById('tracking-threshold');
+        const trackClicks = document.getElementById('track-clicks');
+        const trackScroll = document.getElementById('track-scroll');
+        const trackSections = document.getElementById('track-sections');
+        const trackHover = document.getElementById('track-hover');
+        const trackInactive = document.getElementById('track-inactive');
+
+        if (trackingEnabled) trackingEnabled.checked = settings.enabled;
+        if (trackingInterval) trackingInterval.value = settings.interval;
+        if (trackingThreshold) trackingThreshold.value = settings.threshold;
+        
+        if (trackClicks) trackClicks.checked = settings.events.clicks;
+        if (trackScroll) trackScroll.checked = settings.events.scroll;
+        if (trackSections) trackSections.checked = settings.events.sections;
+        if (trackHover) trackHover.checked = settings.events.hover;
+        if (trackInactive) trackInactive.checked = settings.events.inactive;
+
+        // Afficher/masquer les paramètres détaillés
+        const settingsDiv = document.getElementById('tracking-settings');
+        if (settingsDiv) {
+            settingsDiv.style.display = settings.enabled ? 'block' : 'none';
+        }
+
+        // Mettre à jour le statut
+        updateTrackingStatus(settings);
+
+    } catch (error) {
+        console.error('Erreur chargement paramètres tracking:', error);
+    }
+}
+
+// Sauvegarder les paramètres de tracking
+window.saveTrackingSettings = async function() {
+    const trackingEnabled = document.getElementById('tracking-enabled');
+    const trackingInterval = document.getElementById('tracking-interval');
+    const trackingThreshold = document.getElementById('tracking-threshold');
+    const trackClicks = document.getElementById('track-clicks');
+    const trackScroll = document.getElementById('track-scroll');
+    const trackSections = document.getElementById('track-sections');
+    const trackHover = document.getElementById('track-hover');
+    const trackInactive = document.getElementById('track-inactive');
+
+    if (!trackingEnabled || !trackingInterval || !trackingThreshold) {
+        alert('❌ Erreur : éléments du formulaire introuvables');
+        return;
+    }
+
+    const settings = {
+        enabled: trackingEnabled.checked,
+        interval: parseInt(trackingInterval.value),
+        threshold: parseInt(trackingThreshold.value),
+        events: {
+            clicks: trackClicks ? trackClicks.checked : true,
+            scroll: trackScroll ? trackScroll.checked : true,
+            sections: trackSections ? trackSections.checked : true,
+            hover: trackHover ? trackHover.checked : true,
+            inactive: trackInactive ? trackInactive.checked : true
+        },
+        updated_at: new Date().toISOString()
+    };
+
+    try {
+        const user = await supabaseClient.auth.getUser();
+
+        // Vérifier si la clé existe
+        const { data: existing } = await supabaseClient
+            .from('site_settings')
+            .select('setting_key')
+            .eq('setting_key', 'tracking_settings')
+            .single();
+
+        let error;
+        
+        if (existing) {
+            // Mise à jour
+            ({ error } = await supabaseClient
+                .from('site_settings')
+                .update({
+                    setting_value: settings,
+                    updated_at: new Date().toISOString(),
+                    updated_by: user.data.user?.id
+                })
+                .eq('setting_key', 'tracking_settings'));
+        } else {
+            // Insertion
+            ({ error } = await supabaseClient
+                .from('site_settings')
+                .insert({
+                    setting_key: 'tracking_settings',
+                    setting_value: settings,
+                    updated_by: user.data.user?.id
+                }));
+        }
+
+        if (error) throw error;
+
+        alert('✅ Paramètres de tracking sauvegardés !');
+        updateTrackingStatus(settings);
+        
+    } catch (error) {
+        console.error('Erreur sauvegarde tracking:', error);
+        alert('❌ Erreur : ' + error.message);
+    }
+};
+
+// Mettre à jour l'affichage du statut
+function updateTrackingStatus(settings) {
+    const statusEl = document.getElementById('tracking-status');
+    if (!statusEl) return;
+
+    if (settings.enabled) {
+        const activeEvents = Object.entries(settings.events)
+            .filter(([_, enabled]) => enabled)
+            .length;
+        
+        statusEl.innerHTML = `
+            <span style="color: var(--success);">✅ Actif</span> - 
+            Intervalle: <strong>${settings.interval}min</strong> - 
+            Seuil: <strong>${settings.threshold} événements</strong> - 
+            Types: <strong>${activeEvents}/5</strong>
+        `;
+    } else {
+        statusEl.innerHTML = `<span style="color: var(--danger);">🚫 Désactivé</span>`;
+    }
+}
+
+// Charger au clic sur la section site-settings
+document.addEventListener('DOMContentLoaded', () => {
+    const siteSettingsTab = document.querySelector('[data-section="site-settings"]');
+    if (siteSettingsTab) {
+        siteSettingsTab.addEventListener('click', () => {
+            // Charger la version du site
+            if (typeof loadSiteVersion === 'function') {
+                loadSiteVersion();
+            }
+            // Charger les paramètres de tracking
+            loadTrackingSettings();
+        });
+    }
+});
+
+console.log('✅ Script de gestion du tracking chargé');
+
+
         // =============================================
         // GESTION DES NOTIFICATIONS ADMIN
         // =============================================

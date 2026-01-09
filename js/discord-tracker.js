@@ -1,11 +1,11 @@
 // =============================================
-// DISCORD TRACKER AVANCÉ - Version 2.2 (VRAIMENT CORRIGÉ)
+// DISCORD TRACKER AVANCÉ - Version 2.4
 // Tracking complet des interactions utilisateur
 // =============================================
 
 class AdvancedDiscordTracker {
     constructor() {
-        this.version = "2.3";
+        this.version = "2.4";
         this.sessionId = this.generateSessionId();
         this.userIP = null;
         this.webhookUrl = null;
@@ -16,6 +16,20 @@ class AdvancedDiscordTracker {
         this.isProcessing = false;
         this.exitHandled = false;
         this.exitSent = false;
+
+        // Paramètres de tracking configurables
+        this.trackingSettings = {
+            enabled: true,
+            interval: 30,
+            threshold: 5,
+            events: {
+                clicks: true,
+                scroll: true,
+                sections: true,
+                hover: true,
+                inactive: true
+            }
+        };
 
         // Tracking des sections
         this.availableSections = [];
@@ -39,7 +53,7 @@ class AdvancedDiscordTracker {
         // Temps d'inactivité
         this.lastActivityTime = Date.now();
         this.inactivityThreshold = 60000;
-        this.inactivityNotificationSent = false; // ✅ NOUVEAU FLAG
+        this.inactivityNotificationSent = false;
 
         this.init();
     }
@@ -48,108 +62,111 @@ class AdvancedDiscordTracker {
         return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
 
-async init() {
-    try {
-        console.log('📡 Initialisation du tracker...');
+    async init() {
+        try {
+            //console.log('📡 Initialisation du tracker...');
 
-        await this.getIPAndLocation();
-        this.networkInfo = await this.getNetworkType();
-        await this.loadWebhook();
-        this.detectAvailableSections();
-        this.setupTracking();
-        await this.trackPageView();
-        
-        // ✅ SYSTÈME DE FLUSH DYNAMIQUE (SPAM PROTECTION)
-        this.startDynamicFlush();
-        
-        setInterval(() => this.checkInactivity(), 5000);
+            await this.getIPAndLocation();
+            this.networkInfo = await this.getNetworkType();
+            await this.loadWebhook();
+            await this.loadTrackingSettings();
+            this.detectAvailableSections();
+            this.setupTracking();
+            await this.trackPageView();
+            
+            if (this.trackingSettings.enabled) {
+                this.startDynamicFlush();
+            }
+            
+            setInterval(() => this.checkInactivity(), 5000);
 
-        console.log('✅ Advanced Discord Tracker initialized');
-    } catch (error) {
-        console.error('❌ Tracker init error:', error);
+            //console.log('✅ Advanced Discord Tracker initialized');
+        } catch (error) {
+            //console.error('❌ Tracker init error:', error);
+        }
     }
-}
 
-startDynamicFlush() {
-    let lastFlushTime = Date.now();
-    
-    const intelligentFlush = () => {
-        const sessionDuration = Date.now() - this.startTime;
-        const queueSize = this.eventQueue.length;
-        
-        // Calcul dynamique de l'interval
-        let nextFlushDelay;
-        
-        if (queueSize > 50) {
-            // Beaucoup d'événements : flush immédiat
-            nextFlushDelay = 5000;
-        } else if (sessionDuration < 2 * 60 * 1000) {
-            // Début de session : réactif
-            nextFlushDelay = 15000;
-        } else if (sessionDuration < 5 * 60 * 1000) {
-            // Session moyenne : modéré
-            nextFlushDelay = 45000;
-        } else if (sessionDuration < 10 * 60 * 1000) {
-            // Session longue : espacé
-            nextFlushDelay = 120000;
-        } else {
-            // Session très longue : très espacé (spam protection)
-            nextFlushDelay = 300000;
+    async loadTrackingSettings() {
+        try {
+            if (typeof window.EchoDB === 'undefined') {
+                await this.waitForEchoDB();
+            }
+
+            const { data, error } = await window.EchoDB.supabase
+                .from('site_settings')
+                .select('setting_value')
+                .eq('setting_key', 'tracking_settings')
+                .single();
+
+            if (error && error.code !== 'PGRST116') throw error;
+
+            if (data && data.setting_value) {
+                const settings = typeof data.setting_value === 'string' 
+                    ? JSON.parse(data.setting_value) 
+                    : data.setting_value;
+                
+                this.trackingSettings = settings;
+                console.log('📊 Paramètres de tracking chargés:', this.trackingSettings);
+            }
+        } catch (error) {
+            console.warn('⚠️ Impossible de charger les paramètres de tracking, utilisation des valeurs par défaut');
         }
-        
-        // Si peu d'activité, doubler l'interval
-        if (queueSize < 5 && sessionDuration > 5 * 60 * 1000) {
-            nextFlushDelay *= 2;
+    }
+
+    startDynamicFlush() {
+        if (!this.trackingSettings.enabled) {
+            console.log('📊 Tracking d\'activité désactivé');
+            return;
         }
+
+        const intelligentFlush = () => {
+            const queueSize = this.eventQueue.length;
+            const nextFlushDelay = this.trackingSettings.interval * 60 * 1000;
+            
+            if (queueSize < this.trackingSettings.threshold) {
+                console.log(`📊 Seuil non atteint (${queueSize}/${this.trackingSettings.threshold})`);
+            } else {
+                this.flushQueue();
+            }
+            
+            setTimeout(intelligentFlush, nextFlushDelay);
+        };
         
-        //console.log(`📊 Queue: ${queueSize} events | Next flush in ${nextFlushDelay/1000}s`);
-        
-        this.flushQueue();
-        lastFlushTime = Date.now();
-        
-        setTimeout(intelligentFlush, nextFlushDelay);
-    };
-    
-    intelligentFlush();
-}
+        intelligentFlush();
+    }
 
     async getIPAndLocation() {
         try {
-            console.log('🔍 Récupération IP et localisation...');
+            //console.log('🔍 Récupération IP et localisation...');
 
-            // Attendre que ipDetector existe
             if (!window.ipDetector) {
-                console.log('⏳ Attente chargement ipDetector...');
+                //console.log('⏳ Attente chargement ipDetector...');
                 await this.waitForIPDetector();
             }
 
-            // Forcer la détection si pas encore faite
             let data = window.ipDetector.getData();
             if (!data || !data.ip) {
-                console.log('🔄 Lancement détection IP...');
+                //console.log('🔄 Lancement détection IP...');
                 data = await window.ipDetector.detect();
             }
 
-            // ✅ CORRECTION CRITIQUE : Attendre l'enrichissement
-            console.log('⏳ Attente enrichissement des données...');
+            //console.log('⏳ Attente enrichissement des données...');
             let attempts = 0;
-            const maxAttempts = 10; // 5 secondes max
+            const maxAttempts = 10;
 
             while (attempts < maxAttempts) {
                 data = window.ipDetector.getData();
 
-                // Vérifier si les données sont enrichies
                 if (data && data.city && data.city !== 'Unknown' && data.isp && data.isp !== 'Unknown') {
-                    console.log('✅ Données complètes récupérées !');
+                    //console.log('✅ Données complètes récupérées !');
                     break;
                 }
 
-                console.log(`⏳ Tentative ${attempts + 1}/${maxAttempts}... city: ${data?.city}, isp: ${data?.isp}`);
-                await this.wait(500); // Attendre 500ms entre chaque tentative
+                //console.log(`⏳ Tentative ${attempts + 1}/${maxAttempts}...`);
+                await this.wait(500);
                 attempts++;
             }
 
-            // Récupérer les données finales
             data = window.ipDetector.getData();
 
             this.userIP = data.ip;
@@ -163,10 +180,8 @@ startDynamicFlush() {
                 isp: data.isp || 'Unknown'
             };
 
-            //console.log('✅ Données finales utilisées:', this.locationData);
-
         } catch (error) {
-            console.error('❌ Erreur récupération IP:', error);
+            //console.error('❌ Erreur récupération IP:', error);
             this.userIP = 'Unknown';
             this.locationData = {
                 ip: 'Unknown',
@@ -222,7 +237,6 @@ startDynamicFlush() {
             if (trackedUser) {
                 this.isKnownUser = true;
                 this.userName = trackedUser.first_name;
-                //console.log(`👤 Known user detected: ${this.userName}`);
             }
 
         } catch (error) {
@@ -241,59 +255,56 @@ startDynamicFlush() {
             }, 100);
         });
     }
-async getNetworkType() {
-    try {
-        // API Network Information (Chrome/Edge uniquement)
-        if ('connection' in navigator) {
-            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-            
-            if (conn) {
-                const effectiveType = conn.effectiveType; // 'slow-2g', '2g', '3g', '4g'
-                const downlink = conn.downlink; // Mbps
-                const rtt = conn.rtt; // Round-trip time (ms)
+
+    async getNetworkType() {
+        try {
+            if ('connection' in navigator) {
+                const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
                 
-                const icons = {
-                    'slow-2g': '🐌',
-                    '2g': '📶',
-                    '3g': '📶📶',
-                    '4g': '📶📶📶'
-                };
-                
-                return {
-                    type: effectiveType,
-                    display: `${icons[effectiveType] || '📡'} ${effectiveType.toUpperCase()}`,
-                    speed: `${downlink} Mbps`,
-                    latency: `${rtt}ms`
-                };
+                if (conn) {
+                    const effectiveType = conn.effectiveType;
+                    const downlink = conn.downlink;
+                    const rtt = conn.rtt;
+                    
+                    const icons = {
+                        'slow-2g': '🌐',
+                        '2g': '📶',
+                        '3g': '📶📶',
+                        '4g': '📶📶📶'
+                    };
+                    
+                    return {
+                        type: effectiveType,
+                        display: `${icons[effectiveType] || '📡'} ${effectiveType.toUpperCase()}`,
+                        speed: `${downlink} Mbps`,
+                        latency: `${rtt}ms`
+                    };
+                }
             }
-        }
-        
-        // Fallback : détection via vitesse de chargement
-        if (window.performance && window.performance.timing) {
-            const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
             
-            if (loadTime < 1000) return { display: '⚡ Fast', type: 'fast' };
-            if (loadTime < 3000) return { display: '📶 Normal', type: 'normal' };
-            return { display: '🐌 Slow', type: 'slow' };
+            if (window.performance && window.performance.timing) {
+                const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
+                
+                if (loadTime < 1000) return { display: '⚡ Fast', type: 'fast' };
+                if (loadTime < 3000) return { display: '📶 Normal', type: 'normal' };
+                return { display: '🌐 Slow', type: 'slow' };
+            }
+            
+            return { display: '❓ Unknown', type: 'unknown' };
+        } catch {
+            return { display: '❓ Unknown', type: 'unknown' };
         }
-        
-        return { display: '❓ Unknown', type: 'unknown' };
-    } catch {
-        return { display: '❓ Unknown', type: 'unknown' };
     }
-}
 
     setupTracking() {
-        // ✅ SOLUTION ANTI-DOUBLON : Flag + timeout
         let exitInProgress = false;
 
         const exitHandler = (source) => {
             if (exitInProgress || this.exitSent) {
-                console.log('🚫 Exit déjà en cours, abandon');
                 return;
             }
 
-            exitInProgress = true; // ✅ Bloquer immédiatement
+            exitInProgress = true;
             this.exitSent = true;
 
             console.log(`🚪 EXIT via ${source}`);
@@ -344,12 +355,9 @@ async getNetworkType() {
             navigator.sendBeacon(this.webhookUrl, blob);
         };
 
-        // ✅ Un seul listener suffit pour Chrome/Firefox
         window.addEventListener('beforeunload', () => exitHandler('beforeunload'));
 
-        // ✅ Backup mobile uniquement
-        window.addEventListener('pagehide', (e) => {
-            // Ne déclencher que si beforeunload n'a pas déjà été appelé
+        window.addEventListener('pagehide', () => {
             setTimeout(() => {
                 if (!exitInProgress) {
                     exitHandler('pagehide');
@@ -423,28 +431,28 @@ async getNetworkType() {
             });
         });
 
-        // Tracking des clics externes (liens sortants)
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (link && link.href) {
                 const currentHost = window.location.hostname;
                 const linkHost = new URL(link.href).hostname;
 
-                // Si c'est un lien externe
                 if (linkHost !== currentHost && linkHost !== '') {
                     this.trackEvent('external_link_click', {
                         url: link.href,
                         text: link.textContent.trim().substring(0, 50),
                         section: this.currentSection
-                    }, true); // Envoi immédiat
+                    }, true);
                 }
             }
-        }, true); // Capture phase pour être sûr de l'intercepter
+        }, true);
 
-        console.log('✅ All trackers initialized');
+        //console.log('✅ All trackers initialized');
     }
 
     trackImportantElements() {
+        if (!this.trackingSettings.events.hover) return;
+        
         const selectors = [
             '.btn',
             '.cta-buttons a',
@@ -481,7 +489,8 @@ async getNetworkType() {
     }
 
     detectCurrentSection() {
-        // ✅ Si pas de sections ID, ne rien faire
+        if (!this.trackingSettings.events.sections) return;
+        
         if (this.availableSections.length === 0 ||
             (this.availableSections.length === 1 && this.availableSections[0] === 'page')) {
             return;
@@ -504,7 +513,6 @@ async getNetworkType() {
         });
 
         if (newSection && newSection !== this.currentSection) {
-            // Sauvegarder le temps de l'ancienne section
             if (this.currentSection) {
                 const timeSpent = Date.now() - this.sectionStartTime;
                 if (!this.sectionTimes[this.currentSection]) {
@@ -525,13 +533,9 @@ async getNetworkType() {
     }
 
     detectAvailableSections() {
-        // ✅ Détecter dynamiquement les sections de la page
         const sections = document.querySelectorAll('section[id]');
         this.availableSections = Array.from(sections).map(s => s.id);
 
-        //console.log('📍 Sections disponibles sur cette page:', this.availableSections);
-
-        // Si aucune section, utiliser une section par défaut
         if (this.availableSections.length === 0) {
             this.availableSections = ['page'];
             this.currentSection = 'page';
@@ -539,6 +543,8 @@ async getNetworkType() {
     }
 
     handleClick(e) {
+        if (!this.trackingSettings.events.clicks) return;
+        
         this.updateActivity();
 
         const target = e.target.closest('button, a, .clickable, [onclick]');
@@ -553,12 +559,13 @@ async getNetworkType() {
             };
 
             this.clickedElements.push(clickInfo);
-
             this.trackEvent('click', clickInfo);
         }
     }
 
     handleScroll() {
+        if (!this.trackingSettings.events.scroll) return;
+        
         const scrollPercent = Math.round(
             (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
         );
@@ -599,19 +606,20 @@ async getNetworkType() {
 
     updateActivity() {
         this.lastActivityTime = Date.now();
-        this.inactivityNotificationSent = false; // ✅ Reset le flag quand l'user redevient actif
+        this.inactivityNotificationSent = false;
     }
+
     checkInactivity() {
+        if (!this.trackingSettings.events.inactive) return;
+        
         const inactiveTime = Date.now() - this.lastActivityTime;
 
-        // ✅ N'envoyer qu'UNE SEULE notification jusqu'à ce que l'user redevienne actif
         if (inactiveTime >= this.inactivityThreshold && !this.inactivityNotificationSent) {
             this.trackEvent('user_inactive', {
                 duration: inactiveTime,
                 section: this.currentSection
             });
-            this.inactivityNotificationSent = true; // ✅ Marquer comme envoyé
-            console.log('😴 Notification inactivité envoyée (une seule fois)');
+            this.inactivityNotificationSent = true;
         }
     }
 
@@ -671,7 +679,7 @@ async getNetworkType() {
                     color: this.isKnownUser ? 0x00ff00 : 0x8735b9,
                     fields: fields.slice(0, 25),
                     footer: {
-                        text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}` // ✅ AJOUTER
+                        text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}`
                     },
                     timestamp: new Date().toISOString()
                 }]
@@ -682,8 +690,6 @@ async getNetworkType() {
     }
 
     async trackPageView() {
-        console.log('📤 Envoi notification de visite avec données:', this.locationData);
-
         await this.sendToDiscord({
             embeds: [{
                 title: this.isKnownUser
@@ -700,13 +706,13 @@ async getNetworkType() {
                     { name: '📍 Localisation', value: `${this.locationData.city}, ${this.locationData.country} ${this.locationData.emoji}`, inline: true },
                     { name: '📱 Device', value: this.getDeviceInfo(), inline: true },
                     { name: '🌐 Navigateur', value: this.getBrowserInfo(), inline: true },
-                    { name: '🔍 Source', value: this.getSource(), inline: true },
+                    { name: '📍 Source', value: this.getSource(), inline: true },
                     { name: '🌐 ISP', value: this.locationData.isp, inline: true },
                     { name: '⏱️ Fuseau', value: this.locationData.timezone, inline: true },
                     { name: '📡 Connexion', value: this.networkInfo.display, inline: true }
                 ],
                 footer: {
-                    text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}` // ✅ AJOUTER
+                    text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}`
                 },
                 timestamp: new Date().toISOString()
             }]
@@ -748,56 +754,8 @@ async getNetworkType() {
             if (error) throw error;
 
             this.dbSessionId = data.id;
-            console.log('✅ Session saved to DB:', this.dbSessionId);
         } catch (error) {
             console.error('DB session save error:', error);
-        }
-    }
-
-
-
-    generateCursorHeatmap() {
-        if (this.cursorPositions.length < 10) return null;
-
-        const gridSize = 4;
-        const cellWidth = window.innerWidth / gridSize;
-        const cellHeight = window.innerHeight / gridSize;
-        const heatmap = Array(gridSize).fill(0).map(() => Array(gridSize).fill(0));
-
-        this.cursorPositions.forEach(pos => {
-            const col = Math.min(Math.floor(pos.x / cellWidth), gridSize - 1);
-            const row = Math.min(Math.floor(pos.y / cellHeight), gridSize - 1);
-            heatmap[row][col]++;
-        });
-
-        const zones = [];
-        for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
-                if (heatmap[i][j] > 0) {
-                    zones.push({ row: i, col: j, count: heatmap[i][j] });
-                }
-            }
-        }
-
-        zones.sort((a, b) => b.count - a.count);
-
-        return zones.slice(0, 3)
-            .map(z => `Zone [${z.row},${z.col}]: ${z.count} samples`)
-            .join('\n');
-    }
-
-    async updateSessionInDB(duration) {
-        try {
-            await window.EchoDB.supabase
-                .from('user_sessions')
-                .update({
-                    ended_at: new Date().toISOString(),
-                    duration_seconds: duration,
-                    events_count: this.clickedElements.length
-                })
-                .eq('id', this.dbSessionId);
-        } catch (error) {
-            console.error('DB session update error:', error);
         }
     }
 
@@ -875,10 +833,7 @@ async getNetworkType() {
     }
 
     async sendToDiscord(payload) {
-        if (!this.webhookUrl) {
-            console.error('No webhook URL available');
-            return;
-        }
+        if (!this.webhookUrl) return;
 
         try {
             await fetch(this.webhookUrl, {
@@ -896,5 +851,4 @@ async getNetworkType() {
     }
 }
 
-// Initialisation automatique
 window.advancedTracker = new AdvancedDiscordTracker();
