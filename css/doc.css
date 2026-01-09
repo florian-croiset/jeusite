@@ -287,7 +287,8 @@
 
         #markdownInput {
             width: 100%;
-            min-height: 1000px;
+            /*min-height: 1000px;*/
+            min-height: 100%;
             background: var(--bg-night);
             color: var(--primary-light);
             border: none;
