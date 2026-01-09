@@ -26,7 +26,7 @@
     </header>
     <div class="container">
         <div class="options-panel">
-            <div class="options-grid">
+<div class="options-grid">
                 <div class="option-item">
                     <input type="checkbox" id="optTOC" checked>
                     <label for="optTOC">
@@ -69,9 +69,75 @@
                     </label>
                     <input type="text" id="docAuthor" placeholder="Votre nom" value="Team Nightberry">
                 </div>
+                <!-- Après la div option-item de docAuthor -->
+<div class="option-item">
+    <input type="checkbox" id="optVersion">
+    <label for="optVersion">
+        <i class="fa-solid fa-code-branch"></i>
+        Version du doc
+    </label>
+</div>
+<div class="option-item">
+    <label for="docVersion">
+        <i class="fa-solid fa-hashtag"></i>
+        Version :
+    </label>
+    <input type="text" id="docVersion" placeholder="v1.0" value="v1.0">
+</div>
+            </div>
+            <div class="color-customization">
+                <button class="customize-btn" onclick="toggleColorPanel()">
+                    <i class="fa-solid fa-palette"></i>
+                    Personnaliser les couleurs
+                </button>
+            </div>
+            <div id="colorPanel" class="color-panel" style="display: none;">
+                <h3><i class="fa-solid fa-palette"></i> Personnalisation des couleurs</h3>
+                <div class="color-grid">
+                    <div class="color-option">
+                        <label>Sommaire</label>
+                        <select id="colorTOC" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Titre H1</label>
+                        <select id="colorH1" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Titre H2</label>
+                        <select id="colorH2" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Titre H3</label>
+                        <select id="colorH3" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Titre H4</label>
+                        <select id="colorH4" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Contenu</label>
+                        <select id="colorContent" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Tableau</label>
+                        <select id="colorTable" class="color-select"></select>
+                    </div>
+                    <div class="color-option">
+                        <label>Citation</label>
+                        <select id="colorQuote" class="color-select"></select>
+                    </div>
+                </div>
+                <button class="reset-colors-btn" onclick="resetColors()">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Réinitialiser les couleurs
+                </button>
             </div>
         </div>
         <div class="toolbar">
+            <button onclick="importMarkdown()"><i class="fa-solid fa-file-import"></i> Importer .md</button>
+            <button onclick="importSettings()"><i class="fa-solid fa-file-arrow-down"></i> Importer config</button>
+            <button onclick="exportSettings()"><i class="fa-solid fa-file-arrow-up"></i> Exporter config</button>
+            <div class="toolbar-divider"></div>
             <button onclick="insertMarkdown('# ', '')"><i class="fa-solid fa-heading"></i> Titre 1</button>
             <button onclick="insertMarkdown('## ', '')"><i class="fa-solid fa-heading"></i> Titre 2</button>
             <button onclick="insertMarkdown('### ', '')"><i class="fa-solid fa-heading"></i> Titre 3</button>
@@ -91,6 +157,10 @@
             <button onclick="insertMarkdown('> ', '')"><i class="fa-solid fa-quote-left"></i> Citation</button>
             <button onclick="insertMarkdown('---\n', '')"><i class="fa-solid fa-minus"></i> Séparateur</button>
         </div>
+        
+        <!-- Inputs cachés pour import -->
+        <input type="file" id="mdFileInput" accept=".md,.markdown,.txt" style="display: none;" onchange="handleMdImport(event)">
+        <input type="file" id="settingsFileInput" accept=".json" style="display: none;" onchange="handleSettingsImport(event)">
         <div class="editor-layout">
             <div class="editor-panel">
                 <div class="panel-header">
@@ -174,6 +244,11 @@ Bon travail avec votre document !"></textarea>
                 <i class="fa-solid fa-file-code"></i>
                 Télécharger .md
             </button>
+            <!-- Avant les boutons export -->
+<button class="customize-btn" onclick="toggleFinalPageModal()" style="margin-bottom: 1rem;">
+    <i class="fa-solid fa-file-circle-plus"></i>
+    Page de garde finale
+</button>
         </div>
     </div>
 
@@ -185,6 +260,109 @@ Bon travail avec votre document !"></textarea>
         </div>
     </div>
 
+    <!-- Modale page de garde finale -->
+<div class="modal-overlay" id="finalPageModal" onclick="closeFinalPageModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-file-circle-plus"></i> Page de garde finale</h2>
+            <button class="modal-close" onclick="toggleFinalPageModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="final-page-option">
+                <input type="checkbox" id="optFinalPage">
+                <label for="optFinalPage">Activer la page de garde finale</label>
+            </div>
+
+            <div class="final-page-grid">
+                <div class="final-option-group">
+                    <h3><i class="fa-solid fa-toggle-on"></i> Éléments à afficher</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowTitle" checked>
+                        <label for="finalShowTitle">Titre du document</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowVersion" checked>
+                        <label for="finalShowVersion">Version</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowDate" checked>
+                        <label for="finalShowDate">Date</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowAuthor" checked>
+                        <label for="finalShowAuthor">Auteur principal</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowAuthors" checked>
+                        <label for="finalShowAuthors">Liste des auteurs</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowDesc" checked>
+                        <label for="finalShowDesc">Description</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowCustomText" checked>
+                        <label for="finalShowCustomText">Texte personnalisé</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="finalShowPageNum" checked>
+                        <label for="finalShowPageNum">Numéro de page</label>
+                    </div>
+                </div>
+
+                <div class="final-option-group">
+                    <h3><i class="fa-solid fa-align-left"></i> Contenu</h3>
+                    <label>Description du document :</label>
+                    <textarea id="finalDescription" placeholder="Brève description du document..." rows="3"></textarea>
+                    
+                    <label>Liste des auteurs (un par ligne) :</label>
+                    <textarea id="finalAuthorsList" placeholder="Alice Dupont&#10;Bob Martin&#10;Claire Bernard" rows="4"></textarea>
+                    
+                    <label>Texte personnalisé :</label>
+                    <textarea id="finalCustomText" placeholder="Remerciements, notes, etc..." rows="4"></textarea>
+                </div>
+
+                <div class="final-option-group">
+                    <h3><i class="fa-solid fa-palette"></i> Couleurs</h3>
+                    <label>Couleur du titre :</label>
+                    <select id="finalColorTitle" class="color-select"></select>
+                    
+                    <label>Couleur du texte :</label>
+                    <select id="finalColorText" class="color-select"></select>
+                    
+                    <label>Couleur des accents :</label>
+                    <select id="finalColorAccent" class="color-select"></select>
+                </div>
+
+                <div class="final-option-group">
+                    <h3><i class="fa-solid fa-layer-group"></i> Disposition</h3>
+                    <label>Position du numéro de page :</label>
+                    <select id="finalPageNumPos">
+                        <option value="bottom-center">Bas - Centre</option>
+                        <option value="bottom-right">Bas - Droite</option>
+                        <option value="bottom-left">Bas - Gauche</option>
+                        <option value="top-center">Haut - Centre</option>
+                        <option value="top-right">Haut - Droite</option>
+                        <option value="top-left">Haut - Gauche</option>
+                    </select>
+
+                    <label>Numéro de page personnalisé (laisser vide pour auto) :</label>
+                    <input type="text" id="finalCustomPageNum" placeholder="Ex: Page finale">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn-secondary" onclick="toggleFinalPageModal()">
+                <i class="fa-solid fa-times"></i> Annuler
+            </button>
+            <button class="modal-btn-primary" onclick="saveFinalPageSettings()">
+                <i class="fa-solid fa-check"></i> Enregistrer
+            </button>
+        </div>
+    </div>
+</div>
     <script src="js/doc.js"></script>
 </body>
 

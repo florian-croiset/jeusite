@@ -3,6 +3,128 @@ const preview = document.getElementById('preview');
 const loadingModal = document.getElementById('loadingModal');
 const loadingText = document.getElementById('loadingText');
 
+// Palette de couleurs
+const colorPalette = [
+    { name: "Cyan Primaire", hex: "#00d0c6", rgb: [0, 208, 198] },
+    { name: "Cyan Clair", hex: "#60F4D7", rgb: [96, 244, 215] },
+    { name: "Turquoise Sombre", hex: "#037778", rgb: [3, 119, 120] },
+    { name: "Noir Spatial", hex: "#010B19", rgb: [1, 11, 25] },
+    { name: "Bleu Profond", hex: "#021D27", rgb: [2, 29, 39] },
+    { name: "Teal Océanique", hex: "#013D46", rgb: [1, 61, 70] },
+    { name: "Bleu Nuit", hex: "#181B2B", rgb: [24, 27, 43] },
+    { name: "Turquoise Moyen", hex: "#338A90", rgb: [51, 138, 144] },
+    { name: "Brun Rouillé", hex: "#4A2D31", rgb: [74, 45, 49] }
+];
+
+// Couleurs par défaut
+const defaultColors = {
+    toc: "Cyan Clair",
+    h1: "Cyan Primaire",
+    h2: "Turquoise Moyen",
+    h3: "Turquoise Sombre",
+    h4: "Turquoise Sombre",
+    content: "Noir Spatial",
+    table: "Cyan Primaire",
+    quote: "Cyan Primaire"
+};
+
+// Initialiser les sélecteurs de couleur
+function initColorSelectors() {
+    const selectors = ['colorTOC', 'colorH1', 'colorH2', 'colorH3', 'colorH4', 'colorContent', 'colorTable', 'colorQuote'];
+    
+    selectors.forEach(selectorId => {
+        const select = document.getElementById(selectorId);
+        colorPalette.forEach(color => {
+            const option = document.createElement('option');
+            option.value = color.name;
+            option.textContent = `${color.name} (${color.hex})`;
+            option.style.color = color.hex;
+            select.appendChild(option);
+        });
+    });
+    
+    // Appliquer les couleurs par défaut
+    document.getElementById('colorTOC').value = defaultColors.toc;
+    document.getElementById('colorH1').value = defaultColors.h1;
+    document.getElementById('colorH2').value = defaultColors.h2;
+    document.getElementById('colorH3').value = defaultColors.h3;
+    document.getElementById('colorH4').value = defaultColors.h4;
+    document.getElementById('colorContent').value = defaultColors.content;
+    document.getElementById('colorTable').value = defaultColors.table;
+    document.getElementById('colorQuote').value = defaultColors.quote;
+}
+
+// Initialiser les sélecteurs de couleur pour la page finale
+function initFinalPageColorSelectors() {
+    const selectors = ['finalColorTitle', 'finalColorText', 'finalColorAccent'];
+    
+    selectors.forEach(selectorId => {
+        const select = document.getElementById(selectorId);
+        select.innerHTML = ''; // Vider d'abord
+        colorPalette.forEach(color => {
+            const option = document.createElement('option');
+            option.value = color.name;
+            option.textContent = `${color.name} (${color.hex})`;
+            option.style.color = color.hex;
+            select.appendChild(option);
+        });
+    });
+    
+    // Valeurs par défaut
+    document.getElementById('finalColorTitle').value = "Cyan Primaire";
+    document.getElementById('finalColorText').value = "Noir Spatial";
+    document.getElementById('finalColorAccent').value = "Turquoise Moyen";
+}
+
+// Basculer la modale
+function toggleFinalPageModal() {
+    const modal = document.getElementById('finalPageModal');
+    modal.classList.toggle('active');
+}
+
+// Fermer la modale en cliquant en dehors
+function closeFinalPageModal(event) {
+    if (event.target.id === 'finalPageModal') {
+        toggleFinalPageModal();
+    }
+}
+
+// Sauvegarder les paramètres
+function saveFinalPageSettings() {
+    toggleFinalPageModal();
+    showSuccess('Paramètres de la page finale enregistrés !');
+}
+
+// Fonction pour obtenir la couleur RGB depuis le nom
+function getColorRGB(colorName) {
+    const color = colorPalette.find(c => c.name === colorName);
+    return color ? color.rgb : [0, 0, 0];
+}
+
+// Basculer l'affichage du panneau de couleurs
+function toggleColorPanel() {
+    const panel = document.getElementById('colorPanel');
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+// Réinitialiser les couleurs
+function resetColors() {
+    document.getElementById('colorTOC').value = defaultColors.toc;
+    document.getElementById('colorH1').value = defaultColors.h1;
+    document.getElementById('colorH2').value = defaultColors.h2;
+    document.getElementById('colorH3').value = defaultColors.h3;
+    document.getElementById('colorH4').value = defaultColors.h4;
+    document.getElementById('colorContent').value = defaultColors.content;
+    document.getElementById('colorTable').value = defaultColors.table;
+    document.getElementById('colorQuote').value = defaultColors.quote;
+    
+    showSuccess('Couleurs réinitialisées !');
+}
+
 // Configuration de marked
 const markedInstance = window.marked.marked ? window.marked.marked : window.marked;
 
@@ -167,6 +289,18 @@ async function exportToPDF() {
             producer: 'Echo Docs 1.0'
         });
 
+        // Couleurs personnalisées (PAGE DE GARDE INTACTE)
+        const customColors = {
+            toc: getColorRGB(document.getElementById('colorTOC').value),
+            h1: getColorRGB(document.getElementById('colorH1').value),
+            h2: getColorRGB(document.getElementById('colorH2').value),
+            h3: getColorRGB(document.getElementById('colorH3').value),
+            h4: getColorRGB(document.getElementById('colorH4').value),
+            content: getColorRGB(document.getElementById('colorContent').value),
+            table: getColorRGB(document.getElementById('colorTable').value),
+            quote: getColorRGB(document.getElementById('colorQuote').value)
+        };
+
         const colors = {
             primary: [0, 208, 198],
             primaryLight: [96, 244, 215],
@@ -250,6 +384,14 @@ async function exportToPDF() {
         const teamTextStartX = startXTeam + doc.getStringUnitWidth('Par la ') * doc.internal.getFontSize() / doc.internal.scaleFactor;
         doc.textWithLink(teamText, teamTextStartX, startYTeam, { url: linkUrlTeam });
 
+        const useVersion = document.getElementById('optVersion').checked;
+if (useVersion) {
+    const version = document.getElementById('docVersion').value || 'v1.0';
+    doc.setFontSize(11);
+    doc.setTextColor(...colors.primaryLight);
+    doc.text(`Version ${version}`, pageWidth / 2, 252, { align: 'center' });
+}
+
         // Date
         doc.setFontSize(12);
         doc.setTextColor(...colors.primaryLight);
@@ -275,7 +417,7 @@ async function exportToPDF() {
             const toc = generateTOC(markdown);
 
             doc.setFontSize(11);
-            doc.setTextColor(...colors.primaryLight);
+            doc.setTextColor(...customColors.toc);
             doc.setFont('helvetica', 'normal');
 
             toc.split('\n').forEach(line => {
@@ -303,7 +445,163 @@ async function exportToPDF() {
         doc.addPage();
 
         const markdown = markdownInput.value;
-        await renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, colors, margin, contentWidth, pageWidth, pageHeight);
+        await renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, colors, customColors, margin, contentWidth, pageWidth, pageHeight);
+
+        // === PAGE DE GARDE FINALE ===
+const useFinalPage = document.getElementById('optFinalPage').checked;
+if (useFinalPage) {
+    doc.addPage();
+    
+    const finalColors = {
+        title: getColorRGB(document.getElementById('finalColorTitle').value),
+        text: getColorRGB(document.getElementById('finalColorText').value),
+        accent: getColorRGB(document.getElementById('finalColorAccent').value)
+    };
+    
+    const showTitle = document.getElementById('finalShowTitle').checked;
+    const showVersion = document.getElementById('finalShowVersion').checked;
+    const showDate = document.getElementById('finalShowDate').checked;
+    const showAuthor = document.getElementById('finalShowAuthor').checked;
+    const showAuthors = document.getElementById('finalShowAuthors').checked;
+    const showDesc = document.getElementById('finalShowDesc').checked;
+    const showCustomText = document.getElementById('finalShowCustomText').checked;
+    const showPageNum = document.getElementById('finalShowPageNum').checked;
+    
+    let yFinal = 40;
+    
+    // Bordure décorative
+    doc.setDrawColor(...finalColors.accent);
+    doc.setLineWidth(0.5);
+    doc.rect(15, 15, pageWidth - 30, pageHeight - 30);
+    
+    // Titre
+    if (showTitle) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(26);
+        doc.setTextColor(...finalColors.title);
+        doc.text(docTitle.toUpperCase(), pageWidth / 2, yFinal, { align: 'center' });
+        yFinal += 20;
+    }
+    
+    // Version
+    if (showVersion && useVersion) {
+        const version = document.getElementById('docVersion').value || 'v1.0';
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(14);
+        doc.setTextColor(...finalColors.accent);
+        doc.text(`Version ${version}`, pageWidth / 2, yFinal, { align: 'center' });
+        yFinal += 12;
+    }
+    
+    // Date
+    if (showDate) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        doc.setTextColor(...finalColors.text);
+        doc.text(new Date().toLocaleDateString('fr-FR'), pageWidth / 2, yFinal, { align: 'center' });
+        yFinal += 15;
+    }
+    
+    // Ligne séparatrice
+    doc.setDrawColor(...finalColors.accent);
+    doc.setLineWidth(0.3);
+    doc.line(40, yFinal, pageWidth - 40, yFinal);
+    yFinal += 15;
+    
+    // Auteur principal
+    if (showAuthor) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(...finalColors.accent);
+        doc.text('AUTEUR PRINCIPAL', pageWidth / 2, yFinal, { align: 'center' });
+        yFinal += 8;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        doc.setTextColor(...finalColors.text);
+        doc.text(docAuthor, pageWidth / 2, yFinal, { align: 'center' });
+        yFinal += 15;
+    }
+    
+    // Liste des auteurs
+    if (showAuthors) {
+        const authorsList = document.getElementById('finalAuthorsList').value;
+        if (authorsList.trim()) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(...finalColors.accent);
+            doc.text('CONTRIBUTEURS', pageWidth / 2, yFinal, { align: 'center' });
+            yFinal += 8;
+            
+            const authors = authorsList.split('\n').filter(a => a.trim());
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(...finalColors.text);
+            authors.forEach(author => {
+                doc.text(`• ${author.trim()}`, pageWidth / 2, yFinal, { align: 'center' });
+                yFinal += 6;
+            });
+            yFinal += 10;
+        }
+    }
+    
+    // Description
+    if (showDesc) {
+        const description = document.getElementById('finalDescription').value;
+        if (description.trim()) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(...finalColors.accent);
+            doc.text('DESCRIPTION', pageWidth / 2, yFinal, { align: 'center' });
+            yFinal += 8;
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(...finalColors.text);
+            const descLines = doc.splitTextToSize(description, contentWidth - 40);
+            descLines.forEach(line => {
+                doc.text(line, pageWidth / 2, yFinal, { align: 'center' });
+                yFinal += 6;
+            });
+            yFinal += 10;
+        }
+    }
+    
+    // Texte personnalisé
+    if (showCustomText) {
+        const customText = document.getElementById('finalCustomText').value;
+        if (customText.trim()) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(9);
+            doc.setTextColor(...finalColors.text);
+            const customLines = doc.splitTextToSize(customText, contentWidth - 40);
+            customLines.forEach(line => {
+                doc.text(line, pageWidth / 2, yFinal, { align: 'center' });
+                yFinal += 5;
+            });
+        }
+    }
+    
+    // Numéro de page personnalisé
+    if (showPageNum) {
+        const pageNumPos = document.getElementById('finalPageNumPos').value;
+        const customPageNum = document.getElementById('finalCustomPageNum').value;
+        const pageText = customPageNum || `${doc.internal.getNumberOfPages()}`;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(...finalColors.accent);
+        
+        let xPos = pageWidth / 2;
+        let yPos = pageHeight - 10;
+        let align = 'center';
+        
+        if (pageNumPos.includes('left')) { xPos = 20; align = 'left'; }
+        else if (pageNumPos.includes('right')) { xPos = pageWidth - 20; align = 'right'; }
+        
+        if (pageNumPos.startsWith('top')) yPos = 15;
+        
+        doc.text(pageText, xPos, yPos, { align: align });
+    }
+}
 
         doc.save(`${docTitle}.pdf`);
 
@@ -317,7 +615,7 @@ async function exportToPDF() {
 }
 
 // Fonction principale de rendu Markdown vers PDF
-async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, colors, margin, contentWidth, pageWidth, pageHeight) {
+async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, colors, customColors, margin, contentWidth, pageWidth, pageHeight) {
     const lines = markdown.split('\n');
     let yPos = margin;
     let sectionNumber = { h1: 0, h2: 0, h3: 0 };
@@ -365,15 +663,6 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
 
         return lines;
     }
-
-    /*function truncateText(text, maxWidth, fontSize) {
-doc.setFontSize(fontSize);
-let truncated = text;
-while (doc.getStringUnitWidth(truncated) * fontSize / doc.internal.scaleFactor > maxWidth && truncated.length > 0) {
-truncated = truncated.substring(0, truncated.length - 1);
-}
-return truncated + (truncated.length < text.length ? '...' : '');
-}*/
 
     function renderCodeBlock() {
         if (codeBlockContent.length > 0) {
@@ -454,14 +743,12 @@ return truncated + (truncated.length < text.length ? '...' : '');
         return segments.length > 0 ? segments : [{ text: text, style: 'normal' }];
     }
 
-    // Cherche cette fonction vers la ligne 331 et remplace-la entièrement
     function renderParagraphWithFormatting(text, fontSize, lineHeight, indentLevel = 0, customStartX = null) {
         const segments = parseInlineFormatting(text);
         const maxWidth = contentWidth - (indentLevel * 10) - 5;
         let currentLine = '';
         let currentLineSegments = [];
 
-        // MODIFICATION ICI : On utilise customStartX s'il existe, sinon on garde le calcul par défaut
         let currentX = customStartX !== null ? customStartX : margin + (indentLevel * 10);
 
         function flushLine() {
@@ -469,7 +756,6 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
             checkPageBreak(lineHeight);
 
-            // MODIFICATION ICI AUSSI : Pour le retour à la ligne
             currentX = customStartX !== null ? customStartX : margin + (indentLevel * 10);
 
             currentLineSegments.forEach(seg => {
@@ -477,10 +763,10 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
                 if (seg.style === 'bold') {
                     doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(...colors.black);
+                    doc.setTextColor(...customColors.content);
                 } else if (seg.style === 'italic') {
                     doc.setFont('helvetica', 'italic');
-                    doc.setTextColor(...colors.black);
+                    doc.setTextColor(...customColors.content);
                 } else if (seg.style === 'code') {
                     doc.setFont('courier', 'normal');
                     doc.setFontSize(fontSize - 1);
@@ -498,7 +784,7 @@ return truncated + (truncated.length < text.length ? '...' : '');
                     return;
                 } else {
                     doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(...colors.black);
+                    doc.setTextColor(...customColors.content);
                 }
 
                 doc.text(seg.text, currentX, yPos);
@@ -550,21 +836,19 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
         const numCols = rows[0].length;
         const colWidth = contentWidth / numCols;
-        let maxRowHeight = 10;
 
         rows.forEach((row, rowIndex) => {
-            // Calculer la hauteur nécessaire pour le texte wrappé
             let maxLines = 1;
             row.forEach(cell => {
                 const cellLines = doc.splitTextToSize(cell, colWidth - 4);
                 maxLines = Math.max(maxLines, cellLines.length);
             });
 
-            const rowHeight = Math.max(12, maxLines * 5); // +4 pour padding haut/bas
+            const rowHeight = Math.max(12, maxLines * 5);
             checkPageBreak(rowHeight);
 
             if (rowIndex === 0) {
-                doc.setFillColor(...colors.primary);
+                doc.setFillColor(...customColors.table);
                 doc.rect(margin, yPos, contentWidth, rowHeight, 'F');
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(10);
@@ -586,21 +870,17 @@ return truncated + (truncated.length < text.length ? '...' : '');
                 const cellX = margin + (colIndex * colWidth);
                 doc.rect(cellX, yPos, colWidth, rowHeight);
 
-                // Gérer le formatage dans les cellules
                 const segments = parseInlineFormatting(cell);
                 let cellText = '';
                 segments.forEach(seg => {
                     cellText += seg.text;
                 });
 
-                // Wrapper le texte
                 const wrappedText = doc.splitTextToSize(cellText, colWidth - 4);
 
-                let cellY = yPos + 5; // Augmenté de 5 à 6
-                const cellPadding = 2; // Nouveau padding
+                let cellY = yPos + 5;
                 wrappedText.forEach((line, lineIdx) => {
-                    if (lineIdx < 3) { // Limite à 3 lignes par cellule
-                        // Déterminer si gras/italique
+                    if (lineIdx < 3) {
                         const hasBold = cell.includes('**');
                         const hasItalic = cell.includes('*') && !hasBold;
 
@@ -657,24 +937,24 @@ return truncated + (truncated.length < text.length ? '...' : '');
             renderTable(tableLines);
             tableLines = [];
         }
-        // Saut de ligne avec <br> ou double espace
-        if (line.includes('<br>')) {// || line.endsWith('  ')
+
+        // Saut de ligne avec <br>
+        if (line.includes('<br>')) {
             const cleanLine = line.replace(/<br>/g, '').replace(/\s+$/, '');
             if (cleanLine.trim()) {
                 checkPageBreak(8);
                 renderParagraphWithFormatting(cleanLine, 11, 6);
             }
-            yPos += 6; // Saut de ligne effectif
-            continue;
-        }
-        // Ligne vide
-        if (line.trim() === '') {
-            yPos += 5;
-            lastBlockType = 'empty'; // <--- AJOUTER CETTE LIGNE
+            yPos += 6;
             continue;
         }
 
-        // NE PLUS TESTER line.match(/\s{2,}$/) ici car déjà géré au-dessus
+        // Ligne vide
+        if (line.trim() === '') {
+            yPos += 5;
+            lastBlockType = 'empty';
+            continue;
+        }
 
         // Titres H1
         if (line.startsWith('# ')) {
@@ -687,11 +967,11 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(24);
-            doc.setTextColor(...colors.primary);
+            doc.setTextColor(...customColors.h1);
             doc.text(num + text, margin, yPos);
-            yPos += 5; // 12
+            yPos += 5;
 
-            doc.setDrawColor(...colors.primary);
+            doc.setDrawColor(...customColors.h1);
             doc.setLineWidth(0.5);
             doc.line(margin, yPos, margin + contentWidth, yPos);
             yPos += 15;
@@ -708,11 +988,11 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(18);
-            doc.setTextColor(...colors.accent);
+            doc.setTextColor(...customColors.h2);
             doc.text(num + text, margin, yPos);
-            yPos += 4; // 10
+            yPos += 4;
 
-            doc.setDrawColor(...colors.accent);
+            doc.setDrawColor(...customColors.h2);
             doc.setLineWidth(0.3);
             doc.line(margin, yPos, margin + contentWidth, yPos);
             yPos += 8;
@@ -728,11 +1008,12 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
-            doc.setTextColor(...colors.secondary);
+            doc.setTextColor(...customColors.h3);
             doc.text(num + text, margin, yPos);
             yPos += 8;
             continue;
         }
+
         // Titres H4
         if (line.startsWith('#### ')) {
             checkPageBreak(10);
@@ -740,7 +1021,7 @@ return truncated + (truncated.length < text.length ? '...' : '');
 
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(12);
-            doc.setTextColor(...colors.secondary);
+            doc.setTextColor(...customColors.h4);
             doc.text(text, margin, yPos);
             yPos += 7;
             continue;
@@ -773,38 +1054,33 @@ return truncated + (truncated.length < text.length ? '...' : '');
         }
 
         // Liste à puces
-if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
-    const match = line.match(/^(\s*)([-*+])\s(.+)$/);
-    const indent = match[1].length;
-    const content = match[3];
-    const level = Math.floor(indent / 2);
+        if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
+            const match = line.match(/^(\s*)([-*+])\s(.+)$/);
+            const indent = match[1].length;
+            const content = match[3];
+            const level = Math.floor(indent / 2);
 
-    checkPageBreak(8);
+            checkPageBreak(8);
 
-    // INTERLIGNE LÉGER : On ne remonte que de 2 (au lieu de 5) pour laisser un petit espace
-    if (lastBlockType === 'paragraph') {
-        yPos -= 2; 
-    }
+            if (lastBlockType === 'paragraph') {
+                yPos -= 2; 
+            }
 
-    // DÉCALAGE GAUCHE : On utilise "margin + (level * 10)" sans ajout superflu
-    // Si c'est encore trop à droite, on peut mettre : margin + (level * 10) - 2
-    const bulletX = margin + (level * 10);
+            const bulletX = margin + (level * 10);
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
-    doc.setTextColor(...colors.black);
-    doc.text('•', bulletX, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(...customColors.content);
+            doc.text('•', bulletX, yPos);
 
-    const textX = bulletX + 4;
+            const textX = bulletX + 4;
 
-    renderParagraphWithFormatting(content, 11, 6, level + 1, textX);
+            renderParagraphWithFormatting(content, 11, 6, level + 1, textX);
 
-    yPos += 2;
-    lastBlockType = 'list';
-    continue;
-}
-
-
+            yPos += 2;
+            lastBlockType = 'list';
+            continue;
+        }
 
         // Listes numérotées
         if (line.match(/^(\s*)(\d+\.)\s(.+)$/)) {
@@ -816,7 +1092,6 @@ if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
 
             checkPageBreak(8);
 
-            // CORRECTION VERTICALE : Interligne léger
             if (lastBlockType === 'paragraph') {
                 yPos -= 3;
             }
@@ -825,17 +1100,15 @@ if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
 
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(11);
-            doc.setTextColor(...colors.black);
+            doc.setTextColor(...customColors.content);
             doc.text(number, numberX, yPos);
 
-            // CORRECTION HORIZONTALE (Dynamique)
-            // On calcule la largeur du chiffre (ex: "10.") pour coller le texte juste après
             const numberWidth = doc.getStringUnitWidth(number) * 11 / doc.internal.scaleFactor;
-            const textX = numberX + numberWidth + 1.5; // +1.5 pour un espacement serré
+            const textX = numberX + numberWidth + 1.5;
 
             renderParagraphWithFormatting(content, 11, 6, level + 1, textX);
             yPos += 2;
-            lastBlockType = 'list'; // On marque qu'on est dans une liste
+            lastBlockType = 'list';
             continue;
         }
 
@@ -844,7 +1117,7 @@ if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
             checkPageBreak(10);
             const quoteText = line.substring(2);
 
-            doc.setDrawColor(...colors.primary);
+            doc.setDrawColor(...customColors.quote);
             doc.setLineWidth(2);
             doc.line(margin, yPos - 3, margin, yPos + 5);
 
@@ -913,7 +1186,7 @@ if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
             checkPageBreak(8);
             renderParagraphWithFormatting(line, 11, 6);
             yPos += 4;
-            lastBlockType = 'paragraph'; // <--- AJOUTER CETTE LIGNE
+            lastBlockType = 'paragraph';
         }
     }
 
@@ -930,93 +1203,275 @@ if (line.match(/^(\s*)([-*+])\s(.+)$/)) {
     }
 }
 
-    // Fonction pour charger une image en base64
-    async function loadImageAsBase64(url) {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                resolve(canvas.toDataURL('image/png'));
-            };
-            img.onerror = () => reject(new Error('Image loading failed'));
-            img.src = url;
-        });
-    }
+// Fonction pour charger une image en base64
+async function loadImageAsBase64(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = () => reject(new Error('Image loading failed'));
+        img.src = url;
+    });
+}
 
-    // Fonctions utilitaires
-    function showLoading(message) {
-        loadingText.textContent = message;
-        loadingModal.classList.add('active');
-    }
+// Fonctions utilitaires
+function showLoading(message) {
+    loadingText.textContent = message;
+    loadingModal.classList.add('active');
+}
 
-    function hideLoading() {
-        loadingModal.classList.remove('active');
-    }
+function hideLoading() {
+    loadingModal.classList.remove('active');
+}
 
-    function showSuccess(message) {
-        const successDiv = document.createElement('div');
-        successDiv.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(1, 11, 25, 0.95);
-                border: 2px solid var(--primary);
-                padding: 2rem;
-                border-radius: 15px;
-                z-index: 10000;
-                text-align: center;
-            `;
-        successDiv.innerHTML = `
-                <h3 style="color: var(--primary);">
-                    <i class="fa-solid fa-check-circle"></i> ${message}
-                </h3>
-            `;
-        document.body.appendChild(successDiv);
-        setTimeout(() => document.body.removeChild(successDiv), 3000);
-    }
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(1, 11, 25, 0.95);
+        border: 2px solid var(--primary);
+        padding: 2rem;
+        border-radius: 15px;
+        z-index: 10000;
+        text-align: center;
+    `;
+    successDiv.innerHTML = `
+        <h3 style="color: var(--primary);">
+            <i class="fa-solid fa-check-circle"></i> ${message}
+        </h3>
+    `;
+    document.body.appendChild(successDiv);
+    setTimeout(() => document.body.removeChild(successDiv), 3000);
+}
 
-    function downloadFile(blob, filename) {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.click();
-        URL.revokeObjectURL(url);
-    }
+function downloadFile(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+}
 
-    function showWarning(message) {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast-warning';
+function showWarning(message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast-warning';
 
-        toast.innerHTML = `<span>⚠️</span> ${message}`;
+    toast.innerHTML = `<span>⚠️</span> ${message}`;
 
-        container.appendChild(toast);
+    container.appendChild(toast);
 
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transition = 'opacity 0.5s ease';
-            setTimeout(() => toast.remove(), 500);
-        }, 3000);
-    }
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
 
-    // Au chargement
-    window.onload = () => {
-        const saved = localStorage.getItem('echo_content');
-        if (saved) {
-            markdownInput.value = saved;
-            updatePreview();
+// ========================================
+// IMPORT / EXPORT DE CONFIGURATION
+// ========================================
+
+// Fonction pour collecter tous les paramètres
+function collectSettings() {
+    return {
+        version: "1.0",
+        document: {
+            title: document.getElementById('docTitle').value,
+            author: document.getElementById('docAuthor').value,
+            version: document.getElementById('docVersion').value
+        },
+        options: {
+            toc: document.getElementById('optTOC').checked,
+            numbering: document.getElementById('optNumbering').checked,
+            pageNumbers: document.getElementById('optPageNumbers').checked,
+            ecoPrint: document.getElementById('optEcoPrint').checked,
+            showVersion: document.getElementById('optVersion').checked
+        },
+        colors: {
+            toc: document.getElementById('colorTOC').value,
+            h1: document.getElementById('colorH1').value,
+            h2: document.getElementById('colorH2').value,
+            h3: document.getElementById('colorH3').value,
+            h4: document.getElementById('colorH4').value,
+            content: document.getElementById('colorContent').value,
+            table: document.getElementById('colorTable').value,
+            quote: document.getElementById('colorQuote').value
+        },
+        finalPage: {
+            enabled: document.getElementById('optFinalPage').checked,
+            showTitle: document.getElementById('finalShowTitle').checked,
+            showVersion: document.getElementById('finalShowVersion').checked,
+            showDate: document.getElementById('finalShowDate').checked,
+            showAuthor: document.getElementById('finalShowAuthor').checked,
+            showAuthors: document.getElementById('finalShowAuthors').checked,
+            showDesc: document.getElementById('finalShowDesc').checked,
+            showCustomText: document.getElementById('finalShowCustomText').checked,
+            showPageNum: document.getElementById('finalShowPageNum').checked,
+            description: document.getElementById('finalDescription').value,
+            authorsList: document.getElementById('finalAuthorsList').value,
+            customText: document.getElementById('finalCustomText').value,
+            colorTitle: document.getElementById('finalColorTitle').value,
+            colorText: document.getElementById('finalColorText').value,
+            colorAccent: document.getElementById('finalColorAccent').value,
+            pageNumPos: document.getElementById('finalPageNumPos').value,
+            customPageNum: document.getElementById('finalCustomPageNum').value
         }
     };
+}
 
-    // Sauvegarde automatique
-    markdownInput.addEventListener('input', () => {
+// Fonction pour appliquer les paramètres
+function applySettings(settings) {
+    if (!settings || settings.version !== "1.0") {
+        showWarning('Format de configuration non reconnu');
+        return;
+    }
+
+    // Document
+    if (settings.document) {
+        document.getElementById('docTitle').value = settings.document.title || 'Document Echo';
+        document.getElementById('docAuthor').value = settings.document.author || 'Team Nightberry';
+        document.getElementById('docVersion').value = settings.document.version || 'v1.0';
+    }
+
+    // Options
+    if (settings.options) {
+        document.getElementById('optTOC').checked = settings.options.toc !== false;
+        document.getElementById('optNumbering').checked = settings.options.numbering !== false;
+        document.getElementById('optPageNumbers').checked = settings.options.pageNumbers !== false;
+        document.getElementById('optEcoPrint').checked = settings.options.ecoPrint || false;
+        document.getElementById('optVersion').checked = settings.options.showVersion || false;
+    }
+
+    // Couleurs
+    if (settings.colors) {
+        document.getElementById('colorTOC').value = settings.colors.toc || defaultColors.toc;
+        document.getElementById('colorH1').value = settings.colors.h1 || defaultColors.h1;
+        document.getElementById('colorH2').value = settings.colors.h2 || defaultColors.h2;
+        document.getElementById('colorH3').value = settings.colors.h3 || defaultColors.h3;
+        document.getElementById('colorH4').value = settings.colors.h4 || defaultColors.h4;
+        document.getElementById('colorContent').value = settings.colors.content || defaultColors.content;
+        document.getElementById('colorTable').value = settings.colors.table || defaultColors.table;
+        document.getElementById('colorQuote').value = settings.colors.quote || defaultColors.quote;
+    }
+
+    // Page finale
+    if (settings.finalPage) {
+        document.getElementById('optFinalPage').checked = settings.finalPage.enabled || false;
+        document.getElementById('finalShowTitle').checked = settings.finalPage.showTitle !== false;
+        document.getElementById('finalShowVersion').checked = settings.finalPage.showVersion !== false;
+        document.getElementById('finalShowDate').checked = settings.finalPage.showDate !== false;
+        document.getElementById('finalShowAuthor').checked = settings.finalPage.showAuthor !== false;
+        document.getElementById('finalShowAuthors').checked = settings.finalPage.showAuthors !== false;
+        document.getElementById('finalShowDesc').checked = settings.finalPage.showDesc !== false;
+        document.getElementById('finalShowCustomText').checked = settings.finalPage.showCustomText !== false;
+        document.getElementById('finalShowPageNum').checked = settings.finalPage.showPageNum !== false;
+        document.getElementById('finalDescription').value = settings.finalPage.description || '';
+        document.getElementById('finalAuthorsList').value = settings.finalPage.authorsList || '';
+        document.getElementById('finalCustomText').value = settings.finalPage.customText || '';
+        document.getElementById('finalColorTitle').value = settings.finalPage.colorTitle || 'Cyan Primaire';
+        document.getElementById('finalColorText').value = settings.finalPage.colorText || 'Noir Spatial';
+        document.getElementById('finalColorAccent').value = settings.finalPage.colorAccent || 'Turquoise Moyen';
+        document.getElementById('finalPageNumPos').value = settings.finalPage.pageNumPos || 'bottom-center';
+        document.getElementById('finalCustomPageNum').value = settings.finalPage.customPageNum || '';
+    }
+
+    showSuccess('Configuration importée avec succès !');
+}
+
+// Export des paramètres
+function exportSettings() {
+    const settings = collectSettings();
+    const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+    const docTitle = document.getElementById('docTitle').value || 'document';
+    downloadFile(blob, `${docTitle}_config.json`);
+    showSuccess('Configuration exportée !');
+}
+
+// Import des paramètres
+function importSettings() {
+    document.getElementById('settingsFileInput').click();
+}
+
+function handleSettingsImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const settings = JSON.parse(e.target.result);
+            applySettings(settings);
+        } catch (error) {
+            console.error('Erreur lors de l\'import:', error);
+            showWarning('Erreur : fichier de configuration invalide');
+        }
+    };
+    reader.readAsText(file);
+    
+    // Reset input pour permettre de réimporter le même fichier
+    event.target.value = '';
+}
+
+// ========================================
+// IMPORT DE FICHIERS MARKDOWN
+// ========================================
+
+function importMarkdown() {
+    document.getElementById('mdFileInput').click();
+}
+
+function handleMdImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const content = e.target.result;
+        
+        // Demander confirmation si l'éditeur contient déjà du texte
+        if (markdownInput.value.trim() && markdownInput.value !== markdownInput.defaultValue) {
+            if (!confirm('Remplacer le contenu actuel par le fichier importé ?')) {
+                event.target.value = '';
+                return;
+            }
+        }
+        
+        markdownInput.value = content;
         updatePreview();
-        localStorage.setItem('echo_content', markdownInput.value);
-    });
+        localStorage.setItem('echo_content', content);
+        showSuccess(`Fichier "${file.name}" importé avec succès !`);
+    };
+    reader.readAsText(file);
+    
+    // Reset input pour permettre de réimporter le même fichier
+    event.target.value = '';
+}
+
+// Au chargement
+window.onload = () => {
+    initColorSelectors();
+    initFinalPageColorSelectors();
+    const saved = localStorage.getItem('echo_content');
+    if (saved) {
+        markdownInput.value = saved;
+        updatePreview();
+    }
+};
+
+// Sauvegarde automatique
+markdownInput.addEventListener('input', () => {
+    updatePreview();
+    localStorage.setItem('echo_content', markdownInput.value);
+});
