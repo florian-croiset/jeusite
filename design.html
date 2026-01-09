@@ -11,6 +11,9 @@
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Farro:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
     /* Aperçu du pack */
 .pack-preview {
@@ -422,8 +425,13 @@
 
     <section id="typographie">
         <h2>Typographie</h2>
-        <div class="typo-section">
-            <div class="typo-example">
+        <div class="typo-section" style="display:contents!important;">
+                        <div class="typo-example">
+                <h3>Titre Principal - Titre secondaire - Body</h3>
+                <div style="font-family: farro;font-size: 3rem; font-weight: bold; color: var(--primary);">FARRO</div>
+                <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Farro</p>
+            </div>
+            <!--<div class="typo-example">
                 <h3>Titre Principal - Display</h3>
                 <div style="font-size: 3rem; font-weight: bold; color: var(--primary);">ECHO</div>
                 <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Orbitron, Exo 2, ou équivalent
@@ -453,7 +461,7 @@
                 </div>
                 <p style="color: var(--accent); margin-top: 1rem;">Police recommandée : Courier New, Consolas, ou
                     monospace</p>
-            </div>
+            </div>-->
         </div>
     </section>
 
