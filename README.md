@@ -1,3 +1,6 @@
+![Version](https://img.shields.io/badge/version-2.4-blue)
+![Statut](https://img.shields.io/badge/statut-stable-green)
+
 # 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
 
 ## 📖 Présentation
@@ -89,6 +92,7 @@ Echo/
 
 | Version | Date | Changements clés |
 | --- | --- | --- |
+| **2.4** | 12 janv. 2026 | **Refonte page Diapo** (soutenances). Amélioration Bot Discord (stats/inactifs). **Système Feedback**. Accessibilité doc. **Correction bug téléchargement** & RAM. |
 | **2.3** | 05 janv. 2026 | **Lancement Roadmap (bêta)** : suivi interactif + vote. Refonte page Versions (catégories/comparaison). **Dashboard Admin**. |
 | **2.2** | 04 janv. 2026 | **Bot Discord bêta** (stats/logs). Refonte des sections lore, gameplay et install. Modification groupée (footer). Système de notifications. |
 | **2.1** | 03 janv. 2026 | Compteur téléchargement. Refonte `test.html`. Désactivation téléchargement via admin. **Echo Docs**. Liens soutenances. Correction sablier & icônes PDF. |
@@ -104,7 +108,7 @@ Echo/
 
 ## 🧠 Technologies utilisées
 
-* **HTML5 / CSS3 / JavaScript (ES6)** * **Backend & BDD** : PHP/MySQL (ou Node/NoSQL selon ton stack) pour les comptes et la roadmap
+* **HTML5 / CSS3 / JavaScript (ES6)** * **Backend & BDD** : Supabase pour les comptes et la roadmap
 * **Font Awesome 6** (icônes et animations)
 * **Intersection Observer API** (apparition fluide)
 * **Web Share API & Clipboard API** (partage et copie)

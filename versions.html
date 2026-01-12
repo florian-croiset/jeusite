@@ -681,6 +681,22 @@
         // Données des versions (à remplacer par appel DB plus tard)
         const versions = [
             {
+                version: "2.4",
+                date: "12 janvier 2026",
+                changes: [
+                    { type: "feature", text: "Refonte complète de la page Diapo : intégration des diaporamas pour les deux soutenances et inversion méthodologie/technique" },
+                    { type: "feature", text: "Amélioration majeure du Bot Discord : gestion des utilisateurs inactifs, optimisations pour Chrome et amélioration du tracker" },
+                    { type: "feature", text: "Système de Feedback : création du module de retour utilisateur et intégration" },
+                    { type: "feature", text: "Gestion des notifications : possibilité de désactiver les notifications depuis l'admin et ajout des alertes de nouvelle version" },
+                    { type: "feature", text: "Mise à jour de la documentation (doc.html) : personnalisation des couleurs pour l'accessibilité et ajout d'images" },
+                    { type: "design", text: "Ajustement des prérequis techniques : modification de la RAM nécessaire pour le jeu" },
+                    { type: "design", text: "Amélioration des modales et corrections typographiques dans la section Design" },
+                    { type: "bug", text: "Correction de bugs critiques : bouton de téléchargement, affichage de la version sur l'index (section install) et stabilité du formulaire" },
+                    { type: "bug", text: "Nettoyage de l'interface : suppression des notifications musicales inutiles et correction du bug de sortie (exit)" }
+                ],
+                isLatest: true
+            },
+            {
                 version: "2.3",
                 date: "5 janvier 2026",
                 changes: [

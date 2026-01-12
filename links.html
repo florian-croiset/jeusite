@@ -420,11 +420,11 @@
 <div class="links-container">
         <!-- Liens éparpillés -->
         <div class="scattered-links">
-            <a href="#" class="link-card" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-external-link-alt icon"></i>
-                <div class="title" style="color: red;">Ressources externes</div>
-                <div class="description">Accéder aux ressources et outils externes</div>
-            </a>
+            <a href="#" id="resourcesTrigger" class="link-card">
+    <i class="fas fa-external-link-alt icon"></i>
+    <div class="title">Ressources externes</div>
+    <div class="description">Accéder aux outils et libs</div>
+</a>
 
             <a href="https://github.com/florian-croiset/projetjeu" class="link-card" target="_blank" rel="noopener noreferrer">
                 <i class="fas fa-code icon"></i>
@@ -444,16 +444,16 @@
                 <div class="description">Visiter le site web principal d'Echo</div>
             </a>
 
-            <a href="#" class="link-card" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-file-pdf icon"></i>
-                <div class="title" style="color: red;">Rapport de soutenance</div>
-                <div class="description">Télécharger le rapport complet</div>
-            </a>
+            <a href="#" id="rapportsTrigger" class="link-card">
+    <i class="fas fa-file-pdf icon"></i>
+    <div class="title">Rapport de soutenance</div>
+    <div class="description">Accéder aux documents techniques</div>
+</a>
 
             <a href="diapo.html" class="link-card" target="_blank" rel="noopener noreferrer">
                 <!--<i class="fa-solid fa-presentation-screen"></i>-->
                 <svg fill="var(--bleu)" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="-10 -226 532 503"><path d="M24-216h464c13 0 24 11 24 24s-11 24-24 24H24c-13 0-24-11-24-24s11-24 24-24zm208 352H96c-35 0-64-29-64-64v-192h448V72c0 35-29 64-64 64H280v36l70 48c11 8 13 23 6 34-8 11-23 13-34 6l-66-47-66 47c-11 7-26 5-33-6-8-11-5-26 5-34l70-48v-36z"/></svg>
-                <div class="title">Diaporama CDSF</div>
+                <div class="title">Diaporamas</div>
                 <div class="description">Voir la présentation du projet</div>
             </a>
         </div>
@@ -468,17 +468,11 @@
                 <path d="M12 19V5M5 12l7-7 7 7" />
             </svg>
         </button>
-        <button class="floating-btn btn-music" id="musicBtn" title="Lecture/Pause musique">
-            <i class="fa-solid fa-music"></i>
-        </button>
     </div>
-
-    <audio id="backgroundMusic" src="assets/musique.mp3" loop preload="auto"></audio>
 
     <div id="secretModal" class="secret-modal">
         <div class="secret-box">
-            <h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i
-                        class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock"
+            <h3><span id="copyLock"
                     title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
             <p>Entrez le code d’accès :</p>
             <div class="input-paste-container">
@@ -520,6 +514,314 @@
     </div>
   </div>
 </div>
+
+
+<div id="resourcesModal" class="secret-modal">
+    <div class="secret-box resources-box">
+        <div class="secret-actions">
+    
+</div>
+        <h3><i class="fas fa-tools"></i> Ressources externes</h3>
+        <p style="margin-bottom: 15px; opacity: 0.7;">Liste des ressources utilisées :</p>
+        
+        <div id="resourcesList" class="scrolling-list"></div>
+
+        <div class="secret-actions">
+            <button id="downloadTxt" class="btn-confirm" style="background: rgba(0, 208, 198, 0.2); border: 1px solid var(--debut);">
+        <i class="fa-solid fa-file-export"></i> Exporter .txt
+    </button>
+    <button id="closeResources" class="btn-cancel">Fermer</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="reportsModal" class="secret-modal">
+    <div class="secret-box reports-box">
+        <h3><i class="fas fa-folder-open"></i> Documents</h3>
+        <p style="margin-bottom: 20px; opacity: 0.7;">Sélectionnez le document à consulter :</p>
+        
+        <div class="reports-grid">
+            <a href="docs/RapportTechnique_L2.1_G2_TeamNightberry projet_Echo.pdf" target="_blank" class="report-mini-card">
+                <i class="fas fa-microchip"></i>
+                <span>Rapport Technique</span>
+            </a>
+            <a href="docs/PlanTechnique_L2.1_G2_TeamNightberry projet_Echo.pdf" target="_blank" class="report-mini-card">
+                <i class="fas fa-project-diagram"></i>
+                <span>Plan Technique<br>(Oral)</span>
+            </a>
+            <a href="docs/CDSF_L2.1_G2_TeamNightberry projet_Echo.pdf" target="_blank" class="report-mini-card">
+                <i class="fas fa-book-open"></i>
+                <span>CDSF<br>(Méthodologie)</span>
+            </a>
+        </div>
+
+        <div class="secret-actions">
+            <button id="closeReports" class="btn-cancel">Fermer</button>
+        </div>
+    </div>
+</div>
+<style>/* Style spécifique pour la modale Rapports */
+.reports-box {
+    max-width: 500px !important; /* Un peu plus large pour les 3 choix */
+    text-align: center;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.report-mini-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 208, 198, 0.2);
+    border-radius: 12px;
+    padding: 20px 10px;
+    text-decoration: none;
+    color: var(--text-light, #e0e0e0);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.report-mini-card i {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--debut, #00d0c6), var(--finn, #8735b9));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s ease;
+}
+
+.report-mini-card span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Effets au survol */
+.report-mini-card:hover {
+    background: rgba(0, 208, 198, 0.1);
+    border-color: var(--debut, #00d0c6);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 208, 198, 0.2);
+}
+
+.report-mini-card:hover i {
+    transform: scale(1.2);
+}
+
+/* Responsive pour mobile : les mettre les uns sous les autres */
+@media (max-width: 600px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Container de la modale */
+.resources-box {
+    width: 90%;
+    max-width: 450px;
+    max-height: 80vh; /* Limite la hauteur par rapport à l'écran */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Zone de liste avec scroll */
+.scrolling-list {
+    max-height: 300px; /* Hauteur max de la liste avant scroll */
+    overflow-y: auto;  /* Scroll vertical activé */
+    margin-bottom: 20px;
+    padding-right: 5px; /* Espace pour la scrollbar */
+    text-align: left;
+}
+
+/* Style de chaque ligne (Lien) */
+.resource-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-light, #e0e0e0);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.resource-row:hover {
+    background: rgba(0, 208, 198, 0.15);
+    border-color: var(--debut, #00d0c6);
+    padding-left: 20px; /* Petite animation de glissement */
+}
+
+.resource-row i {
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.resource-row:hover i {
+    opacity: 1;
+    color: var(--debut, #00d0c6);
+}
+
+/* Custom Scrollbar (Style Webkit - Chrome/Safari/Edge) */
+.scrolling-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrolling-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.scrolling-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 208, 198, 0.3);
+    border-radius: 3px;
+}
+
+.scrolling-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 208, 198, 0.6);
+}
+
+
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const rapportsTrigger = document.getElementById('rapportsTrigger');
+        const reportsModal = document.getElementById('reportsModal');
+        const closeReportsBtn = document.getElementById('closeReports');
+
+        // Ouvrir la modale au clic sur la carte
+        if (rapportsTrigger) {
+            rapportsTrigger.addEventListener('click', (e) => {
+                e.preventDefault(); // Empêche le lien vide de recharger la page
+                reportsModal.classList.add('active'); // Utilise ta classe .active existante (ou display: flex)
+                reportsModal.style.display = 'flex'; // Force l'affichage si .active ne gère que l'opacité
+            });
+        }
+
+        // Fermer la modale
+        function closeModal() {
+            reportsModal.classList.remove('active');
+            reportsModal.style.display = 'none';
+        }
+
+        if (closeReportsBtn) {
+            closeReportsBtn.addEventListener('click', closeModal);
+        }
+
+        // Fermer en cliquant en dehors de la boîte
+        reportsModal.addEventListener('click', (e) => {
+            if (e.target === reportsModal) {
+                closeModal();
+            }
+        });
+    });
+
+const externalLinks = [
+        { name: "Github", url: "https://github.com" },
+        { name: "FontAwesome (Icônes)", url: "https://fontawesome.com" },
+        { name: "Google Fonts", url: "https://fonts.google.com" },
+        { name: "GitHub Repo", url: "https://github.com/florian-croiset/projetjeu" },
+        { name: "Discord API", url: "https://discord.com/developers/docs/intro" },
+        { name: "MDN Web Docs", url: "https://developer.mozilla.org" },
+        { name: "Supabase", url: "https://supabase.com/" },
+        { name: "Pixel Art", url: "https://graphicsgale.com" },
+        { name: "Canva", url: "https://www.canva.com" },
+        { name: "Bases de Pygame (vidéo)", url: "https://www.youtube.com/watch?v=WxEmflz009U" },
+        { name: "Pathfinding", url: "https://fr.wikipedia.org/wiki/Algorithme_A%2A" },
+        { name: "Créer un MetroidVania", url: "https://www.youtube.com/watch?v=Fh5O6G1vhg4" },
+        { name: "[LIB] Pygame", url: "https://www.pygame.org/" },
+        { name: "[LIB] Threading", url: "https://docs.python.org/fr/3.15/library/threading.html" },
+        { name: "Bases du game design (vidéo)", url: "https://www.youtube.com/watch?v=ivh1xAjBfQ0" },
+        { name: "Guide de level création (vidéo)", url: "https://www.youtube.com/watch?v=N6xqCwblyiw" },
+        //{ name: "", url: "" },
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+    // --- LOGIQUE ---
+    const resTrigger = document.getElementById('resourcesTrigger');
+    const resModal = document.getElementById('resourcesModal');
+    const resListContainer = document.getElementById('resourcesList');
+    const closeResBtn = document.getElementById('closeResources');
+
+    // 1. Générer la liste HTML automatiquement
+    if (resListContainer) {
+        resListContainer.innerHTML = externalLinks.map(link => `
+            <a href="${link.url}" target="_blank" class="resource-row">
+                <span class="res-name">${link.name}</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        `).join('');
+    }
+
+    // 2. Gestion ouverture/fermeture
+    if (resTrigger) {
+        resTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            resModal.style.display = 'flex';
+            // Petit délai pour l'animation d'opacité si gérée par CSS
+            setTimeout(() => resModal.classList.add('active'), 10);
+        });
+    }
+
+    // Fonction de fermeture commune
+    const closeResModal = () => {
+        resModal.classList.remove('active');
+        setTimeout(() => resModal.style.display = 'none', 300);
+    };
+
+    if (closeResBtn) closeResBtn.addEventListener('click', closeResModal);
+    
+    // Fermer en cliquant à côté
+    if (resModal) {
+        resModal.addEventListener('click', (e) => {
+            if (e.target === resModal) closeResModal();
+        });
+    }
+});
+
+document.getElementById('downloadTxt').addEventListener('click', () => {
+    // 1. Définition du contexte (Infos en haut du fichier)
+    const dateExport = new Date().toLocaleDateString('fr-FR');
+    let contenu = `==========================================\n`;
+    contenu += `   PROJET ECHO - RESSOURCES EXTERNES\n`;
+    contenu += `   Généré le : ${dateExport}\n`;
+    contenu += `   Équipe : Team Nightberry\n`;
+    contenu += `==========================================\n\n`;
+    contenu += `DOCUMENTATION ET LIENS UTILES :\n\n`;
+
+    // 2. Récupération automatique des liens depuis ton Array 'externalLinks'
+    // Note : Assure-toi que la variable externalLinks est accessible ici
+    externalLinks.forEach((item, index) => {
+        contenu += `${index + 1}. ${item.name.toUpperCase()}\n`;
+        contenu += `   URL : ${item.url}\n`;
+        contenu += `------------------------------------------\n`;
+    });
+
+    contenu += `\nFin du document.`;
+
+    // 3. Création du fichier (Blob)
+    const blob = new Blob([contenu], { type: 'text/plain' });
+    const urlFichier = window.URL.createObjectURL(blob);
+    
+    // 4. Déclenchement du téléchargement
+    const link = document.createElement('a');
+    link.href = urlFichier;
+    link.download = `Echo_Ressources-Externes_${dateExport.replace(/\//g, '-')}.txt`;
+    link.click();
+
+    // Nettoyage de la mémoire
+    window.URL.revokeObjectURL(urlFichier);
+});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="js/config/supabase.js"></script>
 <script type="module" src="js/database.js"></script>
