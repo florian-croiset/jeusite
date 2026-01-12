@@ -355,7 +355,9 @@ class AdvancedDiscordTracker {
             navigator.sendBeacon(this.webhookUrl, blob);
         };
 
-        window.addEventListener('beforeunload', () => exitHandler('beforeunload'));
+window.addEventListener('beforeunload', (event) => {
+  exitHandler('beforeunload');
+});
 
         window.addEventListener('pagehide', () => {
             setTimeout(() => {
@@ -431,22 +433,41 @@ class AdvancedDiscordTracker {
             });
         });
 
+// Tracking des clics sur liens externes
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (link && link.href) {
-                const currentHost = window.location.hostname;
-                const linkHost = new URL(link.href).hostname;
+                try {
+                    const currentHost = window.location.hostname;
+                    const linkUrl = new URL(link.href);
+                    const linkHost = linkUrl.hostname;
 
-                if (linkHost !== currentHost && linkHost !== '') {
-                    this.trackEvent('external_link_click', {
-                        url: link.href,
-                        text: link.textContent.trim().substring(0, 50),
-                        section: this.currentSection
-                    }, true);
+                    // 🚨 IGNORER les liens de téléchargement (fichiers .exe, .zip, etc.)
+                    const isDownloadLink = /\.(exe|zip|rar|dmg|pkg|deb)$/i.test(linkUrl.pathname);
+                    if (isDownloadLink) {
+                        console.log('📥 Lien de téléchargement ignoré du tracking externe');
+                        return;
+                    }
+
+                    // Vérifier si c'est un lien externe (domaine différent)
+                    if (linkHost !== currentHost && linkHost !== '' && linkUrl.protocol !== 'javascript:') {
+                        console.log('🔗 Lien externe détecté:', link.href);
+                        
+                        // S'assurer qu'on a une section
+                        const currentSection = this.currentSection || 'hero';
+                        
+                        // Envoyer immédiatement la notification
+                        this.sendEventToDiscord('external_link_click', {
+                            url: link.href,
+                            text: link.textContent.trim().substring(0, 50) || 'Sans texte',
+                            section: currentSection
+                        });
+                    }
+                } catch (error) {
+                    console.error('Erreur parsing URL:', error);
                 }
             }
         }, true);
-
         //console.log('✅ All trackers initialized');
     }
 

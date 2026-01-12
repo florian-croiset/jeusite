@@ -392,7 +392,21 @@ constructor() {
         title: data.enabled ? '🖥️ Plein écran activé' : '🪟 Plein écran désactivé',
         color: 0x8735b9,
         timestamp: new Date().toISOString()
-      }
+      },
+      'external_link_click': {
+        title: this.isKnownUser
+          ? `🔗 ${this.userName} clique sur un lien externe`
+          : '🔗 Clic sur un lien externe',
+        description: `Sortie vers : **${(data.url || 'URL inconnue').substring(0, 100)}**`,
+        color: 0x00d0c6,
+        fields: [
+          { name: '🌐 URL', value: (data.url || 'Non spécifiée').substring(0, 100), inline: false },
+          { name: '📝 Texte du lien', value: (data.text || 'Sans texte').substring(0, 100), inline: true },
+          { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
+          { name: '🔗 IP', value: this.userIP || 'Unknown', inline: true }
+        ],
+        timestamp: new Date().toISOString()
+      },
     };
 
     return embeds[type] || null;

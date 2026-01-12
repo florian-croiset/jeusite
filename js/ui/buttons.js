@@ -65,36 +65,58 @@ function appliquerDisponibiliteBouton(bouton) {
       bouton.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.5)';
       bouton.style.animation = 'pulse 2s infinite';
 
+
 // 📥 Gestion du clic de téléchargement
-const handleDownloadClick = () => {
+const handleDownloadClick = async (e) => {
+    console.log('🎮 Téléchargement déclenché');
+    
+    // Empêcher le comportement par défaut
+    if (e) e.preventDefault();
+    
+    // 🚨 IMPORTANT : Marquer qu'on télécharge (pas une vraie sortie)
+    window._isDownloading = true;
+    
     // 📊 TRACKING SPÉCIAL : Téléchargement du jeu
-    if (typeof window.sendDiscordNotification === 'function') {
-        window.sendDiscordNotification('new_download', {
-            version: window.jeuVersion,
-            url: window.jeuUrl,
-            versionId: currentVersionId
-        });
+    try {
+        if (typeof window.sendDiscordNotification === 'function') {
+            await window.sendDiscordNotification('new_download', {
+                version: window.jeuVersion || 'unknown',
+                url: window.jeuUrl || '#',
+                versionId: currentVersionId
+            });
+            console.log('✅ Notification Discord envoyée');
+        }
+        
+        // Tracking DB si disponible
+        if (currentVersionId && typeof window.trackVersionDownload === 'function') {
+            await window.trackVersionDownload(currentVersionId);
+        }
+    } catch (error) {
+        console.error('❌ Erreur tracking téléchargement:', error);
     }
     
-    // Tracking DB si disponible
-    if (currentVersionId && typeof window.trackVersionDownload === 'function') {
-        window.trackVersionDownload(currentVersionId);
-    }
+    // Créer un lien invisible pour télécharger sans quitter la page
+    const link = document.createElement('a');
+    link.href = window.jeuUrl;
+    link.download = window.jeuUrl.split('/').pop();
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Réinitialiser le flag après 2 secondes
+    setTimeout(() => {
+        window._isDownloading = false;
+    }, 2000);
 };
 
 if (bouton.tagName === 'A') {
-    bouton.href = window.jeuUrl;
-    bouton.setAttribute('download', '');
+    bouton.href = '#'; // Empêcher la navigation directe
     bouton.onclick = handleDownloadClick;
 } else {
-    bouton.onclick = () => {
-        handleDownloadClick();
-        // Rediriger après le tracking
-        setTimeout(() => {
-            window.location.href = window.jeuUrl;
-        }, 100);
-    };
+    bouton.onclick = handleDownloadClick;
 }
+
     } else {
       bouton.innerHTML = '<i class="fa-solid fa-lock"></i> Télécharger le jeu';
       infoSpan.innerHTML = '<i class="fa-solid fa-ban fa-fade"></i> Temporairement désactivé';

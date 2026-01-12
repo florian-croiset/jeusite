@@ -107,12 +107,27 @@ function smoothScrollTo(target) {
   }, 1000);// 3000
 }
 
+// MODIFICATION DANS SCROLL.JS (tout en bas du fichier)
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
+    const currentHref = this.getAttribute('href');
+
+    if (!currentHref || !currentHref.startsWith('#')) {
+        return; 
+    }
+
     e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      smoothScrollTo(target);
+    
+    if (currentHref === '#') return;
+
+    try {
+        const target = document.querySelector(currentHref);
+        if (target) {
+            smoothScrollTo(target);
+        }
+    } catch (error) {
+        console.warn("Navigation ignorée pour : ", currentHref);
     }
   });
 });
