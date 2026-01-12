@@ -1160,7 +1160,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const filenameDisplay = document.getElementById('filename-display');
                         
                         if (versionDisplay) {
-                            versionDisplay.textContent = `v${latestVersion.version}`;
+                            versionDisplay.textContent = `${latestVersion.version}`;
+                            // versionDisplay.textContent = `v${latestVersion.version}`;
                         }
                         
                         if (filenameDisplay && latestVersion.download_url) {
