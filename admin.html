@@ -817,12 +817,12 @@
                 <div class="sidebar-item" data-section="content" style="position: fixed; top: 400px;">📝 Contenu du site
                 </div>
                 <div class="sidebar-item" data-section="media" style="position: fixed; top: 475px;">🎨 Médias</div>
-                <div class="sidebar-item" data-section="forms" style="position: fixed; top: 550px;">📋 Formulaires</div>
-                <div class="sidebar-item" data-section="notifications" style="position: fixed; top: 625px;">📢
+                <!--<div class="sidebar-item" data-section="forms" style="position: fixed; top: 550px;">📋 Formulaires</div>-->
+                <div class="sidebar-item" data-section="notifications" style="position: fixed; top: 550px;">📢
                     Notifications</div>
-                <div class="sidebar-item" data-section="users" style="position: fixed; top: 700px;">👥 Utilisateurs
+                <div class="sidebar-item" data-section="users" style="position: fixed; top: 625px;">👥 Utilisateurs
                 </div>
-                <div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 775px;">⚙️
+                <div class="sidebar-item" data-section="site-settings" style="position: fixed; top: 700px;">⚙️
                     Paramètres</div>
             </div>
 
@@ -1210,15 +1210,15 @@
                     </div>
                 </div>
 
-                <div class="section" id="forms">
+                <!--<div class="section" id="forms">
                     <div class="card">
                         <h2>Réponses aux formulaires</h2>
-                        <!--<p class="loading">En développement</p>-->
+                        <p class="loading">En développement</p>
                         <div id="forms-list">
                             <p class="loading">Chargement...</p>
                         </div>
                     </div>
-                </div>
+                </div>-->
 
                 <div class="section" id="users">
                     <div class="card">
@@ -1939,28 +1939,8 @@
         });
         async function loadForms() {
             try {
-                const { data, error } = await window.EchoDB.supabase
-                    .from('form_responses')
-                    .select('*')
-                    .order('submitted_at', { ascending: false });
                 if (error) throw error;
-                let html = '<table><thead><tr><th>Date</th><th>Nom</th><th>Actions</th></tr></thead><tbody>';
-                data?.forEach(response => {
-                    html += `
-                        <tr>
-                            <td>${new Date(response.submitted_at).toLocaleDateString('fr-FR')}</td>
-                            <td>${response.responses.name || 'Anonyme'}</td>
-                            <td>
-                                <button class="action-btn edit" onclick="viewResponse('${response.id}')">ðŸ‘ï¸</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                html += '</tbody></table>';
-                document.getElementById('forms-list').innerHTML = html;
             } catch (error) {
-                console.error('Erreur formulaires:', error);
-                document.getElementById('forms-list').innerHTML = '<p style="color: #ff0055;">Erreur de chargement</p>';
             }
         }
 
