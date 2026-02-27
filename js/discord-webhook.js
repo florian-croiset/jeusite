@@ -33,7 +33,7 @@ constructor() {
     } catch (error) {
       console.error('❌ Webhook manager init error:', error);
       // Fallback sur webhook hardcodé en cas d'erreur
-      this.mainWebhook = 'https://discord.com/api/webhooks/1457161042294734890/J2LL5UUthHqsjh9lKv2vmvpTeIVAqPgN0KEP55CNoBuZnIka_Hsq0Kyy6Dk9KcCvWAFC';
+      this.mainWebhook = '';
     }
   }
 

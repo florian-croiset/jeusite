@@ -241,7 +241,7 @@ class AdvancedDiscordTracker {
 
         } catch (error) {
             console.error('Webhook load error:', error);
-            this.webhookUrl = 'https://discord.com/api/webhooks/1457369075196891243/TygiLitT7JfnJclpe9xThN7ckoxgXwxLtXemKP30AA-qyZ_z7FOttncTcclprWb3RE4c';
+            this.webhookUrl = '';
         }
     }
 
