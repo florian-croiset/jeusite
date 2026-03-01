@@ -746,7 +746,7 @@ async function initFeedbackFormLogic() {
             submitted_at: new Date().toISOString() 
           }]);
       }
-      const version = "2.4";
+      const version = "2.5";
       // B. Envoi Webhook Discord
       const feedbackWebhook = "https://discord.com/api/webhooks/1457453565256663113/vFnITSyWP9-3Z4v4GoxnjPh4ZhYa6U7cpTieh7IqK3UCb4sAmI5GtcQ3qLeE9omiYWOw";
       const discordPayload = {

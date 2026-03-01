@@ -1,23 +1,23 @@
 ![Version](https://img.shields.io/badge/version-2.4-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-green)
 
-# 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
+# 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
 
 ## 📖 Présentation
 
-**Echo** est un jeu narratif développé par **Team Nightberry**, un collectif de cinq étudiants passionnés par le game design et les univers immersifs.
+**Echo** est un jeu narratif développé par **Team Nightberry**, un collectif de cinq étudiants passionnés par le game design et les univers immersifs.
 
-Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du projet : présentation de l’équipe, téléchargement du jeu, aperçu du gameplay, du lore, suivi des mises à jour, et désormais une roadmap interactive et un dashboard administrateur.
+Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du projet : présentation de l'équipe, téléchargement du jeu, aperçu du gameplay, du lore, suivi des mises à jour, et désormais une roadmap interactive et un dashboard administrateur.
 
 ---
 
-## 👥 Équipe – Team Nightberry
+## 👥 Équipe – Team Nightberry
 
-* **Amaury Giraud-Laforet** – Game Design / UI
-* **Gaspard Sapin** – Programmation / Gestion Web
-* **Florian Croiset** – Pixel Art / Visuels
-* **Éric Sahakian** – Level Design
-* **Jules Cohen** – Conception Sonore
+* **Amaury Giraud-Laforet** – Game Design / UI
+* **Gaspard Sapin** – Programmation / Gestion Web
+* **Florian Croiset** – Pixel Art / Visuels
+* **Éric Sahakian** – Level Design
+* **Jules Cohen** – Conception Sonore
 
 ---
 
@@ -26,7 +26,7 @@ Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du pr
 ### Interface et navigation
 
 * **Design néon sombre** (cyan/violet) avec reflets animés
-* **Effets dynamiques** : particules, filaments d’énergie, transitions scrollées
+* **Effets dynamiques** : particules, filaments d'énergie, transitions scrollées
 * **Navbar adaptative** (réduction et effet de transparence au scroll)
 * **Curseur personnalisé** interactif
 * **Barre de progression horizontale** indiquant la position dans la page
@@ -34,9 +34,9 @@ Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du pr
 * **Logo animé** (gradient + effet holographique)
 * **Soulignement liquide** des liens de navigation
 
-### Page d’accueil (Hero & Interaction)
+### Page d'accueil (Hero & Interaction)
 
-* **Hero section** avec **vidéo d’intro** (`anim.mp4`)
+* **Hero section** avec **vidéo d'intro** (`anim.mp4`)
 * **Compte à rebours interactif** vers la bêta avec **icône fusée 🚀** animée
 * **Bouton sablier 🕒** pour tester la vitesse (accélération de 10s en mode test)
 * **Homogénéisation du compteur** (affichage '0' au lieu de '00' pour plus de clarté)
@@ -46,9 +46,9 @@ Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du pr
 
 ### Sections dédiées & Contenu
 
-* **Team Nightberry** : présentation visuelle et liens membres (agrandis dans l'en-tête)
+* **Team Nightberry** : présentation visuelle et liens membres (agrandis dans l'en-tête)
 * **Télécharger** : gestion dynamique (bouton actif vers `.exe`, redirection ou texte spécifique selon la plateforme/disponibilité) avec **compteur de téléchargements intégré**
-* **Gameplay / Lore** : univers détaillé en **4 actes narratifs** (Kaelen : L’Ombre du Soleil)
+* **Gameplay / Lore** : univers détaillé en **4 actes narratifs** (Kaelen : L'Ombre du Soleil)
 * **Installation** : tutoriel prévu (install/désinstall du jeu)
 * **Historique des versions** : affichage stylisé des changelogs avec **catégories de modifications**, outils de comparaison et modes d'affichage optimisés
 * **Roadmap (Nouveau)** : Suivi interactif du développement (version bêta) avec **système de vote** et d'affichage
@@ -65,9 +65,9 @@ Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du pr
 
 * **Musique de fond** contrôlable (`music.js`) – lecture/pause via bouton flottant ou raccourci clavier `P` (lecture auto après interaction)
 * **Menu burger mobile** : fermeture automatique après clic, fermeture au scroll, touche `Échap` ou clic en dehors
-* **Bouton “Remonter en haut”** fluide et flottant
+* **Bouton "Remonter en haut"** fluide et flottant
 * **Blocage du clic droit** pour protéger les visuels
-* **Partage intégré** via l’API native (copie du lien + QR Code)
+* **Partage intégré** via l'API native (copie du lien + QR Code)
 * **Page Design** : Système d'exports (ZIP du projet, PDF de la charte graphique, pack assets), logos, couleurs, sprites, et accès à **Echo Docs**
 * **Compatibilité mobile complète** grâce à `responsive.css` & `mobile.css`
 
@@ -92,6 +92,7 @@ Echo/
 
 | Version | Date | Changements clés |
 | --- | --- | --- |
+| **2.5** | 1 mars 2026 | Corrections de sécurité. Corrections bugs mineurs. Amélioration détection IP. Ajout `.gitignore`. Sécurisation formulaires. |
 | **2.4** | 12 janv. 2026 | **Refonte page Diapo** (soutenances). Amélioration Bot Discord (stats/inactifs). **Système Feedback**. Accessibilité doc. **Correction bug téléchargement** & RAM. |
 | **2.3** | 05 janv. 2026 | **Lancement Roadmap (bêta)** : suivi interactif + vote. Refonte page Versions (catégories/comparaison). **Dashboard Admin**. |
 | **2.2** | 04 janv. 2026 | **Bot Discord bêta** (stats/logs). Refonte des sections lore, gameplay et install. Modification groupée (footer). Système de notifications. |
@@ -108,7 +109,8 @@ Echo/
 
 ## 🧠 Technologies utilisées
 
-* **HTML5 / CSS3 / JavaScript (ES6)** * **Backend & BDD** : Supabase pour les comptes et la roadmap
+* **HTML5 / CSS3 / JavaScript (ES6)**
+* **Backend & BDD** : Supabase pour les comptes et la roadmap
 * **Font Awesome 6** (icônes et animations)
 * **Intersection Observer API** (apparition fluide)
 * **Web Share API & Clipboard API** (partage et copie)

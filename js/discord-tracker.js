@@ -5,7 +5,7 @@
 
 class AdvancedDiscordTracker {
     constructor() {
-        this.version = "2.4";
+        this.version = "2.5";
         this.sessionId = this.generateSessionId();
         this.userIP = null;
         this.webhookUrl = null;

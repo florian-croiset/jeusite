@@ -681,6 +681,17 @@
         // Données des versions (à remplacer par appel DB plus tard)
         const versions = [
             {
+                version: "2.5",
+                date: "1 mars 2026",
+                changes: [
+                    { type: "feature", text: "Audit de sécurité complet : corrections critiques, sérieuses et mineures sur l'ensemble des fichiers JS et HTML" },
+                    { type: "bug", text: "Correction de la détection IP : remplacement des services incompatibles HTTPS/CORS par des alternatives fiables" },
+                    { type: "bug", text: "Corrections bugs mineurs : initialisation EchoDB, double init webhook manager, double notification plein écran" },
+                    { type: "design", text: "Ajout du .gitignore et nettoyage des fichiers temporaires" }
+                ],
+                isLatest: true
+            },
+            {
                 version: "2.4",
                 date: "12 janvier 2026",
                 changes: [
@@ -694,7 +705,7 @@
                     { type: "bug", text: "Correction de bugs critiques : bouton de téléchargement, affichage de la version sur l'index (section install) et stabilité du formulaire" },
                     { type: "bug", text: "Nettoyage de l'interface : suppression des notifications musicales inutiles et correction du bug de sortie (exit)" }
                 ],
-                isLatest: true
+                isLatest: false
             },
             {
                 version: "2.3",
@@ -705,7 +716,7 @@
                     { type: "feature", text: "Dashboard Admin : intégration complète de la gestion de la Roadmap (Ajout, Modification, Suppression)" },
                     { type: "design", text: "Optimisation de l'interface utilisateur pour la navigation entre les différentes versions et la roadmap" }
                 ],
-                isLatest: true
+                isLatest: false
             },
             {
                 version: "2.2",
