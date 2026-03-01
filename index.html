@@ -1182,7 +1182,12 @@ document.addEventListener('DOMContentLoaded', function() {
             updateVersionInfo();
         }
 
-        // Écouter les changements de window.jeuVersion
-        setInterval(updateVersionInfo, 2000);
+        // Et si tu veux les mises à jour en temps réel :
+        window.EchoDB.supabase
+            .channel('version-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'game_versions' }, () => {
+                updateVersionInfo();
+            })
+            .subscribe();
     </script>
 </html>

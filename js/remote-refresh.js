@@ -409,6 +409,8 @@ if (!window.EchoDB) {
     supabase: supabaseClient // Accès direct au client si besoin
   };
   console.log('✅ Echo Database initialisée avec succès');
+  // Signaler que EchoDB est prêt
+  window.dispatchEvent(new CustomEvent('EchoDBReady'));
 } else {
   console.log('⚠️ EchoDB déjà initialisé');
 }
@@ -438,13 +440,32 @@ class RemoteRefreshManager {
     }
 
     waitForEchoDB() {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
+            // Si déjà dispo, résoudre immédiatement
+            if (window.EchoDB) return resolve();
+
+            // Écouter l'event EchoDBReady
+            const onReady = () => {
+                clearInterval(check);
+                resolve();
+            };
+            window.addEventListener('EchoDBReady', onReady, { once: true });
+
+            // Polling fallback (au cas où l'event est raté)
             const check = setInterval(() => {
                 if (window.EchoDB) {
                     clearInterval(check);
+                    window.removeEventListener('EchoDBReady', onReady);
                     resolve();
                 }
             }, 100);
+
+            // Timeout après 10 secondes
+            setTimeout(() => {
+                clearInterval(check);
+                window.removeEventListener('EchoDBReady', onReady);
+                reject(new Error('EchoDB timeout - non initialisé après 10s'));
+            }, 10000);
         });
     }
 
