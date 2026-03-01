@@ -1476,6 +1476,18 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+
+        function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+
         // Configuration Supabase (utiliser une variable locale pour éviter la redéclaration)
         const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
@@ -1627,7 +1639,7 @@
                                 ${data.map(item => `
                                     <tr>
                                         <td>📥 Téléchargement</td>
-                                        <td>${item.version}</td>
+                                        <td>${escapeHtml(item.version)}</td>
                                         <td>${new Date(item.downloaded_at).toLocaleString('fr-FR')}</td>
                                     </tr>
                                 `).join('')}
@@ -1886,7 +1898,7 @@
 
             select.innerHTML = '<option value="">Sélectionner une version</option>';
             versions?.forEach(v => {
-                select.innerHTML += `<option value="${v.id}">${v.version} - ${v.title}</option>`;
+                select.innerHTML += `<option value="${escapeHtml(v.id)}">${escapeHtml(v.version)} - ${escapeHtml(v.title)}</option>`;
             });
         }
 
@@ -3557,8 +3569,8 @@ console.log('✅ Script de gestion du tracking chargé');
                 historyContainer.innerHTML = data.map(notif => `
                 <tr>
                     <td>${new Date(notif.created_at).toLocaleString('fr-FR')}</td>
-                    <td>${notif.title}</td>
-                    <td>${notif.message}</td>
+                    <td>${escapeHtml(notif.title)}</td>
+                    <td>${escapeHtml(notif.message)}</td>
                     <td>
                         <span class="status-badge ${notif.is_read ? 'status-active' : 'status-inactive'}">
                             ${notif.is_read ? 'Lue' : 'Non lue'}
@@ -3571,7 +3583,7 @@ console.log('✅ Script de gestion du tracking chargé');
                 console.error('Erreur chargement historique:', error);
                 // CORRECTION: On utilise historyContainer, pas "container"
                 if (historyContainer) {
-                    historyContainer.innerHTML = `<tr><td colspan="4" style="color:red;">Erreur: ${error.message}</td></tr>`;
+                    historyContainer.innerHTML = `<tr><td colspan="4" style="color:red;">Erreur: ${escapeHtml(error.message)}</td></tr>`;
                 }
             }
         }

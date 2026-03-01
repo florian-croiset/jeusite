@@ -97,7 +97,13 @@ const handleDownloadClick = async (e) => {
     
     // Créer un lien invisible pour télécharger sans quitter la page
     const link = document.createElement('a');
-    link.href = window.jeuUrl;
+    // Avant le link.href =
+    const safeUrl = window.jeuUrl;
+    if (!safeUrl.startsWith('http') && !safeUrl.startsWith('/') && !safeUrl.startsWith('executable/')) {
+        console.error('URL de téléchargement invalide');
+        return;
+    }
+    link.href = safeUrl;
     link.download = window.jeuUrl.split('/').pop();
     link.style.display = 'none';
     document.body.appendChild(link);
@@ -171,7 +177,7 @@ window.updateDownloadState = function(isAvailable, url, version, versionId = nul
         return;
     }
     
-    console.log(`Mise à jour via DB : Dispo=${isAvailable}, URL=${url}, Version=${version}`);
+    //console.log(`Mise à jour via DB : Dispo=${isAvailable}, URL=${url}, Version=${version}`);
     window.jeuDispo = isAvailable;
     window.jeuUrl = url;
     window.jeuVersion = version;

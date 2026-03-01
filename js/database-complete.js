@@ -74,7 +74,7 @@ async function initHomeContent() {
     const heroSubtitle = document.querySelector('.hero-content p');
     
     if (heroText && heroContent[0].title) {
-      heroText.innerHTML = `<span></span>${heroContent[0].title}`;
+      heroText.innerHTML = `<span></span>${escapeHtml(heroContent[0].title)}`;
     }
     if (heroSubtitle && heroContent[0].content) {
       heroSubtitle.textContent = heroContent[0].content;
@@ -236,7 +236,7 @@ async function loadCountdown() {
     
     const eventTitle = document.querySelector('.countdown-title');
     if (eventTitle && countdown.event_name) {
-      eventTitle.innerHTML = `<i class="fa-solid fa-rocket fa-beat"></i> ${countdown.event_name}`;
+      eventTitle.innerHTML = `<i class="fa-solid fa-rocket fa-beat"></i> ${escapeHtml(countdown.event_name)}`;
     }
   }
 }
@@ -329,14 +329,17 @@ async function loadGallery() {
     return;
   }
   
-  galleryContainer.innerHTML = images.map(img => `
-    <div class="media-item" onclick="openLightbox('${img.url}', '${img.name}')">
-      <img src="${img.url}" alt="${img.name}" loading="lazy">
-      <div class="media-overlay">
-        <span>${img.name}</span>
-      </div>
+  galleryContainer.innerHTML = images.map((img, i) => `
+    <div class="media-item" data-index="${i}">
+        <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.name)}" loading="lazy">
+        <div class="media-overlay"><span>${escapeHtml(img.name)}</span></div>
     </div>
-  `).join('');
+`).join('');
+
+// Attacher les événements proprement
+galleryContainer.querySelectorAll('.media-item').forEach((el, i) => {
+    el.addEventListener('click', () => openLightbox(images[i].url, images[i].name));
+});
 }
 
 function openLightbox(imageUrl, imageName) {
@@ -748,22 +751,26 @@ async function loadNews(limit = 5) {
   }
   
   newsContainer.innerHTML = news.map(article => `
-    <article class="news-card" onclick="openNewsDetail('${article.slug}')">
+    <article class="news-card" data-slug="${escapeHtml(article.slug)}">
       ${article.cover?.url ? `
         <div class="news-image">
-          <img src="${article.cover.url}" alt="${article.title}" loading="lazy">
+          <img src="${escapeHtml(article.cover.url)}" alt="${escapeHtml(article.title)}" loading="lazy">
         </div>
       ` : ''}
       <div class="news-content">
-        <h3>${article.title}</h3>
-        <p class="news-excerpt">${article.excerpt}</p>
+        <h3>${escapeHtml(article.title)}</h3>
+        <p class="news-excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="news-meta">
-          <span class="author">✍️ ${article.author?.display_name || 'Team Nightberry'}</span>
+          <span class="author">✍️ ${escapeHtml(article.author?.display_name || 'Team Nightberry')}</span>
           <span class="date">📅 ${new Date(article.published_at).toLocaleDateString('fr-FR')}</span>
         </div>
       </div>
     </article>
-  `).join('');
+`).join('');
+
+newsContainer.querySelectorAll('.news-card').forEach(el => {
+    el.addEventListener('click', () => openNewsDetail(el.dataset.slug));
+});
 }
 
 window.openNewsDetail = async function(slug) {
@@ -989,11 +996,15 @@ function initSearch() {
       }
       
       searchResults.innerHTML = results.map(item => `
-        <div class="search-result-item" onclick="scrollToSection('${item.section}')">
+        <div class="search-result-item" data-section="${escapeHtml(item.section)}">
           <h4>${highlightQuery(item.title, query)}</h4>
           <p>${highlightQuery(item.content.substring(0, 100), query)}...</p>
         </div>
-      `).join('');
+    `).join('');
+
+searchResults.querySelectorAll('.search-result-item').forEach(el => {
+    el.addEventListener('click', () => scrollToSection(el.dataset.section));
+});
       searchResults.style.display = 'block';
     }, 300);
   });
@@ -1007,8 +1018,10 @@ function initSearch() {
 }
 
 function highlightQuery(text, query) {
-  const regex = new RegExp(`(${query})`, 'gi');
-  return text.replace(regex, '<mark>$1</mark>');
+    // Échapper les caractères spéciaux regex
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'gi');
+    return escapeHtml(text).replace(regex, '<mark>$1</mark>');
 }
 
 window.scrollToSection = function(sectionId) {

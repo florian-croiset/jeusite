@@ -3,6 +3,19 @@
 // Fichier : js/database.js
 // =============================================
 
+
+// Sécurité : échapper les caractères HTML pour éviter les XSS
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+
 // Attendre que EchoDB soit défini
 function waitForEchoDB() {
   return new Promise((resolve) => {
@@ -85,7 +98,7 @@ async function loadCountdown() {
         // Mettre à jour le titre de l'événement
         const eventTitle = document.querySelector('.countdown-title');
         if (eventTitle && countdown.event_name) {
-          eventTitle.innerHTML = `<i class="fa-solid fa-rocket fa-beat"></i> ${countdown.event_name}`;
+          eventTitle.innerHTML = `<i class="fa-solid fa-rocket fa-beat"></i> ${escapeHtml(countdown.event_name)}`;
         }
       }
     }
@@ -190,11 +203,11 @@ async function loadAllVersions() {
         <span class="version-date">${new Date(v.release_date).toLocaleDateString('fr-FR')}</span>
         ${v.is_beta ? '<span class="beta-badge">BETA</span>' : ''}
       </div>
-      <h4>${v.title}</h4>
-      <p>${v.description}</p>
+      <h4>${escapeHtml(v.title)}</h4>
+      <p>${escapeHtml(v.description)}</p>
       ${v.changelog ? `
         <ul class="changelog">
-          ${v.changelog.map(change => `<li>${change}</li>`).join('')}
+          ${v.changelog.map(change => `<li>${escapeHtml(change)}</li>`).join('')}
         </ul>
       ` : ''}
       ${v.download_url ? `
@@ -241,8 +254,8 @@ async function loadSectionContent(sectionName, selector) {
     // Injecter le contenu
     element.innerHTML = content.map(item => `
       <div class="content-block">
-        ${item.title ? `<h3>${item.title}</h3>` : ''}
-        <p>${item.content}</p>
+        ${item.title ? `<h3>${escapeHtml(item.title)}</h3>` : ''}
+        <p>${escapeHtml(item.content)}</p>
       </div>
     `).join('');
   } catch (error) {
@@ -265,12 +278,12 @@ async function loadTeamContent() {
     teamContainer.innerHTML = teamMembers.map(member => `
       <div class="team-member">
         ${member.avatar_url ? `
-          <img src="${member.avatar_url}" alt="${member.display_name}">
+          <img src="${member.avatar_url}" alt="${escapeHtml(member.display_name)}">
         ` : `
           <div class="avatar-placeholder">${member.display_name[0]}</div>
         `}
-        <h4>${member.display_name}</h4>
-        <p class="role">${member.bio || ''}</p>
+        <h4>${escapeHtml(member.display_name)}</h4>
+        <p class="role">${escapeHtml(member.bio)}</p>
       </div>
     `).join('');
   } catch (error) {
@@ -480,12 +493,12 @@ async function loadNews(limit = 5) {
     newsContainer.innerHTML = news.map(article => `
       <article class="news-card">
         ${article.cover?.url ? `
-          <img src="${article.cover.url}" alt="${article.title}">
+          <img src="${article.cover.url}" alt="${escapeHtml(article.title)}">
         ` : ''}
-        <h3><a href="/news/${article.slug}">${article.title}</a></h3>
-        <p class="excerpt">${article.excerpt}</p>
+        <h3><a href="/news/${escapeHtml(article.slug)}">${escapeHtml(article.title)}</a></h3>
+        <p class="excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="meta">
-          <span class="author">Par ${article.author?.display_name || 'Team Nightberry'}</span>
+          <span class="author">Par ${escapeHtml(article.author?.display_name || 'Team Nightberry')}</span>
           <span class="date">${new Date(article.published_at).toLocaleDateString('fr-FR')}</span>
         </div>
       </article>

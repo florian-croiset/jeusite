@@ -26,6 +26,7 @@ class AdvancedSecretModal {
 
     // État
     this.attemptsLeft = 3;
+    this._sessionAttempts = 3; // ← en mémoire, non modifiable depuis la console
     this.isLocked = false;
     this.cooldownInterval = null;
     this.currentUser = null;
@@ -283,14 +284,9 @@ class AdvancedSecretModal {
   }
 
   async checkCode(code) {
-    try {
+     try {
       if (typeof window.EchoDB === 'undefined') {
-        // Fallback : code hardcodé
-        return {
-          valid: code === 'N1ghtberryV1.2',
-          user: { username: 'Admin', permissions: ['all'] },
-          requires2FA: false
-        };
+        return { valid: false };
       }
 
       const { data, error } = await window.EchoDB.supabase
@@ -448,7 +444,15 @@ class AdvancedSecretModal {
   // ========= FAILED ATTEMPT =========
   handleFailedAttempt() {
     this.attemptsLeft--;
+    this._sessionAttempts--;
     localStorage.setItem('modal_attempts', this.attemptsLeft);
+
+    // Vérifier aussi la valeur mémoire (non bypassable)
+    if (this._sessionAttempts <= 0) {
+        this.startCooldown(60);
+        this.showMessage('Trop de tentatives !', 'error');
+        return;
+    }
 
     this.shake();
     this.updateAttemptsDisplay();
@@ -508,6 +512,7 @@ class AdvancedSecretModal {
 
   resetAttempts() {
     this.attemptsLeft = 3;
+    this._sessionAttempts = 3;
     this.isLocked = false;
 
     localStorage.removeItem('modal_attempts');
@@ -573,7 +578,6 @@ class AdvancedSecretModal {
   // ========= ADMIN PANEL =========
   openAdminPanel(user) {
     if (!this.adminPanel) {
-      console.log('✅ Accès accordé - Panel admin non disponible');
       return;
     }
 
@@ -806,26 +810,47 @@ class AdvancedSecretModal {
 
   async checkAuthStatus() {
     const auth = localStorage.getItem('admin_auth');
-    if (auth) {
-      try {
+    if (!auth) return;
+
+    try {
         const { user, timestamp } = JSON.parse(auth);
 
-        // Expiration après 24h
-        if (Date.now() - timestamp < 86400000) {
-          this.currentUser = user;
-          if (this.devBadge) {
+        // Vérifier l'expiration
+        if (Date.now() - timestamp >= 86400000) {
+            localStorage.removeItem('admin_auth');
+            return;
+        }
+
+        // ✅ Revalider le code en base de données
+        if (!user.codeId || !window.EchoDB) {
+            localStorage.removeItem('admin_auth');
+            return;
+        }
+
+        const { data, error } = await window.EchoDB.supabase
+            .from('admin_access_codes')
+            .select('id')
+            .eq('id', user.codeId)
+            .eq('is_active', true)
+            .single();
+
+        if (error || !data) {
+            localStorage.removeItem('admin_auth');
+            return;
+        }
+
+        // Code toujours valide en DB → restaurer la session
+        this.currentUser = user;
+        if (this.devBadge) {
             this.devBadge.classList.remove('hidden');
             const badgeSpan = this.devBadge.querySelector('span');
             if (badgeSpan) badgeSpan.textContent = user.username || 'Admin';
-          }
-        } else {
-          localStorage.removeItem('admin_auth');
         }
-      } catch (err) {
+
+    } catch (err) {
         localStorage.removeItem('admin_auth');
-      }
     }
-  }
+}
 }
 
 // Initialiser

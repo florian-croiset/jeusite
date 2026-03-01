@@ -624,23 +624,15 @@ if (typeof window.sendDiscordNotification === 'function') {
     }
     
     toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } 
-        // 📊 Tracking: Plein écran
-if (typeof window.sendDiscordNotification === 'function') {
-    window.sendDiscordNotification('fullscreen_toggled', {
-        enabled: !document.fullscreenElement
-    });
-}else {
+        const isFullscreen = !!document.fullscreenElement;
+        if (isFullscreen) {
             document.exitFullscreen();
+        } else {
+            document.documentElement.requestFullscreen();
         }
-        // 📊 Tracking: Plein écran
-if (typeof window.sendDiscordNotification === 'function') {
-    window.sendDiscordNotification('fullscreen_toggled', {
-        enabled: !document.fullscreenElement
-    });
-}
+        if (typeof window.sendDiscordNotification === 'function') {
+            window.sendDiscordNotification('fullscreen_toggled', { enabled: !isFullscreen });
+        }
     }
     
     /**

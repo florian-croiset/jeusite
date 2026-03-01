@@ -63,15 +63,27 @@ constructor() {
   }
 
   waitForEchoDB() {
-    return new Promise((resolve) => {
-      const check = setInterval(() => {
-        if (window.EchoDB) {
-          clearInterval(check);
-          resolve();
-        }
-      }, 100);
+    return new Promise((resolve, reject) => {
+        if (window.EchoDB) return resolve();
+
+        const onReady = () => { clearInterval(check); resolve(); };
+        window.addEventListener('EchoDBReady', onReady, { once: true });
+
+        const check = setInterval(() => {
+            if (window.EchoDB) {
+                clearInterval(check);
+                window.removeEventListener('EchoDBReady', onReady);
+                resolve();
+            }
+        }, 100);
+
+        setTimeout(() => {
+            clearInterval(check);
+            window.removeEventListener('EchoDBReady', onReady);
+            reject(new Error('EchoDB timeout'));
+        }, 10000);
     });
-  }
+}
 
 // --- MODIFICATION : Chargement des nouveaux webhooks et du rôle ---
   async loadWebhooks() {
@@ -437,12 +449,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.location.pathname.includes('admin.html')) return;
 
   await window.webhookManager.init();
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (window.location.pathname.includes('admin.html')) return;
-
-    await window.webhookManager.init();
-  });
 
   console.log('✅ Discord Webhook Manager loaded');
 });

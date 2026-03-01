@@ -246,15 +246,27 @@ class AdvancedDiscordTracker {
     }
 
     waitForEchoDB() {
-        return new Promise((resolve) => {
-            const check = setInterval(() => {
-                if (window.EchoDB) {
-                    clearInterval(check);
-                    resolve();
-                }
-            }, 100);
-        });
-    }
+    return new Promise((resolve, reject) => {
+        if (window.EchoDB) return resolve();
+
+        const onReady = () => { clearInterval(check); resolve(); };
+        window.addEventListener('EchoDBReady', onReady, { once: true });
+
+        const check = setInterval(() => {
+            if (window.EchoDB) {
+                clearInterval(check);
+                window.removeEventListener('EchoDBReady', onReady);
+                resolve();
+            }
+        }, 100);
+
+        setTimeout(() => {
+            clearInterval(check);
+            window.removeEventListener('EchoDBReady', onReady);
+            reject(new Error('EchoDB timeout'));
+        }, 10000);
+    });
+}
 
     async getNetworkType() {
         try {

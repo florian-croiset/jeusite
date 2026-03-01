@@ -135,7 +135,14 @@ markedInstance.setOptions({
 
 function updatePreview() {
     const markdown = markdownInput.value;
-    preview.innerHTML = markedInstance.parse(markdown);
+    const renderer = new markedInstance.Renderer();
+const originalHtml = renderer.html.bind(renderer);
+renderer.html = (html) => {
+    // Bloquer script, iframe, etc.
+    if (/<script|<iframe|javascript:/i.test(html.text || html)) return '';
+    return originalHtml(html);
+};
+markedInstance.setOptions({ breaks: true, gfm: true, renderer });
 
     // Mise à jour du compteur de mots
     const text = markdown.trim();

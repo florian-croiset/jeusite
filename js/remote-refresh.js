@@ -573,12 +573,14 @@ class RemoteRefreshManager {
             }
 
             // Insérer une commande dans la table
+            const { data: { user } } = await window.EchoDB.supabase.auth.getUser();
+
             const { data, error } = await window.EchoDB.supabase
                 .from('remote_commands')
                 .insert({
                     command: 'force_refresh',
                     message: message,
-                    triggered_by: 'admin',
+                    triggered_by: user?.email || 'unknown',
                     triggered_at: new Date().toISOString()
                 });
 
