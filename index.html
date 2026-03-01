@@ -1182,12 +1182,21 @@ document.addEventListener('DOMContentLoaded', function() {
             updateVersionInfo();
         }
 
-        // Et si tu veux les mises à jour en temps réel :
-        window.EchoDB.supabase
-            .channel('version-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'game_versions' }, () => {
-                updateVersionInfo();
-            })
-            .subscribe();
+        function setupVersionWatcher() {
+            if (!window.EchoDB) return;
+            window.EchoDB.supabase
+                .channel('version-changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'game_versions' }, () => {
+                    updateVersionInfo();
+                })
+                .subscribe();
+        }
+
+        // Attendre qu'EchoDB soit prêt
+        if (window.EchoDB) {
+            setupVersionWatcher();
+        } else {
+            window.addEventListener('EchoDBReady', setupVersionWatcher, { once: true });
+        }
     </script>
 </html>
