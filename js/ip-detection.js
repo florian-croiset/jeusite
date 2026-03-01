@@ -18,7 +18,7 @@ class IPDetectionService {
             // Service 2: ip-api.com (gratuit, détaillé)
             {
                 name: 'ip-api',
-                url: 'http://ip-api.com/json/',
+                url: 'https://ip-api.com/json/',
                 parse: (data) => ({
                     ip: data.query,
                     city: data.city,
@@ -142,7 +142,7 @@ class IPDetectionService {
         const enrichmentServices = [
             {
                 name: 'ip-api',
-                url: `http://ip-api.com/json/${this.ipData.ip}`,
+                url: `https://ip-api.com/json/${this.ipData.ip}`,
                 parse: (data) => ({
                     city: data.city,
                     region: data.regionName,

@@ -557,6 +557,7 @@ async function getSiteSetting(key, defaultValue = null) {
     }
 }
 
+
 // =============================================
 // GESTION DES FEEDBACKS (DESIGN & LOGIC MERGED)
 // =============================================
@@ -851,6 +852,7 @@ async function submitFeedback(formData) {
     showNotification('❌ Erreur lors de l\'envoi', 'error');
   }
 }
+
 
 // =============================================
 // EXPORT DES FONCTIONS

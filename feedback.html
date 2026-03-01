@@ -6,10 +6,301 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feedback - Echo</title>
 
+    <!-- ================================================================
+         🔒 SÉCURITÉ — HEADERS DE PROTECTION (ajoutés, rien modifié)
+         ================================================================ -->
+
+    <!-- Anti-clickjacking -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <!-- Anti-MIME sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- Referrer réduit -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <!-- Content Security Policy -->
+    <!-- Note : frame-ancestors n'est pas supporté via <meta>, à configurer côté serveur/Cloudflare -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'unsafe-inline';
+        style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';
+        connect-src 'self' https://*.supabase.co wss://*.supabase.co https://discord.com https://api.ipify.org https://ipwho.is https://ip-api.com https://www.cloudflare.com;
+        img-src 'self' data: https:;
+        font-src 'self' https://cdnjs.cloudflare.com;
+        form-action 'self';
+        base-uri 'self';
+    ">
+
     <link rel="stylesheet" href="css/feedback.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         media="print" onload="this.media='all'">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+    <!-- ================================================================
+         🔒 SÉCURITÉ — COUCHE DE PROTECTION (chargée EN PREMIER)
+         Wrapping sécurisé autour du code original, sans y toucher.
+         ================================================================ -->
+    <script>
+    // ================================================================
+    // SECURITY WRAPPER — v1.0
+    // Ce bloc s'exécute avant tout le reste.
+    // Il intercepte et sécurise les appels sensibles sans modifier
+    // une seule ligne de la logique métier originale.
+    // ================================================================
+
+    // ── 1. RATE LIMITING (localStorage) ──────────────────────────────
+    // Empêche un utilisateur de spammer le formulaire.
+    const _EchoRL = {
+        key: 'echo_fb_rl',
+        max: 3,
+        windowMs: 24 * 60 * 60 * 1000, // 24h
+
+        check() {
+            try {
+                const raw = localStorage.getItem(this.key);
+                const d = raw ? JSON.parse(raw) : { n: 0, t: Date.now() };
+                if (Date.now() - d.t > this.windowMs) {
+                    localStorage.setItem(this.key, JSON.stringify({ n: 0, t: Date.now() }));
+                    return { ok: true };
+                }
+                if (d.n >= this.max) {
+                    const minLeft = Math.ceil((this.windowMs - (Date.now() - d.t)) / 60000);
+                    return { ok: false, minLeft };
+                }
+                return { ok: true };
+            } catch { return { ok: true }; }
+        },
+
+        increment() {
+            try {
+                const raw = localStorage.getItem(this.key);
+                const d = raw ? JSON.parse(raw) : { n: 0, t: Date.now() };
+                d.n += 1;
+                localStorage.setItem(this.key, JSON.stringify(d));
+            } catch { }
+        }
+    };
+
+    // ── 2. SANITISATION ──────────────────────────────────────────────
+    // Nettoie chaque champ texte avant envoi.
+    const _EchoSanitize = {
+        text(s, max = 1000) {
+            if (typeof s !== 'string') return '';
+            return s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').slice(0, max).trim();
+        },
+        name(s) { return this.text(s, 50); },
+        email(s) {
+            if (typeof s !== 'string') return '';
+            s = s.trim().slice(0, 254);
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) ? s : '';
+        },
+        rating(v) {
+            const n = parseInt(v, 10);
+            return Number.isInteger(n) && n >= 1 && n <= 5 ? n : null;
+        }
+    };
+
+    // ── 3. DÉTECTION DE CONTENU MALVEILLANT ─────────────────────────
+    const _EchoThreat = {
+        patterns: [/<script/gi, /javascript:/gi, /on\w+=|on\w+\s*=/gi, /\beval\s*\(/gi, /<iframe/gi, /vbscript:/gi],
+        scan(obj) {
+            return Object.values(obj).some(v => typeof v === 'string' && this.patterns.some(p => p.test(v)));
+        }
+    };
+
+    // ── 4. ANTI-BOT : timing ─────────────────────────────────────────
+    // Le formulaire est créé dynamiquement : on enregistre l'heure
+    // dès que le DOM est prêt, et on vérifie à la soumission.
+    window._echoFormLoadTime = null;
+
+    // ── 5. INTERCEPTION DU FETCH (cœur du wrapper) ───────────────────
+    // On wrape window.fetch pour :
+    //   a) Valider + sanitiser les données avant envoi Discord
+    //   b) Appliquer le rate limit
+    //   c) Bloquer les contenus malveillants
+    // Le code original appelle fetch() normalement — il ne sait rien du wrapper.
+    const _originalFetch = window.fetch.bind(window);
+
+    window.fetch = async function(url, options = {}) {
+
+        // N'intercepte QUE les appels vers Discord
+        if (typeof url === 'string' && url.includes('discord.com/api/webhooks')) {
+
+            // ── a. Rate limit ──
+            const rl = _EchoRL.check();
+            if (!rl.ok) {
+                console.warn(`[Echo Security] Rate limit atteint. Réessayez dans ${rl.minLeft} min.`);
+                // On simule une réponse "ok" pour ne pas casser le flux UX
+                // (le message d'erreur rate-limit est affiché séparément)
+                _showRateLimitBanner(rl.minLeft);
+                // On retourne une fausse réponse ok pour que le code original affiche "Merci"
+                // sans réellement envoyer quoi que ce soit
+                return new Response(null, { status: 200 });
+            }
+
+            // ── b. Vérification timing anti-bot ──
+            if (window._echoFormLoadTime) {
+                const elapsed = Date.now() - window._echoFormLoadTime;
+                if (elapsed < 4000) {
+                    console.warn('[Echo Security] Soumission trop rapide, probable bot.');
+                    // Faux succès silencieux (ne pas révéler la détection au bot)
+                    return new Response(null, { status: 200 });
+                }
+            }
+
+            // ── c. Honeypot ──
+            const hp = document.getElementById('_echo_hp');
+            if (hp && hp.value !== '') {
+                console.warn('[Echo Security] Honeypot déclenché.');
+                return new Response(null, { status: 200 });
+            }
+
+            // ── d. Sanitisation du payload Discord ──
+            if (options.body) {
+                try {
+                    let payload = JSON.parse(options.body);
+
+                    // Parcourt les fields Discord embed et sanitise chaque value
+                    if (payload.embeds?.[0]?.fields) {
+                        payload.embeds[0].fields = payload.embeds[0].fields.map(field => ({
+                            ...field,
+                            value: _EchoSanitize.text(String(field.value || ''), 1024)
+                        }));
+                    }
+
+                    // Vérifie les menaces sur le payload reconstruit
+                    const flatValues = payload.embeds?.[0]?.fields?.map(f => f.value).join(' ') || '';
+                    if (_EchoThreat.patterns.some(p => p.test(flatValues))) {
+                        console.warn('[Echo Security] Contenu suspect détecté, envoi bloqué.');
+                        return new Response(null, { status: 200 });
+                    }
+
+                    options = { ...options, body: JSON.stringify(payload) };
+                } catch { /* si le JSON est invalide, on laisse passer et Discord rejettera */ }
+            }
+
+            // ── e. Envoi réel + incrément rate limit ──
+            const response = await _originalFetch(url, options);
+            if (response.ok) {
+                _EchoRL.increment();
+            }
+            return response;
+        }
+
+        // Tous les autres appels fetch passent sans interception
+        return _originalFetch(url, options);
+    };
+
+    // ── 6. INTERCEPTION SUPABASE INSERT ─────────────────────────────
+    // On sanitise également les données avant insertion en DB.
+    // On patche EchoDB.supabase.from() une fois qu'il est disponible.
+    function _patchSupabaseInsert() {
+        if (!window.EchoDB?.supabase) return false;
+
+        const _origFrom = window.EchoDB.supabase.from.bind(window.EchoDB.supabase);
+        window.EchoDB.supabase.from = function(table) {
+            const builder = _origFrom(table);
+
+            if (table === 'form_responses') {
+                const _origInsert = builder.insert.bind(builder);
+                builder.insert = function(rows) {
+                    // Sanitise chaque réponse
+                    const sanitized = (Array.isArray(rows) ? rows : [rows]).map(row => {
+                        if (row.responses && typeof row.responses === 'object') {
+                            const r = row.responses;
+                            row = {
+                                ...row,
+                                responses: {
+                                    name:        _EchoSanitize.name(r.name),
+                                    email:       _EchoSanitize.email(r.email),
+                                    rating:      _EchoSanitize.rating(r.rating),
+                                    positive:    _EchoSanitize.text(r.positive),
+                                    negative:    _EchoSanitize.text(r.negative),
+                                    suggestions: _EchoSanitize.text(r.suggestions)
+                                }
+                            };
+                        }
+                        return row;
+                    });
+                    return _origInsert(sanitized);
+                };
+            }
+
+            return builder;
+        };
+        return true;
+    }
+
+    // ── 7. BANNER RATE LIMIT ─────────────────────────────────────────
+    function _showRateLimitBanner(minLeft) {
+        // Évite l'affichage en double
+        if (document.getElementById('_echo_rl_banner')) return;
+        const container = document.getElementById('feedback-container');
+        if (!container) return;
+        const banner = document.createElement('div');
+        banner.id = '_echo_rl_banner';
+        banner.style.cssText = 'background:rgba(255,0,85,.08);border:1px solid #ff0055;border-radius:10px;padding:16px;margin-bottom:16px;color:#ff0055;text-align:center;font-size:.9rem;';
+        banner.innerHTML = `<i class="fa-solid fa-clock"></i> Vous avez déjà soumis votre avis récemment. Réessayez dans <strong>${minLeft} minute${minLeft > 1 ? 's' : ''}</strong>.`;
+        container.prepend(banner);
+    }
+
+    // ── 8. HONEYPOT CSS (invisible pour les humains) ─────────────────
+    const _hpStyle = document.createElement('style');
+    _hpStyle.textContent = `
+        #_echo_hp_wrap {
+            opacity: 0; position: absolute; top: 0; left: 0;
+            height: 0; width: 0; z-index: -9999; pointer-events: none;
+        }
+    `;
+    document.head.appendChild(_hpStyle);
+
+    // ── 9. INJECTION HONEYPOT + TIMESTAMP dans le formulaire ─────────
+    // On observe le DOM pour détecter quand le formulaire est injecté
+    // (car database.js crée le formulaire dynamiquement via innerHTML).
+    const _formObserver = new MutationObserver(() => {
+        const form = document.getElementById('feedbackForm');
+        if (form && !form.dataset.echoSecured) {
+            form.dataset.echoSecured = '1';
+
+            // Honeypot
+            const hpWrap = document.createElement('div');
+            hpWrap.id = '_echo_hp_wrap';
+            hpWrap.setAttribute('aria-hidden', 'true');
+            hpWrap.innerHTML = '<label for="_echo_hp">Ne pas remplir</label><input type="text" id="_echo_hp" name="_echo_hp" tabindex="-1" autocomplete="off">';
+            form.prepend(hpWrap);
+
+            // ✅ FIX TIMING : on démarre le chrono uniquement au premier vrai
+            // interact humain (clic, frappe, touch) — pas au chargement du script.
+            // Sinon les appels internes déclenchent faussement "trop rapide".
+            window._echoFormLoadTime = null;
+            const _startTimer = () => {
+                if (!window._echoFormLoadTime) {
+                    window._echoFormLoadTime = Date.now();
+                }
+            };
+            form.addEventListener('click',    _startTimer, { once: true });
+            form.addEventListener('keydown',  _startTimer, { once: true });
+            form.addEventListener('touchstart', _startTimer, { once: true });
+            form.addEventListener('change',   _startTimer, { once: true });
+
+            // Applique le patch Supabase maintenant que EchoDB est dispo
+            _patchSupabaseInsert();
+
+            // Vérifie rate limit au chargement et bloque l'affichage si déjà atteint
+            const rl = _EchoRL.check();
+            if (!rl.ok) {
+                form.style.opacity = '0.4';
+                form.style.pointerEvents = 'none';
+                _showRateLimitBanner(rl.minLeft);
+            }
+
+            _formObserver.disconnect();
+        }
+    });
+    _formObserver.observe(document.body || document.documentElement, { childList: true, subtree: true });
+    </script>
+    <!-- ================================================================
+         FIN SECURITY WRAPPER
+         ================================================================ -->
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module" src="js/config/supabase.js"></script>
     <script type="module" src="js/database.js"></script>
