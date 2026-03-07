@@ -9,59 +9,11 @@ class IPDetectionService {
         this.ipData = null;
         this.enrichmentPromise = null;
         this.services = [
-            // Service 1: ipinfo.io (HTTPS + CORS OK, géo complète)
             {
-                name: 'ipinfo',
-                url: 'https://ipinfo.io/json',
-                parse: (data) => ({
-                    ip: data.ip,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country,
-                    country_emoji: this.getCountryEmoji(data.country),
-                    timezone: data.timezone,
-                    isp: data.org
-                })
-            },
-            // Service 2: freeipapi.com (HTTPS + CORS OK)
-            {
-                name: 'freeipapi',
-                url: 'https://freeipapi.com/api/json',
-                parse: (data) => ({
-                    ip: data.ipAddress,
-                    city: data.cityName,
-                    region: data.regionName,
-                    country: data.countryName,
-                    country_emoji: data.countryFlag || this.getCountryEmoji(data.countryCode),
-                    timezone: data.timeZone,
-                    isp: null
-                })
-            },
-            // Service 3: Cloudflare Trace (très rapide, IP + pays)
-            {
-                name: 'cloudflare',
-                url: 'https://www.cloudflare.com/cdn-cgi/trace',
-                parse: (text) => {
-                    const lines = text.split('\n');
-                    const data = {};
-                    lines.forEach(line => {
-                        const [key, value] = line.split('=');
-                        if (key && value) data[key] = value;
-                    });
-                    return {
-                        ip: data.ip,
-                        country: data.loc,
-                        country_emoji: this.getCountryEmoji(data.loc)
-                    };
-                },
-                isText: true
-            },
-            // Service 4: ipify (fallback minimal, IP uniquement)
-            {
-                name: 'ipify',
-                url: 'https://api.ipify.org?format=json',
-                parse: (data) => ({ ip: data.ip })
-            }
+    name: 'ipify-v4',
+    url: 'https://api4.ipify.org?format=json',
+    parse: (data) => ({ ip: data.ip })
+},
         ];
     }
 
@@ -93,11 +45,12 @@ class IPDetectionService {
                 }
 
                 if (data.ip) {
+                    data.ip = this.normalizeIP(data.ip);
                     this.ipData = data;
                     //console.log(`✅ IP détectée avec ${service.name}:`, data.ip);
                     
                     // ✅ CORRECTION: Enrichir IMMÉDIATEMENT si nécessaire
-                    if (!data.city || service.name === 'ipify' || service.name === 'cloudflare') {
+                    if (!data.city || service.name === 'ipify-v4') {
                         //console.log('🔄 Enrichissement immédiat en cours...');
                         await this.enrichData();
                     } else {
@@ -125,6 +78,15 @@ class IPDetectionService {
         return this.ipData;
     }
 
+    normalizeIP(ip) {
+        if (!ip || !ip.includes(':')) return ip; // IPv4, on touche pas
+        try {
+            // Expand puis recompress l'IPv6
+            const sections = ip.split(':');
+            return sections.map(s => parseInt(s, 16).toString(16)).join(':');
+        } catch(e) { return ip; }
+    }
+
     async enrichData() {
         // Si on a seulement l'IP (via ipify), essayer d'obtenir plus d'infos
         if (!this.ipData) {
@@ -140,27 +102,15 @@ class IPDetectionService {
         // Essayer plusieurs services pour l'enrichissement
         const enrichmentServices = [
             {
-                name: 'ipinfo',
-                url: `https://ipinfo.io/${this.ipData.ip}/json`,
+                name: 'ipapi',
+                url: `https://ipapi.co/${this.ipData.ip}/json/`,
                 parse: (data) => ({
                     city: data.city,
                     region: data.region,
-                    country: data.country,
-                    country_emoji: this.getCountryEmoji(data.country),
+                    country: data.country_name,
+                    country_emoji: this.getCountryEmoji(data.country_code),
                     timezone: data.timezone,
                     isp: data.org
-                })
-            },
-            {
-                name: 'freeipapi',
-                url: `https://freeipapi.com/api/json/${this.ipData.ip}`,
-                parse: (data) => ({
-                    city: data.cityName,
-                    region: data.regionName,
-                    country: data.countryName,
-                    country_emoji: data.countryFlag || this.getCountryEmoji(data.countryCode),
-                    timezone: data.timeZone,
-                    isp: null
                 })
             }
         ];

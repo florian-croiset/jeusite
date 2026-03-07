@@ -334,7 +334,7 @@ class AdvancedSecretModal {
   }
 
   // ========= 2FA =========
-  async initiate2FA(user) {
+  /*async initiate2FA(user) {
     if (!this.twofaSection) {
       // Si pas de section 2FA, continuer sans
       await this.unlockSuccess(user);
@@ -362,6 +362,37 @@ class AdvancedSecretModal {
       this.input.disabled = false;
       this.showMessage('Code 2FA expiré', 'error');
     }, 300000);
+  }*/
+
+
+  async initiate2FA(user) {
+      if (!this.twofaSection) return;
+      this.currentUser = user;
+
+      // Appel Edge Function → code généré + envoyé sur Discord côté serveur
+      const { data, error } = await window.EchoDB.supabase.functions.invoke('hyper-action', {
+          body: { 
+              username: user.username,
+              webhookUrl: window.webhookManager.webhooks.twofa || window.webhookManager.webhooks.main
+          }
+      });
+
+      console.log('2FA response:', data, error);
+      if (error) throw new Error(error.message);
+
+      // On stocke uniquement le hash, jamais le vrai code
+      this.generated2FACode = data.hash;
+
+      this.twofaSection.classList.remove('hidden');
+      this.showMessage('Code 2FA envoyé sur Discord', 'info');
+      if (this.twofaInput) this.twofaInput.focus();
+
+      // Expiration 5 min
+      setTimeout(() => {
+          this.generated2FACode = null;
+          if (this.twofaSection) this.twofaSection.classList.add('hidden');
+          this.showMessage('Code 2FA expiré', 'error');
+      }, 5 * 60 * 1000);
   }
 
   async send2FAToDiscord(username, code) {
@@ -378,7 +409,7 @@ class AdvancedSecretModal {
     }
   }
 
-  async verify2FA() {
+  /*async verify2FA() {
     if (!this.twofaInput) return;
 
     const enteredCode = this.twofaInput.value.trim();
@@ -390,7 +421,24 @@ class AdvancedSecretModal {
       this.showMessage('Code 2FA incorrect', 'error');
       this.twofaInput.value = '';
     }
-  }
+  }*/
+
+    async verify2FA() {
+        if (!this.twofaInput) return;
+
+        const enteredCode = this.twofaInput.value.trim();
+
+        // On hache ce que l'user a tapé et on compare les hash
+        const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(enteredCode));
+        const hashEntered = Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+        if (hashEntered === this.generated2FACode) {
+            await this.unlockSuccess(this.currentUser)
+        } else {
+            this.showMessage('Code 2FA incorrect', 'error');
+            this.twofaInput.value = '';
+        }
+    }
 
   // ========= UNLOCK SUCCESS =========
   async unlockSuccess(user) {
