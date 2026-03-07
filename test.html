@@ -5,11 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔬 Echo Test -Database & Files</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="js/ip-detection.js"></script>
-<script type="module" src="js/discord-webhook.js"></script>
-<script src="js/discord-tracker.js"></script>    
-<script type="module" src="js/remote-refresh.js"></script>
+    <!-- REMPLACE ces lignes dans le <head> : -->
+<!-- <script src="js/ip-detection.js"></script> -->
+<!-- <script type="module" src="js/discord-webhook.js"></script> -->
+<!-- <script src="js/discord-tracker.js"></script> -->
+<!-- <script type="module" src="js/remote-refresh.js"></script> -->
+<!-- <script>...(ancien script protection)...</script> -->
+
+<!-- PAR : -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
+
+    const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.style.visibility = 'hidden';
+    });
+
+    (async () => {
+        await new Promise(r => {
+            if (document.readyState !== 'loading') r();
+            else document.addEventListener('DOMContentLoaded', r, { once: true });
+        });
+
+        document.body.style.visibility = 'hidden';
+
+        try {
+            const { data: { user } } = await _supabase.auth.getUser();
+            if (!user) throw new Error('non connecté');
+
+            const { data: profile } = await _supabase
+                .from('profiles').select('role').eq('id', user.id).single();
+            if (!profile || profile.role !== 'admin') throw new Error('rôle insuffisant');
+
+            // ✅ Accès autorisé
+            document.body.style.visibility = 'visible';
+
+        } catch {
+            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#0a0a0f;color:#ff0055;font-size:1.5rem;">🔒 Accès refusé</div>';
+        }
+    })();
+</script>
 <style>
     
         /* --- VARIABLES & RESET --- */
@@ -382,6 +420,41 @@
             overflow-y: auto;
         }
 
+        /* REMPLACE l'ancienne règle #github-files-tests */
+#github-files-tests {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--finn) transparent;
+}
+
+/* Idem pour les tables principales qui peuvent aussi s'allonger */
+#main-tables-tests {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--finn) transparent;
+}
+
+#stats-tables-tests {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--finn) transparent;
+}
+
     </style>
 </head>
 
@@ -460,7 +533,7 @@
                 </div>
                 <!-- Fichiers GitHub -->
                 <div class="test-section">
-                    <h2><i class="fab fa-github"></i> Fichiers GitHub</h2>
+                    <h2><i class="fab fa-github"></i> Fichiers GitHub <span style="font-size:11px;color:var(--text-dim);font-weight:normal;margin-left:8px;">↕ scroll</span></h2>
                     <div id="github-files-tests"></div>
                 </div>
 
@@ -530,18 +603,124 @@
 
         // Tables à tester
         const TABLES = {
-            main: ['countdown', 'download_packs', 'downloads', 'form_responses', 'forms',
-                'game_versions', 'media', 'news', 'notifications', 'profiles',
-                'role_changes', 'site_content'],
-            stats: ['download_settings', 'download_stats', 'downloads_by_version',
-                'recent_activity', 'stats_overview', 'user_permissions', 'version_stats']
+            main: [
+                'admin_access_codes', 'birthdays', 'bot_status', 'countdown', 'deadlines',
+                'download_packs', 'downloads', 'form_responses', 'forms', 'game_versions',
+                'links', 'lore', 'media', 'meetings', 'news', 'notifications', 'profiles',
+                'remote_commands', 'roadmap_items', 'roadmap_votes', 'role_changes',
+                'site_content', 'site_settings', 'suggestions', 'tasks', 'time_tracking',
+                'tracked_users', 'tracking_events', 'user_sessions', 'webhook_settings'
+            ],
+            stats: [
+                'download_settings', 'download_stats', 'downloads_by_version',
+                'recent_activity', 'stats_overview', 'tracked_users_stats',
+                'user_permissions', 'version_stats'
+            ]
         };
 
         // Fichiers GitHub à tester
         const GITHUB_FILES = [
+            // ===== ASSETS =====
             'https://florian-croiset.github.io/jeusite/assets/anim.mp4',
+            'https://florian-croiset.github.io/jeusite/assets/arriere.png',
             'https://florian-croiset.github.io/jeusite/assets/favicon.ico',
+            'https://florian-croiset.github.io/jeusite/assets/jpgLogoEGA.jpg',
+            'https://florian-croiset.github.io/jeusite/assets/mp3compressmusique.mp3',
+            'https://florian-croiset.github.io/jeusite/assets/mp3musique.mp3',
+            'https://florian-croiset.github.io/jeusite/assets/mp4compressFlamme.mp4',
+            'https://florian-croiset.github.io/jeusite/assets/mp4Flamme.mp4',
+            'https://florian-croiset.github.io/jeusite/assets/musique.mp3',
+            'https://florian-croiset.github.io/jeusite/assets/pngArriere.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngarrieretrans.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngcristal.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngDecorPixel.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngLogoE.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngLogoEA.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngLogoEC.png',
+            'https://florian-croiset.github.io/jeusite/assets/pnglogoEcercle.png',
+            'https://florian-croiset.github.io/jeusite/assets/pnglogoEcercleblanc.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngLogoEP.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngLogoG.png',
+            'https://florian-croiset.github.io/jeusite/assets/pnglogononpixel.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngQRCode.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngSpriteperso.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngteamcercle.png',
+            'https://florian-croiset.github.io/jeusite/assets/pngTorche.png',
+            'https://florian-croiset.github.io/jeusite/assets/svgQRCode.svg',
+
+            // ===== CSS =====
+            'https://florian-croiset.github.io/jeusite/css/admin.css',
+            'https://florian-croiset.github.io/jeusite/css/auth.css',
+            'https://florian-croiset.github.io/jeusite/css/components.css',
+            'https://florian-croiset.github.io/jeusite/css/couleurs.css',
+            'https://florian-croiset.github.io/jeusite/css/cursor.css',
+            'https://florian-croiset.github.io/jeusite/css/database-styles.css',
+            'https://florian-croiset.github.io/jeusite/css/design.css',
+            'https://florian-croiset.github.io/jeusite/css/doc.css',
+            'https://florian-croiset.github.io/jeusite/css/effects.css',
+            'https://florian-croiset.github.io/jeusite/css/feedback.css',
+            'https://florian-croiset.github.io/jeusite/css/gameplay.css',
+            'https://florian-croiset.github.io/jeusite/css/hero.css',
+            'https://florian-croiset.github.io/jeusite/css/install.css',
+            'https://florian-croiset.github.io/jeusite/css/layout.css',
+            'https://florian-croiset.github.io/jeusite/css/lore.css',
+            'https://florian-croiset.github.io/jeusite/css/main.css',
+            'https://florian-croiset.github.io/jeusite/css/modals.css',
+            'https://florian-croiset.github.io/jeusite/css/responsive.css',
+            'https://florian-croiset.github.io/jeusite/css/screen.css',
+            'https://florian-croiset.github.io/jeusite/css/settings.css',
             'https://florian-croiset.github.io/jeusite/css/style.css',
+
+            // ===== JS racine =====
+            'https://florian-croiset.github.io/jeusite/js/auth.js',
+            'https://florian-croiset.github.io/jeusite/js/database.js',
+            'https://florian-croiset.github.io/jeusite/js/database-complete.js',
+            'https://florian-croiset.github.io/jeusite/js/design.js',
+            'https://florian-croiset.github.io/jeusite/js/discord-tracker.js',
+            'https://florian-croiset.github.io/jeusite/js/discord-webhook.js',
+            'https://florian-croiset.github.io/jeusite/js/doc.js',
+            'https://florian-croiset.github.io/jeusite/js/ip-detection.js',
+            'https://florian-croiset.github.io/jeusite/js/liens.js',
+            'https://florian-croiset.github.io/jeusite/js/main.js',
+            'https://florian-croiset.github.io/jeusite/js/modal-advanced.js',
+            'https://florian-croiset.github.io/jeusite/js/notifications.js',
+            'https://florian-croiset.github.io/jeusite/js/remote-refresh.js',
+            'https://florian-croiset.github.io/jeusite/js/zip.js',
+
+            // ===== JS/config =====
+            'https://florian-croiset.github.io/jeusite/js/config/supabase.js',
+
+            // ===== JS/ui =====
+            'https://florian-croiset.github.io/jeusite/js/ui/buttons.js',
+            'https://florian-croiset.github.io/jeusite/js/ui/cursor.js',
+            'https://florian-croiset.github.io/jeusite/js/ui/modal.js',
+            'https://florian-croiset.github.io/jeusite/js/ui/music.js',
+            'https://florian-croiset.github.io/jeusite/js/ui/navbar.js',
+            'https://florian-croiset.github.io/jeusite/js/ui/scroll.js',
+
+            // ===== JS/utils =====
+            'https://florian-croiset.github.io/jeusite/js/utils/clipboard.js',
+            'https://florian-croiset.github.io/jeusite/js/utils/countdown.js',
+            'https://florian-croiset.github.io/jeusite/js/utils/screen.js',
+            'https://florian-croiset.github.io/jeusite/js/utils/settings.js',
+            'https://florian-croiset.github.io/jeusite/js/utils/share.js',
+
+            // ===== HTML =====
+            'https://florian-croiset.github.io/jeusite/index.html',
+            'https://florian-croiset.github.io/jeusite/404.html',
+            'https://florian-croiset.github.io/jeusite/admin.html',
+            'https://florian-croiset.github.io/jeusite/design.html',
+            'https://florian-croiset.github.io/jeusite/diapo.html',
+            'https://florian-croiset.github.io/jeusite/doc.html',
+            'https://florian-croiset.github.io/jeusite/feedback.html',
+            'https://florian-croiset.github.io/jeusite/int.html',
+            'https://florian-croiset.github.io/jeusite/liens.html',
+            'https://florian-croiset.github.io/jeusite/links.html',
+            'https://florian-croiset.github.io/jeusite/roadmap.html',
+            'https://florian-croiset.github.io/jeusite/versions.html',
+
+            // ===== Exécutable =====
             'https://florian-croiset.github.io/jeusite/executable/Echo_TeamNightberry_v1.exe'
         ];
 
@@ -882,6 +1061,15 @@
             }, 2000);
         });
     </script>
+    <script>
+    // Charger le SDK une seule fois
+    if (!window._supabaseLoaded) {
+        window._supabaseLoaded = true;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="js/config/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
 </body>
 
 </html>

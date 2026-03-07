@@ -179,6 +179,14 @@
     flex-direction: column;
     cursor: pointer;
     gap: 6px;
+    position: fixed;
+    top: 0;
+    right: 1rem;
+    left: 80%;
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
 }
 
 .burger span {
@@ -197,10 +205,8 @@
 
     .burger {
         display: flex;
-        position: absolute;
-        top: 26px;
-        left: 80%;
-        z-index: 10;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Menu déroulant */
@@ -271,5 +277,38 @@
 
     .btn-primary {
         top: -10px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Fix glow orbs — clip au lieu de display:none */
+    [class*="glow-orb"] {
+        display: none !important;
+    }
+}
+
+/* Fix global overflow — à mettre HORS media query */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        position: fixed;
+        top: 60px;
+        transition: top 0.3s ease, transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+
+    @media (max-width: 768px) {
+    nav.scrolled .nav-links {
+        top: 61px;
+    }
+}
+}
+
+@media (max-width: 768px) {
+    .nav-links.active {
+        box-shadow: 0 100vh 0 100vh rgba(0, 0, 0, 0.8);
     }
 }

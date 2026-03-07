@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo — Mentions Légales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <style>
+        /* ===== PAGE MENTIONS LÉGALES ===== */
+
+        .mentions-hero {
+            padding: 10rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .mentions-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 208, 198, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .mentions-hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            background: linear-gradient(135deg, var(--debut) 0%, var(--fin) 50%, var(--finn) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .mentions-hero p {
+            color: #808080;
+            font-size: 1rem;
+        }
+
+        .mentions-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 2rem 6rem;
+        }
+
+        /* ===== CARD OPT-OUT ===== */
+        .optout-card {
+            background: rgba(0, 208, 198, 0.05);
+            border: 2px solid var(--debut);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .optout-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--debut), var(--finn));
+        }
+
+        .optout-card h2 {
+            font-size: 1.4rem !important;
+            text-align: left !important;
+            margin-bottom: 1rem !important;
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .optout-card h2::after { display: none !important; }
+
+        .optout-card > p {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .tracking-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+        }
+
+        .tracking-status.active {
+            background: rgba(255, 0, 85, 0.08);
+            border: 1px solid rgba(255, 0, 85, 0.3);
+            color: #ff6b87;
+        }
+
+        .tracking-status.disabled {
+            background: rgba(0, 208, 198, 0.08);
+            border: 1px solid rgba(0, 208, 198, 0.3);
+            color: var(--debut);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .active .status-dot {
+            background: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .disabled .status-dot {
+            background: var(--debut);
+            box-shadow: 0 0 10px var(--debut);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .btn-optout {
+            padding: 0.9rem 2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .btn-optout.disable-tracking {
+            background: linear-gradient(135deg, #ff0055, #c0001a);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 0, 85, 0.3);
+        }
+
+        .btn-optout.disable-tracking:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 0, 85, 0.5);
+        }
+
+        .btn-optout.enable-tracking {
+            background: transparent;
+            color: var(--debut);
+            border: 2px solid var(--debut);
+        }
+
+        .btn-optout.enable-tracking:hover {
+            background: rgba(0, 208, 198, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ===== SECTIONS ===== */
+        .mentions-section {
+            margin-bottom: 3.5rem;
+        }
+
+        .mentions-section h2 {
+            font-size: 1.6rem;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .mentions-section p {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .mentions-section strong { color: #ccc; }
+
+        /* ===== TABLE ===== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            background: rgba(0, 208, 198, 0.08);
+            color: var(--debut);
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 208, 198, 0.2);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table td {
+            padding: 0.8rem 1rem;
+            color: #888;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tag.oui    { background: rgba(255,0,85,0.12);    color: #ff6b87; border: 1px solid rgba(255,0,85,0.25); }
+        .tag.non    { background: rgba(0,208,198,0.1);    color: var(--debut); border: 1px solid rgba(0,208,198,0.2); }
+        .tag.partiel{ background: rgba(135,53,185,0.12);  color: #b47fdd; border: 1px solid rgba(135,53,185,0.25); }
+
+        /* ===== DROITS ===== */
+        .droits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .droit-item {
+            background: rgba(24, 27, 43, 0.6);
+            border: 1px solid rgba(0, 208, 198, 0.15);
+            border-radius: 10px;
+            padding: 1.2rem;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .droit-item:hover {
+            border-color: rgba(0, 208, 198, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .droit-item i {
+            color: var(--finn);
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .droit-item strong {
+            color: var(--debut);
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .droit-item p {
+            color: #666;
+            font-size: 0.82rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* ===== CONTACT ===== */
+        .contact-box {
+            background: rgba(135, 53, 185, 0.06);
+            border: 1px solid rgba(135, 53, 185, 0.3);
+            border-radius: 12px;
+            padding: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .contact-box i { font-size: 2rem; color: var(--finn); flex-shrink: 0; }
+
+        .contact-box p { color: #888; margin: 0; font-size: 0.9rem; line-height: 1.7; }
+
+        .contact-box a { color: var(--debut); text-decoration: none; transition: color 0.2s; }
+        .contact-box a:hover { color: var(--finn); }
+
+        code {
+            background: rgba(0, 208, 198, 0.08);
+            border: 1px solid rgba(0, 208, 198, 0.2);
+            color: var(--debut);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .section-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 208, 198, 0.2), transparent);
+            margin: 2.5rem 0;
+        }
+
+        .last-update {
+            text-align: right;
+            color: #555;
+            font-size: 0.8rem;
+            margin-top: 3rem;
+        }
+
+        /* ===== FIX : layout.css met section { opacity:0 } par défaut
+           Les sections ne deviennent visibles qu'avec .visible via scroll.js
+           Comme scroll.js n'est pas chargé ici, on force la visibilité ===== */
+        section,
+        section:not(.hero),
+        .mentions-section {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .mentions-hero { padding: 8rem 1.5rem 3rem; }
+            .mentions-container { padding: 1.5rem 1.5rem 4rem; }
+            .optout-card { padding: 1.5rem; }
+            .contact-box { flex-direction: column; text-align: center; }
+            .data-table { font-size: 0.8rem; }
+            .data-table th, .data-table td { padding: 0.6rem 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div><div class="custom-cursor" id="customCursor"></div>
+    <!-- NAVIGATION (identique au reste du site) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo"><a href="index.html" style="text-decoration:none;">Echo</a></div>
+            </div>
+            <div class="burger" id="burger">
+                <span></span><span></span><span></span>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="index.html#team">Team Nightberry</a></li>
+                <li><a href="index.html#install">Installer le jeu</a></li>
+                <li><a href="index.html#gameplay">Gameplay</a></li>
+                <li><a href="index.html#lore">Lore</a></li>
+                <li><a href="feedback.html" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Feedback</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="mentions-hero">
+        <h1><i class="fa-solid fa-shield-halved"></i> Mentions Légales</h1>
+        <p>Politique de confidentialité & gestion du suivi — Team Nightberry</p>
+    </div>
+
+    <!-- CONTENU -->
+    <div class="mentions-container">
+
+        <!-- OPT-OUT -->
+        <div class="optout-card">
+            <h2><i class="fa-solid fa-eye-slash"></i> Votre choix de confidentialité</h2>
+            <p>
+                Ce site collecte des données de navigation à des fins de statistiques internes
+                (voir détail ci-dessous). Vous pouvez désactiver ce suivi à tout moment.
+                Votre choix est mémorisé dans votre navigateur pendant 1 an.
+            </p>
+            <div class="tracking-status active" id="tracking-status">
+                <div class="status-dot"></div>
+                <span id="status-text">Suivi actif sur ce navigateur</span>
+            </div>
+            <button class="btn-optout disable-tracking" id="optout-btn" onclick="toggleTracking()">
+                <i class="fa-solid fa-eye-slash" id="optout-icon"></i>
+                <span id="optout-label">Désactiver le suivi</span>
+            </button>
+        </div>
+
+        <!-- ÉDITEUR -->
+        <section class="mentions-section">
+            <h2><i class="fa-solid fa-building" style="margin-right:0.5rem;color:var(--finn)"></i> Éditeur du site</h2>
+            <p>Ce site est édité par <strong>Team Nightberry</strong>, collectif d'étudiants dans le cadre d'un projet pédagogique.</p>
+            <p><strong>Membres :</strong> Amaury Giraud-Laforet, Gaspard Sapin, Florian Croiset, Éric Sahakian, Jules Cohen.</p>
+            <p><strong>Hébergement :</strong> GitHub Pages — GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- DONNÉES -->
+        <section class="mentions-section">
+            <h2><i class="fa-solid fa-database" style="margin-right:0.5rem;color:var(--finn)"></i> Données collectées</h2>
+            <p>Lors de votre visite, les données suivantes peuvent être collectées automatiquement et transmises à notre monitoring interne via Discord :</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Donnée</th>
+                        <th>Finalité</th>
+                        <th>Durée</th>
+                        <th>Identifiant ?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Adresse IP</td><td>Statistiques de fréquentation</td><td>Session</td><td><span class="tag oui">Oui</span></td></tr>
+                    <tr><td>Ville / Pays</td><td>Géolocalisation approximative</td><td>Session</td><td><span class="tag oui">Oui</span></td></tr>
+                    <tr><td>Navigateur / OS</td><td>Compatibilité technique</td><td>Session</td><td><span class="tag non">Non</span></td></tr>
+                    <tr><td>Pages visitées</td><td>Analyse de navigation</td><td>Session</td><td><span class="tag non">Non</span></td></tr>
+                    <tr><td>Durée de visite</td><td>Statistiques d'engagement</td><td>Session</td><td><span class="tag non">Non</span></td></tr>
+                    <tr><td>FAI (fournisseur internet)</td><td>Statistiques réseau</td><td>Session</td><td><span class="tag partiel">Partiel</span></td></tr>
+                    <tr><td>Clics & scroll</td><td>Analyse UX interne</td><td>Session</td><td><span class="tag non">Non</span></td></tr>
+                </tbody>
+            </table>
+
+            <p>Ces données ne sont <strong>jamais vendues</strong> à des tiers. Elles transitent via <strong>Discord Webhooks</strong> et sont stockées dans <strong>Supabase</strong> (hébergé en Europe).</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- COOKIES -->
+        <section class="mentions-section">
+            <h2><i class="fa-solid fa-cookie-bite" style="margin-right:0.5rem;color:var(--finn)"></i> Cookies</h2>
+            <p>Ce site utilise un cookie technique nommé <code>echo_tracking_opt</code> pour mémoriser votre choix de consentement. Il ne contient aucune donnée personnelle et expire après <strong>1 an</strong>.</p>
+            <p>Aucun cookie publicitaire ou de traçage tiers n'est utilisé sur ce site.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- DROITS -->
+        <section class="mentions-section">
+            <h2><i class="fa-solid fa-scale-balanced" style="margin-right:0.5rem;color:var(--finn)"></i> Vos droits (RGPD)</h2>
+            <p>Conformément au Règlement Général sur la Protection des Données, vous disposez des droits suivants :</p>
+            <div class="droits-grid">
+                <div class="droit-item">
+                    <i class="fa-solid fa-eye"></i>
+                    <strong>Accès</strong>
+                    <p>Savoir quelles données nous détenons sur vous.</p>
+                </div>
+                <div class="droit-item">
+                    <i class="fa-solid fa-pen"></i>
+                    <strong>Rectification</strong>
+                    <p>Corriger des données inexactes vous concernant.</p>
+                </div>
+                <div class="droit-item">
+                    <i class="fa-solid fa-trash"></i>
+                    <strong>Effacement</strong>
+                    <p>Demander la suppression de vos données.</p>
+                </div>
+                <div class="droit-item">
+                    <i class="fa-solid fa-hand"></i>
+                    <strong>Opposition</strong>
+                    <p>Vous opposer au traitement via le bouton ci-dessus.</p>
+                </div>
+                <div class="droit-item">
+                    <i class="fa-solid fa-file-export"></i>
+                    <strong>Portabilité</strong>
+                    <p>Recevoir vos données dans un format structuré.</p>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- CONTACT -->
+        <section class="mentions-section">
+            <h2><i class="fa-solid fa-envelope" style="margin-right:0.5rem;color:var(--finn)"></i> Contact</h2>
+            <div class="contact-box">
+                <i class="fa-brands fa-discord"></i>
+                <p>
+                    <!--Pour toute demande relative à vos données ou pour exercer vos droits, contactez-nous via notre serveur Discord ou à l'adresse :
+                    <a href="mailto:contact&#64;teamnightberry.fr">contact&#64;teamnightberry.fr</a>-->
+                    Pour toute demande relative à vos données ou pour exercer vos droits,  contactez-nous via
+                    <a href="feedback.html">notre formulaire de contact</a>.
+                </p>
+            </div>
+        </section>
+
+        <p class="last-update">Dernière mise à jour : Mars 2026</p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            &copy; <span id="current-year">2025</span> Echo. Tous droits réservés •
+            <span class="version-text">Mentions Légales</span>
+        </p>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        const COOKIE = 'echo_tracking_opt';
+
+        function getCookie(name) {
+            return document.cookie.split('; ').find(r => r.startsWith(name + '='))?.split('=')[1];
+        }
+
+        function setCookie(name, value, days) {
+            const expires = new Date(Date.now() + days * 864e5).toUTCString();
+            document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+        }
+
+        function updateUI(isOptOut) {
+            const status = document.getElementById('tracking-status');
+            const text   = document.getElementById('status-text');
+            const btn    = document.getElementById('optout-btn');
+            const icon   = document.getElementById('optout-icon');
+            const label  = document.getElementById('optout-label');
+
+            if (isOptOut) {
+                status.className = 'tracking-status disabled';
+                text.textContent = 'Suivi désactivé sur ce navigateur';
+                btn.className = 'btn-optout enable-tracking';
+                icon.className = 'fa-solid fa-eye';
+                label.textContent = 'Réactiver le suivi';
+            } else {
+                status.className = 'tracking-status active';
+                text.textContent = 'Suivi actif sur ce navigateur';
+                btn.className = 'btn-optout disable-tracking';
+                icon.className = 'fa-solid fa-eye-slash';
+                label.textContent = 'Désactiver le suivi';
+            }
+        }
+
+        function toggleTracking() {
+            const isOptOut = getCookie(COOKIE) === 'opt-out';
+            const newValue = isOptOut ? 'opt-in' : 'opt-out';
+            setCookie(COOKIE, newValue, 365);
+            updateUI(!isOptOut);
+
+            // Récupère l'IP à la volée puis envoie la notif
+            fetch('https://ipinfo.io/json')
+                .then(r => r.json())
+                .then(ipData => {
+                    if (window.advancedTracker) {
+                        window.advancedTracker.sendToDiscord({
+                            embeds: [{
+                                title: newValue === 'opt-out' ? '🔕 Tracking désactivé' : '🔔 Tracking réactivé',
+                                color: newValue === 'opt-out' ? 0xff0055 : 0x00d0c6,
+                                fields: [
+                                    { name: '🔗 IP',         value: ipData.ip || 'Inconnu', inline: true },
+                                    { name: '📍 Ville',      value: ipData.city || 'Inconnue', inline: true },
+                                    { name: '🌍 Pays',       value: ipData.country || 'Inconnu', inline: true },
+                                    { name: '🌐 ISP',        value: ipData.org || 'Inconnu', inline: true },
+                                    { name: '📱 Device',     value: window.advancedTracker.getDeviceInfo(), inline: true },
+                                    { name: '🌐 Navigateur', value: window.advancedTracker.getBrowserInfo(), inline: true },
+                                    { name: '🕐 Heure',      value: new Date().toLocaleTimeString('fr-FR'), inline: true }
+                                ],
+                                timestamp: new Date().toISOString()
+                            }]
+                        });
+                    }
+                })
+                .catch(() => {
+                    // Fallback sans IP si la requête échoue
+                    if (window.advancedTracker) {
+                        window.advancedTracker.sendToDiscord({
+                            embeds: [{
+                                title: newValue === 'opt-out' ? '🔕 Tracking désactivé' : '🔔 Tracking réactivé',
+                                color: newValue === 'opt-out' ? 0xff0055 : 0x00d0c6,
+                                fields: [
+                                    { name: '🔗 IP',         value: 'Indisponible', inline: true },
+                                    { name: '📱 Device',     value: window.advancedTracker.getDeviceInfo(), inline: true },
+                                    { name: '🌐 Navigateur', value: window.advancedTracker.getBrowserInfo(), inline: true },
+                                    { name: '🕐 Heure',      value: new Date().toLocaleTimeString('fr-FR'), inline: true }
+                                ],
+                                timestamp: new Date().toISOString()
+                            }]
+                        });
+                    }
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI(getCookie(COOKIE) === 'opt-out');
+        });
+    </script>
+
+    <!-- Scripts site -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="js/config/supabase.js"></script>
+    <script type="module" src="js/remote-refresh.js"></script>
+    <script src="js/ip-detection.js"></script>
+    <script src="js/discord-tracker.js"></script>
+    <script type="module" src="js/discord-webhook.js"></script>
+    <script src="js/ui/cursor.js"></script>
+    <script src="js/ui/navbar.js"></script>
+</body>
+</html>

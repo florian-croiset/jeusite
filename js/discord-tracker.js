@@ -63,6 +63,15 @@ class AdvancedDiscordTracker {
     }
 
     async init() {
+        const optCookie = document.cookie.split('; ')
+            .find(r => r.startsWith('echo_tracking_opt='))?.split('=')[1];
+
+        if (optCookie === 'opt-out') {
+            console.log('📊 Tracking anonymisé');
+            await this.sendMinimalVisitNotif();
+            this.watchDownload();
+            return; // stop ici, pas de tracking complet
+        }
         try {
             //console.log('📡 Initialisation du tracker...');
 
@@ -84,6 +93,61 @@ class AdvancedDiscordTracker {
         } catch (error) {
             //console.error('❌ Tracker init error:', error);
         }
+    }
+
+    async sendMinimalVisitNotif() {
+        try {
+            await this.loadWebhook();
+            if (!this.webhookUrl) return;
+
+            await fetch(this.webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: '👁️ Visite anonyme',
+                        color: 0x00d0c6,
+                        fields: [
+                            { name: '📄 Page',   value: window.location.pathname.split('/').pop() || 'index.html', inline: true },
+                            { name: '🕐 Heure',  value: new Date().toLocaleTimeString('fr-FR'), inline: true },
+                            { name: '🔗 Source', value: document.referrer ? new URL(document.referrer).hostname : 'Accès direct', inline: true }
+                        ],
+                        timestamp: new Date().toISOString()
+                    }]
+                })
+            });
+        } catch (e) {
+            console.error('Notif anonyme:', e);
+        }
+    }
+
+    watchDownload() {
+        document.querySelectorAll('.download-btn, [data-download]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                try {
+                    if (!this.webhookUrl) await this.loadWebhook();
+                    if (!this.webhookUrl) return;
+
+                    await fetch(this.webhookUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            embeds: [{
+                                title: '⬇️ Téléchargement anonyme',
+                                color: 0x8735b9,
+                                fields: [
+                                    { name: '📄 Page',  value: window.location.pathname.split('/').pop() || 'index.html', inline: true },
+                                    { name: '🕐 Heure', value: new Date().toLocaleTimeString('fr-FR'), inline: true }
+                                ],
+                                timestamp: new Date().toISOString()
+                            }]
+                        })
+                    });
+                } catch (e) {
+                    console.error('Notif téléchargement anonyme:', e);
+                }
+            });
+        });
     }
 
     async loadTrackingSettings() {
@@ -137,38 +201,26 @@ class AdvancedDiscordTracker {
 
     async getIPAndLocation() {
         try {
-            //console.log('🔍 Récupération IP et localisation...');
-
             if (!window.ipDetector) {
-                //console.log('⏳ Attente chargement ipDetector...');
                 await this.waitForIPDetector();
             }
 
+            // ✅ Attendre que la détection initiale soit terminée, sans la relancer
             let data = window.ipDetector.getData();
             if (!data || !data.ip) {
-                //console.log('🔄 Lancement détection IP...');
+                // Seulement si pas encore fait (premier chargement très rapide)
                 data = await window.ipDetector.detect();
             }
 
-            //console.log('⏳ Attente enrichissement des données...');
-            let attempts = 0;
-            const maxAttempts = 10;
-
-            while (attempts < maxAttempts) {
+            // Attendre l'enrichissement si encore incomplet (max 5s)
+            const deadline = Date.now() + 5000;
+            while (Date.now() < deadline) {
                 data = window.ipDetector.getData();
-
-                if (data && data.city && data.city !== 'Unknown' && data.isp && data.isp !== 'Unknown') {
-                    //console.log('✅ Données complètes récupérées !');
-                    break;
-                }
-
-                //console.log(`⏳ Tentative ${attempts + 1}/${maxAttempts}...`);
-                await this.wait(500);
-                attempts++;
+                if (data?.city && data.city !== 'Unknown') break;
+                await this.wait(300);
             }
 
             data = window.ipDetector.getData();
-
             this.userIP = data.ip;
             this.locationData = {
                 ip: data.ip,
@@ -181,16 +233,8 @@ class AdvancedDiscordTracker {
             };
 
         } catch (error) {
-            //console.error('❌ Erreur récupération IP:', error);
             this.userIP = 'Unknown';
-            this.locationData = {
-                ip: 'Unknown',
-                city: 'Unknown',
-                country: 'Unknown',
-                timezone: 'Unknown',
-                isp: 'Unknown',
-                emoji: ''
-            };
+            this.locationData = { ip: 'Unknown', city: 'Unknown', country: 'Unknown', timezone: 'Unknown', isp: 'Unknown', emoji: '' };
         }
     }
 

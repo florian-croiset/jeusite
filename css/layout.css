@@ -72,7 +72,7 @@ nav.scrolled {
 
 nav.scrolled .nav-container {
     padding: 0.7rem 2rem !important;
-    transform: scale(0.98) !important;
+    /*transform: scale(0.98) !important;*/
 }
 
 /* Logo */
