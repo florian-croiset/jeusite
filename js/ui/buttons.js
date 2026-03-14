@@ -210,7 +210,7 @@ async function verifierDisponibiliteAdmin() {
             .from('game_versions')
             .select('*')
             .eq('is_published', true)
-            .lte('release_date', now)
+            //.lte('release_date', now)
             .order('release_date', { ascending: false })
             .limit(1)
             .single();

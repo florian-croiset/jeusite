@@ -960,3 +960,202 @@ tr:has(.status-scheduled) { background: rgba(255, 171, 0, 0.03); }
     .logout-icon { display: inline; }
     #logout-btn { padding: 7px 10px; font-size: 16px; }
 }
+
+/* ===== SECTION FORMULAIRES ===== */
+#forms .card { padding: 24px; }
+
+.forms-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.forms-toolbar h2 { margin: 0; }
+
+.forms-toolbar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#forms-count {
+    font-size: 12px;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.06);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.forms-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.forms-filters input[type="text"] {
+    flex: 1;
+    min-width: 200px;
+    font-size: 13px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 9px 14px;
+    color: var(--text);
+    transition: border-color .2s;
+}
+
+.forms-filters input[type="text"]:focus {
+    outline: none;
+    border-color: var(--cyan);
+    background: rgba(0,208,198,0.06);
+}
+
+.forms-filters select {
+    font-size: 13px;
+    padding: 9px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+}
+
+/* Carte réponse */
+.form-response-card {
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    background: rgba(255,255,255,0.02);
+    transition: border-color .2s, background .2s;
+}
+
+.form-response-card:hover {
+    border-color: rgba(0,208,198,0.25);
+    background: rgba(0,208,198,0.03);
+}
+
+.form-response-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.form-response-meta { flex: 1; }
+
+.form-response-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 3px;
+}
+
+.form-response-info {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.form-response-info a {
+    color: var(--cyan);
+    text-decoration: none;
+}
+.form-response-info a:hover { text-decoration: underline; }
+
+.form-response-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Étoiles */
+.form-stars {
+    font-size: 18px;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+/* Blocs contenu */
+.form-response-block {
+    margin-bottom: 10px;
+}
+
+.form-response-block:last-child { margin-bottom: 0; }
+
+.form-response-block-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-response-block-content {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 9px 12px;
+    border-radius: 8px;
+    border-left: 3px solid;
+    line-height: 1.6;
+}
+
+.block-positive .form-response-block-label { color: #00ff88; }
+.block-positive .form-response-block-content {
+    border-color: #00ff88;
+    background: rgba(0,255,136,0.05);
+}
+
+.block-negative .form-response-block-label { color: #ff4757; }
+.block-negative .form-response-block-content {
+    border-color: #ff4757;
+    background: rgba(255,71,87,0.05);
+}
+
+.block-suggestions .form-response-block-label { color: #ffc107; }
+.block-suggestions .form-response-block-content {
+    border-color: #ffc107;
+    background: rgba(255,193,7,0.05);
+}
+
+/* Bouton supprimer */
+.btn-delete-response {
+    background: rgba(255,71,87,0.12);
+    color: #ff4757;
+    border: 1px solid rgba(255,71,87,0.25);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    white-space: nowrap;
+}
+.btn-delete-response:hover {
+    background: rgba(255,71,87,0.25);
+    border-color: #ff4757;
+}
+
+/* État vide / erreur */
+.forms-empty {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 40px 20px;
+    font-size: 14px;
+}

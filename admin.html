@@ -57,6 +57,7 @@
                 <div class="sidebar-item active" data-section="overview">📊 Vue d'ensemble</div>
                 <div class="sidebar-item" data-section="versions">🎮 Versions du jeu</div>
                 <div class="sidebar-item" data-section="roadmap">🗺️ Roadmap</div>
+                <div class="sidebar-item" data-section="forms">📋 Formulaires</div>
                 <div class="sidebar-item" data-section="downloads-manage">📥 Téléchargements</div>
                 <div class="sidebar-item" data-section="content">📝 Contenu du site</div>
                 <div class="sidebar-item" data-section="media">🎨 Médias</div>
@@ -233,43 +234,54 @@
 
                 <!-- Versions du jeu -->
                 <div class="section" id="versions">
-                    <div class="stat-card" style="border: 1px solid var(--cyan); margin-bottom: 20px;">
-                        <span class="stat-icon" style="color: var(--cyan);">
-                            <i class="fa-solid fa-power-off"></i>
-                        </span>
-                        <span class="stat-info">
-                            <span class="version-down">Téléchargement Public</span>
-                            <p style="font-size: 10px;">(Activer/Désactiver l'accès)</p>
 
-                            <label class="switch"
-                                style="margin-top: 10px; display: inline-block; position: relative; width: 50px; height: 24px;">
+                    <!-- Bandeau accès public téléchargement -->
+                    <div class="card" style="margin-bottom: 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 20px;">
+                        <i class="fa-solid fa-power-off" style="font-size: 20px; color: var(--cyan);"></i>
+                        <div style="flex: 1; min-width: 180px;">
+                            <div style="font-weight: 600; font-size: 14px;">Téléchargement public</div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Activer ou bloquer l'accès au téléchargement pour tous les visiteurs</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label class="switch" style="display: inline-block; position: relative; width: 50px; height: 24px; flex-shrink: 0;">
                                 <input type="checkbox" id="globalDownloadSwitch" onchange="toggleDownloadState(this)">
-                                <span class="slider round"
-                                    style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
-
+                                <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
                             </label>
-                            <span id="switchStatusText" style="font-size: 12px; margin-left: 10px;">Chargement...</span>
-                        </span>
+                            <span id="switchStatusText" style="font-size: 13px; font-weight: 500; min-width: 240px;">Chargement...</span>
+                        </div>
                     </div>
+
+                    <!-- Dashboard stats versions -->
                     <div id="versions-dashboard"></div>
+
+                    <!-- Countdown actif affiché -->
+                    <div id="countdown-status-card" style="display:none;" class="card" style="margin-bottom: 16px;"></div>
+
+                    <!-- Tableau des versions -->
                     <div class="card" style="margin-bottom: 0;">
                         <div class="version-header-actions">
-                            <h2>🎮 Gestion des Versions</h2>
+                            <h2>🎮 Gestion des versions</h2>
                             <div class="btn-group">
-                                <button class="btn btn-primary" onclick="openVersionModal()">
-                                    <i class="fa-solid fa-plus"></i> Créer une v.
+                                <button class="btn btn-primary" onclick="openVersionModal()" title="Créer une nouvelle version">
+                                    <i class="fa-solid fa-plus"></i> Nouvelle version
                                 </button>
-                                <button class="btn btn-success" onclick="publishNextVersion()">
-                                    <i class="fa-solid fa-rocket"></i> Publier Proch.
+                                <button class="btn btn-success" onclick="publishNextVersion()" title="Publier immédiatement la version marquée comme prochaine">
+                                    <i class="fa-solid fa-rocket"></i> Publier suivante
                                 </button>
-                                <button class="btn btn-warning" onclick="openCountdownModal()">
-                                    <i class="fa-solid fa-clock"></i> Countdown
+                                <button class="btn" style="background: linear-gradient(135deg, #7b2ff7, #00bcd4); color:#fff;" onclick="openScheduleModal()" title="Programmer une sortie : lie la version, le countdown et la date en une seule action">
+                                    <i class="fa-solid fa-calendar-plus"></i> Programmer une sortie
                                 </button>
-                                <!-- NOUVEAU : Bouton Archives -->
-                                <button class="btn" style="background: var(--warning);" onclick="showArchives()">
+                                <button class="btn" style="background: #6c757d;" onclick="showArchives()" title="Voir les versions archivées">
                                     <i class="fa-solid fa-archive"></i> Archives
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Légende statuts -->
+                        <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; color: var(--text-dim);">
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00ff88;margin-right:4px;"></span>Publiée</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7b2ff7;margin-right:4px;"></span>Sortie programmée (countdown + auto-publish)</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6c757d;margin-right:4px;"></span>Brouillon</span>
                         </div>
 
                         <div id="versions-container">
@@ -413,15 +425,36 @@
                     </div>
                 </div>
 
-                <!--<div class="section" id="forms">
+                <div class="section" id="forms">
                     <div class="card">
-                        <h2>Réponses aux formulaires</h2>
-                        <p class="loading">En développement</p>
+                        <div class="forms-toolbar">
+                            <h2>📋 Réponses au formulaire</h2>
+                            <div class="forms-toolbar-actions">
+                                <span id="forms-count"></span>
+                                <button class="btn btn-small" onclick="exportFormResponses()" title="Exporter en CSV">
+                                    <i class="fa-solid fa-download"></i> CSV
+                                </button>
+                                <button class="btn btn-small btn-primary" onclick="loadFormResponses()" title="Rafraîchir">
+                                    <i class="fa-solid fa-rotate"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="forms-filters">
+                            <input type="text" id="forms-search"
+                                placeholder="🔍 Rechercher nom / email / message..."
+                                oninput="filterFormResponses()">
+                            <select id="forms-sort" onchange="filterFormResponses()">
+                                <option value="desc">Plus récentes d'abord</option>
+                                <option value="asc">Plus anciennes d'abord</option>
+                            </select>
+                        </div>
+
                         <div id="forms-list">
-                            <p class="loading">Chargement...</p>
+                            <p class="forms-empty">Chargement...</p>
                         </div>
                     </div>
-                </div>-->
+                </div>
 
                 <div class="section" id="users">
                     <div class="card">
@@ -540,11 +573,11 @@
         </div>
     </div>
 
-    <!-- MODAL VERSION SIMPLIFIÉE -->
+    <!-- MODAL VERSION -->
     <div id="version-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title">Nouvelle Version</h3>
+                <h3 id="modal-title">Nouvelle version</h3>
                 <span class="close-modal" onclick="closeVersionModal()">&times;</span>
             </div>
             <form id="version-form">
@@ -553,7 +586,6 @@
                 <!-- SECTION 1 : INFOS DE BASE -->
                 <div class="form-section">
                     <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations</h4>
-
                     <div class="form-row">
                         <div class="form-group">
                             <label>Numéro de version *</label>
@@ -564,12 +596,10 @@
                             <input type="datetime-local" id="v-date" required>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label>Titre *</label>
                         <input type="text" id="v-title" required placeholder="Grande mise à jour">
                     </div>
-
                     <div class="form-group">
                         <label>Description courte</label>
                         <textarea id="v-description" rows="2" placeholder="Résumé en 1-2 lignes..."></textarea>
@@ -579,7 +609,6 @@
                 <!-- SECTION 2 : CHANGELOG -->
                 <div class="form-section">
                     <h4 style="color: var(--cyan); margin-bottom: 15px;">📝 Notes de mise à jour</h4>
-
                     <div class="form-group">
                         <textarea id="v-notes" rows="6"
                             placeholder="- Ajout de...&#10;- Correction de...&#10;- Amélioration de..."></textarea>
@@ -590,12 +619,10 @@
                 <!-- SECTION 3 : TÉLÉCHARGEMENT -->
                 <div class="form-section">
                     <h4 style="color: var(--cyan); margin-bottom: 15px;">📥 Fichiers</h4>
-
                     <div class="form-group">
-                        <label>Lien de téléchargement (URL) *</label>
-                        <input type="url" id="v-url" required placeholder="https://...">
+                        <label>Lien de téléchargement (URL)</label>
+                        <input type="url" id="v-url" placeholder="https://...">
                     </div>
-
                     <div class="form-group">
                         <label>Taille du fichier</label>
                         <input type="text" id="v-size" placeholder="150 MB">
@@ -608,69 +635,100 @@
                     <h4 style="color: var(--cyan); margin-bottom: 15px;">🚀 Publication</h4>
 
                     <div class="checkbox-group"
-                        style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--success);">
+                        style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--success); margin-bottom: 12px;">
                         <input type="checkbox" id="v-published">
                         <label for="v-published">
-                            <strong>Publier cette version immédiatement</strong>
-                            <br>
-                            <small style="color: var(--text-dim);">Si décoché, reste en brouillon</small>
+                            <strong>Publier cette version immédiatement</strong><br>
+                            <small style="color: var(--text-dim);">Si décoché, reste en brouillon. Pour programmer une sortie avec countdown, utilise le bouton "Programmer une sortie".</small>
                         </label>
                     </div>
+
+                    <!-- Info sortie programmée si existante -->
+                    <div id="v-schedule-info" style="display:none; padding: 10px 14px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px; color: #ce93d8;">
+                        <i class="fa-solid fa-calendar-check" style="margin-right:6px;"></i>
+                        <span id="v-schedule-info-text"></span>
+                        <button type="button" onclick="cancelScheduleFromVersion()" style="background:none;border:none;color:#ff4757;cursor:pointer;font-size:12px;margin-left:8px;" title="Annuler la programmation">✕ Annuler</button>
+                    </div>
                 </div>
-                <button type="button" class="btn btn-primary"
-                    onclick="scheduleVersion(document.getElementById('v-id').value)">
-                    ⏰ Programmer
-                </button>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" onclick="closeVersionModal()">❌ Annuler</button>
-
-                    <!-- NOUVEAU : Bouton Programmer -->
-                    <button type="button" class="btn btn-primary"
-                        onclick="scheduleVersion(document.getElementById('v-id').value)" id="btn-schedule"
-                        style="display: none;">
-                        ⏰ Programmer
-                    </button>
-
                     <button type="submit" class="btn btn-success">💾 Enregistrer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL COUNTDOWN -->
-    <div id="countdown-modal" class="modal-overlay" style="display: none;">
+    <!-- MODAL PROGRAMMER UNE SORTIE (unifié countdown + scheduled_publish_at) -->
+    <div id="schedule-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>⏰ Configuration du Compte à Rebours</h3>
-                <span class="close-modal" onclick="closeCountdownModal()">&times;</span>
+                <h3>🗓️ Programmer une sortie</h3>
+                <span class="close-modal" onclick="closeScheduleModal()">&times;</span>
             </div>
-            <form id="countdown-form">
-                <div class="form-group">
-                    <label>Nom de l'événement *</label>
-                    <input type="text" id="cd-event-name" required placeholder="Lancement de la version bêta">
+
+            <!-- Sortie déjà programmée -->
+            <div id="sm-active-info" style="display:none; margin-bottom: 16px; padding: 12px 16px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px;">
+                <div style="font-weight: 600; color: #ce93d8; margin-bottom: 6px;">
+                    <i class="fa-solid fa-calendar-check"></i> Sortie déjà programmée
+                </div>
+                <div id="sm-active-detail" style="color: var(--text-dim); line-height: 1.6;"></div>
+                <button type="button" class="btn btn-danger" style="font-size: 12px; margin-top: 10px;" onclick="cancelSchedule()">
+                    <i class="fa-solid fa-xmark"></i> Annuler cette programmation
+                </button>
+            </div>
+
+            <form id="schedule-modal-form">
+                <input type="hidden" id="sm-countdown-id">
+                <input type="hidden" id="sm-version-id-prev">
+
+                <!-- Explication visuelle du flux -->
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap;">
+                    <span style="color:#ce93d8;"><i class="fa-solid fa-box"></i> Version choisie</span>
+                    <span style="color: var(--text-dim);">→</span>
+                    <span style="color:#00bcd4;"><i class="fa-solid fa-clock"></i> Countdown sur le site</span>
+                    <span style="color: var(--text-dim);">→</span>
+                    <span style="color:#ffc107;"><i class="fa-solid fa-hourglass-end"></i> Countdown = 0</span>
+                    <span style="color: var(--text-dim);">→</span>
+                    <span style="color:#00ff88;"><i class="fa-solid fa-rocket"></i> Publication + 🎉</span>
                 </div>
 
                 <div class="form-group">
-                    <label>Version associée</label>
-                    <select id="cd-version">
-                        <option value="">Sélectionner une version</option>
+                    <label>Version à publier *</label>
+                    <select id="sm-version" required onchange="onScheduleVersionChange()">
+                        <option value="">— Choisir une version —</option>
                     </select>
+                    <small id="sm-version-hint" style="color: var(--text-dim); margin-top: 4px; display: block;"></small>
                 </div>
 
                 <div class="form-group">
-                    <label>Date et heure cible *</label>
-                    <input type="datetime-local" id="cd-target-date" required>
+                    <label>Date et heure de lancement *</label>
+                    <input type="datetime-local" id="sm-target-date" required onchange="onScheduleDateChange()">
+                    <small id="sm-date-hint" style="margin-top: 4px; display: block;"></small>
                 </div>
 
                 <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="cd-description" rows="3"></textarea>
+                    <label>Nom affiché sur le site *</label>
+                    <input type="text" id="sm-event-name" required placeholder="Lancement de Echo v2.1 !">
+                    <small style="color: var(--text-dim);">Titre affiché au-dessus du countdown sur le site public</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Description <small style="color: var(--text-dim);">(optionnel)</small></label>
+                    <textarea id="sm-description" rows="2" placeholder="Texte affiché sous le countdown..."></textarea>
+                </div>
+
+                <!-- Récap visuel avant confirmation -->
+                <div id="sm-recap" style="display:none; padding: 12px 16px; background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.25); border-radius: 8px; font-size: 13px; margin-top: 4px;">
+                    <div style="font-weight: 600; color: #00ff88; margin-bottom: 8px;"><i class="fa-solid fa-circle-check"></i> Ce qui va se passer</div>
+                    <div id="sm-recap-text" style="color: var(--text-dim); line-height: 1.8;"></div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="closeCountdownModal()">Annuler</button>
-                    <button type="submit" class="btn btn-success">Enregistrer</button>
+                    <button type="button" class="btn btn-danger" onclick="closeScheduleModal()">Annuler</button>
+                    <button type="submit" class="btn btn-success" id="sm-submit-btn">
+                        <i class="fa-solid fa-calendar-plus"></i> Programmer la sortie
+                    </button>
                 </div>
             </form>
         </div>
@@ -763,8 +821,10 @@
         });
 
         function showError(message) {
-            document.getElementById('error-container').innerHTML =
-                `<div class="error-message">${message}</div>`;
+            const div = document.createElement('div');
+            div.className = 'error-message';
+            div.textContent = message;
+            document.getElementById('error-container').replaceChildren(div);
         }
 
         function showDashboard(user, profile) {
@@ -795,9 +855,6 @@
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.getElementById(section).classList.add('active');
 
-                if (section === 'versions') {
-                    loadVersions();
-                }
                 if (section === 'users') {
                     loadUsers();
                 }
@@ -836,43 +893,36 @@
                 if (error) throw error;
 
                 const container = document.getElementById('recent-activity');
+                container.replaceChildren();
                 if (data && data.length > 0) {
-                    container.innerHTML = `
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Version</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.map(item => `
-                                    <tr>
-                                        <td>📥 Téléchargement</td>
-                                        <td>${escapeHtml(item.version)}</td>
-                                        <td>${new Date(item.downloaded_at).toLocaleString('fr-FR')}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                    const table = document.createElement('table');
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = '<tr><th>Type</th><th>Version</th><th>Date</th></tr>'; // statique ✅
+                    const tbody = document.createElement('tbody');
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        const tdType = document.createElement('td');
+                        tdType.textContent = '📥 Téléchargement';
+                        const tdVersion = document.createElement('td');
+                        tdVersion.textContent = item.version || '—';
+                        const tdDate = document.createElement('td');
+                        tdDate.textContent = new Date(item.downloaded_at).toLocaleString('fr-FR');
+                        tr.append(tdType, tdVersion, tdDate);
+                        tbody.appendChild(tr);
+                    });
+                    table.append(thead, tbody);
+                    container.appendChild(table);
                 } else {
-                    container.innerHTML = '<p style="color: var(--purple);">Aucune activité récente</p>';
+                    const p = document.createElement('p');
+                    p.style.color = 'var(--purple)';
+                    p.textContent = 'Aucune activité récente';
+                    container.appendChild(p);
                 }
             } catch (error) {
                 console.error('Erreur activités:', error);
             }
         }
-        function toggleScheduleButton() {
-            const isPublished = document.getElementById('v-published').checked;
-            const scheduleBtn = document.getElementById('btn-schedule');
-            const versionId = document.getElementById('v-id').value;
 
-            if (scheduleBtn) {
-                scheduleBtn.style.display = !isPublished && versionId ? 'inline-block' : 'none';
-            }
-        }
 
         // Charger l'état des téléchargements
         async function loadDownloadSettings() {
@@ -927,245 +977,835 @@
         });
 
 
-        // ===== MODAL VERSION (CORRIGÉ) =====
-        // Ouvrir le modal
+        // ===== TOAST (remplace les alert) =====
+        function showToast(message, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;';
+                document.body.appendChild(container);
+            }
+            const colors = { success: '#00ff88', danger: '#ff4757', warning: '#ffc107', info: '#00bcd4' };
+            const toast = document.createElement('div');
+            toast.style.cssText = `background:#1a1a2e;border-left:4px solid ${colors[type] || colors.success};color:#fff;padding:12px 18px;border-radius:8px;font-size:14px;max-width:350px;box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:slideIn .2s ease;`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+        const style = document.createElement('style');
+        style.textContent = '@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';
+        document.head.appendChild(style);
+
+        // ===== MODAL VERSION =====
         window.openVersionModal = function () {
             document.getElementById('version-form').reset();
             document.getElementById('v-id').value = '';
-            document.getElementById('modal-title').textContent = 'Nouvelle Version';
-            document.getElementById('v-date').valueAsDate = new Date();
-            document.getElementById('v-published').checked = false; // Par défaut : brouillon
+            document.getElementById('modal-title').textContent = 'Nouvelle version';
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('v-date').value = now.toISOString().slice(0, 16);
+            document.getElementById('v-published').checked = false;
+            document.getElementById('v-schedule-info').style.display = 'none';
             document.getElementById('version-modal').style.display = 'flex';
-            document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
         };
 
         window.closeVersionModal = function () {
             document.getElementById('version-modal').style.display = 'none';
         };
 
-        // Éditer une version existante
-        window.editVersion = function (version) {
-            document.getElementById('v-id').value = version.id;
-            document.getElementById('v-number').value = version.version;
-            document.getElementById('v-title').value = version.title || '';
-            document.getElementById('v-description').value = version.description || '';
+        // ===== ÉDITER VERSION — lit game_versions directement pour avoir tous les champs =====
+        window.editVersion = async function (id) {
+            try {
+                const { data: version, error } = await supabaseClient
+                    .from('game_versions')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                if (error || !version) throw error || new Error('Version introuvable');
 
-            if (version.changelog && Array.isArray(version.changelog)) {
-                document.getElementById('v-notes').value = version.changelog.join('\n');
-            } else {
-                document.getElementById('v-notes').value = '';
+                document.getElementById('v-id').value = version.id;
+                document.getElementById('v-number').value = version.version || '';
+                document.getElementById('v-title').value = version.title || '';
+                document.getElementById('v-description').value = version.description || '';
+                document.getElementById('v-url').value = version.download_url || '';
+                document.getElementById('v-size').value = version.file_size || '';
+                document.getElementById('v-date').value = version.release_date ? version.release_date.slice(0, 16) : '';
+                document.getElementById('v-published').checked = version.is_published || false;
+
+                if (version.changelog && Array.isArray(version.changelog)) {
+                    document.getElementById('v-notes').value = version.changelog.join('\n');
+                } else if (typeof version.changelog === 'string') {
+                    document.getElementById('v-notes').value = version.changelog;
+                } else {
+                    document.getElementById('v-notes').value = '';
+                }
+
+                // Afficher info sortie programmée si existante
+                const scheduleInfo = document.getElementById('v-schedule-info');
+                const scheduleInfoText = document.getElementById('v-schedule-info-text');
+                if (version.scheduled_publish_at && !version.is_published) {
+                    const d = new Date(version.scheduled_publish_at);
+                    scheduleInfoText.textContent = `Sortie programmée le ${d.toLocaleString('fr-FR')} — countdown lié`;
+                    scheduleInfo.style.display = 'block';
+                } else {
+                    scheduleInfo.style.display = 'none';
+                }
+
+                document.getElementById('modal-title').textContent = `Modifier — v${version.version}`;
+                document.getElementById('version-modal').style.display = 'flex';
+            } catch (err) {
+                showToast('❌ Impossible de charger la version : ' + err.message, 'danger');
             }
-
-            document.getElementById('v-url').value = version.download_url || '';
-            document.getElementById('v-size').value = version.file_size || '';
-            document.getElementById('v-date').value = version.release_date ? version.release_date.slice(0, 16) : '';
-            document.getElementById('v-published').checked = version.is_published || false;
-
-            document.getElementById('modal-title').textContent = 'Modifier la Version';
-            document.getElementById('version-modal').style.display = 'flex';
-            document.getElementById('v-published')?.addEventListener('change', toggleScheduleButton);
         };
 
-        // Soumettre le formulaire
+        // ===== SOUMETTRE FORMULAIRE VERSION =====
         document.getElementById('version-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const id = document.getElementById('v-id').value;
             const notesText = document.getElementById('v-notes').value;
-            const changelog = notesText ? notesText.split('\n').filter(line => line.trim()) : null;
+            const changelog = notesText ? notesText.split('\n').filter(l => l.trim()) : null;
 
             const data = {
-                version: document.getElementById('v-number').value,
-                title: document.getElementById('v-title').value,
-                description: document.getElementById('v-description').value,
+                version: document.getElementById('v-number').value.trim(),
+                title: document.getElementById('v-title').value.trim(),
+                description: document.getElementById('v-description').value.trim() || null,
                 changelog: changelog,
-                download_url: document.getElementById('v-url').value || null,
-                file_size: document.getElementById('v-size').value || null,
+                download_url: document.getElementById('v-url').value.trim() || null,
+                file_size: document.getElementById('v-size').value.trim() || null,
                 release_date: document.getElementById('v-date').value,
                 is_published: document.getElementById('v-published').checked
             };
 
             try {
                 if (id) {
-                    const { error } = await supabaseClient
-                        .from('game_versions')
-                        .update(data)
-                        .eq('id', id);
+                    const { error } = await supabaseClient.from('game_versions').update(data).eq('id', id);
                     if (error) throw error;
+                    showToast('✅ Version mise à jour !', 'success');
                 } else {
-                    const { error } = await supabaseClient
-                        .from('game_versions')
-                        .insert([data]);
+                    const { error } = await supabaseClient.from('game_versions').insert([data]);
                     if (error) throw error;
+                    showToast('✅ Version créée !', 'success');
                 }
-
                 closeVersionModal();
                 loadVersions();
-                alert('✅ Version enregistrée !');
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur : ' + error.message);
+                loadVersionsDashboard();
+            } catch (err) {
+                showToast('❌ Erreur : ' + err.message, 'danger');
             }
         });
 
-        // ===== MARQUER COMME PROCHAINE VERSION =====
-        window.setAsNext = async function (id) {
-            if (!confirm('Marquer cette version comme "prochaine" ?')) return;
-
+        // ===== PUBLIER / DÉPUBLIER =====
+        window.publishVersion = async function (id) {
+            if (!confirm('Publier cette version ?')) return;
             try {
-                // Retirer le flag des autres
-                await supabaseClient
-                    .from('game_versions')
-                    .update({ is_next: false })
-                    .neq('id', id);
-
-                // Activer sur celle-ci
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .update({ is_next: true })
-                    .eq('id', id);
-
+                const { error } = await supabaseClient.from('game_versions')
+                    .update({ is_published: true }).eq('id', id);
                 if (error) throw error;
-
-                loadVersions();
-                alert('✅ Marquée comme prochaine version !');
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur : ' + error.message);
-            }
+                showToast('✅ Version publiée !', 'success');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
         };
 
-        // ===== PUBLIER PROCHAINE VERSION =====
+        window.unpublishVersion = async function (id) {
+            if (!confirm('Dépublier cette version ? Elle passera en brouillon.')) return;
+            try {
+                const { error } = await supabaseClient.from('game_versions')
+                    .update({ is_published: false }).eq('id', id);
+                if (error) throw error;
+                showToast('Version dépubliée', 'info');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // ===== PUBLIER LA PROCHAINE VERSION (is_next) — corrigé =====
         window.publishNextVersion = async function () {
             try {
                 const { data: nextVersion, error: fetchError } = await supabaseClient
-                    .from('game_versions')
-                    .select('*')
-                    .eq('is_next', true)
-                    .single();
-
+                    .from('game_versions').select('*').eq('is_next', true).single();
                 if (fetchError || !nextVersion) {
-                    alert('⚠️ Aucune version marquée comme "prochaine"');
-                    return;
+                    showToast('⚠️ Aucune version marquée comme "prochaine"', 'warning'); return;
                 }
-
                 if (!confirm(`Publier la version ${nextVersion.version} maintenant ?`)) return;
-
-                // Mettre à jour la date de release à maintenant
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .update({
-                        release_date: new Date().toISOString(),
-                        is_next: false
-                    })
-                    .eq('id', nextVersion.id);
-
+                const { error } = await supabaseClient.from('game_versions').update({
+                    release_date: new Date().toISOString(),
+                    is_published: true,   // ← était manquant
+                    is_next: false,
+                    scheduled_publish_at: null
+                }).eq('id', nextVersion.id);
                 if (error) throw error;
+                showToast(`✅ Version ${nextVersion.version} publiée !`, 'success');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
 
+        // ===== MARQUER COMME PROCHAINE VERSION =====
+        window.setAsNext = async function (id) {
+            if (!confirm('Marquer cette version comme "prochaine sortie" ?')) return;
+            try {
+                await supabaseClient.from('game_versions').update({ is_next: false }).neq('id', id);
+                const { error } = await supabaseClient.from('game_versions').update({ is_next: true }).eq('id', id);
+                if (error) throw error;
+                showToast('✅ Marquée comme prochaine version !', 'success');
                 loadVersions();
-                alert('✅ Version publiée !');
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur : ' + error.message);
-            }
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
         };
 
         // ===== SUPPRIMER VERSION =====
         window.deleteVersion = async function (id) {
-            if (!confirm('⚠️ Supprimer définitivement cette version ?')) return;
-
+            if (!confirm('⚠️ Supprimer définitivement cette version ? Cette action est irréversible.')) return;
             try {
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .delete()
-                    .eq('id', id);
+                const { error } = await supabaseClient.from('game_versions').delete().eq('id', id);
+                if (error) throw error;
+                showToast('Version supprimée', 'info');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
 
+        // ===== ARCHIVAGE =====
+        window.archiveVersion = async function (id) {
+            if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
+            try {
+                const { error } = await supabaseClient.from('game_versions').update({ is_archived: true }).eq('id', id);
+                if (error) throw error;
+                showToast('Version archivée', 'info');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        window.unarchiveVersion = async function (id) {
+            try {
+                const { error } = await supabaseClient.from('game_versions').update({ is_archived: false }).eq('id', id);
+                if (error) throw error;
+                document.querySelector('.custom-modal')?.remove();
+                showToast('✅ Version restaurée !', 'success');
+                loadVersions();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        window.showArchives = async function () {
+            const { data: archived } = await supabaseClient
+                .from('game_versions').select('*')
+                .eq('is_archived', true).order('release_date', { ascending: false });
+
+            let content;
+            if (archived && archived.length > 0) {
+                const table = document.createElement('table');
+                table.innerHTML = '<thead><tr><th>Version</th><th>Titre</th><th>Date</th><th>Action</th></tr></thead>'; // statique ✅
+                const tbody = document.createElement('tbody');
+                archived.forEach(v => {
+                    const tr = document.createElement('tr');
+                    const tdV = document.createElement('td'); const s = document.createElement('strong'); s.textContent = v.version; tdV.appendChild(s);
+                    const tdT = document.createElement('td'); tdT.textContent = v.title || '-';
+                    const tdD = document.createElement('td'); tdD.textContent = new Date(v.release_date).toLocaleDateString('fr-FR');
+                    const tdA = document.createElement('td');
+                    const btn = document.createElement('button'); btn.className = 'action-btn btn-edit'; btn.title = 'Restaurer'; btn.textContent = '📤 Restaurer';
+                    btn.addEventListener('click', () => unarchiveVersion(v.id));
+                    tdA.appendChild(btn);
+                    tr.append(tdV, tdT, tdD, tdA);
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                content = table;
+            } else {
+                const p = document.createElement('p');
+                p.style.cssText = 'text-align:center;color:var(--text-dim);padding:20px;';
+                p.textContent = 'Aucune version archivée';
+                content = p;
+            }
+            createModal('📁 Versions archivées', content);
+        };
+
+        // ===== CHARGEMENT TABLEAU VERSIONS — lit game_versions directement =====
+        async function loadVersions() {
+            const container = document.getElementById('versions-container');
+            const loadingP = document.createElement('p');
+            loadingP.className = 'loading';
+            loadingP.textContent = 'Chargement';
+            container.replaceChildren(loadingP);
+            try {
+                const { data: versions, error } = await supabaseClient
+                    .from('game_versions')
+                    .select('*')
+                    .eq('is_archived', false)
+                    .order('release_date', { ascending: false });
                 if (error) throw error;
 
-                loadVersions();
-                alert('✅ Version supprimée !');
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur : ' + error.message);
+                if (!versions || versions.length === 0) {
+                    const emptyP = document.createElement('p');
+                    emptyP.style.cssText = 'text-align:center;color:var(--text-dim);padding:30px;';
+                    emptyP.textContent = 'Aucune version. Créez-en une !';
+                    container.replaceChildren(emptyP);
+                    return;
+                }
+
+                const now = new Date();
+
+                function makeStatusBadge(v, releaseDate, scheduledDate) {
+                    const span = document.createElement('span');
+                    span.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;';
+                    const dot = document.createElement('span');
+                    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;';
+                    if (v.is_published && releaseDate <= now) {
+                        span.style.background = 'rgba(0,255,136,0.12)'; span.style.color = '#00ff88'; span.style.border = '1px solid rgba(0,255,136,0.3)';
+                        dot.style.background = '#00ff88'; span.append(dot); span.append(' Publiée');
+                    } else if (v.is_published && releaseDate > now) {
+                        span.style.background = 'rgba(0,188,212,0.12)'; span.style.color = '#00bcd4'; span.style.border = '1px solid rgba(0,188,212,0.3)';
+                        dot.style.background = '#00bcd4'; span.append(dot); span.append(' Publiée · ' + releaseDate.toLocaleDateString('fr-FR'));
+                    } else if (!v.is_published && scheduledDate && scheduledDate > now) {
+                        span.style.background = 'rgba(123,47,247,0.15)'; span.style.color = '#ce93d8'; span.style.border = '1px solid rgba(123,47,247,0.4)';
+                        span.title = 'Countdown actif · publication automatique à cette date';
+                        dot.style.background = '#7b2ff7'; span.append(dot); span.append(' ⏰ ' + scheduledDate.toLocaleDateString('fr-FR'));
+                    } else if (!v.is_published && scheduledDate && scheduledDate <= now) {
+                        span.style.background = 'rgba(255,71,87,0.12)'; span.style.color = '#ff4757'; span.style.border = '1px solid rgba(255,71,87,0.3)';
+                        span.title = 'Date de sortie passée — countdown expiré ?';
+                        dot.style.background = '#ff4757'; span.append(dot); span.append(' Expirée ?');
+                    } else {
+                        span.style.background = 'rgba(108,117,125,0.12)'; span.style.color = '#adb5bd'; span.style.border = '1px solid rgba(108,117,125,0.3)'; span.style.fontWeight = '400';
+                        dot.style.background = '#6c757d'; span.append(dot); span.append(' Brouillon');
+                    }
+                    return span;
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-wrapper';
+                const table = document.createElement('table');
+                // thead statique ✅
+                table.innerHTML = `<thead><tr>
+                    <th>Version</th><th>Titre</th><th>Date de sortie</th>
+                    <th style="text-align:center;">Lien</th><th>Statut</th><th>Actions</th>
+                </tr></thead>`;
+                const tbody = document.createElement('tbody');
+
+                versions.forEach(v => {
+                    const releaseDate = new Date(v.release_date);
+                    const scheduledDate = v.scheduled_publish_at ? new Date(v.scheduled_publish_at) : null;
+                    const tr = document.createElement('tr');
+
+                    // Version + badge suivante
+                    const tdVer = document.createElement('td');
+                    const strong = document.createElement('strong');
+                    strong.style.fontSize = '14px';
+                    strong.textContent = v.version;
+                    tdVer.appendChild(strong);
+                    if (v.is_next) {
+                        const nextBadge = document.createElement('span');
+                        nextBadge.style.cssText = 'background:rgba(156,39,176,0.15);color:#ce93d8;padding:2px 7px;border-radius:12px;font-size:11px;margin-left:4px;border:1px solid rgba(156,39,176,0.3);';
+                        nextBadge.textContent = 'Suivante';
+                        tdVer.appendChild(nextBadge);
+                    }
+
+                    // Titre + description
+                    const tdTitle = document.createElement('td');
+                    tdTitle.style.maxWidth = '160px';
+                    const titleDiv = document.createElement('div');
+                    titleDiv.style.fontSize = '13px';
+                    titleDiv.textContent = v.title || '—';
+                    tdTitle.appendChild(titleDiv);
+                    if (v.description) {
+                        const descDiv = document.createElement('div');
+                        descDiv.style.cssText = 'font-size:11px;color:var(--text-dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;';
+                        descDiv.title = v.description;
+                        descDiv.textContent = v.description;
+                        tdTitle.appendChild(descDiv);
+                    }
+
+                    // Date
+                    const tdDate = document.createElement('td');
+                    tdDate.style.cssText = 'font-size:13px;white-space:nowrap;';
+                    tdDate.textContent = releaseDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'});
+
+                    // Lien téléchargement
+                    const tdDl = document.createElement('td');
+                    tdDl.style.textAlign = 'center';
+                    if (v.download_url) {
+                        try {
+                            const url = new URL(v.download_url);
+                            if (url.protocol === 'https:' || url.protocol === 'http:') {
+                                const a = document.createElement('a');
+                                a.href = v.download_url;
+                                a.target = '_blank';
+                                a.title = 'Voir le lien';
+                                a.style.cssText = 'color:var(--cyan);font-size:12px;';
+                                a.innerHTML = '<i class="fa-solid fa-link"></i>'; // icône statique ✅
+                                tdDl.appendChild(a);
+                            } else { tdDl.textContent = '—'; }
+                        } catch { tdDl.textContent = '—'; }
+                    } else {
+                        const dash = document.createElement('span');
+                        dash.style.cssText = 'color:var(--text-dim);font-size:12px;';
+                        dash.title = 'Pas de lien'; dash.textContent = '—';
+                        tdDl.appendChild(dash);
+                    }
+
+                    // Statut
+                    const tdStatus = document.createElement('td');
+                    tdStatus.appendChild(makeStatusBadge(v, releaseDate, scheduledDate));
+
+                    // Actions
+                    const tdActions = document.createElement('td');
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'action-btn btn-edit'; editBtn.title = 'Modifier'; editBtn.textContent = '✏️';
+                    editBtn.addEventListener('click', () => editVersion(v.id));
+
+                    const pubBtn = document.createElement('button');
+                    if (!v.is_published) {
+                        pubBtn.className = 'action-btn btn-publish'; pubBtn.title = 'Publier maintenant'; pubBtn.textContent = '🚀';
+                        pubBtn.addEventListener('click', () => publishVersion(v.id));
+                    } else {
+                        pubBtn.className = 'action-btn'; pubBtn.style.cssText = 'background:rgba(255,152,0,0.2);color:#ff9800;';
+                        pubBtn.title = 'Dépublier (→ brouillon)'; pubBtn.textContent = '📦';
+                        pubBtn.addEventListener('click', () => unpublishVersion(v.id));
+                    }
+
+                    actionsDiv.append(editBtn, pubBtn);
+
+                    if (!v.is_next && !v.is_published) {
+                        const nextBtn = document.createElement('button');
+                        nextBtn.className = 'action-btn'; nextBtn.style.cssText = 'background:rgba(156,39,176,0.2);color:#ce93d8;';
+                        nextBtn.title = 'Marquer comme prochaine version'; nextBtn.textContent = '⭐';
+                        nextBtn.addEventListener('click', () => setAsNext(v.id));
+                        actionsDiv.appendChild(nextBtn);
+                    }
+
+                    const archBtn = document.createElement('button');
+                    archBtn.className = 'action-btn'; archBtn.style.cssText = 'background:rgba(108,117,125,0.2);color:#adb5bd;';
+                    archBtn.title = 'Archiver'; archBtn.textContent = '📁';
+                    archBtn.addEventListener('click', () => archiveVersion(v.id));
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'action-btn btn-delete'; delBtn.title = 'Supprimer définitivement'; delBtn.textContent = '🗑️';
+                    delBtn.addEventListener('click', () => deleteVersion(v.id));
+
+                    actionsDiv.append(archBtn, delBtn);
+                    tdActions.appendChild(actionsDiv);
+
+                    tr.append(tdVer, tdTitle, tdDate, tdDl, tdStatus, tdActions);
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                wrapper.appendChild(table);
+                container.replaceChildren(wrapper);
+            } catch (err) {
+                const errP = document.createElement('p');
+                errP.style.cssText = 'color:var(--danger);padding:20px;';
+                errP.textContent = '❌ Erreur de chargement : ' + err.message;
+                container.replaceChildren(errP);
             }
+        }
+
+        // ===== DASHBOARD STATS =====
+        async function loadVersionsDashboard() {
+            try {
+                const [publishedRes, nextRes, draftRes] = await Promise.all([
+                    supabaseClient.from('game_versions').select('*').eq('is_published', true).eq('is_archived', false)
+                        .order('release_date', { ascending: false }).limit(1).maybeSingle(),
+                    supabaseClient.from('game_versions').select('*').eq('is_published', false).eq('is_archived', false)
+                        .not('scheduled_publish_at', 'is', null).order('scheduled_publish_at', { ascending: true }).limit(1).maybeSingle(),
+                    supabaseClient.from('game_versions').select('id', { count: 'exact', head: true })
+                        .eq('is_published', false).eq('is_archived', false)
+                ]);
+
+                const current = publishedRes.data;
+                const next = nextRes.data;
+                const draftCount = draftRes.count || 0;
+
+                const container = document.getElementById('versions-dashboard');
+                if (!container) return;
+                container.replaceChildren();
+
+                const grid = document.createElement('div');
+                grid.className = 'stats-grid';
+                grid.style.marginBottom = '20px';
+
+                function makeStatCard(borderColor, label, valueText, detailText, detailColor) {
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.borderColor = borderColor;
+                    const lbl = document.createElement('div'); lbl.className = 'stat-label'; lbl.textContent = label;
+                    const val = document.createElement('div'); val.className = 'stat-value'; val.style.color = borderColor; val.textContent = valueText;
+                    const det = document.createElement('div'); det.style.cssText = `font-size:11px;color:${detailColor || 'var(--text-dim)'};margin-top:4px;`; det.textContent = detailText;
+                    card.append(lbl, val, det);
+                    return card;
+                }
+
+                grid.appendChild(makeStatCard('#00ff88', 'Version publiée',
+                    current ? `v${current.version}` : '—',
+                    current ? (current.title || '') : 'Aucune version publiée'));
+
+                grid.appendChild(makeStatCard('#ffc107', 'Publication auto prévue',
+                    next ? `v${next.version}` : '—',
+                    next?.scheduled_publish_at ? new Date(next.scheduled_publish_at).toLocaleString('fr-FR') : 'Aucune programmée'));
+
+                grid.appendChild(makeStatCard('#6c757d', 'Brouillons',
+                    String(draftCount), 'En attente de publication', '#adb5bd'));
+
+                container.appendChild(grid);
+            } catch (err) { console.error('Erreur dashboard:', err); }
+        }
+
+        // ===== MODAL UNIFIÉ "PROGRAMMER UNE SORTIE" =====
+
+        window.openScheduleModal = async function () {
+            document.getElementById('schedule-modal-form').reset();
+            document.getElementById('sm-countdown-id').value = '';
+            document.getElementById('sm-version-id-prev').value = '';
+            document.getElementById('sm-active-info').style.display = 'none';
+            document.getElementById('sm-recap').style.display = 'none';
+            document.getElementById('sm-version-hint').textContent = '';
+            document.getElementById('sm-date-hint').textContent = '';
+            document.getElementById('sm-submit-btn').innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Programmer la sortie';
+
+            // Charger la liste des versions brouillon
+            await loadVersionsForSchedule();
+
+            // Chercher une sortie déjà programmée (countdown actif lié à une version)
+            try {
+                const { data: active } = await supabaseClient
+                    .from('countdown').select('*').eq('is_active', true).maybeSingle();
+
+                if (active && active.version_id) {
+                    document.getElementById('sm-countdown-id').value = active.id;
+                    document.getElementById('sm-version-id-prev').value = active.version_id;
+
+                    const target = new Date(active.target_date);
+                    const isPast = target < new Date();
+                    const diff = target - new Date();
+                    const days = Math.abs(Math.floor(diff / 86400000));
+                    const hours = Math.abs(Math.floor((diff % 86400000) / 3600000));
+
+                    const detail = document.getElementById('sm-active-detail');
+                    detail.replaceChildren();
+                    detail.appendChild(document.createTextNode('Version : '));
+                    const strong = document.createElement('strong');
+                    strong.style.color = '#ce93d8';
+                    strong.textContent = active.event_name;
+                    detail.appendChild(strong);
+                    detail.appendChild(document.createElement('br'));
+                    detail.appendChild(document.createTextNode('Date : ' + target.toLocaleString('fr-FR')));
+                    if (isPast) {
+                        const warn = document.createElement('span');
+                        warn.style.color = '#ff4757';
+                        warn.textContent = ` · ⚠️ Expirée depuis ${days}j ${hours}h`;
+                        detail.appendChild(warn);
+                    } else {
+                        const ok = document.createElement('span');
+                        ok.style.color = '#00ff88';
+                        ok.textContent = ` · dans ${days}j ${hours}h`;
+                        detail.appendChild(ok);
+                    }
+                    document.getElementById('sm-active-info').style.display = 'block';
+
+                    // Pré-remplir le formulaire avec les valeurs existantes
+                    document.getElementById('sm-event-name').value = active.event_name || '';
+                    document.getElementById('sm-target-date').value = active.target_date ? active.target_date.slice(0, 16) : '';
+                    document.getElementById('sm-description').value = active.description || '';
+                    document.getElementById('sm-submit-btn').innerHTML = '<i class="fa-solid fa-rotate"></i> Mettre à jour';
+
+                    // Sélectionner la version après chargement du select
+                    setTimeout(() => {
+                        const sel = document.getElementById('sm-version');
+                        if (sel) { sel.value = active.version_id; onScheduleVersionChange(); }
+                    }, 300);
+                }
+            } catch (err) { console.error('Erreur chargement sortie programmée:', err); }
+
+            document.getElementById('schedule-modal').style.display = 'flex';
         };
 
-        // ===== COUNTDOWN (CORRIGÉ) =====
-        window.openCountdownModal = function () {
-            loadVersionsForCountdown();
-            document.getElementById('countdown-modal').style.display = 'flex';
+        window.closeScheduleModal = function () {
+            document.getElementById('schedule-modal').style.display = 'none';
         };
 
-        window.closeCountdownModal = function () {
-            document.getElementById('countdown-modal').style.display = 'none';
-        };
+        // Rétrocompat : l'ancien openCountdownModal pointe sur le nouveau
+        window.openCountdownModal = window.openScheduleModal;
+        window.closeCountdownModal = window.closeScheduleModal;
 
-        async function loadVersionsForCountdown() {
-            const select = document.getElementById('cd-version');
+        async function loadVersionsForSchedule() {
+            const select = document.getElementById('sm-version');
             const { data: versions } = await supabaseClient
-                .from('game_versions')
-                .select('id, version, title')
-                .order('release_date', { ascending: false });
-
-            select.innerHTML = '<option value="">Sélectionner une version</option>';
+                .from('game_versions').select('id, version, title, is_published, scheduled_publish_at')
+                .eq('is_archived', false).order('release_date', { ascending: false });
+            select.replaceChildren();
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = ''; defaultOpt.textContent = '— Choisir une version —';
+            select.appendChild(defaultOpt);
             versions?.forEach(v => {
-                select.innerHTML += `<option value="${escapeHtml(v.id)}">${escapeHtml(v.version)} - ${escapeHtml(v.title)}</option>`;
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                const statusTag = v.is_published ? ' ✅' : (v.scheduled_publish_at ? ' ⏰' : ' ⚫');
+                opt.textContent = v.version + (v.title ? ' — ' + v.title : '') + statusTag;
+                select.appendChild(opt);
             });
         }
 
-        document.getElementById('countdown-form').addEventListener('submit', async (e) => {
+        window.onScheduleVersionChange = function () {
+            const sel = document.getElementById('sm-version');
+            const selected = sel.options[sel.selectedIndex];
+            const hint = document.getElementById('sm-version-hint');
+            if (sel.value) {
+                const label = selected.text;
+                hint.replaceChildren();
+                const hintSpan = document.createElement('span');
+                hintSpan.style.color = '#ce93d8';
+                hintSpan.textContent = 'Version sélectionnée : ' + label;
+                hint.appendChild(hintSpan);
+                // Auto-remplir le nom si vide
+                const nameField = document.getElementById('sm-event-name');
+                if (!nameField.value.trim()) {
+                    const versionNum = label.split(' — ')[0];
+                    nameField.value = `Lancement de Echo ${versionNum} !`;
+                }
+            } else {
+                hint.textContent = '';
+            }
+            updateScheduleRecap();
+        };
+
+        window.onScheduleDateChange = function () {
+            const dateVal = document.getElementById('sm-target-date').value;
+            const hint = document.getElementById('sm-date-hint');
+            hint.replaceChildren();
+
+            if (dateVal) {
+                const target = new Date(dateVal);
+                const diff = target - new Date();
+                const days = Math.abs(Math.floor(diff / 86400000));
+                const hours = Math.abs(Math.floor((diff % 86400000) / 3600000));
+                const mins = Math.abs(Math.floor((diff % 3600000) / 60000));
+
+                const dateSpan = document.createElement('span');
+                if (diff < 0) {
+                    dateSpan.style.color = '#ff4757';
+                    dateSpan.textContent = '⚠️ Cette date est dans le passé';
+                } else {
+                    dateSpan.style.color = '#00ff88';
+                    dateSpan.textContent = `→ dans ${days}j ${hours}h ${mins}min`;
+                }
+                hint.appendChild(dateSpan);
+            }
+
+            updateScheduleRecap();
+        };
+
+        function updateScheduleRecap() {
+            const versionSel = document.getElementById('sm-version');
+            const dateVal = document.getElementById('sm-target-date').value;
+            const recap = document.getElementById('sm-recap');
+            const recapText = document.getElementById('sm-recap-text');
+
+            if (!versionSel.value || !dateVal) { recap.style.display = 'none'; return; }
+
+            const versionLabel = versionSel.options[versionSel.selectedIndex].text.replace(/ [✅⏰⚫]$/, '');
+            const target = new Date(dateVal);
+
+            recapText.replaceChildren();
+
+            function recapLine(iconClass, iconColor, textBefore, boldText) {
+                const line = document.createElement('div');
+                const icon = document.createElement('i');
+                icon.className = iconClass; icon.style.cssText = `color:${iconColor};margin-right:6px;`;
+                const textNode = document.createTextNode(textBefore);
+                const bold = document.createElement('strong'); bold.textContent = boldText;
+                line.append(icon, textNode, bold);
+                return line;
+            }
+
+            recapText.appendChild(recapLine('fa-solid fa-clock', '#00bcd4', 'Countdown activé sur le site jusqu\'au ', target.toLocaleString('fr-FR')));
+            recapText.appendChild(recapLine('fa-solid fa-box', '#ce93d8', 'Version ', versionLabel + ' liée au countdown'));
+            const lastLine = recapLine('fa-solid fa-rocket', '#00ff88', 'Quand le countdown atteint 0 → ', 'publication automatique + 🎉');
+            recapText.appendChild(lastLine);
+
+            recap.style.display = 'block';
+        }
+
+        // Annuler une sortie programmée (depuis le modal ou depuis le modal version)
+        window.cancelSchedule = async function () {
+            if (!confirm('Annuler cette sortie programmée ? Le countdown sera désactivé et la version restera en brouillon.')) return;
+            try {
+                // Désactiver le countdown
+                await supabaseClient.from('countdown').update({ is_active: false }).eq('is_active', true);
+                // Retirer scheduled_publish_at de la version
+                const prevId = document.getElementById('sm-version-id-prev').value;
+                if (prevId) {
+                    await supabaseClient.from('game_versions').update({ scheduled_publish_at: null }).eq('id', prevId);
+                }
+                showToast('Sortie programmée annulée', 'info');
+                closeScheduleModal();
+                loadVersions();
+                loadVersionsDashboard();
+                loadCountdownStatusCard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // Annuler depuis le modal d'édition d'une version
+        window.cancelScheduleFromVersion = async function () {
+            const id = document.getElementById('v-id').value;
+            if (!id) return;
+            if (!confirm('Annuler la programmation ? Le countdown associé sera aussi désactivé.')) return;
+            try {
+                await supabaseClient.from('game_versions').update({ scheduled_publish_at: null }).eq('id', id);
+                // Désactiver le countdown lié à cette version
+                await supabaseClient.from('countdown').update({ is_active: false }).eq('version_id', id);
+                document.getElementById('v-schedule-info').style.display = 'none';
+                showToast('Programmation annulée', 'info');
+                loadVersions(); loadCountdownStatusCard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // Soumettre : écrit countdown + scheduled_publish_at sur la version
+        document.getElementById('schedule-modal-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
+            const versionId = document.getElementById('sm-version').value;
+            const targetDateRaw = document.getElementById('sm-target-date').value;
+            const eventName = document.getElementById('sm-event-name').value.trim();
+            const description = document.getElementById('sm-description').value.trim() || null;
+            const existingCountdownId = document.getElementById('sm-countdown-id').value;
+            const prevVersionId = document.getElementById('sm-version-id-prev').value;
+
+            if (!versionId) { showToast('⚠️ Choisissez une version', 'warning'); return; }
+            if (!targetDateRaw) { showToast('⚠️ Choisissez une date', 'warning'); return; }
+            if (!eventName) { showToast('⚠️ Saisissez un nom pour l\'événement', 'warning'); return; }
+
+            const targetDate = new Date(targetDateRaw);
+            if (targetDate < new Date()) {
+                if (!confirm('⚠️ La date est dans le passé. Continuer quand même ?')) return;
+            }
+
+            const btn = document.getElementById('sm-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+
             try {
-                // Désactiver les anciens
-                await supabaseClient
-                    .from('countdown')
-                    .update({ is_active: false })
-                    .eq('is_active', true);
-
-                const versionId = document.getElementById('cd-version').value;
-                let eventName = document.getElementById('cd-event-name').value;
-
-                if (versionId) {
-                    const { data: version } = await supabaseClient
-                        .from('game_versions')
-                        .select('version')
-                        .eq('id', versionId)
-                        .single();
-
-                    if (version) {
-                        eventName = eventName.replace('{version}', version.version);
-                    }
+                // 1. Si on change de version, retirer scheduled_publish_at de l'ancienne
+                if (prevVersionId && prevVersionId !== versionId) {
+                    await supabaseClient.from('game_versions')
+                        .update({ scheduled_publish_at: null }).eq('id', prevVersionId);
                 }
 
-                const { error } = await supabaseClient
-                    .from('countdown')
-                    .insert({
-                        event_name: eventName,
-                        target_date: document.getElementById('cd-target-date').value,
-                        description: document.getElementById('cd-description').value,
-                        version_id: versionId || null,
-                        is_active: true
-                    });
+                // 2. Écrire scheduled_publish_at sur la nouvelle version
+                const { error: verErr } = await supabaseClient.from('game_versions')
+                    .update({ scheduled_publish_at: targetDate.toISOString(), is_published: false })
+                    .eq('id', versionId);
+                if (verErr) throw verErr;
 
-                if (error) throw error;
+                // 3. Créer ou mettre à jour le countdown
+                const countdownPayload = {
+                    event_name: eventName,
+                    target_date: targetDate.toISOString(),
+                    description,
+                    version_id: versionId,
+                    is_active: true
+                };
 
-                closeCountdownModal();
-                alert('✅ Compte à rebours configuré !');
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur : ' + error.message);
+                if (existingCountdownId) {
+                    const { error } = await supabaseClient.from('countdown')
+                        .update(countdownPayload).eq('id', existingCountdownId);
+                    if (error) throw error;
+                } else {
+                    // Désactiver les éventuels autres countdowns actifs
+                    await supabaseClient.from('countdown').update({ is_active: false }).eq('is_active', true);
+                    const { error } = await supabaseClient.from('countdown').insert(countdownPayload);
+                    if (error) throw error;
+                }
+
+                showToast('🚀 Sortie programmée ! Countdown actif sur le site.', 'success');
+                closeScheduleModal();
+                loadVersions();
+                loadVersionsDashboard();
+                loadCountdownStatusCard();
+
+            } catch (err) {
+                showToast('❌ Erreur : ' + err.message, 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Programmer la sortie';
             }
-
             return false;
         });
-        async function loadForms() {
+
+        // Carte de statut countdown dans la section versions
+        async function loadCountdownStatusCard() {
+            const card = document.getElementById('countdown-status-card');
+            if (!card) return;
             try {
-                if (error) throw error;
-            } catch (error) {
-            }
+                const { data: active } = await supabaseClient.from('countdown').select('*').eq('is_active', true).maybeSingle();
+                if (active && active.target_date) {
+                    const target = new Date(active.target_date);
+                    const now = new Date();
+                    const diff = target - now;
+                    const isPast = diff < 0;
+                    const days = Math.abs(Math.floor(diff / 86400000));
+                    const hours = Math.abs(Math.floor((diff % 86400000) / 3600000));
+                    const mins = Math.abs(Math.floor((diff % 3600000) / 60000));
+                    card.style.display = 'block';
+                    card.replaceChildren();
+
+                    const flex = document.createElement('div');
+                    flex.style.cssText = 'display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
+
+                    const icon = document.createElement('span');
+                    icon.style.fontSize = '22px';
+                    icon.textContent = isPast ? '⚠️' : '⏰';
+
+                    const info = document.createElement('div');
+                    info.style.flex = '1';
+
+                    const titleRow = document.createElement('div');
+                    titleRow.style.cssText = 'font-weight:600;font-size:14px;';
+                    titleRow.appendChild(document.createTextNode('Sortie programmée : '));
+                    const nameSpan = document.createElement('span');
+                    nameSpan.style.color = '#ce93d8';
+                    nameSpan.textContent = active.event_name;
+                    titleRow.appendChild(nameSpan);
+
+                    const dateRow = document.createElement('div');
+                    dateRow.style.cssText = 'font-size:12px;color:var(--text-dim);margin-top:3px;';
+                    dateRow.appendChild(document.createTextNode(target.toLocaleString('fr-FR')));
+                    const timeSpan = document.createElement('span');
+                    timeSpan.style.cssText = `color:${isPast ? '#ff4757' : '#00ff88'};margin-left:8px;`;
+                    timeSpan.textContent = isPast
+                        ? `· Expirée depuis ${days}j ${hours}h ${mins}min — le countdown a dû se déclencher`
+                        : `· dans ${days}j ${hours}h ${mins}min`;
+                    dateRow.appendChild(timeSpan);
+
+                    info.appendChild(titleRow);
+                    info.appendChild(dateRow);
+
+                    if (active.description) {
+                        const descRow = document.createElement('div');
+                        descRow.style.cssText = 'font-size:11px;color:var(--text-dim);margin-top:2px;';
+                        descRow.textContent = active.description;
+                        info.appendChild(descRow);
+                    }
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn';
+                    editBtn.style.cssText = 'background:linear-gradient(135deg,#7b2ff7,#00bcd4);color:#fff;font-size:12px;';
+                    editBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Modifier'; // statique ✅
+                    editBtn.addEventListener('click', () => openScheduleModal());
+
+                    flex.append(icon, info, editBtn);
+                    card.appendChild(flex);
+                } else {
+                    card.style.display = 'none';
+                }
+            } catch (err) { card.style.display = 'none'; }
         }
+
+        // ===== LISTENER UNIQUE sur la section versions =====
+        document.querySelector('[data-section="versions"]')?.addEventListener('click', () => {
+            loadVersionsDashboard();
+            loadVersions();
+            loadCountdownStatusCard();
+            initDownloadSwitch();
+        });
 
 
         // AJOUTER ce script dans admin.html (dans la section <script>)
@@ -1283,399 +1923,12 @@
             }
         };
 
-        // =============================================
-        // CODE À AJOUTER DANS ADMIN.HTML <script>
-        // =============================================
-
-        // 1. WIDGET DASHBOARD DE STATUT
-        async function loadVersionsDashboard() {
-            try {
-                const { data: current } = await supabaseClient
-                    .from('game_versions')
-                    .select('*, download_stats(download_count)')
-                    .eq('is_published', true)
-                    .eq('is_archived', false)
-                    .order('release_date', { ascending: false })
-                    .limit(1)
-                    .single();
-
-                const { data: next } = await supabaseClient
-                    .from('game_versions')
-                    .select('*')
-                    .eq('is_published', false)
-                    .eq('is_archived', false)
-                    .order('scheduled_publish_at', { ascending: true })
-                    .limit(1)
-                    .maybeSingle();
-
-                const { data: drafts } = await supabaseClient
-                    .from('game_versions')
-                    .select('id', { count: 'exact', head: true })
-                    .eq('is_published', false)
-                    .eq('is_archived', false);
-
-                const dashboardHTML = `
-            <div class="stats-grid" style="margin-bottom: 30px;">
-                <div class="stat-card" style="border-color: var(--success);">
-                    <div class="stat-label">Version Actuelle</div>
-                    <div class="stat-value">${current?.version || 'Aucune'}</div>
-                    <div class="stat-detail">${current?.download_stats?.[0]?.download_count || 0} téléchargements</div>
-                </div>
-                
-                <div class="stat-card" style="border-color: var(--cyan);">
-                    <div class="stat-label">Prochaine Sortie</div>
-                    <div class="stat-value">${next?.version || 'N/A'}</div>
-                    <div class="stat-detail">
-                        ${next?.scheduled_publish_at
-                        ? new Date(next.scheduled_publish_at).toLocaleDateString('fr-FR')
-                        : 'Non programmée'}
-                    </div>
-                </div>
-                
-                <div class="stat-card" style="border-color: var(--warning);">
-                    <div class="stat-label">Brouillons</div>
-                    <div class="stat-value">${drafts?.count || 0}</div>
-                    <div class="stat-detail">En attente</div>
-                </div>
-            </div>
-        `;
-
-                const container = document.getElementById('versions-dashboard');
-                if (container) container.innerHTML = dashboardHTML;
-            } catch (error) {
-                console.error('Erreur dashboard:', error);
-            }
-        }
-
-        // 2. STATS PAR VERSION
-        async function loadVersionWithStats(versionId) {
-            const { data, error } = await supabaseClient
-                .from('game_versions')
-                .select(`
-            *,
-            download_stats(download_count)
-        `)
-                .eq('id', versionId)
-                .single();
-
-            if (error) {
-                console.error('Erreur stats version:', error);
-                return null;
-            }
-            return data;
-        }
-
-        // 3. MODIFICATION DU TABLEAU DES VERSIONS (remplace loadVersions)
-        async function loadVersions() {
-            const container = document.getElementById('versions-container');
-            container.innerHTML = '<p class="loading">Chargement</p>';
-
-            try {
-                const { data: versions } = await supabaseClient
-                    .from('version_stats')
-                    .select('*')
-                    .eq('is_archived', false)
-                    .order('release_date', { ascending: false });
-
-                if (!versions || versions.length === 0) {
-                    container.innerHTML = '<p>Aucune version.</p>';
-                    return;
-                }
-
-                const now = new Date();
-
-                container.innerHTML = `<div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Version</th>
-                        <th>Titre</th>
-                        <th>Date de sortie</th>
-                        <th>📊 Téléch.</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${versions.map(v => {
-                    const releaseDate = new Date(v.release_date);
-                    const scheduledDate = v.scheduled_publish_at ? new Date(v.scheduled_publish_at) : null;
-                    const isPast = releaseDate <= now;
-
-                    let status = '⚫ Brouillon';
-                    if (v.is_published) {
-                        status = isPast ? '🟢 Publiée' : '🔵 Planifiée';
-                    } else if (scheduledDate && scheduledDate > now) {
-                        status = `⏰ Programmée (${scheduledDate.toLocaleDateString('fr-FR')})`;
-                    }
-
-                    return `
-                            <tr>
-                                <td><strong>${v.version}</strong></td>
-                                <td>${v.title || '-'}</td>
-                                <td>${releaseDate.toLocaleString('fr-FR')}</td>
-                                <td style="text-align: center;">
-                                    <strong style="color: var(--cyan);">${v.download_count || 0}</strong>
-                                </td>
-                                <td>${status}</td>
-                                <td>
-                                    <button class="action-btn btn-edit" onclick='editVersion(${JSON.stringify(v).replace(/'/g, "&#39;")})'>
-                                        ✏️
-                                    </button>
-                                    ${!v.is_published ? `
-                                        <button class="action-btn btn-publish" onclick="publishVersion('${v.id}')">
-                                            🚀
-                                        </button>
-                                    ` : `
-                                        <button class="action-btn btn-delete" onclick="unpublishVersion('${v.id}')">
-                                            📦
-                                        </button>
-                                    `}
-                                    <button class="action-btn" style="background: var(--warning);" onclick="archiveVersion('${v.id}')">
-                                        📁
-                                    </button>
-                                    <button class="action-btn btn-delete" onclick="deleteVersion('${v.id}')">
-                                        🗑️
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                }).join('')}
-                </tbody>
-            </table>
-            </div>
-        `;
-            } catch (error) {
-                console.error('Erreur:', error);
-                container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
-            }
-        }
-
-        // 4. ARCHIVAGE
-        window.archiveVersion = async function (id) {
-            if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .update({ is_archived: true })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadVersions();
-                loadVersionsDashboard();
-                alert('✅ Version archivée !');
-            } catch (err) {
-                alert('❌ Erreur : ' + err.message);
-            }
-        };
-
-        // 5. PROGRAMMATION INTELLIGENTE
-        window.scheduleVersion = function (versionId) {
-            const modal = createModal('⏰ Programmer la publication', `
-        <form id="schedule-form">
-            <div class="form-group">
-                <label>Publication dans :</label>
-                <select id="schedule-type" onchange="updateScheduleFields()">
-                    <option value="custom">📅 Date personnalisée</option>
-                    <option value="hours">⏰ Dans X heures</option>
-                    <option value="days">📆 Dans X jours</option>
-                </select>
-            </div>
-
-            <div id="schedule-custom" class="form-group">
-                <label>Date et heure</label>
-                <input type="datetime-local" id="schedule-datetime">
-            </div>
-
-            <div id="schedule-relative" class="form-group" style="display: none;">
-                <label>Délai</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="number" id="schedule-amount" min="1" value="1" style="flex: 1;">
-                    <select id="schedule-unit" style="flex: 1;">
-                        <option value="hours">Heures</option>
-                        <option value="days">Jours</option>
-                    </select>
-                </div>
-            </div>
-
-            <div style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                <p style="margin: 0; font-size: 0.9rem;">
-                    📌 La version sera automatiquement publiée à la date/heure choisie
-                </p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="this.closest('.custom-modal').remove()">
-                    Annuler
-                </button>
-                <button type="submit" class="btn btn-success">Programmer</button>
-            </div>
-        </form>
-    `);
-
-            const form = document.getElementById('schedule-form');
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                let scheduledDate;
-                const type = document.getElementById('schedule-type').value;
-
-                if (type === 'custom') {
-                    scheduledDate = document.getElementById('schedule-datetime').value;
-                } else {
-                    const amount = parseInt(document.getElementById('schedule-amount').value);
-                    const unit = document.getElementById('schedule-unit').value;
-
-                    const now = new Date();
-                    if (unit === 'hours') {
-                        now.setHours(now.getHours() + amount);
-                    } else {
-                        now.setDate(now.getDate() + amount);
-                    }
-                    scheduledDate = now.toISOString();
-                }
-
-                try {
-                    const { error } = await supabaseClient
-                        .from('game_versions')
-                        .update({
-                            scheduled_publish_at: scheduledDate,
-                            is_published: false
-                        })
-                        .eq('id', versionId);
-
-                    if (error) throw error;
-
-                    modal.remove();
-                    loadVersions();
-                    loadVersionsDashboard();
-                    alert('✅ Publication programmée !');
-                } catch (err) {
-                    alert('❌ Erreur : ' + err.message);
-                }
-            });
-        };
-
-        window.updateScheduleFields = function () {
-            const type = document.getElementById('schedule-type').value;
-            const customDiv = document.getElementById('schedule-custom');
-            const relativeDiv = document.getElementById('schedule-relative');
-            const unitSelect = document.getElementById('schedule-unit');
-
-            if (type === 'custom') {
-                customDiv.style.display = 'block';
-                relativeDiv.style.display = 'none';
-            } else {
-                customDiv.style.display = 'none';
-                relativeDiv.style.display = 'block';
-                unitSelect.value = type;
-            }
-        };
-
         // 6. INCRÉMENTER TÉLÉCHARGEMENTS (appel depuis buttons.js)
         window.trackVersionDownload = async function (versionId) {
             try {
-                await supabaseClient.rpc('increment_download_count', {
-                    p_version_id: versionId
-                });
+                await supabaseClient.rpc('increment_download_count', { p_version_id: versionId });
             } catch (error) {
                 console.error('Erreur tracking:', error);
-            }
-        };
-
-        // 8. INITIALISATION AU CHARGEMENT DE LA SECTION VERSIONS
-        document.querySelector('[data-section="versions"]')?.addEventListener('click', () => {
-            loadVersionsDashboard();
-            loadVersions();
-        });
-
-        // 9. VOIR LES ARCHIVES
-        window.showArchives = async function () {
-            const { data: archived } = await supabaseClient
-                .from('game_versions')
-                .select('*')
-                .eq('is_archived', true)
-                .order('release_date', { ascending: false });
-
-            const modal = createModal('📁 Versions archivées', `
-        ${archived && archived.length > 0 ? `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Version</th>
-                        <th>Titre</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${archived.map(v => `
-                        <tr>
-                            <td>${v.version}</td>
-                            <td>${v.title}</td>
-                            <td>
-                                <button class="action-btn btn-edit" onclick="unarchiveVersion('${v.id}')">
-                                    📤 Restaurer
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        ` : '<p style="text-align: center; color: var(--purple);">Aucune version archivée</p>'}
-    `);
-        };
-
-        window.unarchiveVersion = async function (id) {
-            try {
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .update({ is_archived: false })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                const modal = document.querySelector('.custom-modal');
-                if (modal) modal.remove();
-
-                loadVersions();
-                alert('✅ Version restaurée !');
-            } catch (err) {
-                alert('❌ Erreur : ' + err.message);
-            }
-        };
-        // ===== ACTIONS =====
-        window.publishVersion = async function (id) {
-            if (!confirm('Publier cette version ?')) return;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .update({ is_published: true })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadVersions();
-                alert('✅ Version publiée !');
-            } catch (err) {
-                alert('❌ Erreur : ' + err.message);
-            }
-        };
-
-        window.unpublishVersion = async function (id) {
-            if (!confirm('Dépublier cette version ?')) return;
-
-            try {
-                const { error } = await supabaseClient
-                    .from('game_versions')
-                    .update({ is_published: false })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadVersions();
-                alert('✅ Version dépubliée !');
-            } catch (err) {
-                alert('❌ Erreur : ' + err.message);
             }
         };
         // Lancer au chargement de la page
@@ -1700,16 +1953,240 @@
             }
         })();
 
+        // ===== FORMULAIRES =====
+    let _allFormResponses = [];
+
+    async function loadFormResponses() {
+        const container = document.getElementById('forms-list');
+        const countEl = document.getElementById('forms-count');
+
+        container.replaceChildren();
+        const loading = document.createElement('p');
+        loading.className = 'forms-empty';
+        loading.textContent = 'Chargement...';
+        container.appendChild(loading);
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('form_responses')
+                .select('*')
+                .order('submitted_at', { ascending: false });
+
+            if (error) throw error;
+
+            _allFormResponses = data || [];
+            const n = _allFormResponses.length;
+            countEl.textContent = `${n} réponse${n > 1 ? 's' : ''}`;
+            renderFormResponses(_allFormResponses);
+
+        } catch (err) {
+            container.replaceChildren();
+            const errEl = document.createElement('p');
+            errEl.className = 'forms-empty';
+            errEl.textContent = '❌ Erreur de chargement : ' + err.message;
+            errEl.style.color = 'var(--danger)';
+            container.appendChild(errEl);
+        }
+    }
+
+    function renderFormResponses(data) {
+        const container = document.getElementById('forms-list');
+        container.replaceChildren();
+
+        if (!data || data.length === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'forms-empty';
+            empty.textContent = 'Aucune réponse pour le moment.';
+            container.appendChild(empty);
+            return;
+        }
+
+        const ratingColor = n => n >= 4 ? '#00ff88' : n >= 3 ? '#ffc107' : '#ff4757';
+
+        data.forEach(row => {
+            const r = row.responses || {};
+            const rating = parseInt(r.rating) || 0;
+            const date = row.submitted_at
+                ? new Date(row.submitted_at).toLocaleString('fr-FR')
+                : '—';
+
+            // Carte
+            const card = document.createElement('div');
+            card.className = 'form-response-card';
+
+            // ── Header ──
+            const header = document.createElement('div');
+            header.className = 'form-response-header';
+
+            // Meta (nom + email + date)
+            const meta = document.createElement('div');
+            meta.className = 'form-response-meta';
+
+            const name = document.createElement('div');
+            name.className = 'form-response-name';
+            name.textContent = r.name || '—';
+
+            const info = document.createElement('div');
+            info.className = 'form-response-info';
+
+            if (r.email) {
+                const emailLink = document.createElement('a');
+                emailLink.href = 'mailto:' + r.email;
+                emailLink.textContent = r.email;
+                info.appendChild(emailLink);
+                info.appendChild(document.createTextNode(' · '));
+            }
+            info.appendChild(document.createTextNode(date));
+
+            meta.appendChild(name);
+            meta.appendChild(info);
+
+            // Actions (étoiles + bouton supprimer)
+            const actions = document.createElement('div');
+            actions.className = 'form-response-actions';
+
+            if (rating) {
+                const stars = document.createElement('div');
+                stars.className = 'form-stars';
+                stars.title = `${rating}/5`;
+                stars.style.color = ratingColor(rating);
+                stars.textContent = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
+                actions.appendChild(stars);
+            }
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-delete-response';
+            delBtn.title = 'Supprimer cette réponse';
+            delBtn.textContent = '🗑️ Supprimer';
+            delBtn.addEventListener('click', () => deleteFormResponse(row.id, card));
+            actions.appendChild(delBtn);
+
+            header.appendChild(meta);
+            header.appendChild(actions);
+            card.appendChild(header);
+
+            // ── Blocs contenu ──
+            const sections = [
+                { key: 'positive',    label: '👍 Points positifs', cls: 'block-positive' },
+                { key: 'negative',    label: '👎 Points négatifs', cls: 'block-negative' },
+                { key: 'suggestions', label: '💡 Suggestions',     cls: 'block-suggestions' },
+            ];
+
+            sections.forEach(({ key, label, cls }) => {
+                if (!r[key]) return;
+                const block = document.createElement('div');
+                block.className = `form-response-block ${cls}`;
+
+                const lbl = document.createElement('div');
+                lbl.className = 'form-response-block-label';
+                lbl.textContent = label;
+
+                const content = document.createElement('div');
+                content.className = 'form-response-block-content';
+                content.textContent = r[key];
+
+                block.appendChild(lbl);
+                block.appendChild(content);
+                card.appendChild(block);
+            });
+
+            container.appendChild(card);
+        });
+    }
+
+    async function deleteFormResponse(id, cardElement) {
+        if (!confirm('Supprimer définitivement cette réponse ?')) return;
+        try {
+            const { error } = await supabaseClient
+                .from('form_responses')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+
+            // Retirer du tableau local
+            _allFormResponses = _allFormResponses.filter(r => r.id !== id);
+
+            // Supprimer la carte avec animation
+            cardElement.style.transition = 'opacity .25s, transform .25s';
+            cardElement.style.opacity = '0';
+            cardElement.style.transform = 'translateX(20px)';
+            setTimeout(() => cardElement.remove(), 250);
+
+            // Mettre à jour le compteur
+            const n = _allFormResponses.length;
+            document.getElementById('forms-count').textContent =
+                `${n} réponse${n > 1 ? 's' : ''}`;
+
+            showToast('Réponse supprimée', 'info');
+        } catch (err) {
+            showToast('❌ ' + err.message, 'danger');
+        }
+    }
+
+    function filterFormResponses() {
+        const search = document.getElementById('forms-search').value.toLowerCase();
+        const sort = document.getElementById('forms-sort').value;
+
+        let filtered = _allFormResponses.filter(row => {
+            const r = row.responses || {};
+            return ['name','email','positive','negative','suggestions']
+                .some(k => r[k] && r[k].toLowerCase().includes(search));
+        });
+
+        filtered.sort((a, b) => {
+            const da = new Date(a.submitted_at), db = new Date(b.submitted_at);
+            return sort === 'desc' ? db - da : da - db;
+        });
+
+        const total = _allFormResponses.length;
+        const shown = filtered.length;
+        document.getElementById('forms-count').textContent =
+            shown === total
+                ? `${total} réponse${total > 1 ? 's' : ''}`
+                : `${shown} / ${total} réponse${total > 1 ? 's' : ''}`;
+
+        renderFormResponses(filtered);
+    }
+
+    window.exportFormResponses = function () {
+        if (!_allFormResponses.length) { showToast('Aucune donnée à exporter', 'warning'); return; }
+        const headers = ['Date','Nom','Email','Note','Positif','Négatif','Suggestions'];
+        const rows = _allFormResponses.map(row => {
+            const r = row.responses || {};
+            return [
+                new Date(row.submitted_at).toLocaleString('fr-FR'),
+                r.name || '', r.email || '', r.rating || '',
+                r.positive || '', r.negative || '', r.suggestions || ''
+            ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(',');
+        });
+        const csv = [headers.join(','), ...rows].join('\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `form_responses_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('✅ Export CSV téléchargé !', 'success');
+    };
+
+    document.querySelector('[data-section="forms"]')?.addEventListener('click', loadFormResponses);
+
 
         // ===== GESTION DES UTILISATEURS =====
         async function loadUsers() {
             if (currentUserProfile.role !== 'admin') {
-                document.getElementById('users-list').innerHTML = '<p style="color: var(--danger);">Accès refusé - Admin uniquement</p>';
+                const p = document.createElement('p');
+                p.style.color = 'var(--danger)';
+                p.textContent = 'Accès refusé - Admin uniquement';
+                document.getElementById('users-list').replaceChildren(p);
                 return;
             }
 
             const container = document.getElementById('users-list');
-            container.innerHTML = '<p class="loading">Chargement</p>';
+            const loadingP = document.createElement('p');
+            loadingP.className = 'loading'; loadingP.textContent = 'Chargement';
+            container.replaceChildren(loadingP);
 
             try {
                 const { data: users, error } = await supabaseClient
@@ -1720,7 +2197,10 @@
                 if (error) throw error;
 
                 if (!users || users.length === 0) {
-                    container.innerHTML = '<p style="color: var(--purple);">Aucun utilisateur</p>';
+                    const emptyP = document.createElement('p');
+                    emptyP.style.color = 'var(--purple)';
+                    emptyP.textContent = 'Aucun utilisateur';
+                    container.replaceChildren(emptyP);
                     return;
                 }
 
@@ -1739,30 +2219,64 @@
                 <tbody>
         `;
 
+                container.replaceChildren();
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-wrapper';
+                const table = document.createElement('table');
+                table.innerHTML = `<thead><tr>
+                    <th>Username</th><th>Email (ID)</th><th>Rôle</th>
+                    <th>Date inscription</th><th>Actions</th>
+                </tr></thead>`; // thead statique ✅
+                const tbody = document.createElement('tbody');
+
                 users.forEach(user => {
-                    html += `
-                <tr>
-                    <td>${user.username || 'N/A'}</td>
-                    <td>${user.id}</td>
-                    <td><span class="role-badge role-${user.role}">${user.role}</span></td>
-                    <td>${new Date(user.created_at).toLocaleDateString('fr-FR')}</td>
-                    <td>
-                        <select onchange="changeUserRole('${user.id}', this.value)" 
-                                style="background: rgba(0,0,0,0.4); color: white; border: 1px solid var(--finn); padding: 8px; border-radius: 6px; cursor: pointer;">
-                            <option value="user" ${user.role === 'user' ? 'selected' : ''}>Utilisateur</option>
-                            <option value="collaborator" ${user.role === 'collaborator' ? 'selected' : ''}>Collaborateur</option>
-                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-                        </select>
-                    </td>
-                </tr>
-            `;
+                    const tr = document.createElement('tr');
+
+                    const tdName = document.createElement('td');
+                    tdName.textContent = user.username || 'N/A';
+
+                    const tdId = document.createElement('td');
+                    tdId.textContent = user.id;
+
+                    const tdRole = document.createElement('td');
+                    const badge = document.createElement('span');
+                    // Whitelist des rôles autorisés pour éviter injection dans className
+                    const safeRole = ['user','collaborator','admin'].includes(user.role) ? user.role : 'user';
+                    badge.className = `role-badge role-${safeRole}`;
+                    badge.textContent = user.role;
+                    tdRole.appendChild(badge);
+
+                    const tdDate = document.createElement('td');
+                    tdDate.textContent = new Date(user.created_at).toLocaleDateString('fr-FR');
+
+                    const tdAction = document.createElement('td');
+                    const select = document.createElement('select');
+                    select.style.cssText = 'background:rgba(0,0,0,0.4);color:white;border:1px solid var(--finn);padding:8px;border-radius:6px;cursor:pointer;';
+                    [['user','Utilisateur'],['collaborator','Collaborateur'],['admin','Admin']].forEach(([val, label]) => {
+                        const opt = document.createElement('option');
+                        opt.value = val;
+                        opt.textContent = label;
+                        opt.selected = user.role === val;
+                        select.appendChild(opt);
+                    });
+                    // Stocker l'id dans data-attribute, pas dans un inline handler
+                    select.dataset.userId = user.id;
+                    select.addEventListener('change', (e) => changeUserRole(e.target.dataset.userId, e.target.value));
+                    tdAction.appendChild(select);
+
+                    tr.append(tdName, tdId, tdRole, tdDate, tdAction);
+                    tbody.appendChild(tr);
                 });
 
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
+                table.appendChild(tbody);
+                wrapper.appendChild(table);
+                container.appendChild(wrapper);
             } catch (error) {
                 console.error('Erreur chargement utilisateurs:', error);
-                container.innerHTML = '<p style="color: var(--danger);">Erreur : ' + error.message + '</p>';
+                const errP = document.createElement('p');
+                errP.style.color = 'var(--danger)';
+                errP.textContent = 'Erreur : ' + error.message;
+                container.replaceChildren(errP);
             }
         }
 
@@ -1802,7 +2316,11 @@
         // Charger la roadmap
         async function loadRoadmap() {
             const container = document.getElementById('roadmap-container');
-            container.innerHTML = '<p class="loading">Chargement...</p>';
+            container.replaceChildren();
+            const loadingP = document.createElement('p');
+            loadingP.className = 'loading';
+            loadingP.textContent = 'Chargement...';
+            container.appendChild(loadingP);
 
             try {
                 const { data: items, error } = await supabaseClient
@@ -1813,29 +2331,33 @@
                 if (error) throw error;
 
                 if (!items || items.length === 0) {
-                    container.innerHTML = '<p style="color: var(--purple);">Aucun élément dans la roadmap</p>';
+                    container.replaceChildren();
+                    const p = document.createElement('p');
+                    p.style.color = 'var(--purple)';
+                    p.textContent = 'Aucun élément dans la roadmap';
+                    container.replaceChildren(p);
                     return;
                 }
 
                 const grouped = {
-                    planned: items.filter(i => i.status === 'planned'),
+                    planned:     items.filter(i => i.status === 'planned'),
                     in_progress: items.filter(i => i.status === 'in_progress'),
-                    completed: items.filter(i => i.status === 'completed'),
-                    cancelled: items.filter(i => i.status === 'cancelled')
+                    completed:   items.filter(i => i.status === 'completed'),
+                    cancelled:   items.filter(i => i.status === 'cancelled')
                 };
 
                 const statusLabels = {
-                    planned: '📋 Planifié',
+                    planned:     '📋 Planifié',
                     in_progress: '⚙️ En cours',
-                    completed: '✅ Terminé',
-                    cancelled: '❌ Annulé'
+                    completed:   '✅ Terminé',
+                    cancelled:   '❌ Annulé'
                 };
 
                 const categoryColors = {
                     feature: 'var(--success)',
-                    bug: 'var(--danger)',
-                    design: 'var(--warning)',
-                    other: 'var(--purple)'
+                    bug:     'var(--danger)',
+                    design:  'var(--warning)',
+                    other:   'var(--purple)'
                 };
 
                 const priorityLabels = {
@@ -1844,60 +2366,130 @@
                     2: '🔴 Haute'
                 };
 
-                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
+                // Stocke les objets complets — on passera seulement l'id dans les boutons
+                const _roadmapCache = new Map();
+
+                container.replaceChildren();
+                const grid = document.createElement('div');
+                grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;';
 
                 Object.entries(grouped).forEach(([status, statusItems]) => {
                     if (status === 'cancelled' && statusItems.length === 0) return;
 
-                    html += `
-                <div class="card" style="background: rgba(0, 0, 0, 0.2); padding: 20px;">
-                    <h3 style="color: var(--cyan); margin-bottom: 15px;">
-                        ${statusLabels[status]}
-                        <span class="role-badge" style="background: rgba(0, 208, 198, 0.2); color: var(--cyan);">
-                            ${statusItems.length}
-                        </span>
-                    </h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-            `;
+                    // Colonne
+                    const col = document.createElement('div');
+                    col.className = 'card';
+                    col.style.cssText = 'background:rgba(0,0,0,0.2);padding:20px;';
+
+                    // Titre de colonne
+                    const h3 = document.createElement('h3');
+                    h3.style.cssText = 'color:var(--cyan);margin-bottom:15px;display:flex;align-items:center;gap:8px;';
+                    h3.textContent = statusLabels[status] + ' ';
+                    const countBadge = document.createElement('span');
+                    countBadge.className = 'role-badge';
+                    countBadge.style.cssText = 'background:rgba(0,208,198,0.2);color:var(--cyan);';
+                    countBadge.textContent = statusItems.length;
+                    h3.appendChild(countBadge);
+                    col.appendChild(h3);
+
+                    const itemsWrap = document.createElement('div');
+                    itemsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
 
                     statusItems.forEach(item => {
-                        html += `
-                    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-left: 4px solid ${categoryColors[item.category]}; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                            <div style="flex: 1;">
-                                <div style="font-weight: bold; color: var(--text); margin-bottom: 5px;">${item.title}</div>
-                                ${item.description ? `<div style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">${item.description}</div>` : ''}
-                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-                                    <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; background: rgba(${item.category === 'feature' ? '0, 255, 136' : item.category === 'bug' ? '255, 0, 85' : item.category === 'design' ? '255, 170, 0' : '135, 53, 185'}, 0.2); color: ${categoryColors[item.category]}; border: 1px solid ${categoryColors[item.category]};">${item.category}</span>
-                                    <span style="padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; background: rgba(255, 255, 255, 0.05); color: var(--text-dim);">${priorityLabels[item.priority]}</span>
-                                    ${item.estimated_date ? `<span style="padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; background: rgba(255, 255, 255, 0.05); color: var(--text-dim);">📅 ${new Date(item.estimated_date).toLocaleDateString('fr-FR')}</span>` : ''}
-                                </div>
-                                <div style="margin-bottom: 5px;">
-                                    <div style="background: rgba(255, 255, 255, 0.1); height: 6px; border-radius: 3px; overflow: hidden;">
-                                        <div style="background: linear-gradient(90deg, var(--cyan), var(--purple)); height: 100%; width: ${item.progress}%; transition: width 0.3s;"></div>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 3px;">${item.progress}% complété</div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 5px; color: var(--cyan); font-size: 0.9rem;"><i class="fas fa-thumbs-up"></i> <span>${item.votes || 0} votes</span></div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 5px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                            <button class="action-btn btn-edit" onclick='editRoadmapItem(${JSON.stringify(item).replace(/'/g, "&#39;")})'>✏️ Modifier</button>
-                            <button class="action-btn btn-delete" onclick="deleteRoadmapItem('${item.id}')">🗑️ Supprimer</button>
-                        </div>
-                    </div>
-                `;
+                        _roadmapCache.set(item.id, item);
+
+                        const card = document.createElement('div');
+                        const catColor = categoryColors[item.category] || 'rgba(255,255,255,0.2)';
+                        card.style.cssText = `background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-left:4px solid ${catColor};border-radius:8px;padding:15px;cursor:pointer;transition:border-color .3s;`;
+                        card.addEventListener('mouseenter', () => card.style.borderColor = 'var(--cyan)');
+                        card.addEventListener('mouseleave', () => card.style.borderColor = 'rgba(255,255,255,0.1)');
+
+                        // Titre
+                        const titleEl = document.createElement('div');
+                        titleEl.style.cssText = 'font-weight:bold;color:var(--text);margin-bottom:5px;';
+                        titleEl.textContent = item.title; // textContent ✅
+
+                        // Description
+                        const descEl = document.createElement('div');
+                        descEl.style.cssText = 'font-size:0.85rem;color:var(--text-dim);margin-bottom:8px;';
+                        descEl.textContent = item.description || ''; // textContent ✅
+                        if (!item.description) descEl.style.display = 'none';
+
+                        // Badges
+                        const badgesRow = document.createElement('div');
+                        badgesRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;';
+
+                        const catBadge = document.createElement('span');
+                        catBadge.style.cssText = `padding:3px 8px;border-radius:12px;font-size:0.75rem;color:${catColor};border:1px solid ${catColor};`;
+                        catBadge.textContent = item.category; // textContent ✅
+                        badgesRow.appendChild(catBadge);
+
+                        const prioBadge = document.createElement('span');
+                        prioBadge.style.cssText = 'padding:3px 8px;border-radius:12px;font-size:0.75rem;background:rgba(255,255,255,0.05);color:var(--text-dim);';
+                        prioBadge.textContent = priorityLabels[item.priority] || '—';
+                        badgesRow.appendChild(prioBadge);
+
+                        if (item.estimated_date) {
+                            const dateBadge = document.createElement('span');
+                            dateBadge.style.cssText = 'padding:3px 8px;border-radius:12px;font-size:0.75rem;background:rgba(255,255,255,0.05);color:var(--text-dim);';
+                            dateBadge.textContent = '📅 ' + new Date(item.estimated_date).toLocaleDateString('fr-FR');
+                            badgesRow.appendChild(dateBadge);
+                        }
+
+                        // Barre progression
+                        const progressWrap = document.createElement('div');
+                        progressWrap.style.marginBottom = '5px';
+                        const progressBg = document.createElement('div');
+                        progressBg.style.cssText = 'background:rgba(255,255,255,0.1);height:6px;border-radius:3px;overflow:hidden;';
+                        const progressBar = document.createElement('div');
+                        const pct = Math.min(100, Math.max(0, item.progress || 0));
+                        progressBar.style.cssText = `background:linear-gradient(90deg,var(--cyan),var(--purple));height:100%;width:${pct}%;transition:width .3s;`;
+                        progressBg.appendChild(progressBar);
+                        const progressLabel = document.createElement('div');
+                        progressLabel.style.cssText = 'font-size:0.75rem;color:var(--text-dim);margin-top:3px;';
+                        progressLabel.textContent = `${pct}% complété`;
+                        progressWrap.append(progressBg, progressLabel);
+
+                        // Votes
+                        const votesEl = document.createElement('div');
+                        votesEl.style.cssText = 'display:flex;align-items:center;gap:5px;color:var(--cyan);font-size:0.9rem;';
+                        votesEl.textContent = `👍 ${item.votes || 0} votes`;
+
+                        // Boutons
+                        const actionsRow = document.createElement('div');
+                        actionsRow.style.cssText = 'display:flex;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);';
+
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'action-btn btn-edit';
+                        editBtn.textContent = '✏️ Modifier';
+                        editBtn.addEventListener('click', () => {
+                            // On récupère l'objet depuis le cache, pas depuis le DOM
+                            editRoadmapItem(_roadmapCache.get(item.id));
+                        });
+
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'action-btn btn-delete';
+                        delBtn.textContent = '🗑️ Supprimer';
+                        delBtn.addEventListener('click', () => deleteRoadmapItem(item.id));
+
+                        actionsRow.append(editBtn, delBtn);
+                        card.append(titleEl, descEl, badgesRow, progressWrap, votesEl, actionsRow);
+                        itemsWrap.appendChild(card);
                     });
 
-                    html += '</div></div>';
+                    col.appendChild(itemsWrap);
+                    grid.appendChild(col);
                 });
 
-                html += '</div>';
-                container.innerHTML = html;
+                container.appendChild(grid);
 
             } catch (error) {
                 console.error('Erreur chargement roadmap:', error);
-                container.innerHTML = '<p style="color: var(--danger);">Erreur de chargement</p>';
+                container.replaceChildren();
+                const errP = document.createElement('p');
+                errP.style.color = 'var(--danger)';
+                errP.textContent = 'Erreur de chargement';
+                container.appendChild(errP);
             }
         }
 
@@ -2162,221 +2754,150 @@
             displayGeneralStats(stats) {
                 const container = document.getElementById('analytics-general');
                 if (!container) return;
-
+                // Toutes les valeurs sont numériques — pas de données DB textuelles ✅
                 const growthIcon = stats.growth > 0 ? '📈' : stats.growth < 0 ? '📉' : '➡️';
                 const growthColor = stats.growth > 0 ? 'var(--success)' : stats.growth < 0 ? 'var(--danger)' : 'var(--text-dim)';
 
-                container.innerHTML = `
-            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
-                <div class="stat-card">
-                    <div class="stat-label">Taux de lecture</div>
-                    <div class="stat-value">${stats.readRate}%</div>
-                    <div class="stat-detail">${stats.read} / ${stats.total}</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-label">Aujourd'hui</div>
-                    <div class="stat-value">${stats.today}</div>
-                    <div class="stat-detail" style="color: ${growthColor};">
-                        ${growthIcon} ${Math.abs(stats.growth)}% vs hier
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-label">Temps moyen de lecture</div>
-                    <div class="stat-value">${stats.avgReadTime}min</div>
-                    <div class="stat-detail">Création → Lecture</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-label">Total envoyées</div>
-                    <div class="stat-value">${stats.total}</div>
-                    <div class="stat-detail">Depuis le début</div>
-                </div>
-            </div>
-        `;
+                function makeCard(label, value, detail, detailColor) {
+                    const card = document.createElement('div'); card.className = 'stat-card';
+                    const lbl = document.createElement('div'); lbl.className = 'stat-label'; lbl.textContent = label;
+                    const val = document.createElement('div'); val.className = 'stat-value'; val.textContent = value;
+                    const det = document.createElement('div'); det.className = 'stat-detail';
+                    if (detailColor) det.style.color = detailColor;
+                    det.textContent = detail;
+                    card.append(lbl, val, det);
+                    return card;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'stats-grid';
+                grid.style.cssText = 'grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;';
+                grid.appendChild(makeCard('Taux de lecture', `${stats.readRate}%`, `${stats.read} / ${stats.total}`));
+                grid.appendChild(makeCard('Aujourd\'hui', String(stats.today), `${growthIcon} ${Math.abs(stats.growth)}% vs hier`, growthColor));
+                grid.appendChild(makeCard('Temps moyen de lecture', `${stats.avgReadTime}min`, 'Création → Lecture'));
+                grid.appendChild(makeCard('Total envoyées', String(stats.total), 'Depuis le début'));
+                container.replaceChildren(grid);
             }
 
             displayReadRateChart(data) {
                 const container = document.getElementById('analytics-read-rate');
                 if (!container) return;
+                // Whitelist stricte des types autorisés — on n'injecte jamais item.type directement dans du CSS
+                const ALLOWED_TYPES = { info: 'var(--cyan)', success: 'var(--success)', warning: 'var(--warning)', danger: 'var(--danger)' };
 
-                const colors = {
-                    info: 'var(--cyan)',
-                    success: 'var(--success)',
-                    warning: 'var(--warning)',
-                    danger: 'var(--danger)'
-                };
+                container.replaceChildren();
+                const h3 = document.createElement('h3'); h3.textContent = '📊 Taux de lecture par type'; container.appendChild(h3);
+                const chartDiv = document.createElement('div'); chartDiv.style.padding = '20px';
 
-                const maxValue = Math.max(...data.map(d => d.total));
+                data.forEach(item => {
+                    const safeColor = ALLOWED_TYPES[item.type] || 'var(--text-dim)'; // whitelist ✅
+                    const bar = document.createElement('div'); bar.style.marginBottom = '20px';
 
-                container.innerHTML = `
-            <h3>📊 Taux de lecture par type</h3>
-            <div class="chart-container" style="padding: 20px;">
-                ${data.map(item => `
-                    <div class="chart-bar" style="margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="text-transform: capitalize; font-weight: bold; color: ${colors[item.type]};">
-                                ${item.type}
-                            </span>
-                            <span style="color: var(--text-dim);">
-                                ${item.read}/${item.total} (${item.readRate}%)
-                            </span>
-                        </div>
-                        <div style="
-                            background: rgba(0, 0, 0, 0.3);
-                            height: 30px;
-                            border-radius: 15px;
-                            overflow: hidden;
-                            position: relative;
-                        ">
-                            <div style="
-                                background: ${colors[item.type]};
-                                height: 100%;
-                                width: ${item.readRate}%;
-                                transition: width 1s ease;
-                                display: flex;
-                                align-items: center;
-                                justify-content: flex-end;
-                                padding-right: 10px;
-                                font-size: 12px;
-                                font-weight: bold;
-                            ">
-                                ${item.readRate}%
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+                    const labelRow = document.createElement('div'); labelRow.style.cssText = 'display:flex;justify-content:space-between;margin-bottom:8px;';
+                    const typeSpan = document.createElement('span'); typeSpan.style.cssText = `text-transform:capitalize;font-weight:bold;color:${safeColor};`;
+                    typeSpan.textContent = item.type; // textContent ✅
+                    const countSpan = document.createElement('span'); countSpan.style.color = 'var(--text-dim)';
+                    countSpan.textContent = `${item.read}/${item.total} (${item.readRate}%)`;
+                    labelRow.append(typeSpan, countSpan);
+
+                    const track = document.createElement('div'); track.style.cssText = 'background:rgba(0,0,0,0.3);height:30px;border-radius:15px;overflow:hidden;position:relative;';
+                    const fill = document.createElement('div');
+                    const pct = Math.min(100, Math.max(0, item.readRate));
+                    fill.style.cssText = `background:${safeColor};height:100%;width:${pct}%;transition:width 1s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font-size:12px;font-weight:bold;`;
+                    fill.textContent = `${pct}%`; // textContent ✅
+                    track.appendChild(fill);
+
+                    bar.append(labelRow, track);
+                    chartDiv.appendChild(bar);
+                });
+                container.appendChild(chartDiv);
             }
 
             displayDailyChart(data) {
                 const container = document.getElementById('analytics-daily');
                 if (!container) return;
+                if (!data.length) return;
+                const maxValue = Math.max(...data.map(d => Math.max(d.sent, d.read))) || 1;
 
-                const maxValue = Math.max(...data.map(d => Math.max(d.sent, d.read)));
+                container.replaceChildren();
+                const h3 = document.createElement('h3'); h3.textContent = '📅 Activité des 7 derniers jours'; container.appendChild(h3);
 
-                container.innerHTML = `
-            <h3>📅 Activité des 7 derniers jours</h3>
-            <div class="chart-container" style="padding: 20px;">
-                <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 200px; gap: 5px;">
-                    ${data.map(day => `
-                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;">
-                            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%;">
-                                <div style="
-                                    background: var(--cyan);
-                                    width: 100%;
-                                    height: ${(day.sent / maxValue) * 150}px;
-                                    border-radius: 8px 8px 0 0;
-                                    transition: all 0.3s;
-                                    position: relative;
-                                    cursor: pointer;
-                                " title="Envoyées: ${day.sent}">
-                                    <span style="
-                                        position: absolute;
-                                        top: -20px;
-                                        left: 50%;
-                                        transform: translateX(-50%);
-                                        font-size: 11px;
-                                        font-weight: bold;
-                                        color: var(--cyan);
-                                    ">${day.sent}</span>
-                                </div>
-                                <div style="
-                                    background: var(--success);
-                                    width: 100%;
-                                    height: ${(day.read / maxValue) * 150}px;
-                                    border-radius: 0 0 8px 8px;
-                                    transition: all 0.3s;
-                                    position: relative;
-                                    cursor: pointer;
-                                " title="Lues: ${day.read}">
-                                    <span style="
-                                        position: absolute;
-                                        bottom: -20px;
-                                        left: 50%;
-                                        transform: translateX(-50%);
-                                        font-size: 11px;
-                                        font-weight: bold;
-                                        color: var(--success);
-                                    ">${day.read}</span>
-                                </div>
-                            </div>
-                            <span style="font-size: 10px; color: var(--text-dim); margin-top: 30px;">
-                                ${day.date.split('/').slice(0, 2).join('/')}
-                            </span>
-                        </div>
-                    `).join('')}
-                </div>
-                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 20px; height: 20px; background: var(--cyan); border-radius: 4px;"></div>
-                        <span style="font-size: 13px;">Envoyées</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div style="width: 20px; height: 20px; background: var(--success); border-radius: 4px;"></div>
-                        <span style="font-size: 13px;">Lues</span>
-                    </div>
-                </div>
-            </div>
-        `;
+                const chart = document.createElement('div'); chart.style.padding = '20px';
+                const barsRow = document.createElement('div'); barsRow.style.cssText = 'display:flex;align-items:flex-end;justify-content:space-between;height:200px;gap:5px;';
+
+                data.forEach(day => {
+                    // day.sent / day.read sont des entiers — pas de données textuelles DB ✅
+                    const col = document.createElement('div'); col.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;';
+                    const inner = document.createElement('div'); inner.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;';
+
+                    const sentH = Math.round((day.sent / maxValue) * 150);
+                    const sentBar = document.createElement('div');
+                    sentBar.style.cssText = `background:var(--cyan);width:100%;height:${sentH}px;border-radius:8px 8px 0 0;transition:all .3s;position:relative;cursor:pointer;`;
+                    sentBar.title = `Envoyées: ${day.sent}`;
+                    const sentLbl = document.createElement('span'); sentLbl.style.cssText = 'position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:bold;color:var(--cyan);';
+                    sentLbl.textContent = String(day.sent); sentBar.appendChild(sentLbl);
+
+                    const readH = Math.round((day.read / maxValue) * 150);
+                    const readBar = document.createElement('div');
+                    readBar.style.cssText = `background:var(--success);width:100%;height:${readH}px;border-radius:0 0 8px 8px;transition:all .3s;position:relative;cursor:pointer;`;
+                    readBar.title = `Lues: ${day.read}`;
+                    const readLbl = document.createElement('span'); readLbl.style.cssText = 'position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:bold;color:var(--success);';
+                    readLbl.textContent = String(day.read); readBar.appendChild(readLbl);
+
+                    inner.append(sentBar, readBar);
+                    const dateLbl = document.createElement('span'); dateLbl.style.cssText = 'font-size:10px;color:var(--text-dim);margin-top:30px;';
+                    // day.date vient de toLocaleDateString — format numérique sûr ✅
+                    dateLbl.textContent = day.date.split('/').slice(0, 2).join('/');
+                    col.append(inner, dateLbl);
+                    barsRow.appendChild(col);
+                });
+
+                const legend = document.createElement('div'); legend.style.cssText = 'display:flex;justify-content:center;gap:20px;margin-top:30px;';
+                [['var(--cyan)', 'Envoyées'], ['var(--success)', 'Lues']].forEach(([color, label]) => {
+                    const item = document.createElement('div'); item.style.cssText = 'display:flex;align-items:center;gap:8px;';
+                    const dot = document.createElement('div'); dot.style.cssText = `width:20px;height:20px;background:${color};border-radius:4px;`;
+                    const txt = document.createElement('span'); txt.style.fontSize = '13px'; txt.textContent = label;
+                    item.append(dot, txt); legend.appendChild(item);
+                });
+
+                chart.append(barsRow, legend);
+                container.appendChild(chart);
             }
 
             displayTopUsers(users) {
                 const container = document.getElementById('analytics-top-users');
                 if (!container) return;
+                container.replaceChildren();
 
-                container.innerHTML = `
-            <h3>🏆 Top 10 utilisateurs</h3>
-            <div style="padding: 15px;">
-                <table style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Utilisateur</th>
-                            <th>Reçues</th>
-                            <th>Lues</th>
-                            <th>Taux</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${users.map((user, index) => {
+                const h3 = document.createElement('h3'); h3.textContent = '🏆 Top 10 utilisateurs'; container.appendChild(h3);
+                const wrap = document.createElement('div'); wrap.style.padding = '15px';
+                const table = document.createElement('table'); table.style.width = '100%';
+                table.innerHTML = '<thead><tr><th>#</th><th>Utilisateur</th><th>Reçues</th><th>Lues</th><th>Taux</th></tr></thead>'; // statique ✅
+                const tbody = document.createElement('tbody');
+
+                users.forEach((user, index) => {
                     const rate = Math.round((user.read / user.total) * 100);
                     const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                    const tr = document.createElement('tr');
 
-                    return `
-                                <tr>
-                                    <td>${medal || (index + 1)}</td>
-                                    <td style="font-weight: bold;">${user.username}</td>
-                                    <td>${user.total}</td>
-                                    <td>${user.read}</td>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 8px;">
-                                            <div style="
-                                                background: rgba(0, 0, 0, 0.3);
-                                                height: 8px;
-                                                border-radius: 4px;
-                                                flex: 1;
-                                                overflow: hidden;
-                                            ">
-                                                <div style="
-                                                    background: var(--success);
-                                                    height: 100%;
-                                                    width: ${rate}%;
-                                                    transition: width 0.5s ease;
-                                                "></div>
-                                            </div>
-                                            <span style="font-size: 12px; min-width: 40px;">${rate}%</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            `;
-                }).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
+                    const tdIdx = document.createElement('td'); tdIdx.textContent = medal || String(index + 1);
+                    const tdName = document.createElement('td'); tdName.style.fontWeight = 'bold'; tdName.textContent = user.username; // textContent ✅
+                    const tdTotal = document.createElement('td'); tdTotal.textContent = String(user.total);
+                    const tdRead = document.createElement('td'); tdRead.textContent = String(user.read);
+
+                    const tdRate = document.createElement('td');
+                    const rateWrap = document.createElement('div'); rateWrap.style.cssText = 'display:flex;align-items:center;gap:8px;';
+                    const track = document.createElement('div'); track.style.cssText = 'background:rgba(0,0,0,0.3);height:8px;border-radius:4px;flex:1;overflow:hidden;';
+                    const fill = document.createElement('div'); fill.style.cssText = `background:var(--success);height:100%;width:${Math.min(100,rate)}%;transition:width .5s ease;`;
+                    track.appendChild(fill);
+                    const pctSpan = document.createElement('span'); pctSpan.style.cssText = 'font-size:12px;min-width:40px;'; pctSpan.textContent = `${rate}%`;
+                    rateWrap.append(track, pctSpan); tdRate.appendChild(rateWrap);
+
+                    tr.append(tdIdx, tdName, tdTotal, tdRead, tdRate);
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody); wrap.appendChild(table); container.appendChild(wrap);
             }
         }
 
@@ -2608,19 +3129,23 @@ function updateTrackingStatus(settings) {
     const statusEl = document.getElementById('tracking-status');
     if (!statusEl) return;
 
+    statusEl.replaceChildren();
     if (settings.enabled) {
-        const activeEvents = Object.entries(settings.events)
-            .filter(([_, enabled]) => enabled)
-            .length;
-        
-        statusEl.innerHTML = `
-            <span style="color: var(--success);">✅ Actif</span> - 
-            Intervalle: <strong>${settings.interval}min</strong> - 
-            Seuil: <strong>${settings.threshold} événements</strong> - 
-            Types: <strong>${activeEvents}/5</strong>
-        `;
+        const activeEvents = Object.values(settings.events).filter(Boolean).length;
+
+        const activeSpan = document.createElement('span');
+        activeSpan.style.color = 'var(--success)';
+        activeSpan.textContent = '✅ Actif';
+
+        statusEl.appendChild(activeSpan);
+        statusEl.appendChild(document.createTextNode(
+            ` — Intervalle : ${settings.interval}min — Seuil : ${settings.threshold} événements — Types : ${activeEvents}/5`
+        ));
     } else {
-        statusEl.innerHTML = `<span style="color: var(--danger);">🚫 Désactivé</span>`;
+        const offSpan = document.createElement('span');
+        offSpan.style.color = 'var(--danger)';
+        offSpan.textContent = '🚫 Désactivé';
+        statusEl.appendChild(offSpan);
     }
 }
 
@@ -2656,10 +3181,16 @@ console.log('✅ Script de gestion du tracking chargé');
                     .select('id')
                     .order('username');
 
-                select.innerHTML = '<option value="">Sélectionner un utilisateur</option>';
-
+                select.replaceChildren();
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.textContent = 'Sélectionner un utilisateur';
+                select.appendChild(defaultOpt);
                 users?.forEach(user => {
-                    select.innerHTML += `<option value="${user.id}">${user.username || user.email}</option>`;
+                    const opt = document.createElement('option');
+                    opt.value = user.id; // uuid — inoffensif dans .value
+                    opt.textContent = user.username || user.email || user.id;
+                    select.appendChild(opt);
                 });
             } catch (error) {
                 console.error('Erreur chargement utilisateurs:', error);
@@ -2763,9 +3294,7 @@ console.log('✅ Script de gestion du tracking chargé');
             if (!historyContainer) return;
 
             try {
-                const supabase = await waitForSupabase(); // On attend d'être sûr d'avoir le client
-
-                // Requête simplifiée : pas de .select(profiles...)
+                const supabase = await waitForSupabase();
                 const { data, error } = await supabase
                     .from('notifications')
                     .select('id, title, message, created_at, is_read')
@@ -2775,31 +3304,47 @@ console.log('✅ Script de gestion du tracking chargé');
                 if (error) throw error;
 
                 if (data.length === 0) {
-                    historyContainer.innerHTML = '<tr><td colspan="4" style="text-align:center;">Aucune notification</td></tr>';
+                    const emptyTr = document.createElement('tr');
+                    const emptyTd = document.createElement('td');
+                    emptyTd.colSpan = 4;
+                    emptyTd.style.textAlign = 'center';
+                    emptyTd.textContent = 'Aucune notification';
+                    emptyTr.appendChild(emptyTd);
+                    historyContainer.replaceChildren(emptyTr);
                     return;
                 }
 
-                historyContainer.innerHTML = data.map(notif => `
-                <tr>
-                    <td>${new Date(notif.created_at).toLocaleString('fr-FR')}</td>
-                    <td>${escapeHtml(notif.title)}</td>
-                    <td>${escapeHtml(notif.message)}</td>
-                    <td>
-                        <span class="status-badge ${notif.is_read ? 'status-active' : 'status-inactive'}">
-                            ${notif.is_read ? 'Lue' : 'Non lue'}
-                        </span>
-                    </td>
-                </tr>
-            `).join('');
+                historyContainer.replaceChildren();
+                data.forEach(notif => {
+                    const tr = document.createElement('tr');
+                    const tdDate = document.createElement('td');
+                    tdDate.textContent = new Date(notif.created_at).toLocaleString('fr-FR');
+                    const tdTitle = document.createElement('td');
+                    tdTitle.textContent = notif.title || '—';
+                    const tdMsg = document.createElement('td');
+                    tdMsg.textContent = notif.message || '—';
+                    const tdStatus = document.createElement('td');
+                    const span = document.createElement('span');
+                    span.className = `status-badge ${notif.is_read ? 'status-active' : 'status-inactive'}`;
+                    span.textContent = notif.is_read ? 'Lue' : 'Non lue';
+                    tdStatus.appendChild(span);
+                    tr.append(tdDate, tdTitle, tdMsg, tdStatus);
+                    historyContainer.appendChild(tr);
+                });
 
             } catch (error) {
                 console.error('Erreur chargement historique:', error);
-                // CORRECTION: On utilise historyContainer, pas "container"
                 if (historyContainer) {
-                    historyContainer.innerHTML = `<tr><td colspan="4" style="color:red;">Erreur: ${escapeHtml(error.message)}</td></tr>`;
-                }
-            }
-        }
+                    const errTr = document.createElement('tr');
+                    const errTd = document.createElement('td');
+                    errTd.colSpan = 4;
+                    errTd.style.color = 'red';
+                    errTd.textContent = 'Erreur : ' + error.message;
+                    errTr.appendChild(errTd);
+                    historyContainer.replaceChildren(errTr);
+                }   // ← ferme le if
+            }       // ← ferme le catch
+        }           // ← ferme la fonction ✅
 
         // Fonction d'envoi simplifiée (Global, pas de destinataire)
         async function sendNotification(event) {
