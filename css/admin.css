@@ -1159,3 +1159,23 @@ tr:has(.status-scheduled) { background: rgba(255, 171, 0, 0.03); }
     padding: 40px 20px;
     font-size: 14px;
 }
+
+/* Drag & Drop Roadmap */
+.roadmap-drop-col {
+    min-height: 80px;
+    transition: background 0.2s;
+}
+.roadmap-drop-col.drag-over {
+    background: rgba(0, 208, 198, 0.08);
+    border-radius: 8px;
+    outline: 2px dashed rgba(0, 208, 198, 0.4);
+}
+.roadmap-drag-card {
+    cursor: grab;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.roadmap-drag-card:active { cursor: grabbing; }
+.roadmap-drag-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.97);
+}

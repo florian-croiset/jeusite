@@ -8,7 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/admin.css">
-    <style>/* Mobile sidebar fix: override inline styles on sidebar-items */ .sidebar-item { position: relative !important; top: auto !important; left: auto !important; }</style>
+    <style>
+        /* Mobile sidebar fix: override inline styles on sidebar-items */
+        .sidebar-item {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -57,6 +64,7 @@
                 <div class="sidebar-item active" data-section="overview">📊 Vue d'ensemble</div>
                 <div class="sidebar-item" data-section="versions">🎮 Versions du jeu</div>
                 <div class="sidebar-item" data-section="roadmap">🗺️ Roadmap</div>
+                <div class="sidebar-item" data-section="suggestions">💡 Suggestions Roadmap</div>
                 <div class="sidebar-item" data-section="forms">📋 Formulaires</div>
                 <div class="sidebar-item" data-section="downloads-manage">📥 Téléchargements</div>
                 <div class="sidebar-item" data-section="content">📝 Contenu du site</div>
@@ -96,15 +104,14 @@
                     <div class="card">
                         <h2>🔄 Forcer le rechargement des clients</h2>
                         <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 20px;">
-                            Envoie un signal de rechargement à <strong>tous les navigateurs connectés</strong> sur le site.
+                            Envoie un signal de rechargement à <strong>tous les navigateurs connectés</strong> sur le
+                            site.
                         </p>
 
                         <div class="form-group">
                             <label>Message affiché aux utilisateurs</label>
-                            <input type="text" id="refresh-message" 
-                                placeholder="Nouvelle version disponible !" 
-                                value="Nouvelle version disponible !"
-                                maxlength="100">
+                            <input type="text" id="refresh-message" placeholder="Nouvelle version disponible !"
+                                value="Nouvelle version disponible !" maxlength="100">
                         </div>
 
                         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
@@ -236,18 +243,23 @@
                 <div class="section" id="versions">
 
                     <!-- Bandeau accès public téléchargement -->
-                    <div class="card" style="margin-bottom: 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 20px;">
+                    <div class="card"
+                        style="margin-bottom: 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 20px;">
                         <i class="fa-solid fa-power-off" style="font-size: 20px; color: var(--cyan);"></i>
                         <div style="flex: 1; min-width: 180px;">
                             <div style="font-weight: 600; font-size: 14px;">Téléchargement public</div>
-                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Activer ou bloquer l'accès au téléchargement pour tous les visiteurs</div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Activer ou bloquer
+                                l'accès au téléchargement pour tous les visiteurs</div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <label class="switch" style="display: inline-block; position: relative; width: 50px; height: 24px; flex-shrink: 0;">
+                            <label class="switch"
+                                style="display: inline-block; position: relative; width: 50px; height: 24px; flex-shrink: 0;">
                                 <input type="checkbox" id="globalDownloadSwitch" onchange="toggleDownloadState(this)">
-                                <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                                <span class="slider round"
+                                    style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
                             </label>
-                            <span id="switchStatusText" style="font-size: 13px; font-weight: 500; min-width: 240px;">Chargement...</span>
+                            <span id="switchStatusText"
+                                style="font-size: 13px; font-weight: 500; min-width: 240px;">Chargement...</span>
                         </div>
                     </div>
 
@@ -255,33 +267,45 @@
                     <div id="versions-dashboard"></div>
 
                     <!-- Countdown actif affiché -->
-                    <div id="countdown-status-card" style="display:none;" class="card" style="margin-bottom: 16px;"></div>
+                    <div id="countdown-status-card" style="display:none;" class="card" style="margin-bottom: 16px;">
+                    </div>
 
                     <!-- Tableau des versions -->
                     <div class="card" style="margin-bottom: 0;">
                         <div class="version-header-actions">
                             <h2>🎮 Gestion des versions</h2>
                             <div class="btn-group">
-                                <button class="btn btn-primary" onclick="openVersionModal()" title="Créer une nouvelle version">
+                                <button class="btn btn-primary" onclick="openVersionModal()"
+                                    title="Créer une nouvelle version">
                                     <i class="fa-solid fa-plus"></i> Nouvelle version
                                 </button>
-                                <button class="btn btn-success" onclick="publishNextVersion()" title="Publier immédiatement la version marquée comme prochaine">
+                                <button class="btn btn-success" onclick="publishNextVersion()"
+                                    title="Publier immédiatement la version marquée comme prochaine">
                                     <i class="fa-solid fa-rocket"></i> Publier suivante
                                 </button>
-                                <button class="btn" style="background: linear-gradient(135deg, #7b2ff7, #00bcd4); color:#fff;" onclick="openScheduleModal()" title="Programmer une sortie : lie la version, le countdown et la date en une seule action">
+                                <button class="btn"
+                                    style="background: linear-gradient(135deg, #7b2ff7, #00bcd4); color:#fff;"
+                                    onclick="openScheduleModal()"
+                                    title="Programmer une sortie : lie la version, le countdown et la date en une seule action">
                                     <i class="fa-solid fa-calendar-plus"></i> Programmer une sortie
                                 </button>
-                                <button class="btn" style="background: #6c757d;" onclick="showArchives()" title="Voir les versions archivées">
+                                <button class="btn" style="background: #6c757d;" onclick="showArchives()"
+                                    title="Voir les versions archivées">
                                     <i class="fa-solid fa-archive"></i> Archives
                                 </button>
                             </div>
                         </div>
 
                         <!-- Légende statuts -->
-                        <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; color: var(--text-dim);">
-                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00ff88;margin-right:4px;"></span>Publiée</span>
-                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7b2ff7;margin-right:4px;"></span>Sortie programmée (countdown + auto-publish)</span>
-                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6c757d;margin-right:4px;"></span>Brouillon</span>
+                        <div
+                            style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; color: var(--text-dim);">
+                            <span><span
+                                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00ff88;margin-right:4px;"></span>Publiée</span>
+                            <span><span
+                                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7b2ff7;margin-right:4px;"></span>Sortie
+                                programmée (countdown + auto-publish)</span>
+                            <span><span
+                                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6c757d;margin-right:4px;"></span>Brouillon</span>
                         </div>
 
                         <div id="versions-container">
@@ -289,7 +313,7 @@
                         </div>
                     </div>
                 </div>
-<div class="section" id="site-settings">
+                <div class="section" id="site-settings">
                     <div class="card">
                         <h2>⚙️ Paramètres du site</h2>
 
@@ -368,16 +392,18 @@
 
                             <div class="form-group">
                                 <label>Seuil minimum d'événements</label>
-                                <input type="number" id="tracking-threshold" min="1" max="100" value="5" 
-                                       placeholder="Nombre d'événements avant envoi">
+                                <input type="number" id="tracking-threshold" min="1" max="100" value="5"
+                                    placeholder="Nombre d'événements avant envoi">
                                 <small style="color: var(--text-dim); display: block; margin-top: 5px;">
                                     Ne pas envoyer de notification s'il y a moins de X événements dans l'intervalle
                                 </small>
                             </div>
 
-                            <div style="background: rgba(0, 208, 198, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--cyan); margin-top: 15px;">
+                            <div
+                                style="background: rgba(0, 208, 198, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--cyan); margin-top: 15px;">
                                 <p style="margin: 0; font-size: 0.9rem;">
-                                    ℹ️ <strong>Recommandation :</strong> Utilisez un intervalle de 30-60 minutes pour éviter le spam.
+                                    ℹ️ <strong>Recommandation :</strong> Utilisez un intervalle de 30-60 minutes pour
+                                    éviter le spam.
                                     Les notifications de visite/sortie sont toujours envoyées immédiatement.
                                 </p>
                             </div>
@@ -410,6 +436,47 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="section" id="suggestions">
+                    <div class="card">
+                        <div class="version-header-actions">
+                            <h2>💡 Suggestions de la communauté</h2>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <span id="suggestions-count" style="font-size:13px;color:var(--text-dim);"></span>
+                                <button class="btn btn-small btn-primary" onclick="loadSuggestions()">
+                                    <i class="fa-solid fa-rotate"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filtres -->
+                        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+                            <button class="btn btn-small" id="sg-filter-pending"
+                                onclick="setSuggestionFilter('pending')"
+                                style="background:rgba(255,193,7,0.2);color:#ffc107;border:1px solid #ffc107;">
+                                ⏳ En attente
+                            </button>
+                            <button class="btn btn-small" id="sg-filter-approved"
+                                onclick="setSuggestionFilter('approved')"
+                                style="background:rgba(0,255,136,0.1);color:#adb5bd;border:1px solid rgba(255,255,255,0.1);">
+                                ✅ Acceptées
+                            </button>
+                            <button class="btn btn-small" id="sg-filter-rejected"
+                                onclick="setSuggestionFilter('rejected')"
+                                style="background:rgba(255,71,87,0.1);color:#adb5bd;border:1px solid rgba(255,255,255,0.1);">
+                                ❌ Refusées
+                            </button>
+                            <button class="btn btn-small" id="sg-filter-all" onclick="setSuggestionFilter('all')"
+                                style="background:rgba(255,255,255,0.05);color:#adb5bd;border:1px solid rgba(255,255,255,0.1);">
+                                Toutes
+                            </button>
+                        </div>
+
+                        <div id="suggestions-list">
+                            <p class="loading">Chargement...</p>
+                        </div>
+                    </div>
+                </div>
                 <!-- Autres sections -->
                 <div class="section" id="content">
                     <div class="card">
@@ -434,15 +501,15 @@
                                 <button class="btn btn-small" onclick="exportFormResponses()" title="Exporter en CSV">
                                     <i class="fa-solid fa-download"></i> CSV
                                 </button>
-                                <button class="btn btn-small btn-primary" onclick="loadFormResponses()" title="Rafraîchir">
+                                <button class="btn btn-small btn-primary" onclick="loadFormResponses()"
+                                    title="Rafraîchir">
                                     <i class="fa-solid fa-rotate"></i>
                                 </button>
                             </div>
                         </div>
 
                         <div class="forms-filters">
-                            <input type="text" id="forms-search"
-                                placeholder="🔍 Rechercher nom / email / message..."
+                            <input type="text" id="forms-search" placeholder="🔍 Rechercher nom / email / message..."
                                 oninput="filterFormResponses()">
                             <select id="forms-sort" onchange="filterFormResponses()">
                                 <option value="desc">Plus récentes d'abord</option>
@@ -639,15 +706,19 @@
                         <input type="checkbox" id="v-published">
                         <label for="v-published">
                             <strong>Publier cette version immédiatement</strong><br>
-                            <small style="color: var(--text-dim);">Si décoché, reste en brouillon. Pour programmer une sortie avec countdown, utilise le bouton "Programmer une sortie".</small>
+                            <small style="color: var(--text-dim);">Si décoché, reste en brouillon. Pour programmer une
+                                sortie avec countdown, utilise le bouton "Programmer une sortie".</small>
                         </label>
                     </div>
 
                     <!-- Info sortie programmée si existante -->
-                    <div id="v-schedule-info" style="display:none; padding: 10px 14px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px; color: #ce93d8;">
+                    <div id="v-schedule-info"
+                        style="display:none; padding: 10px 14px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px; color: #ce93d8;">
                         <i class="fa-solid fa-calendar-check" style="margin-right:6px;"></i>
                         <span id="v-schedule-info-text"></span>
-                        <button type="button" onclick="cancelScheduleFromVersion()" style="background:none;border:none;color:#ff4757;cursor:pointer;font-size:12px;margin-left:8px;" title="Annuler la programmation">✕ Annuler</button>
+                        <button type="button" onclick="cancelScheduleFromVersion()"
+                            style="background:none;border:none;color:#ff4757;cursor:pointer;font-size:12px;margin-left:8px;"
+                            title="Annuler la programmation">✕ Annuler</button>
                     </div>
                 </div>
 
@@ -668,12 +739,14 @@
             </div>
 
             <!-- Sortie déjà programmée -->
-            <div id="sm-active-info" style="display:none; margin-bottom: 16px; padding: 12px 16px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px;">
+            <div id="sm-active-info"
+                style="display:none; margin-bottom: 16px; padding: 12px 16px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px;">
                 <div style="font-weight: 600; color: #ce93d8; margin-bottom: 6px;">
                     <i class="fa-solid fa-calendar-check"></i> Sortie déjà programmée
                 </div>
                 <div id="sm-active-detail" style="color: var(--text-dim); line-height: 1.6;"></div>
-                <button type="button" class="btn btn-danger" style="font-size: 12px; margin-top: 10px;" onclick="cancelSchedule()">
+                <button type="button" class="btn btn-danger" style="font-size: 12px; margin-top: 10px;"
+                    onclick="cancelSchedule()">
                     <i class="fa-solid fa-xmark"></i> Annuler cette programmation
                 </button>
             </div>
@@ -683,7 +756,8 @@
                 <input type="hidden" id="sm-version-id-prev">
 
                 <!-- Explication visuelle du flux -->
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap;">
+                <div
+                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap;">
                     <span style="color:#ce93d8;"><i class="fa-solid fa-box"></i> Version choisie</span>
                     <span style="color: var(--text-dim);">→</span>
                     <span style="color:#00bcd4;"><i class="fa-solid fa-clock"></i> Countdown sur le site</span>
@@ -698,7 +772,8 @@
                     <select id="sm-version" required onchange="onScheduleVersionChange()">
                         <option value="">— Choisir une version —</option>
                     </select>
-                    <small id="sm-version-hint" style="color: var(--text-dim); margin-top: 4px; display: block;"></small>
+                    <small id="sm-version-hint"
+                        style="color: var(--text-dim); margin-top: 4px; display: block;"></small>
                 </div>
 
                 <div class="form-group">
@@ -710,7 +785,8 @@
                 <div class="form-group">
                     <label>Nom affiché sur le site *</label>
                     <input type="text" id="sm-event-name" required placeholder="Lancement de Echo v2.1 !">
-                    <small style="color: var(--text-dim);">Titre affiché au-dessus du countdown sur le site public</small>
+                    <small style="color: var(--text-dim);">Titre affiché au-dessus du countdown sur le site
+                        public</small>
                 </div>
 
                 <div class="form-group">
@@ -719,8 +795,10 @@
                 </div>
 
                 <!-- Récap visuel avant confirmation -->
-                <div id="sm-recap" style="display:none; padding: 12px 16px; background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.25); border-radius: 8px; font-size: 13px; margin-top: 4px;">
-                    <div style="font-weight: 600; color: #00ff88; margin-bottom: 8px;"><i class="fa-solid fa-circle-check"></i> Ce qui va se passer</div>
+                <div id="sm-recap"
+                    style="display:none; padding: 12px 16px; background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.25); border-radius: 8px; font-size: 13px; margin-top: 4px;">
+                    <div style="font-weight: 600; color: #00ff88; margin-bottom: 8px;"><i
+                            class="fa-solid fa-circle-check"></i> Ce qui va se passer</div>
                     <div id="sm-recap-text" style="color: var(--text-dim); line-height: 1.8;"></div>
                 </div>
 
@@ -739,29 +817,29 @@
     <script>
 
         function escapeHtml(str) {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
 
-    function showError(err, context = '') {
-        // Log complet en console pour le debug
-        console.error(`[Admin error] ${context}`, err);
-        // Message générique pour l'UI
-        const msg = context ? `Une erreur est survenue (${context}).` : 'Une erreur est survenue.';
-        alert(msg);
-    }
+        function showError(err, context = '') {
+            // Log complet en console pour le debug
+            console.error(`[Admin error] ${context}`, err);
+            // Message générique pour l'UI
+            const msg = context ? `Une erreur est survenue (${context}).` : 'Une erreur est survenue.';
+            alert(msg);
+        }
 
-    const ROLE_PERMISSIONS = {
-    admin: ['overview', 'versions', 'roadmap', 'forms', 'downloads-manage', 'content', 'media', 'notifications', 'users', 'site-settings'],
-    collaborator: ['roadmap'],
-    user: []
-    };
+        const ROLE_PERMISSIONS = {
+            admin: ['overview', 'versions', 'roadmap', 'forms', 'downloads-manage', 'content', 'media', 'notifications', 'users', 'site-settings', 'suggestions'],
+            collaborator: ['roadmap', 'suggestions'],
+            user: []
+        };
 
         // Configuration Supabase (utiliser une variable locale pour éviter la redéclaration)
         const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
@@ -882,8 +960,8 @@
                 const allowedSections = ROLE_PERMISSIONS[currentUserProfile?.role] || [];
 
                 if (!allowedSections.includes(section)) {
-                showToast('❌ Accès refusé', 'danger');
-                return;
+                    showToast('❌ Accès refusé', 'danger');
+                    return;
                 }
 
                 document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
@@ -1359,7 +1437,7 @@
                     // Date
                     const tdDate = document.createElement('td');
                     tdDate.style.cssText = 'font-size:13px;white-space:nowrap;';
-                    tdDate.textContent = releaseDate.toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'});
+                    tdDate.textContent = releaseDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
 
                     // Lien téléchargement
                     const tdDl = document.createElement('td');
@@ -2005,225 +2083,225 @@
         })();
 
         // ===== FORMULAIRES =====
-    let _allFormResponses = [];
+        let _allFormResponses = [];
 
-    async function loadFormResponses() {
-        const container = document.getElementById('forms-list');
-        const countEl = document.getElementById('forms-count');
+        async function loadFormResponses() {
+            const container = document.getElementById('forms-list');
+            const countEl = document.getElementById('forms-count');
 
-        container.replaceChildren();
-        const loading = document.createElement('p');
-        loading.className = 'forms-empty';
-        loading.textContent = 'Chargement...';
-        container.appendChild(loading);
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('form_responses')
-                .select('*')
-                .order('submitted_at', { ascending: false });
-
-            if (error) throw error;
-
-            _allFormResponses = data || [];
-            const n = _allFormResponses.length;
-            countEl.textContent = `${n} réponse${n > 1 ? 's' : ''}`;
-            renderFormResponses(_allFormResponses);
-
-        } catch (err) {
             container.replaceChildren();
-            const errEl = document.createElement('p');
-            errEl.className = 'forms-empty';
-            errEl.textContent = '❌ Erreur de chargement : ' + err.message;
-            errEl.style.color = 'var(--danger)';
-            container.appendChild(errEl);
-        }
-    }
+            const loading = document.createElement('p');
+            loading.className = 'forms-empty';
+            loading.textContent = 'Chargement...';
+            container.appendChild(loading);
 
-    function renderFormResponses(data) {
-        const container = document.getElementById('forms-list');
-        container.replaceChildren();
+            try {
+                const { data, error } = await supabaseClient
+                    .from('form_responses')
+                    .select('*')
+                    .order('submitted_at', { ascending: false });
 
-        if (!data || data.length === 0) {
-            const empty = document.createElement('p');
-            empty.className = 'forms-empty';
-            empty.textContent = 'Aucune réponse pour le moment.';
-            container.appendChild(empty);
-            return;
-        }
+                if (error) throw error;
 
-        const ratingColor = n => n >= 4 ? '#00ff88' : n >= 3 ? '#ffc107' : '#ff4757';
+                _allFormResponses = data || [];
+                const n = _allFormResponses.length;
+                countEl.textContent = `${n} réponse${n > 1 ? 's' : ''}`;
+                renderFormResponses(_allFormResponses);
 
-        data.forEach(row => {
-            const r = row.responses || {};
-            const rating = parseInt(r.rating) || 0;
-            const date = row.submitted_at
-                ? new Date(row.submitted_at).toLocaleString('fr-FR')
-                : '—';
-
-            // Carte
-            const card = document.createElement('div');
-            card.className = 'form-response-card';
-
-            // ── Header ──
-            const header = document.createElement('div');
-            header.className = 'form-response-header';
-
-            // Meta (nom + email + date)
-            const meta = document.createElement('div');
-            meta.className = 'form-response-meta';
-
-            const name = document.createElement('div');
-            name.className = 'form-response-name';
-            name.textContent = r.name || '—';
-
-            const info = document.createElement('div');
-            info.className = 'form-response-info';
-
-            if (r.email) {
-                const emailLink = document.createElement('a');
-                emailLink.href = 'mailto:' + r.email;
-                emailLink.textContent = r.email;
-                info.appendChild(emailLink);
-                info.appendChild(document.createTextNode(' · '));
+            } catch (err) {
+                container.replaceChildren();
+                const errEl = document.createElement('p');
+                errEl.className = 'forms-empty';
+                errEl.textContent = '❌ Erreur de chargement : ' + err.message;
+                errEl.style.color = 'var(--danger)';
+                container.appendChild(errEl);
             }
-            info.appendChild(document.createTextNode(date));
+        }
 
-            meta.appendChild(name);
-            meta.appendChild(info);
+        function renderFormResponses(data) {
+            const container = document.getElementById('forms-list');
+            container.replaceChildren();
 
-            // Actions (étoiles + bouton supprimer)
-            const actions = document.createElement('div');
-            actions.className = 'form-response-actions';
-
-            if (rating) {
-                const stars = document.createElement('div');
-                stars.className = 'form-stars';
-                stars.title = `${rating}/5`;
-                stars.style.color = ratingColor(rating);
-                stars.textContent = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
-                actions.appendChild(stars);
+            if (!data || data.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'forms-empty';
+                empty.textContent = 'Aucune réponse pour le moment.';
+                container.appendChild(empty);
+                return;
             }
 
-            const delBtn = document.createElement('button');
-            delBtn.className = 'btn-delete-response';
-            delBtn.title = 'Supprimer cette réponse';
-            delBtn.textContent = '🗑️ Supprimer';
-            delBtn.addEventListener('click', () => deleteFormResponse(row.id, card));
-            actions.appendChild(delBtn);
+            const ratingColor = n => n >= 4 ? '#00ff88' : n >= 3 ? '#ffc107' : '#ff4757';
 
-            header.appendChild(meta);
-            header.appendChild(actions);
-            card.appendChild(header);
+            data.forEach(row => {
+                const r = row.responses || {};
+                const rating = parseInt(r.rating) || 0;
+                const date = row.submitted_at
+                    ? new Date(row.submitted_at).toLocaleString('fr-FR')
+                    : '—';
 
-            // ── Blocs contenu ──
-            const sections = [
-                { key: 'positive',    label: '👍 Points positifs', cls: 'block-positive' },
-                { key: 'negative',    label: '👎 Points négatifs', cls: 'block-negative' },
-                { key: 'suggestions', label: '💡 Suggestions',     cls: 'block-suggestions' },
-            ];
+                // Carte
+                const card = document.createElement('div');
+                card.className = 'form-response-card';
 
-            sections.forEach(({ key, label, cls }) => {
-                if (!r[key]) return;
-                const block = document.createElement('div');
-                block.className = `form-response-block ${cls}`;
+                // ── Header ──
+                const header = document.createElement('div');
+                header.className = 'form-response-header';
 
-                const lbl = document.createElement('div');
-                lbl.className = 'form-response-block-label';
-                lbl.textContent = label;
+                // Meta (nom + email + date)
+                const meta = document.createElement('div');
+                meta.className = 'form-response-meta';
 
-                const content = document.createElement('div');
-                content.className = 'form-response-block-content';
-                content.textContent = r[key];
+                const name = document.createElement('div');
+                name.className = 'form-response-name';
+                name.textContent = r.name || '—';
 
-                block.appendChild(lbl);
-                block.appendChild(content);
-                card.appendChild(block);
+                const info = document.createElement('div');
+                info.className = 'form-response-info';
+
+                if (r.email) {
+                    const emailLink = document.createElement('a');
+                    emailLink.href = 'mailto:' + r.email;
+                    emailLink.textContent = r.email;
+                    info.appendChild(emailLink);
+                    info.appendChild(document.createTextNode(' · '));
+                }
+                info.appendChild(document.createTextNode(date));
+
+                meta.appendChild(name);
+                meta.appendChild(info);
+
+                // Actions (étoiles + bouton supprimer)
+                const actions = document.createElement('div');
+                actions.className = 'form-response-actions';
+
+                if (rating) {
+                    const stars = document.createElement('div');
+                    stars.className = 'form-stars';
+                    stars.title = `${rating}/5`;
+                    stars.style.color = ratingColor(rating);
+                    stars.textContent = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
+                    actions.appendChild(stars);
+                }
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-delete-response';
+                delBtn.title = 'Supprimer cette réponse';
+                delBtn.textContent = '🗑️ Supprimer';
+                delBtn.addEventListener('click', () => deleteFormResponse(row.id, card));
+                actions.appendChild(delBtn);
+
+                header.appendChild(meta);
+                header.appendChild(actions);
+                card.appendChild(header);
+
+                // ── Blocs contenu ──
+                const sections = [
+                    { key: 'positive', label: '👍 Points positifs', cls: 'block-positive' },
+                    { key: 'negative', label: '👎 Points négatifs', cls: 'block-negative' },
+                    { key: 'suggestions', label: '💡 Suggestions', cls: 'block-suggestions' },
+                ];
+
+                sections.forEach(({ key, label, cls }) => {
+                    if (!r[key]) return;
+                    const block = document.createElement('div');
+                    block.className = `form-response-block ${cls}`;
+
+                    const lbl = document.createElement('div');
+                    lbl.className = 'form-response-block-label';
+                    lbl.textContent = label;
+
+                    const content = document.createElement('div');
+                    content.className = 'form-response-block-content';
+                    content.textContent = r[key];
+
+                    block.appendChild(lbl);
+                    block.appendChild(content);
+                    card.appendChild(block);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        async function deleteFormResponse(id, cardElement) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Supprimer définitivement cette réponse ?')) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('form_responses')
+                    .delete()
+                    .eq('id', id);
+                if (error) throw error;
+
+                // Retirer du tableau local
+                _allFormResponses = _allFormResponses.filter(r => r.id !== id);
+
+                // Supprimer la carte avec animation
+                cardElement.style.transition = 'opacity .25s, transform .25s';
+                cardElement.style.opacity = '0';
+                cardElement.style.transform = 'translateX(20px)';
+                setTimeout(() => cardElement.remove(), 250);
+
+                // Mettre à jour le compteur
+                const n = _allFormResponses.length;
+                document.getElementById('forms-count').textContent =
+                    `${n} réponse${n > 1 ? 's' : ''}`;
+
+                showToast('Réponse supprimée', 'info');
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        }
+
+        function filterFormResponses() {
+            const search = document.getElementById('forms-search').value.toLowerCase();
+            const sort = document.getElementById('forms-sort').value;
+
+            let filtered = _allFormResponses.filter(row => {
+                const r = row.responses || {};
+                return ['name', 'email', 'positive', 'negative', 'suggestions']
+                    .some(k => r[k] && r[k].toLowerCase().includes(search));
             });
 
-            container.appendChild(card);
-        });
-    }
+            filtered.sort((a, b) => {
+                const da = new Date(a.submitted_at), db = new Date(b.submitted_at);
+                return sort === 'desc' ? db - da : da - db;
+            });
 
-    async function deleteFormResponse(id, cardElement) {
-        if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
-        if (!confirm('Supprimer définitivement cette réponse ?')) return;
-        try {
-            const { error } = await supabaseClient
-                .from('form_responses')
-                .delete()
-                .eq('id', id);
-            if (error) throw error;
-
-            // Retirer du tableau local
-            _allFormResponses = _allFormResponses.filter(r => r.id !== id);
-
-            // Supprimer la carte avec animation
-            cardElement.style.transition = 'opacity .25s, transform .25s';
-            cardElement.style.opacity = '0';
-            cardElement.style.transform = 'translateX(20px)';
-            setTimeout(() => cardElement.remove(), 250);
-
-            // Mettre à jour le compteur
-            const n = _allFormResponses.length;
+            const total = _allFormResponses.length;
+            const shown = filtered.length;
             document.getElementById('forms-count').textContent =
-                `${n} réponse${n > 1 ? 's' : ''}`;
+                shown === total
+                    ? `${total} réponse${total > 1 ? 's' : ''}`
+                    : `${shown} / ${total} réponse${total > 1 ? 's' : ''}`;
 
-            showToast('Réponse supprimée', 'info');
-        } catch (err) {
-            showToast('❌ ' + err.message, 'danger');
+            renderFormResponses(filtered);
         }
-    }
 
-    function filterFormResponses() {
-        const search = document.getElementById('forms-search').value.toLowerCase();
-        const sort = document.getElementById('forms-sort').value;
+        window.exportFormResponses = function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!_allFormResponses.length) { showToast('Aucune donnée à exporter', 'warning'); return; }
+            const headers = ['Date', 'Nom', 'Email', 'Note', 'Positif', 'Négatif', 'Suggestions'];
+            const rows = _allFormResponses.map(row => {
+                const r = row.responses || {};
+                return [
+                    new Date(row.submitted_at).toLocaleString('fr-FR'),
+                    r.name || '', r.email || '', r.rating || '',
+                    r.positive || '', r.negative || '', r.suggestions || ''
+                ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+            });
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `form_responses_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ Export CSV téléchargé !', 'success');
+        };
 
-        let filtered = _allFormResponses.filter(row => {
-            const r = row.responses || {};
-            return ['name','email','positive','negative','suggestions']
-                .some(k => r[k] && r[k].toLowerCase().includes(search));
-        });
-
-        filtered.sort((a, b) => {
-            const da = new Date(a.submitted_at), db = new Date(b.submitted_at);
-            return sort === 'desc' ? db - da : da - db;
-        });
-
-        const total = _allFormResponses.length;
-        const shown = filtered.length;
-        document.getElementById('forms-count').textContent =
-            shown === total
-                ? `${total} réponse${total > 1 ? 's' : ''}`
-                : `${shown} / ${total} réponse${total > 1 ? 's' : ''}`;
-
-        renderFormResponses(filtered);
-    }
-
-    window.exportFormResponses = function () {
-        if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
-        if (!_allFormResponses.length) { showToast('Aucune donnée à exporter', 'warning'); return; }
-        const headers = ['Date','Nom','Email','Note','Positif','Négatif','Suggestions'];
-        const rows = _allFormResponses.map(row => {
-            const r = row.responses || {};
-            return [
-                new Date(row.submitted_at).toLocaleString('fr-FR'),
-                r.name || '', r.email || '', r.rating || '',
-                r.positive || '', r.negative || '', r.suggestions || ''
-            ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(',');
-        });
-        const csv = [headers.join(','), ...rows].join('\n');
-        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `form_responses_${new Date().toISOString().slice(0,10)}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('✅ Export CSV téléchargé !', 'success');
-    };
-
-    document.querySelector('[data-section="forms"]')?.addEventListener('click', loadFormResponses);
+        document.querySelector('[data-section="forms"]')?.addEventListener('click', loadFormResponses);
 
 
         // ===== GESTION DES UTILISATEURS =====
@@ -2294,7 +2372,7 @@
                     const tdRole = document.createElement('td');
                     const badge = document.createElement('span');
                     // Whitelist des rôles autorisés pour éviter injection dans className
-                    const safeRole = ['user','collaborator','admin'].includes(user.role) ? user.role : 'user';
+                    const safeRole = ['user', 'collaborator', 'admin'].includes(user.role) ? user.role : 'user';
                     badge.className = `role-badge role-${safeRole}`;
                     badge.textContent = user.role;
                     tdRole.appendChild(badge);
@@ -2305,7 +2383,7 @@
                     const tdAction = document.createElement('td');
                     const select = document.createElement('select');
                     select.style.cssText = 'background:rgba(0,0,0,0.4);color:white;border:1px solid var(--finn);padding:8px;border-radius:6px;cursor:pointer;';
-                    [['user','Utilisateur'],['collaborator','Collaborateur'],['admin','Admin']].forEach(([val, label]) => {
+                    [['user', 'Utilisateur'], ['collaborator', 'Collaborateur'], ['admin', 'Admin']].forEach(([val, label]) => {
                         const opt = document.createElement('option');
                         opt.value = val;
                         opt.textContent = label;
@@ -2385,7 +2463,6 @@
                 if (error) throw error;
 
                 if (!items || items.length === 0) {
-                    container.replaceChildren();
                     const p = document.createElement('p');
                     p.style.color = 'var(--purple)';
                     p.textContent = 'Aucun élément dans la roadmap';
@@ -2394,24 +2471,24 @@
                 }
 
                 const grouped = {
-                    planned:     items.filter(i => i.status === 'planned'),
+                    planned: items.filter(i => i.status === 'planned'),
                     in_progress: items.filter(i => i.status === 'in_progress'),
-                    completed:   items.filter(i => i.status === 'completed'),
-                    cancelled:   items.filter(i => i.status === 'cancelled')
+                    completed: items.filter(i => i.status === 'completed'),
+                    cancelled: items.filter(i => i.status === 'cancelled')
                 };
 
                 const statusLabels = {
-                    planned:     '📋 Planifié',
+                    planned: '📋 Planifié',
                     in_progress: '⚙️ En cours',
-                    completed:   '✅ Terminé',
-                    cancelled:   '❌ Annulé'
+                    completed: '✅ Terminé',
+                    cancelled: '❌ Annulé'
                 };
 
                 const categoryColors = {
                     feature: 'var(--success)',
-                    bug:     'var(--danger)',
-                    design:  'var(--warning)',
-                    other:   'var(--purple)'
+                    bug: 'var(--danger)',
+                    design: 'var(--warning)',
+                    other: 'var(--purple)'
                 };
 
                 const priorityLabels = {
@@ -2420,22 +2497,47 @@
                     2: '🔴 Haute'
                 };
 
-                // Stocke les objets complets — on passera seulement l'id dans les boutons
                 const _roadmapCache = new Map();
+                items.forEach(i => _roadmapCache.set(i.id, i));
 
                 container.replaceChildren();
                 const grid = document.createElement('div');
                 grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;';
 
+                // ── Drag state ──
+                let draggedId = null;
+                let draggedEl = null;
+
+                // ── Fonction de mise à jour du statut en BDD ──
+                async function updateItemStatus(id, newStatus) {
+                    try {
+                        const { error } = await supabaseClient
+                            .from('roadmap_items')
+                            .update({ status: newStatus, updated_at: new Date().toISOString() })
+                            .eq('id', id);
+                        if (error) throw error;
+                        // Mettre à jour le cache local
+                        const item = _roadmapCache.get(id);
+                        if (item) item.status = newStatus;
+                        showToast(`✅ Déplacé vers "${statusLabels[newStatus]}"`, 'success');
+                    } catch (err) {
+                        showToast('❌ ' + err.message, 'danger');
+                        // Recharger pour annuler le déplacement visuel
+                        loadRoadmap();
+                    }
+                }
+
+                // ── Construction des colonnes ──
+                const colEls = {}; // status → itemsWrap, pour accès cross-colonne
+
                 Object.entries(grouped).forEach(([status, statusItems]) => {
                     if (status === 'cancelled' && statusItems.length === 0) return;
 
-                    // Colonne
                     const col = document.createElement('div');
                     col.className = 'card';
                     col.style.cssText = 'background:rgba(0,0,0,0.2);padding:20px;';
 
-                    // Titre de colonne
+                    // Header colonne
                     const h3 = document.createElement('h3');
                     h3.style.cssText = 'color:var(--cyan);margin-bottom:15px;display:flex;align-items:center;gap:8px;';
                     h3.textContent = statusLabels[status] + ' ';
@@ -2447,90 +2549,67 @@
                     col.appendChild(h3);
 
                     const itemsWrap = document.createElement('div');
-                    itemsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+                    itemsWrap.className = 'roadmap-drop-col';
+                    itemsWrap.style.cssText = 'display:flex;flex-direction:column;gap:10px;min-height:60px;';
+                    itemsWrap.dataset.status = status;
+                    colEls[status] = { wrap: itemsWrap, badge: countBadge };
 
-                    statusItems.forEach(item => {
-                        _roadmapCache.set(item.id, item);
-
-                        const card = document.createElement('div');
-                        const catColor = categoryColors[item.category] || 'rgba(255,255,255,0.2)';
-                        card.style.cssText = `background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-left:4px solid ${catColor};border-radius:8px;padding:15px;cursor:pointer;transition:border-color .3s;`;
-                        card.addEventListener('mouseenter', () => card.style.borderColor = 'var(--cyan)');
-                        card.addEventListener('mouseleave', () => card.style.borderColor = 'rgba(255,255,255,0.1)');
-
-                        // Titre
-                        const titleEl = document.createElement('div');
-                        titleEl.style.cssText = 'font-weight:bold;color:var(--text);margin-bottom:5px;';
-                        titleEl.textContent = item.title; // textContent ✅
-
-                        // Description
-                        const descEl = document.createElement('div');
-                        descEl.style.cssText = 'font-size:0.85rem;color:var(--text-dim);margin-bottom:8px;';
-                        descEl.textContent = item.description || ''; // textContent ✅
-                        if (!item.description) descEl.style.display = 'none';
-
-                        // Badges
-                        const badgesRow = document.createElement('div');
-                        badgesRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;';
-
-                        const catBadge = document.createElement('span');
-                        catBadge.style.cssText = `padding:3px 8px;border-radius:12px;font-size:0.75rem;color:${catColor};border:1px solid ${catColor};`;
-                        catBadge.textContent = item.category; // textContent ✅
-                        badgesRow.appendChild(catBadge);
-
-                        const prioBadge = document.createElement('span');
-                        prioBadge.style.cssText = 'padding:3px 8px;border-radius:12px;font-size:0.75rem;background:rgba(255,255,255,0.05);color:var(--text-dim);';
-                        prioBadge.textContent = priorityLabels[item.priority] || '—';
-                        badgesRow.appendChild(prioBadge);
-
-                        if (item.estimated_date) {
-                            const dateBadge = document.createElement('span');
-                            dateBadge.style.cssText = 'padding:3px 8px;border-radius:12px;font-size:0.75rem;background:rgba(255,255,255,0.05);color:var(--text-dim);';
-                            dateBadge.textContent = '📅 ' + new Date(item.estimated_date).toLocaleDateString('fr-FR');
-                            badgesRow.appendChild(dateBadge);
+                    // ── Drop zone events ──
+                    itemsWrap.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        itemsWrap.classList.add('drag-over');
+                    });
+                    itemsWrap.addEventListener('dragleave', (e) => {
+                        if (!itemsWrap.contains(e.relatedTarget)) {
+                            itemsWrap.classList.remove('drag-over');
                         }
+                    });
+                    itemsWrap.addEventListener('drop', async (e) => {
+                        e.preventDefault();
+                        itemsWrap.classList.remove('drag-over');
+                        if (!draggedId || !draggedEl) return;
 
-                        // Barre progression
-                        const progressWrap = document.createElement('div');
-                        progressWrap.style.marginBottom = '5px';
-                        const progressBg = document.createElement('div');
-                        progressBg.style.cssText = 'background:rgba(255,255,255,0.1);height:6px;border-radius:3px;overflow:hidden;';
-                        const progressBar = document.createElement('div');
-                        const pct = Math.min(100, Math.max(0, item.progress || 0));
-                        progressBar.style.cssText = `background:linear-gradient(90deg,var(--cyan),var(--purple));height:100%;width:${pct}%;transition:width .3s;`;
-                        progressBg.appendChild(progressBar);
-                        const progressLabel = document.createElement('div');
-                        progressLabel.style.cssText = 'font-size:0.75rem;color:var(--text-dim);margin-top:3px;';
-                        progressLabel.textContent = `${pct}% complété`;
-                        progressWrap.append(progressBg, progressLabel);
+                        const targetStatus = itemsWrap.dataset.status;
+                        const sourceStatus = draggedEl.dataset.status;
+                        if (targetStatus === sourceStatus) return; // pas de changement
 
-                        // Votes
-                        const votesEl = document.createElement('div');
-                        votesEl.style.cssText = 'display:flex;align-items:center;gap:5px;color:var(--cyan);font-size:0.9rem;';
-                        votesEl.textContent = `👍 ${item.votes || 0} votes`;
+                        // Déplacement visuel immédiat
+                        itemsWrap.appendChild(draggedEl);
+                        draggedEl.dataset.status = targetStatus;
+                        draggedEl.classList.remove('dragging');
 
-                        // Boutons
-                        const actionsRow = document.createElement('div');
-                        actionsRow.style.cssText = 'display:flex;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);';
+                        // Mettre à jour les compteurs des colonnes
+                        const sourceCount = colEls[sourceStatus];
+                        const targetCount = colEls[targetStatus];
+                        if (sourceCount) sourceCount.badge.textContent = parseInt(sourceCount.badge.textContent) - 1;
+                        if (targetCount) targetCount.badge.textContent = parseInt(targetCount.badge.textContent) + 1;
 
-                        const editBtn = document.createElement('button');
-                        editBtn.className = 'action-btn btn-edit';
-                        editBtn.textContent = '✏️ Modifier';
-                        editBtn.addEventListener('click', () => {
-                            // On récupère l'objet depuis le cache, pas depuis le DOM
-                            editRoadmapItem(_roadmapCache.get(item.id));
+                        // Persister en BDD
+                        await updateItemStatus(draggedId, targetStatus);
+                        draggedId = null;
+                        draggedEl = null;
+                    });
+
+                    // ── Cartes ──
+                    statusItems.forEach(item => {
+                        const card = makeRoadmapCard(item, categoryColors, priorityLabels, _roadmapCache, status);
+
+                        // ── Drag events sur la carte ──
+                        card.setAttribute('draggable', 'true');
+                        card.dataset.status = status;
+                        card.classList.add('roadmap-drag-card');
+
+                        card.addEventListener('dragstart', (e) => {
+                            draggedId = item.id;
+                            draggedEl = card;
+                            card.classList.add('dragging');
+                            e.dataTransfer.effectAllowed = 'move';
+                        });
+                        card.addEventListener('dragend', () => {
+                            card.classList.remove('dragging');
+                            document.querySelectorAll('.roadmap-drop-col').forEach(c => c.classList.remove('drag-over'));
                         });
 
-                        const delBtn = document.createElement('button');
-                        delBtn.className = 'action-btn btn-delete';
-                        delBtn.textContent = '🗑️ Supprimer';
-                        delBtn.addEventListener('click', () => deleteRoadmapItem(item.id));
-
-                        actionsRow.appendChild(editBtn);
-                        if (currentUserProfile?.role === 'admin') {
-                            actionsRow.appendChild(delBtn);
-                        }
-                        card.append(titleEl, descEl, badgesRow, progressWrap, votesEl, actionsRow);
                         itemsWrap.appendChild(card);
                     });
 
@@ -2542,12 +2621,95 @@
 
             } catch (error) {
                 console.error('Erreur chargement roadmap:', error);
-                container.replaceChildren();
                 const errP = document.createElement('p');
                 errP.style.color = 'var(--danger)';
                 errP.textContent = 'Erreur de chargement';
-                container.appendChild(errP);
+                container.replaceChildren(errP);
             }
+        }
+
+        // ── Extraction de la construction d'une carte (factorisée hors de loadRoadmap) ──
+        function makeRoadmapCard(item, categoryColors, priorityLabels, _roadmapCache, status) {
+            const card = document.createElement('div');
+            const catColor = categoryColors[item.category] || 'rgba(255,255,255,0.2)';
+            card.style.cssText = `background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-left:4px solid ${catColor};border-radius:8px;padding:15px;transition:border-color .3s, opacity .2s;`;
+            card.addEventListener('mouseenter', () => card.style.borderColor = 'var(--cyan)');
+            card.addEventListener('mouseleave', () => card.style.borderColor = 'rgba(255,255,255,0.1)');
+
+            const titleEl = document.createElement('div');
+            titleEl.style.cssText = 'font-weight:bold;color:var(--text);margin-bottom:5px;display:flex;align-items:center;gap:6px;';
+            // Icône drag
+            const dragIcon = document.createElement('span');
+            dragIcon.textContent = '⠿';
+            dragIcon.style.cssText = 'color:var(--text-dim);font-size:14px;cursor:grab;opacity:0.5;';
+            dragIcon.title = 'Glisser pour changer le statut';
+            titleEl.appendChild(dragIcon);
+            titleEl.appendChild(document.createTextNode(item.title));
+
+            const descEl = document.createElement('div');
+            descEl.style.cssText = 'font-size:0.85rem;color:var(--text-dim);margin-bottom:8px;';
+            descEl.textContent = item.description || '';
+            if (!item.description) descEl.style.display = 'none';
+
+            const badgesRow = document.createElement('div');
+            badgesRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;';
+
+            const catBadge = document.createElement('span');
+            catBadge.style.cssText = `padding:3px 8px;border-radius:12px;font-size:0.75rem;color:${catColor};border:1px solid ${catColor};`;
+            catBadge.textContent = item.category;
+            badgesRow.appendChild(catBadge);
+
+            const prioBadge = document.createElement('span');
+            prioBadge.style.cssText = 'padding:3px 8px;border-radius:12px;font-size:0.75rem;background:rgba(255,255,255,0.05);color:var(--text-dim);';
+            prioBadge.textContent = priorityLabels[item.priority] || '—';
+            badgesRow.appendChild(prioBadge);
+
+            if (item.estimated_date) {
+                const dateBadge = document.createElement('span');
+                dateBadge.style.cssText = 'padding:3px 8px;border-radius:12px;font-size:0.75rem;background:rgba(255,255,255,0.05);color:var(--text-dim);';
+                dateBadge.textContent = '📅 ' + new Date(item.estimated_date).toLocaleDateString('fr-FR');
+                badgesRow.appendChild(dateBadge);
+            }
+
+            const progressBg = document.createElement('div');
+            progressBg.style.cssText = 'background:rgba(255,255,255,0.1);height:6px;border-radius:3px;overflow:hidden;margin-bottom:3px;';
+            const progressBar = document.createElement('div');
+            const pct = Math.min(100, Math.max(0, item.progress || 0));
+            progressBar.style.cssText = `background:linear-gradient(90deg,var(--cyan),var(--purple));height:100%;width:${pct}%;`;
+            progressBg.appendChild(progressBar);
+            const progressLabel = document.createElement('div');
+            progressLabel.style.cssText = 'font-size:0.75rem;color:var(--text-dim);margin-bottom:8px;';
+            progressLabel.textContent = `${pct}% complété`;
+
+            const votesEl = document.createElement('div');
+            votesEl.style.cssText = 'display:flex;align-items:center;gap:5px;color:var(--cyan);font-size:0.9rem;margin-bottom:8px;';
+            votesEl.textContent = `👍 ${item.votes || 0} votes`;
+
+            const actionsRow = document.createElement('div');
+            actionsRow.style.cssText = 'display:flex;gap:5px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);';
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'action-btn btn-edit';
+            editBtn.textContent = '✏️ Modifier';
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                editRoadmapItem(_roadmapCache.get(item.id));
+            });
+            actionsRow.appendChild(editBtn);
+
+            if (currentUserProfile?.role === 'admin') {
+                const delBtn = document.createElement('button');
+                delBtn.className = 'action-btn btn-delete';
+                delBtn.textContent = '🗑️ Supprimer';
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteRoadmapItem(item.id);
+                });
+                actionsRow.appendChild(delBtn);
+            }
+
+            card.append(titleEl, descEl, badgesRow, progressBg, progressLabel, votesEl, actionsRow);
+            return card;
         }
 
         window.openRoadmapModal = function () {
@@ -2625,6 +2787,219 @@
 
         document.querySelector('[data-section="roadmap"]')?.addEventListener('click', () => {
             loadRoadmap();
+        });
+
+        // ===== SUGGESTIONS =====
+        let _allSuggestions = [];
+        let _sgFilter = 'pending';
+
+        window.setSuggestionFilter = function (filter) {
+            _sgFilter = filter;
+            // Style des boutons
+            ['pending', 'approved', 'rejected', 'all'].forEach(f => {
+                const btn = document.getElementById(`sg-filter-${f}`);
+                if (!btn) return;
+                if (f === filter) {
+                    btn.style.opacity = '1';
+                    btn.style.fontWeight = '700';
+                } else {
+                    btn.style.opacity = '0.5';
+                    btn.style.fontWeight = '400';
+                }
+            });
+            renderSuggestions();
+        };
+
+        async function loadSuggestions() {
+            const container = document.getElementById('suggestions-list');
+            const countEl = document.getElementById('suggestions-count');
+            container.innerHTML = '<p class="loading">Chargement...</p>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('roadmap_suggestions')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                _allSuggestions = data || [];
+                const pending = _allSuggestions.filter(s => s.status === 'pending').length;
+                countEl.textContent = pending > 0 ? `${pending} en attente` : 'Aucune en attente';
+                countEl.style.color = pending > 0 ? '#ffc107' : 'var(--text-dim)';
+                renderSuggestions();
+            } catch (err) {
+                container.innerHTML = `<p style="color:var(--danger)">❌ ${err.message}</p>`;
+            }
+        }
+
+        function renderSuggestions() {
+            const container = document.getElementById('suggestions-list');
+            const filtered = _sgFilter === 'all'
+                ? _allSuggestions
+                : _allSuggestions.filter(s => s.status === _sgFilter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-dim);text-align:center;padding:30px;">Aucune suggestion</p>';
+                return;
+            }
+
+            const statusColors = { pending: '#ffc107', approved: '#00ff88', rejected: '#ff4757' };
+            const statusLabels = { pending: '⏳ En attente', approved: '✅ Acceptée', rejected: '❌ Refusée' };
+
+            container.replaceChildren();
+            filtered.forEach(sg => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;';
+
+                // Header
+                const header = document.createElement('div');
+                header.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap;';
+
+                const left = document.createElement('div');
+
+                const titleEl = document.createElement('div');
+                titleEl.style.cssText = 'font-weight:600;font-size:15px;margin-bottom:4px;';
+                titleEl.textContent = sg.title;
+
+                const meta = document.createElement('div');
+                meta.style.cssText = 'font-size:12px;color:var(--text-dim);display:flex;gap:10px;flex-wrap:wrap;';
+
+                const catSpan = document.createElement('span');
+                catSpan.textContent = sg.category;
+                const dateSpan = document.createElement('span');
+                dateSpan.textContent = new Date(sg.created_at).toLocaleString('fr-FR');
+                const authorSpan = document.createElement('span');
+                authorSpan.textContent = sg.author_name ? `par ${sg.author_name}` : 'Anonyme';
+
+                meta.append(catSpan, dateSpan, authorSpan);
+                left.append(titleEl, meta);
+
+                // Badge statut
+                const badge = document.createElement('span');
+                badge.style.cssText = `padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;color:${statusColors[sg.status]};background:${statusColors[sg.status]}22;border:1px solid ${statusColors[sg.status]}55;white-space:nowrap;`;
+                badge.textContent = statusLabels[sg.status];
+
+                header.append(left, badge);
+                card.appendChild(header);
+
+                // Description
+                if (sg.description) {
+                    const desc = document.createElement('div');
+                    desc.style.cssText = 'font-size:13px;color:#b0b0b0;margin-bottom:12px;line-height:1.5;';
+                    desc.textContent = sg.description;
+                    card.appendChild(desc);
+                }
+
+                // Actions
+                if (sg.status === 'pending') {
+                    const actions = document.createElement('div');
+                    actions.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;';
+
+                    const approveBtn = document.createElement('button');
+                    approveBtn.className = 'btn btn-small btn-success';
+                    approveBtn.innerHTML = '✅ Accepter et ajouter à la roadmap';
+                    approveBtn.addEventListener('click', () => approveSuggestion(sg));
+
+                    const rejectBtn = document.createElement('button');
+                    rejectBtn.className = 'btn btn-small btn-danger';
+                    rejectBtn.innerHTML = '❌ Refuser';
+                    rejectBtn.addEventListener('click', () => rejectSuggestion(sg.id));
+
+                    actions.append(approveBtn, rejectBtn);
+                    card.appendChild(actions);
+                } else {
+                    // Bouton supprimer pour admin
+                    if (currentUserProfile?.role === 'admin') {
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'btn btn-small';
+                        delBtn.style.cssText = 'background:rgba(108,117,125,0.2);color:#adb5bd;';
+                        delBtn.textContent = '🗑️ Supprimer';
+                        delBtn.addEventListener('click', () => deleteSuggestion(sg.id));
+                        card.appendChild(delBtn);
+                    }
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        // Accepter → crée directement un roadmap_item
+        window.approveSuggestion = async function (sg) {
+            if (!confirm(`Accepter "${sg.title}" et l'ajouter à la roadmap ?`)) return;
+
+            try {
+                const user = await supabaseClient.auth.getUser();
+
+                // 1. Créer le roadmap_item
+                const { error: insertError } = await supabaseClient
+                    .from('roadmap_items')
+                    .insert({
+                        title: sg.title,
+                        description: sg.description || null,
+                        category: sg.category,
+                        status: 'planned',
+                        priority: 0,
+                        progress: 0,
+                        created_by: user.data.user?.id
+                    });
+                if (insertError) throw insertError;
+
+                // 2. Marquer la suggestion comme acceptée
+                const { error: updateError } = await supabaseClient
+                    .from('roadmap_suggestions')
+                    .update({
+                        status: 'approved',
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: user.data.user?.id
+                    })
+                    .eq('id', sg.id);
+                if (updateError) throw updateError;
+
+                showToast('✅ Ajouté à la roadmap !', 'success');
+                loadSuggestions();
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        };
+
+        window.rejectSuggestion = async function (id) {
+            if (!confirm('Refuser cette suggestion ?')) return;
+            try {
+                const user = await supabaseClient.auth.getUser();
+                const { error } = await supabaseClient
+                    .from('roadmap_suggestions')
+                    .update({
+                        status: 'rejected',
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: user.data.user?.id
+                    })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Suggestion refusée', 'info');
+                loadSuggestions();
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        };
+
+        window.deleteSuggestion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Supprimer définitivement cette suggestion ?')) return;
+            try {
+                const { error } = await supabaseClient.from('roadmap_suggestions').delete().eq('id', id);
+                if (error) throw error;
+                showToast('Suggestion supprimée', 'info');
+                loadSuggestions();
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        };
+
+        // Charger au clic sur la section
+        document.querySelector('[data-section="suggestions"]')?.addEventListener('click', () => {
+            loadSuggestions();
+            setSuggestionFilter('pending');
         });
 
         // =============================================
@@ -2945,7 +3320,7 @@
                     const tdRate = document.createElement('td');
                     const rateWrap = document.createElement('div'); rateWrap.style.cssText = 'display:flex;align-items:center;gap:8px;';
                     const track = document.createElement('div'); track.style.cssText = 'background:rgba(0,0,0,0.3);height:8px;border-radius:4px;flex:1;overflow:hidden;';
-                    const fill = document.createElement('div'); fill.style.cssText = `background:var(--success);height:100%;width:${Math.min(100,rate)}%;transition:width .5s ease;`;
+                    const fill = document.createElement('div'); fill.style.cssText = `background:var(--success);height:100%;width:${Math.min(100, rate)}%;transition:width .5s ease;`;
                     track.appendChild(fill);
                     const pctSpan = document.createElement('span'); pctSpan.style.cssText = 'font-size:12px;min-width:40px;'; pctSpan.textContent = `${rate}%`;
                     rateWrap.append(track, pctSpan); tdRate.appendChild(rateWrap);
@@ -3023,205 +3398,205 @@
     <script src="js/notifications.js"></script>
 
     <script>
-// ========================================
-// GESTION DES PARAMÈTRES DE TRACKING
-// À ajouter dans admin.html
-// ========================================
+        // ========================================
+        // GESTION DES PARAMÈTRES DE TRACKING
+        // À ajouter dans admin.html
+        // ========================================
 
-// Toggle des paramètres de tracking
-document.addEventListener('DOMContentLoaded', () => {
-    const trackingEnabledCheckbox = document.getElementById('tracking-enabled');
-    if (trackingEnabledCheckbox) {
-        trackingEnabledCheckbox.addEventListener('change', (e) => {
-            const settingsDiv = document.getElementById('tracking-settings');
-            if (settingsDiv) {
-                settingsDiv.style.display = e.target.checked ? 'block' : 'none';
+        // Toggle des paramètres de tracking
+        document.addEventListener('DOMContentLoaded', () => {
+            const trackingEnabledCheckbox = document.getElementById('tracking-enabled');
+            if (trackingEnabledCheckbox) {
+                trackingEnabledCheckbox.addEventListener('change', (e) => {
+                    const settingsDiv = document.getElementById('tracking-settings');
+                    if (settingsDiv) {
+                        settingsDiv.style.display = e.target.checked ? 'block' : 'none';
+                    }
+                });
             }
         });
-    }
-});
 
-// Charger les paramètres de tracking
-async function loadTrackingSettings() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('site_settings')
-            .select('setting_value')
-            .eq('setting_key', 'tracking_settings')
-            .single();
+        // Charger les paramètres de tracking
+        async function loadTrackingSettings() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('site_settings')
+                    .select('setting_value')
+                    .eq('setting_key', 'tracking_settings')
+                    .single();
 
-        if (error && error.code !== 'PGRST116') throw error;
+                if (error && error.code !== 'PGRST116') throw error;
 
-        // Paramètres par défaut
-        let settings = {
-            enabled: true,
-            interval: 30,
-            threshold: 5,
-            events: {
-                clicks: true,
-                scroll: true,
-                sections: true,
-                hover: true,
-                inactive: true
+                // Paramètres par défaut
+                let settings = {
+                    enabled: true,
+                    interval: 30,
+                    threshold: 5,
+                    events: {
+                        clicks: true,
+                        scroll: true,
+                        sections: true,
+                        hover: true,
+                        inactive: true
+                    }
+                };
+
+                // Si des paramètres existent, les charger
+                if (data && data.setting_value) {
+                    settings = typeof data.setting_value === 'string'
+                        ? JSON.parse(data.setting_value)
+                        : data.setting_value;
+                }
+
+                // Appliquer les valeurs aux champs
+                const trackingEnabled = document.getElementById('tracking-enabled');
+                const trackingInterval = document.getElementById('tracking-interval');
+                const trackingThreshold = document.getElementById('tracking-threshold');
+                const trackClicks = document.getElementById('track-clicks');
+                const trackScroll = document.getElementById('track-scroll');
+                const trackSections = document.getElementById('track-sections');
+                const trackHover = document.getElementById('track-hover');
+                const trackInactive = document.getElementById('track-inactive');
+
+                if (trackingEnabled) trackingEnabled.checked = settings.enabled;
+                if (trackingInterval) trackingInterval.value = settings.interval;
+                if (trackingThreshold) trackingThreshold.value = settings.threshold;
+
+                if (trackClicks) trackClicks.checked = settings.events.clicks;
+                if (trackScroll) trackScroll.checked = settings.events.scroll;
+                if (trackSections) trackSections.checked = settings.events.sections;
+                if (trackHover) trackHover.checked = settings.events.hover;
+                if (trackInactive) trackInactive.checked = settings.events.inactive;
+
+                // Afficher/masquer les paramètres détaillés
+                const settingsDiv = document.getElementById('tracking-settings');
+                if (settingsDiv) {
+                    settingsDiv.style.display = settings.enabled ? 'block' : 'none';
+                }
+
+                // Mettre à jour le statut
+                updateTrackingStatus(settings);
+
+            } catch (error) {
+                console.error('Erreur chargement paramètres tracking:', error);
+            }
+        }
+
+        // Sauvegarder les paramètres de tracking
+        window.saveTrackingSettings = async function () {
+            const trackingEnabled = document.getElementById('tracking-enabled');
+            const trackingInterval = document.getElementById('tracking-interval');
+            const trackingThreshold = document.getElementById('tracking-threshold');
+            const trackClicks = document.getElementById('track-clicks');
+            const trackScroll = document.getElementById('track-scroll');
+            const trackSections = document.getElementById('track-sections');
+            const trackHover = document.getElementById('track-hover');
+            const trackInactive = document.getElementById('track-inactive');
+
+            if (!trackingEnabled || !trackingInterval || !trackingThreshold) {
+                alert('❌ Erreur : éléments du formulaire introuvables');
+                return;
+            }
+
+            const settings = {
+                enabled: trackingEnabled.checked,
+                interval: parseInt(trackingInterval.value),
+                threshold: parseInt(trackingThreshold.value),
+                events: {
+                    clicks: trackClicks ? trackClicks.checked : true,
+                    scroll: trackScroll ? trackScroll.checked : true,
+                    sections: trackSections ? trackSections.checked : true,
+                    hover: trackHover ? trackHover.checked : true,
+                    inactive: trackInactive ? trackInactive.checked : true
+                },
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                const user = await supabaseClient.auth.getUser();
+
+                // Vérifier si la clé existe
+                const { data: existing } = await supabaseClient
+                    .from('site_settings')
+                    .select('setting_key')
+                    .eq('setting_key', 'tracking_settings')
+                    .single();
+
+                let error;
+
+                if (existing) {
+                    // Mise à jour
+                    ({ error } = await supabaseClient
+                        .from('site_settings')
+                        .update({
+                            setting_value: settings,
+                            updated_at: new Date().toISOString(),
+                            updated_by: user.data.user?.id
+                        })
+                        .eq('setting_key', 'tracking_settings'));
+                } else {
+                    // Insertion
+                    ({ error } = await supabaseClient
+                        .from('site_settings')
+                        .insert({
+                            setting_key: 'tracking_settings',
+                            setting_value: settings,
+                            updated_by: user.data.user?.id
+                        }));
+                }
+
+                if (error) throw error;
+
+                alert('✅ Paramètres de tracking sauvegardés !');
+                updateTrackingStatus(settings);
+
+            } catch (error) {
+                console.error('Erreur sauvegarde tracking:', error);
+                alert('❌ Erreur : ' + error.message);
             }
         };
 
-        // Si des paramètres existent, les charger
-        if (data && data.setting_value) {
-            settings = typeof data.setting_value === 'string' 
-                ? JSON.parse(data.setting_value) 
-                : data.setting_value;
-        }
+        // Mettre à jour l'affichage du statut
+        function updateTrackingStatus(settings) {
+            const statusEl = document.getElementById('tracking-status');
+            if (!statusEl) return;
 
-        // Appliquer les valeurs aux champs
-        const trackingEnabled = document.getElementById('tracking-enabled');
-        const trackingInterval = document.getElementById('tracking-interval');
-        const trackingThreshold = document.getElementById('tracking-threshold');
-        const trackClicks = document.getElementById('track-clicks');
-        const trackScroll = document.getElementById('track-scroll');
-        const trackSections = document.getElementById('track-sections');
-        const trackHover = document.getElementById('track-hover');
-        const trackInactive = document.getElementById('track-inactive');
+            statusEl.replaceChildren();
+            if (settings.enabled) {
+                const activeEvents = Object.values(settings.events).filter(Boolean).length;
 
-        if (trackingEnabled) trackingEnabled.checked = settings.enabled;
-        if (trackingInterval) trackingInterval.value = settings.interval;
-        if (trackingThreshold) trackingThreshold.value = settings.threshold;
-        
-        if (trackClicks) trackClicks.checked = settings.events.clicks;
-        if (trackScroll) trackScroll.checked = settings.events.scroll;
-        if (trackSections) trackSections.checked = settings.events.sections;
-        if (trackHover) trackHover.checked = settings.events.hover;
-        if (trackInactive) trackInactive.checked = settings.events.inactive;
+                const activeSpan = document.createElement('span');
+                activeSpan.style.color = 'var(--success)';
+                activeSpan.textContent = '✅ Actif';
 
-        // Afficher/masquer les paramètres détaillés
-        const settingsDiv = document.getElementById('tracking-settings');
-        if (settingsDiv) {
-            settingsDiv.style.display = settings.enabled ? 'block' : 'none';
-        }
-
-        // Mettre à jour le statut
-        updateTrackingStatus(settings);
-
-    } catch (error) {
-        console.error('Erreur chargement paramètres tracking:', error);
-    }
-}
-
-// Sauvegarder les paramètres de tracking
-window.saveTrackingSettings = async function() {
-    const trackingEnabled = document.getElementById('tracking-enabled');
-    const trackingInterval = document.getElementById('tracking-interval');
-    const trackingThreshold = document.getElementById('tracking-threshold');
-    const trackClicks = document.getElementById('track-clicks');
-    const trackScroll = document.getElementById('track-scroll');
-    const trackSections = document.getElementById('track-sections');
-    const trackHover = document.getElementById('track-hover');
-    const trackInactive = document.getElementById('track-inactive');
-
-    if (!trackingEnabled || !trackingInterval || !trackingThreshold) {
-        alert('❌ Erreur : éléments du formulaire introuvables');
-        return;
-    }
-
-    const settings = {
-        enabled: trackingEnabled.checked,
-        interval: parseInt(trackingInterval.value),
-        threshold: parseInt(trackingThreshold.value),
-        events: {
-            clicks: trackClicks ? trackClicks.checked : true,
-            scroll: trackScroll ? trackScroll.checked : true,
-            sections: trackSections ? trackSections.checked : true,
-            hover: trackHover ? trackHover.checked : true,
-            inactive: trackInactive ? trackInactive.checked : true
-        },
-        updated_at: new Date().toISOString()
-    };
-
-    try {
-        const user = await supabaseClient.auth.getUser();
-
-        // Vérifier si la clé existe
-        const { data: existing } = await supabaseClient
-            .from('site_settings')
-            .select('setting_key')
-            .eq('setting_key', 'tracking_settings')
-            .single();
-
-        let error;
-        
-        if (existing) {
-            // Mise à jour
-            ({ error } = await supabaseClient
-                .from('site_settings')
-                .update({
-                    setting_value: settings,
-                    updated_at: new Date().toISOString(),
-                    updated_by: user.data.user?.id
-                })
-                .eq('setting_key', 'tracking_settings'));
-        } else {
-            // Insertion
-            ({ error } = await supabaseClient
-                .from('site_settings')
-                .insert({
-                    setting_key: 'tracking_settings',
-                    setting_value: settings,
-                    updated_by: user.data.user?.id
-                }));
-        }
-
-        if (error) throw error;
-
-        alert('✅ Paramètres de tracking sauvegardés !');
-        updateTrackingStatus(settings);
-        
-    } catch (error) {
-        console.error('Erreur sauvegarde tracking:', error);
-        alert('❌ Erreur : ' + error.message);
-    }
-};
-
-// Mettre à jour l'affichage du statut
-function updateTrackingStatus(settings) {
-    const statusEl = document.getElementById('tracking-status');
-    if (!statusEl) return;
-
-    statusEl.replaceChildren();
-    if (settings.enabled) {
-        const activeEvents = Object.values(settings.events).filter(Boolean).length;
-
-        const activeSpan = document.createElement('span');
-        activeSpan.style.color = 'var(--success)';
-        activeSpan.textContent = '✅ Actif';
-
-        statusEl.appendChild(activeSpan);
-        statusEl.appendChild(document.createTextNode(
-            ` — Intervalle : ${settings.interval}min — Seuil : ${settings.threshold} événements — Types : ${activeEvents}/5`
-        ));
-    } else {
-        const offSpan = document.createElement('span');
-        offSpan.style.color = 'var(--danger)';
-        offSpan.textContent = '🚫 Désactivé';
-        statusEl.appendChild(offSpan);
-    }
-}
-
-// Charger au clic sur la section site-settings
-document.addEventListener('DOMContentLoaded', () => {
-    const siteSettingsTab = document.querySelector('[data-section="site-settings"]');
-    if (siteSettingsTab) {
-        siteSettingsTab.addEventListener('click', () => {
-            // Charger la version du site
-            if (typeof loadSiteVersion === 'function') {
-                loadSiteVersion();
+                statusEl.appendChild(activeSpan);
+                statusEl.appendChild(document.createTextNode(
+                    ` — Intervalle : ${settings.interval}min — Seuil : ${settings.threshold} événements — Types : ${activeEvents}/5`
+                ));
+            } else {
+                const offSpan = document.createElement('span');
+                offSpan.style.color = 'var(--danger)';
+                offSpan.textContent = '🚫 Désactivé';
+                statusEl.appendChild(offSpan);
             }
-            // Charger les paramètres de tracking
-            loadTrackingSettings();
-        });
-    }
-});
+        }
 
-console.log('✅ Script de gestion du tracking chargé');
+        // Charger au clic sur la section site-settings
+        document.addEventListener('DOMContentLoaded', () => {
+            const siteSettingsTab = document.querySelector('[data-section="site-settings"]');
+            if (siteSettingsTab) {
+                siteSettingsTab.addEventListener('click', () => {
+                    // Charger la version du site
+                    if (typeof loadSiteVersion === 'function') {
+                        loadSiteVersion();
+                    }
+                    // Charger les paramètres de tracking
+                    loadTrackingSettings();
+                });
+            }
+        });
+
+        console.log('✅ Script de gestion du tracking chargé');
 
 
         // =============================================
@@ -3594,31 +3969,31 @@ console.log('✅ Script de gestion du tracking chargé');
                 return; // On arrête tout ici
             }
 
-        // 2. Confirmation explicite (évite les clics accidentels)
-        const message = messageInput.value.trim() || 'Le site va se rafraîchir...';
-        const confirmed = confirm(`⚠️ Tous les clients connectés vont recharger la page.\n\nMessage : "${message}"\n\nConfirmer ?`);
-        if (!confirmed) return;
+            // 2. Confirmation explicite (évite les clics accidentels)
+            const message = messageInput.value.trim() || 'Le site va se rafraîchir...';
+            const confirmed = confirm(`⚠️ Tous les clients connectés vont recharger la page.\n\nMessage : "${message}"\n\nConfirmer ?`);
+            if (!confirmed) return;
 
-        // 3. Envoi de la commande (la RLS Supabase est le vrai verrou côté serveur)
-        try {
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
-            status.textContent = '';
+            // 3. Envoi de la commande (la RLS Supabase est le vrai verrou côté serveur)
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
+                status.textContent = '';
 
-            await forceRefreshAllClients(message);
+                await forceRefreshAllClients(message);
 
-            status.textContent = '✅ Commande envoyée avec succès';
-            status.style.color = 'var(--success)';
+                status.textContent = '✅ Commande envoyée avec succès';
+                status.style.color = 'var(--success)';
 
-        } catch (err) {
-            console.error('Erreur refresh:', err);
-            status.textContent = '❌ Erreur : ' + err.message;
-            status.style.color = 'var(--danger)';
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Forcer le rechargement';
+            } catch (err) {
+                console.error('Erreur refresh:', err);
+                status.textContent = '❌ Erreur : ' + err.message;
+                status.style.color = 'var(--danger)';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Forcer le rechargement';
+            }
         }
-    }
     </script>
     <script type="module" src="js/remote-refresh.js"></script>
 </body>

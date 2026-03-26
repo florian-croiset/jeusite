@@ -343,6 +343,148 @@
         .vote-btn:active i {
             transform: scale(0.9);
         }
+
+
+        /* Bouton suggestion */
+        .suggest-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin: 0 auto 2rem;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 208, 198, 0.15), rgba(135, 53, 185, 0.15));
+            border: 2px solid rgba(0, 208, 198, 0.4);
+            border-radius: 25px;
+            color: var(--debut);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggest-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 208, 198, 0.3), rgba(135, 53, 185, 0.3));
+            border-color: var(--debut);
+            transform: translateY(-2px);
+        }
+
+        /* Modal suggestion */
+        .suggest-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .suggest-modal-overlay.open {
+            display: flex;
+        }
+
+        .suggest-modal {
+            background: #12121f;
+            border: 1px solid rgba(0, 208, 198, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+        }
+
+        .suggest-modal h3 {
+            font-size: 1.4rem;
+            color: var(--debut);
+            margin-bottom: 1.5rem;
+        }
+
+        .suggest-modal .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .suggest-modal label {
+            display: block;
+            font-size: 0.85rem;
+            color: #b0b0b0;
+            margin-bottom: 0.4rem;
+        }
+
+        .suggest-modal input,
+        .suggest-modal textarea,
+        .suggest-modal select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+            padding: 0.7rem 1rem;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .suggest-modal input:focus,
+        .suggest-modal textarea:focus,
+        .suggest-modal select:focus {
+            outline: none;
+            border-color: var(--debut);
+        }
+
+        .suggest-modal textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .suggest-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .suggest-modal .btn-cancel {
+            padding: 0.7rem 1.4rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .suggest-modal .btn-submit {
+            padding: 0.7rem 1.4rem;
+            background: linear-gradient(135deg, var(--debut), var(--finn));
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .suggest-modal .btn-submit:hover {
+            opacity: 0.85;
+        }
+
+        .suggest-modal .close-x {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            font-size: 1.4rem;
+            color: #808080;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .suggest-success {
+            text-align: center;
+            padding: 1rem 0;
+            color: #00ff88;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 
@@ -370,6 +512,52 @@
         <button class="filter-btn" data-filter="other" onclick="filterItems('other')">
             <i class="fas fa-ellipsis-h"></i> Autre
         </button>
+    </div>
+
+    <!-- Bouton suggestion -->
+    <div style="text-align:center; margin-top: 0.5rem;">
+        <button class="suggest-btn" onclick="openSuggestModal()">
+            <i class="fas fa-lightbulb"></i> Suggérer un ajout
+        </button>
+    </div>
+
+    <!-- Modal suggestion -->
+    <div class="suggest-modal-overlay" id="suggest-modal-overlay">
+        <div class="suggest-modal">
+            <button class="close-x" onclick="closeSuggestModal()">×</button>
+            <h3>💡 Suggérer un ajout</h3>
+            <div id="suggest-form-wrap">
+                <div id="suggest-fields">
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="sg-title" placeholder="Ex: Mode multijoueur en ligne" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Description <small style="color:#808080;">(500 caractères max)</small></label>
+                        <textarea id="sg-description" placeholder="Décris ta suggestion..." maxlength="500"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie</label>
+                        <select id="sg-category">
+                            <option value="feature">⭐ Feature</option>
+                            <option value="bug">🐛 Bug</option>
+                            <option value="design">🎨 Design</option>
+                            <option value="other">📦 Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ton prénom <small style="color:#808080;">(optionnel)</small></label>
+                        <input type="text" id="sg-name" placeholder="Florian" maxlength="50">
+                    </div>
+                </div>
+                <div id="suggest-footer" class="suggest-modal-footer">
+                    <button class="btn-cancel" onclick="closeSuggestModal()">Annuler</button>
+                    <button class="btn-submit" onclick="submitSuggestion()">
+                        <i class="fas fa-paper-plane"></i> Envoyer
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Container -->
@@ -673,10 +861,180 @@
 
         // Init
         document.addEventListener('DOMContentLoaded', loadRoadmap);
+
+        // ===== SUGGESTIONS =====
+
+        // Anti-spam : 1 suggestion par session + délai entre envois
+        const SUGGEST_COOLDOWN_MS = 60 * 1000; // 1 minute
+        let _lastSuggestTime = 0;
+        let _suggestCount = 0;
+        const SUGGEST_MAX_PER_SESSION = 3;
+
+        // Sanitisation XSS basique (pas d'innerHTML avec données utilisateur)
+        function sanitizeText(str, maxLen) {
+            if (!str) return '';
+            return String(str).trim().slice(0, maxLen);
+        }
+
+        // Validation stricte de la catégorie
+        const ALLOWED_CATEGORIES = ['feature', 'bug', 'design', 'other'];
+
+        window.openSuggestModal = function () {
+            document.getElementById('suggest-modal-overlay').classList.add('open');
+            document.getElementById('sg-title').focus();
+        };
+
+        window.closeSuggestModal = function () {
+            document.getElementById('suggest-modal-overlay').classList.remove('open');
+            resetSuggestForm();
+        };
+
+        function resetSuggestForm() {
+            const wrap = document.getElementById('suggest-form-wrap');
+            // Vider les champs sans recréer le HTML via innerHTML
+            const titleInput = document.getElementById('sg-title');
+            const descInput = document.getElementById('sg-description');
+            const nameInput = document.getElementById('sg-name');
+            const catSelect = document.getElementById('sg-category');
+            if (titleInput) { titleInput.value = ''; titleInput.style.borderColor = ''; }
+            if (descInput) descInput.value = '';
+            if (nameInput) nameInput.value = '';
+            if (catSelect) catSelect.value = 'feature';
+            // Réafficher le formulaire si on était sur l'écran succès
+            wrap.style.display = '';
+            const successEl = document.getElementById('suggest-success-screen');
+            if (successEl) successEl.remove();
+            const formFields = document.getElementById('suggest-fields');
+            if (formFields) formFields.style.display = '';
+            const footer = document.getElementById('suggest-footer');
+            if (footer) footer.style.display = '';
+        }
+
+        // Fermer en cliquant l'overlay
+        document.getElementById('suggest-modal-overlay').addEventListener('click', function (e) {
+            if (e.target === this) closeSuggestModal();
+        });
+
+        // Fermer avec Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSuggestModal();
+        });
+
+        window.submitSuggestion = async function () {
+            await waitForEchoDB();
+
+            // ── Anti-spam session ──
+            if (_suggestCount >= SUGGEST_MAX_PER_SESSION) {
+                showSuggestError('Limite atteinte : 3 suggestions maximum par session.');
+                return;
+            }
+            const now = Date.now();
+            if (now - _lastSuggestTime < SUGGEST_COOLDOWN_MS) {
+                const remaining = Math.ceil((SUGGEST_COOLDOWN_MS - (now - _lastSuggestTime)) / 1000);
+                showSuggestError(`Veuillez patienter ${remaining}s avant d'envoyer une nouvelle suggestion.`);
+                return;
+            }
+
+            // ── Récupération et sanitisation ──
+            const rawTitle = document.getElementById('sg-title').value;
+            const rawDesc = document.getElementById('sg-description').value;
+            const rawName = document.getElementById('sg-name').value;
+            const rawCat = document.getElementById('sg-category').value;
+
+            const title = sanitizeText(rawTitle, 100);
+            const description = sanitizeText(rawDesc, 500);
+            const name = sanitizeText(rawName, 50);
+            const category = ALLOWED_CATEGORIES.includes(rawCat) ? rawCat : 'feature';
+
+            // ── Validation ──
+            if (!title || title.length < 3) {
+                document.getElementById('sg-title').style.borderColor = '#ff4757';
+                document.getElementById('sg-title').focus();
+                showSuggestError('Le titre doit faire au moins 3 caractères.');
+                return;
+            }
+
+            // Détection contenu suspicieux (URLs, balises)
+            const suspiciousPattern = /<|>|javascript:|data:|vbscript:|on\w+\s*=/i;
+            if (suspiciousPattern.test(title) || suspiciousPattern.test(description) || suspiciousPattern.test(name)) {
+                showSuggestError('Contenu non autorisé détecté.');
+                return;
+            }
+
+            const btn = document.querySelector('#suggest-footer .btn-submit');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+
+            try {
+                const { error } = await window.EchoDB.supabase
+                    .from('roadmap_suggestions')
+                    .insert({
+                        title,
+                        description: description || null,
+                        category,
+                        author_name: name || null,
+                        status: 'pending'
+                    });
+
+                if (error) throw error;
+
+                // Mise à jour anti-spam
+                _lastSuggestTime = Date.now();
+                _suggestCount++;
+
+                // ── Écran succès (sans innerHTML avec données user) ──
+                const fields = document.getElementById('suggest-fields');
+                const footer = document.getElementById('suggest-footer');
+                if (fields) fields.style.display = 'none';
+                if (footer) footer.style.display = 'none';
+
+                const success = document.createElement('div');
+                success.id = 'suggest-success-screen';
+                success.className = 'suggest-success';
+                success.style.cssText = 'text-align:center;padding:1rem 0;';
+
+                const icon = document.createElement('div');
+                icon.style.cssText = 'font-size:3rem;margin-bottom:1rem;';
+                icon.textContent = '✅';
+
+                const title2 = document.createElement('div');
+                title2.style.cssText = 'font-size:1.2rem;font-weight:600;margin-bottom:0.5rem;color:#00ff88;';
+                title2.textContent = 'Suggestion envoyée !';
+
+                const sub = document.createElement('div');
+                sub.style.cssText = 'color:#b0b0b0;font-size:0.95rem;';
+                sub.textContent = 'Merci ! Elle sera examinée prochainement.';
+
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'btn-cancel';
+                closeBtn.style.marginTop = '1.5rem';
+                closeBtn.textContent = 'Fermer';
+                closeBtn.addEventListener('click', closeSuggestModal);
+
+                success.append(icon, title2, sub, closeBtn);
+                document.getElementById('suggest-form-wrap').appendChild(success);
+
+            } catch (err) {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer'; }
+                showSuggestError('Erreur : ' + err.message);
+            }
+        };
+
+        function showSuggestError(msg) {
+            let errEl = document.getElementById('suggest-error');
+            if (!errEl) {
+                errEl = document.createElement('div');
+                errEl.id = 'suggest-error';
+                errEl.style.cssText = 'color:#ff4757;font-size:13px;margin-bottom:10px;padding:8px 12px;background:rgba(255,71,87,0.1);border-radius:6px;border:1px solid rgba(255,71,87,0.3);';
+                const footer = document.getElementById('suggest-footer');
+                if (footer) footer.before(errEl);
+            }
+            errEl.textContent = msg; // textContent — pas d'injection possible
+            setTimeout(() => errEl?.remove(), 4000);
+        }
     </script>
     <script src="js/ip-detection.js"></script>
-<script type="module" src="js/discord-webhook.js"></script>
-<script src="js/discord-tracker.js"></script>
+    <script type="module" src="js/discord-webhook.js"></script>
+    <script src="js/discord-tracker.js"></script>
     <script src="js/ui/cursor.js"></script>
     <script type="module" src="js/remote-refresh.js"></script>
 </body>
