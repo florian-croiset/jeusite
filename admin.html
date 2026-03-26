@@ -757,12 +757,35 @@
         alert(msg);
     }
 
+    const ROLE_PERMISSIONS = {
+    admin: ['overview', 'versions', 'roadmap', 'forms', 'downloads-manage', 'content', 'media', 'notifications', 'users', 'site-settings'],
+    collaborator: ['roadmap'],
+    user: []
+    };
+
         // Configuration Supabase (utiliser une variable locale pour éviter la redéclaration)
         const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUserProfile = null;
+
+        function applyRoleUI(role) {
+            const allowed = ROLE_PERMISSIONS[role] || [];
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                const section = item.dataset.section;
+                item.style.display = allowed.includes(section) ? '' : 'none';
+            });
+
+            // Si collaborator, montrer directement la roadmap
+            if (role === 'collaborator') {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById('roadmap').classList.add('active');
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                document.querySelector('[data-section="roadmap"]')?.classList.add('active');
+                loadRoadmap();
+            }
+        }
 
         function getSupabase() {
             // On cherche le client partout où il pourrait être défini
@@ -848,16 +871,22 @@
         document.querySelectorAll('.sidebar-item').forEach(item => {
             item.addEventListener('click', () => {
                 const section = item.dataset.section;
+                const allowedSections = ROLE_PERMISSIONS[currentUserProfile?.role] || [];
+
+                if (!allowedSections.includes(section)) {
+                showToast('❌ Accès refusé', 'danger');
+                return;
+                }
 
                 document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
-
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.getElementById(section).classList.add('active');
 
-                if (section === 'users') {
-                    loadUsers();
-                }
+                if (section === 'users') loadUsers();
+                if (section === 'forms') loadFormResponses();
+                if (section === 'roadmap') loadRoadmap();
+                // etc.
             });
         });
 
@@ -944,6 +973,7 @@
 
         // Sauvegarder les paramètres
         window.saveDownloadSettings = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             try {
                 const settings = {
                     assets_pack_enabled: document.getElementById('toggle-assets').checked,
@@ -1061,6 +1091,7 @@
 
         // ===== SOUMETTRE FORMULAIRE VERSION =====
         document.getElementById('version-form').addEventListener('submit', async (e) => {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             e.preventDefault();
             const id = document.getElementById('v-id').value;
             const notesText = document.getElementById('v-notes').value;
@@ -1097,6 +1128,7 @@
 
         // ===== PUBLIER / DÉPUBLIER =====
         window.publishVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (!confirm('Publier cette version ?')) return;
             try {
                 const { error } = await supabaseClient.from('game_versions')
@@ -1108,6 +1140,7 @@
         };
 
         window.unpublishVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (!confirm('Dépublier cette version ? Elle passera en brouillon.')) return;
             try {
                 const { error } = await supabaseClient.from('game_versions')
@@ -1120,6 +1153,7 @@
 
         // ===== PUBLIER LA PROCHAINE VERSION (is_next) — corrigé =====
         window.publishNextVersion = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             try {
                 const { data: nextVersion, error: fetchError } = await supabaseClient
                     .from('game_versions').select('*').eq('is_next', true).single();
@@ -1141,6 +1175,7 @@
 
         // ===== MARQUER COMME PROCHAINE VERSION =====
         window.setAsNext = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (!confirm('Marquer cette version comme "prochaine sortie" ?')) return;
             try {
                 await supabaseClient.from('game_versions').update({ is_next: false }).neq('id', id);
@@ -1153,6 +1188,7 @@
 
         // ===== SUPPRIMER VERSION =====
         window.deleteVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (!confirm('⚠️ Supprimer définitivement cette version ? Cette action est irréversible.')) return;
             try {
                 const { error } = await supabaseClient.from('game_versions').delete().eq('id', id);
@@ -1164,6 +1200,7 @@
 
         // ===== ARCHIVAGE =====
         window.archiveVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
             try {
                 const { error } = await supabaseClient.from('game_versions').update({ is_archived: true }).eq('id', id);
@@ -1174,6 +1211,7 @@
         };
 
         window.unarchiveVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             try {
                 const { error } = await supabaseClient.from('game_versions').update({ is_archived: false }).eq('id', id);
                 if (error) throw error;
@@ -1625,6 +1663,7 @@
 
         // Annuler une sortie programmée (depuis le modal ou depuis le modal version)
         window.cancelSchedule = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (!confirm('Annuler cette sortie programmée ? Le countdown sera désactivé et la version restera en brouillon.')) return;
             try {
                 // Désactiver le countdown
@@ -1644,6 +1683,7 @@
 
         // Annuler depuis le modal d'édition d'une version
         window.cancelScheduleFromVersion = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             const id = document.getElementById('v-id').value;
             if (!id) return;
             if (!confirm('Annuler la programmation ? Le countdown associé sera aussi désactivé.')) return;
@@ -1659,6 +1699,7 @@
 
         // Soumettre : écrit countdown + scheduled_publish_at sur la version
         document.getElementById('schedule-modal-form').addEventListener('submit', async (e) => {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             e.preventDefault();
             e.stopPropagation();
 
@@ -1833,6 +1874,7 @@
 
         // Sauvegarder la version du site
         window.saveSiteVersion = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             const newVersion = document.getElementById('site-version-input').value.trim();
 
             if (!newVersion) {
@@ -1890,6 +1932,7 @@
         }
 
         window.toggleDownloadState = async function (checkbox) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); checkbox.checked = !checkbox.checked; return; }
             const newState = checkbox.checked;
             const labelEl = document.getElementById('switchStatusText');
             labelEl.textContent = "⏳ Mise à jour...";
@@ -2095,6 +2138,7 @@
     }
 
     async function deleteFormResponse(id, cardElement) {
+        if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
         if (!confirm('Supprimer définitivement cette réponse ?')) return;
         try {
             const { error } = await supabaseClient
@@ -2149,6 +2193,7 @@
     }
 
     window.exportFormResponses = function () {
+        if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
         if (!_allFormResponses.length) { showToast('Aucune donnée à exporter', 'warning'); return; }
         const headers = ['Date','Nom','Email','Note','Positif','Négatif','Suggestions'];
         const rows = _allFormResponses.map(row => {
@@ -2281,6 +2326,7 @@
         }
 
         window.changeUserRole = async function (userId, newRole) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
             if (currentUserProfile.role !== 'admin') {
                 alert('❌ Seuls les admins peuvent modifier les rôles');
                 return;
@@ -3512,29 +3558,30 @@ console.log('✅ Script de gestion du tracking chargé');
 
 
         async function handleForceRefresh() {
-        const btn = document.getElementById('refresh-btn');
-        const status = document.getElementById('refresh-status');
-        const messageInput = document.getElementById('refresh-message');
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            const btn = document.getElementById('refresh-btn');
+            const status = document.getElementById('refresh-status');
+            const messageInput = document.getElementById('refresh-message');
 
-        // 1. Vérification du rôle côté client (première barrière)
-        try {
-            const { data: { user } } = await window.EchoDB.supabase.auth.getUser();
-            if (!user) throw new Error('Non authentifié');
+            // 1. Vérification du rôle côté client (première barrière)
+            try {
+                const { data: { user } } = await window.EchoDB.supabase.auth.getUser();
+                if (!user) throw new Error('Non authentifié');
 
-            const { data: profile, error } = await window.EchoDB.supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single();
+                const { data: profile, error } = await window.EchoDB.supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
 
-            if (error || !profile) throw new Error('Profil introuvable');
-            if (profile.role !== 'admin') throw new Error('Accès refusé : rôle admin requis');
+                if (error || !profile) throw new Error('Profil introuvable');
+                if (profile.role !== 'admin') throw new Error('Accès refusé : rôle admin requis');
 
-        } catch (err) {
-            status.textContent = '❌ ' + err.message;
-            status.style.color = 'var(--danger)';
-            return; // On arrête tout ici
-        }
+            } catch (err) {
+                status.textContent = '❌ ' + err.message;
+                status.style.color = 'var(--danger)';
+                return; // On arrête tout ici
+            }
 
         // 2. Confirmation explicite (évite les clics accidentels)
         const message = messageInput.value.trim() || 'Le site va se rafraîchir...';
