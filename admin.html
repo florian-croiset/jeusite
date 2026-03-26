@@ -859,7 +859,15 @@
             roleBadge.textContent = profile.role === 'admin' ? 'Admin' : 'Collaborateur';
             roleBadge.className = `role-badge role-${profile.role}`;
 
-            loadDashboardData();
+            if (profile.role === 'collaborator') {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                document.getElementById('roadmap').classList.add('active');
+                document.querySelector('[data-section="roadmap"]').classList.add('active');
+                loadRoadmap();
+            } else {
+                loadDashboardData();
+            }
         }
 
         window.logout = async function () {
