@@ -2526,7 +2526,10 @@
                         delBtn.textContent = '🗑️ Supprimer';
                         delBtn.addEventListener('click', () => deleteRoadmapItem(item.id));
 
-                        actionsRow.append(editBtn, delBtn);
+                        actionsRow.appendChild(editBtn);
+                        if (currentUserProfile?.role === 'admin') {
+                            actionsRow.appendChild(delBtn);
+                        }
                         card.append(titleEl, descEl, badgesRow, progressWrap, votesEl, actionsRow);
                         itemsWrap.appendChild(card);
                     });
@@ -2613,7 +2616,7 @@
                 const { error } = await supabaseClient.from('roadmap_items').delete().eq('id', id);
                 if (error) throw error;
                 loadRoadmap();
-                alert('✅ Élément supprimé !');
+                showToast('✅ Élément supprimé !', 'success');
             } catch (error) {
                 console.error('Erreur:', error);
                 alert('❌ Erreur : ' + error.message);
