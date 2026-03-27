@@ -707,8 +707,6 @@
             renderRoadmap();
         }
 
-        // Vote for item
-        // Vote for item (VERSION AMÉLIORÉE)
         // Vote for item avec effet visuel
         window.voteForItem = async function (itemId, event) {
             event.stopPropagation();
@@ -865,10 +863,12 @@
         // ===== SUGGESTIONS =====
 
         // Anti-spam : 1 suggestion par session + délai entre envois
-        const SUGGEST_COOLDOWN_MS = 60 * 1000; // 1 minute
+        //const SUGGEST_COOLDOWN_MS = 60 * 1000; // 1 minute
+        const SUGGEST_COOLDOWN_MS = 1000; // 1 minute
         let _lastSuggestTime = 0;
         let _suggestCount = 0;
-        const SUGGEST_MAX_PER_SESSION = 3;
+        //const SUGGEST_MAX_PER_SESSION = 3;
+        const SUGGEST_MAX_PER_SESSION = 15;
 
         // Sanitisation XSS basique (pas d'innerHTML avec données utilisateur)
         function sanitizeText(str, maxLen) {
