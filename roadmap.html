@@ -485,10 +485,161 @@
             color: #00ff88;
             font-size: 1.1rem;
         }
+
+        /* --- Bouton Auth / Profil (Haut Droit) --- */
+.auth-container {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+}
+
+.auth-btn {
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.auth-btn:hover {
+    border-color: var(--debut);
+    color: var(--debut);
+    background: rgba(0, 208, 198, 0.1);
+}
+
+/* --- Container des boutons d'actions --- */
+.actions-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+/* --- Modale Matrice Eisenhower --- */
+.matrix-modal {
+    max-width: 800px !important;
+    width: 95% !important;
+}
+
+.eisenhower-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: 60vh;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow: hidden;
+}
+
+/* Lignes séparatrices de la matrice */
+.eisenhower-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+.eisenhower-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Labels des quadrants */
+.quadrant-label {
+    position: absolute;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+    font-weight: 600;
+}
+.ql-top-left { top: 10px; left: 10px; color: rgba(255, 0, 85, 0.6); }
+.ql-top-right { top: 10px; right: 10px; color: rgba(255, 170, 0, 0.6); text-align: right; }
+.ql-bottom-left { bottom: 10px; left: 10px; color: rgba(0, 255, 136, 0.6); }
+.ql-bottom-right { bottom: 10px; right: 10px; }
+
+/* Point/Item dans la matrice */
+.matrix-dot {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--debut);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 208, 198, 0.5);
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+.matrix-dot:hover {
+    transform: translate(-50%, -50%) scale(1.5);
+    z-index: 20;
+}
+
+/* Tooltip pour la matrice */
+.matrix-tooltip {
+    position: absolute;
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid var(--debut);
+    padding: 0.8rem;
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 100;
+    width: 200px;
+    font-size: 0.85rem;
+}
+
+/* --- Version Mobile --- */
+@media (max-width: 768px) {
+    .auth-container {
+        position: relative;
+        top: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    header {
+        padding-top: 1rem;
+    }
+
+    .eisenhower-container {
+        max-height: 50vh;
+    }
+}
     </style>
 </head>
 
 <body>
+    <div class="auth-container">
+        <button id="profile-btn" class="auth-btn" onclick="toggleAuth()">
+            <i class="fas fa-user"></i> <span id="auth-text">Connexion</span>
+        </button>
+    </div>
     <div class="custom-cursor" id="customCursor"></div>
     <header>
         <h1><i class="fas fa-map-signs"></i> Roadmap</h1>
@@ -515,9 +666,18 @@
     </div>
 
     <!-- Bouton suggestion -->
-    <div style="text-align:center; margin-top: 0.5rem;">
+    <!--<div style="text-align:center; margin-top: 0.5rem;">
         <button class="suggest-btn" onclick="openSuggestModal()">
             <i class="fas fa-lightbulb"></i> Suggérer un ajout
+        </button>
+    </div>-->
+
+    <div class="actions-container">
+        <button class="suggest-btn" onclick="openSuggestModal()">
+            <i class="fas fa-lightbulb"></i> Suggérer un ajout
+        </button>
+        <button class="suggest-btn" style="background: linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 0, 85, 0.15)); border-color: rgba(255, 170, 0, 0.4); color: #ffaa00;" onclick="openMatrixModal()">
+            <i class="fas fa-chart-line"></i> Matrice Eisenhower
         </button>
     </div>
 
@@ -557,6 +717,25 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="suggest-modal-overlay" id="matrix-modal-overlay">
+        <div class="suggest-modal matrix-modal">
+            <button class="close-x" onclick="closeMatrixModal()">×</button>
+            <h3><i class="fas fa-chart-line"></i> Matrice d'Eisenhower</h3>
+            <p style="color: #b0b0b0; font-size: 0.9rem; margin-bottom: 1rem;">
+                Visualisation basée sur la priorité (Importance) et la date prévue (Urgence).
+            </p>
+            
+            <div class="eisenhower-container" id="eisenhower-grid">
+                <div class="quadrant-label ql-top-left">Important & Urgent<br>(À faire)</div>
+                <div class="quadrant-label ql-top-right">Important & Non Urgent<br>(À planifier)</div>
+                <div class="quadrant-label ql-bottom-left">Moins Important & Urgent<br>(À déléguer)</div>
+                <div class="quadrant-label ql-bottom-right">Moins Important & Non Urgent<br>(À abandonner)</div>
+                </div>
+            
+            <div id="matrix-tooltip" class="matrix-tooltip"></div>
         </div>
     </div>
 
@@ -1031,7 +1210,168 @@
             errEl.textContent = msg; // textContent — pas d'injection possible
             setTimeout(() => errEl?.remove(), 4000);
         }
+
+
+
+        // ===== AUTHENTIFICATION / PROFIL =====
+        
+        async function checkAuthState() {
+            try {
+                await waitForEchoDB();
+                const user = await window.EchoDB.Auth.getCurrentUser();
+                const authText = document.getElementById('auth-text');
+                if (user) {
+                    authText.textContent = 'Mon Profil';
+                    // Tu peux stocker l'info utilisateur ici
+                } else {
+                    authText.textContent = 'Connexion';
+                }
+            } catch (error) {
+                console.log('Erreur vérification auth');
+            }
+        }
+
+        window.toggleAuth = async function() {
+            const user = await window.EchoDB.Auth.getCurrentUser();
+            if (user) {
+                // Rediriger vers la page profil ou ouvrir modale profil
+                window.location.href = 'profile.html'; // Modifie selon ton routage
+            } else {
+                // Rediriger vers la page de connexion
+                window.location.href = 'login.html'; // Modifie selon ton routage
+            }
+        };
+
+        // Lancer la vérification au chargement
+        document.addEventListener('DOMContentLoaded', checkAuthState);
+
+// --- LOGIQUE MATRICE EISENHOWER CORRIGÉE ---
+
+window.openMatrixModal = function() {
+    const modal = document.getElementById('matrix-modal-overlay');
+    if (modal) {
+        modal.classList.add('open');
+        renderEisenhowerMatrix();
+    }
+};
+
+window.closeMatrixModal = function() {
+    const modal = document.getElementById('matrix-modal-overlay');
+    if (modal) modal.classList.remove('open');
+};
+
+function renderEisenhowerMatrix() {
+    const grid = document.getElementById('eisenhower-grid');
+    const tooltip = document.getElementById('matrix-tooltip');
+    
+    if (!grid || !tooltip) return;
+
+    // Nettoyage des anciens points uniquement (on garde les axes/labels)
+    grid.querySelectorAll('.matrix-dot').forEach(dot => dot.remove());
+
+    // Filtrage des items valides (exclure les complétés si nécessaire)
+    const activeItems = roadmapData.filter(item => item.status !== 'completed');
+
+    activeItems.forEach(item => {
+        // 1. CALCUL DE L'IMPORTANCE (Axe Y : 0% = Haut, 100% = Bas)
+        // priority: 2 (High), 1 (Medium), 0 (Low)
+        let yPos = 80; // Par défaut Low
+        if (item.priority === 2) yPos = 20;
+        else if (item.priority === 1) yPos = 50;
+
+        // 2. CALCUL DE L'URGENCE (Axe X : 0% = Urgent/Gauche, 100% = Non-Urgent/Droite)
+        let xPos = 50; // Neutre par défaut
+        
+        const dateStr = item.target_date || item.planned_date;
+        
+        if (dateStr) {
+            const target = new Date(dateStr);
+            const now = new Date();
+            const diffDays = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) xPos = 10;      // Urgent (déjà dû ou aujourd'hui)
+            else if (diffDays > 30) xPos = 90; // Pas urgent (plus d'un mois)
+            else {
+                // Interpolation : 1 jour -> 15%, 30 jours -> 85%
+                xPos = 15 + ((diffDays / 30) * 70);
+            }
+        } else {
+            // Fallback sur le statut si pas de date
+            xPos = (item.status === 'in_progress') ? 30 : 70;
+        }
+
+        // 3. CRÉATION DU POINT
+        const dot = document.createElement('div');
+        dot.className = 'matrix-dot';
+
+        // Ajout du "jitter" pour éviter les chevauchements parfaits
+        const jitterX = (Math.random() - 0.5) * 8;
+        const jitterY = (Math.random() - 0.5) * 8;
+
+        dot.style.left = `${Math.max(5, Math.min(95, xPos + jitterX))}%`;
+        dot.style.top = `${Math.max(5, Math.min(95, yPos + jitterY))}%`;
+
+        // Couleur basée sur les variables CSS du thème
+        if (item.category === 'bug') dot.style.backgroundColor = 'var(--bug)';
+        else if (item.category === 'feature') dot.style.backgroundColor = 'var(--feature)';
+        else if (item.category === 'design') dot.style.backgroundColor = 'var(--design)';
+        else dot.style.backgroundColor = 'var(--finn)';
+
+        // 4. INTERACTIONS (TOOLTIP)
+        dot.addEventListener('mouseenter', (e) => {
+            const rect = grid.getBoundingClientRect();
+            tooltip.style.opacity = '1';
+            tooltip.innerHTML = `
+                <div style="font-weight:bold; margin-bottom:4px;">${item.title}</div>
+                <div style="font-size:11px; color:#aaa;">
+                    Priorité: ${item.priority === 2 ? 'Haute' : item.priority === 1 ? 'Moyenne' : 'Basse'}<br>
+                    Statut: ${item.status.replace('_', ' ')}<br>
+                    Progression: ${item.progress}%
+                </div>
+            `;
+            
+            // Positionnement relatif à la grille
+            tooltip.style.left = `${e.clientX - rect.left + 15}px`;
+            tooltip.style.top = `${e.clientY - rect.top + 15}px`;
+        });
+
+        dot.addEventListener('mouseleave', () => {
+            tooltip.style.opacity = '0';
+        });
+
+        grid.appendChild(dot);
+    });
+}
     </script>
+    <style>
+        .eisenhower-container {
+    position: relative; /* CRUCIAL pour les dots */
+    width: 100%;
+    height: 400px; /* Force une hauteur */
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.matrix-dot {
+    position: absolute; /* CRUCIAL : permet de sortir de l'alignement standard */
+    width: 14px;
+    height: 14px;
+    background: var(--debut);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 10;
+}
+
+.matrix-dot:hover {
+    transform: translate(-50%, -50%) scale(1.8);
+    box-shadow: 0 0 15px var(--debut);
+}
+    </style>
     <script src="js/ip-detection.js"></script>
     <script type="module" src="js/discord-webhook.js"></script>
     <script src="js/discord-tracker.js"></script>
