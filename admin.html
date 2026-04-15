@@ -2305,7 +2305,7 @@
 
 
         // ===== GESTION DES UTILISATEURS =====
-        async function loadUsers() {
+        /*async function loadUsers() {
             if (currentUserProfile.role !== 'admin') {
                 const p = document.createElement('p');
                 p.style.color = 'var(--danger)';
@@ -2438,7 +2438,7 @@
                 alert('❌ Erreur : ' + error.message);
                 loadUsers();
             }
-        };
+        };*/
 
 
         // =============================================
@@ -3913,6 +3913,822 @@
                 form.addEventListener('submit', sendNotification);
             }
         });
+
+        // =============================================
+// GESTION AVANCÉE DES UTILISATEURS
+// À intégrer dans le <script> principal de admin.html
+// =============================================
+
+// ----------------------------
+// ÉTAT LOCAL
+// ----------------------------
+let _allUsers = [];
+let _usersFilter = { search: '', role: 'all', status: 'all' };
+
+// ----------------------------
+// CHARGEMENT PRINCIPAL
+// ----------------------------
+async function loadUsers() {
+    if (currentUserProfile?.role !== 'admin') {
+        document.getElementById('users-list').innerHTML =
+            '<p style="color:var(--danger)">Accès refusé - Admin uniquement</p>';
+        return;
+    }
+
+    const container = document.getElementById('users-list');
+    container.innerHTML = '<p class="loading">Chargement...</p>';
+
+    try {
+        const { data: users, error } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        _allUsers = users || [];
+        renderUsersPanel();
+    } catch (err) {
+        container.innerHTML = `<p style="color:var(--danger)">❌ ${err.message}</p>`;
+    }
+}
+
+// ----------------------------
+// RENDU DU PANEL COMPLET
+// ----------------------------
+function renderUsersPanel() {
+    const container = document.getElementById('users-list');
+    container.replaceChildren();
+
+    // ── Toolbar ──
+    const toolbar = document.createElement('div');
+    toolbar.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;';
+
+    // Search
+    const search = document.createElement('input');
+    search.type = 'text';
+    search.placeholder = '🔍 Rechercher username / email...';
+    search.value = _usersFilter.search;
+    search.style.cssText = 'flex:1;min-width:200px;background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px 12px;border-radius:6px;';
+    search.oninput = (e) => { _usersFilter.search = e.target.value; renderUsersTable(); };
+
+    // Role filter
+    const roleFilter = document.createElement('select');
+    roleFilter.style.cssText = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px;border-radius:6px;';
+    [['all','Tous les rôles'],['user','Utilisateurs'],['collaborator','Collaborateurs'],['admin','Admins']].forEach(([v,l]) => {
+        const o = document.createElement('option'); o.value = v; o.textContent = l;
+        if (_usersFilter.role === v) o.selected = true;
+        roleFilter.appendChild(o);
+    });
+    roleFilter.onchange = (e) => { _usersFilter.role = e.target.value; renderUsersTable(); };
+
+    // Status filter
+    const statusFilter = document.createElement('select');
+    statusFilter.style.cssText = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px;border-radius:6px;';
+    [['all','Tous les statuts'],['active','Actifs'],['banned','Bannis']].forEach(([v,l]) => {
+        const o = document.createElement('option'); o.value = v; o.textContent = l;
+        if (_usersFilter.status === v) o.selected = true;
+        statusFilter.appendChild(o);
+    });
+    statusFilter.onchange = (e) => { _usersFilter.status = e.target.value; renderUsersTable(); };
+
+    // Boutons d'action globaux
+    const btnCreate = document.createElement('button');
+    btnCreate.className = 'btn btn-primary';
+    btnCreate.innerHTML = '<i class="fa-solid fa-plus"></i> Créer un user';
+    btnCreate.onclick = () => openCreateUserModal();
+
+    const btnInvite = document.createElement('button');
+    btnInvite.className = 'btn btn-success';
+    btnInvite.innerHTML = '<i class="fa-solid fa-envelope"></i> Inviter par email';
+    btnInvite.onclick = () => openInviteModal();
+
+    const btnRefresh = document.createElement('button');
+    btnRefresh.className = 'btn';
+    btnRefresh.style.cssText = 'background:rgba(255,255,255,0.05);';
+    btnRefresh.innerHTML = '<i class="fa-solid fa-rotate"></i>';
+    btnRefresh.onclick = loadUsers;
+
+    const countSpan = document.createElement('span');
+    countSpan.id = 'users-count-label';
+    countSpan.style.cssText = 'font-size:13px;color:var(--text-dim);margin-left:auto;';
+
+    toolbar.append(search, roleFilter, statusFilter, btnCreate, btnInvite, btnRefresh, countSpan);
+    container.appendChild(toolbar);
+
+    // ── Table wrapper ──
+    const tableWrap = document.createElement('div');
+    tableWrap.id = 'users-table-wrap';
+    tableWrap.className = 'table-wrapper';
+    container.appendChild(tableWrap);
+
+    renderUsersTable();
+}
+
+// ----------------------------
+// RENDU TABLE (filtrable)
+// ----------------------------
+function renderUsersTable() {
+    const wrap = document.getElementById('users-table-wrap');
+    if (!wrap) return;
+
+    const { search, role, status } = _usersFilter;
+    let filtered = _allUsers.filter(u => {
+        const matchSearch = !search ||
+            (u.username || '').toLowerCase().includes(search.toLowerCase()) ||
+            (u.id || '').toLowerCase().includes(search.toLowerCase());
+        const matchRole = role === 'all' || u.role === role;
+        const matchStatus = status === 'all' ||
+            (status === 'banned' ? u.is_banned : !u.is_banned);
+        return matchSearch && matchRole && matchStatus;
+    });
+
+    const countLabel = document.getElementById('users-count-label');
+    if (countLabel) {
+        countLabel.textContent = filtered.length === _allUsers.length
+            ? `${_allUsers.length} utilisateur${_allUsers.length > 1 ? 's' : ''}`
+            : `${filtered.length} / ${_allUsers.length}`;
+    }
+
+    if (filtered.length === 0) {
+        wrap.innerHTML = '<p style="text-align:center;color:var(--text-dim);padding:30px;">Aucun résultat</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.innerHTML = `<thead><tr>
+        <th>Utilisateur</th>
+        <th>Rôle</th>
+        <th>Statut</th>
+        <th>Inscription</th>
+        <th>Dernière co.</th>
+        <th style="text-align:right;">Actions</th>
+    </tr></thead>`;
+
+    const tbody = document.createElement('tbody');
+
+    filtered.forEach(user => {
+        const tr = document.createElement('tr');
+        if (user.is_banned) tr.style.opacity = '0.6';
+
+        // ── Utilisateur ──
+        const tdUser = document.createElement('td');
+        const userDiv = document.createElement('div');
+        userDiv.style.cssText = 'display:flex;align-items:center;gap:10px;';
+
+        const avatar = document.createElement('div');
+        avatar.style.cssText = `width:32px;height:32px;border-radius:50%;background:${stringToColor(user.id)};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:#fff;flex-shrink:0;`;
+        avatar.textContent = (user.username || '?')[0].toUpperCase();
+
+        const nameBlock = document.createElement('div');
+        const nameSpan = document.createElement('div');
+        nameSpan.style.cssText = 'font-size:13px;font-weight:600;';
+        nameSpan.textContent = user.username || '—';
+        const idSpan = document.createElement('div');
+        idSpan.style.cssText = 'font-size:10px;color:var(--text-dim);font-family:monospace;';
+        idSpan.textContent = user.id.slice(0, 8) + '…';
+        idSpan.title = user.id;
+        nameBlock.append(nameSpan, idSpan);
+        userDiv.append(avatar, nameBlock);
+        tdUser.appendChild(userDiv);
+
+        // ── Rôle ──
+        const tdRole = document.createElement('td');
+        const safeRole = ['user','collaborator','admin'].includes(user.role) ? user.role : 'user';
+        const roleBadge = document.createElement('span');
+        roleBadge.className = `role-badge role-${safeRole}`;
+        roleBadge.textContent = user.role;
+        tdRole.appendChild(roleBadge);
+
+        // ── Statut ──
+        const tdStatus = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.style.cssText = `padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;${
+            user.is_banned
+                ? 'background:rgba(255,71,87,0.15);color:#ff4757;border:1px solid rgba(255,71,87,0.3);'
+                : 'background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.2);'
+        }`;
+        statusBadge.textContent = user.is_banned ? '🚫 Banni' : '✅ Actif';
+        tdStatus.appendChild(statusBadge);
+
+        // ── Dates ──
+        const tdCreated = document.createElement('td');
+        tdCreated.style.cssText = 'font-size:12px;color:var(--text-dim);white-space:nowrap;';
+        tdCreated.textContent = user.created_at
+            ? new Date(user.created_at).toLocaleDateString('fr-FR')
+            : '—';
+
+        const tdLastLogin = document.createElement('td');
+        tdLastLogin.style.cssText = 'font-size:12px;color:var(--text-dim);white-space:nowrap;';
+        tdLastLogin.textContent = user.last_sign_in_at
+            ? new Date(user.last_sign_in_at).toLocaleString('fr-FR')
+            : '—';
+
+        // ── Actions ──
+        const tdActions = document.createElement('td');
+        tdActions.style.textAlign = 'right';
+        const actDiv = document.createElement('div');
+        actDiv.style.cssText = 'display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap;';
+
+        const btnDetail = makeActionBtn('🔍', 'btn-edit', 'Détail / modifier', () => openUserDetailModal(user));
+        const btnPwd = makeActionBtn('🔑', '', 'Réinitialiser le mot de passe', () => resetUserPassword(user));
+        btnPwd.style.background = 'rgba(255,193,7,0.2)'; btnPwd.style.color = '#ffc107';
+
+        const btnBan = makeActionBtn(
+            user.is_banned ? '✅' : '🚫',
+            '',
+            user.is_banned ? 'Débannir' : 'Bannir',
+            () => toggleBanUser(user)
+        );
+        btnBan.style.background = user.is_banned
+            ? 'rgba(0,255,136,0.1)' : 'rgba(255,71,87,0.15)';
+        btnBan.style.color = user.is_banned ? '#00ff88' : '#ff4757';
+
+        const btnHistory = makeActionBtn('📋', '', 'Historique de connexion', () => openLoginHistory(user));
+        btnHistory.style.background = 'rgba(0,188,212,0.15)'; btnHistory.style.color = '#00bcd4';
+
+        const btnForceOut = makeActionBtn('🔌', '', 'Forcer la déconnexion', () => forceSignOut(user));
+        btnForceOut.style.background = 'rgba(255,152,0,0.15)'; btnForceOut.style.color = '#ff9800';
+
+        const btnDel = makeActionBtn('🗑️', 'btn-delete', 'Supprimer définitivement', () => deleteUser(user));
+
+        actDiv.append(btnDetail, btnPwd, btnBan, btnHistory, btnForceOut, btnDel);
+        tdActions.appendChild(actDiv);
+
+        tr.append(tdUser, tdRole, tdStatus, tdCreated, tdLastLogin, tdActions);
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    wrap.replaceChildren(table);
+}
+
+// ----------------------------
+// HELPER : couleur déterministe depuis un string (UUID)
+// ----------------------------
+function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    const h = Math.abs(hash) % 360;
+    return `hsl(${h},55%,40%)`;
+}
+
+function makeActionBtn(icon, extraClass, title, onClick) {
+    const btn = document.createElement('button');
+    btn.className = `action-btn ${extraClass}`;
+    btn.title = title;
+    btn.textContent = icon;
+    btn.onclick = onClick;
+    return btn;
+}
+
+// ----------------------------
+// MODAL DÉTAIL / ÉDITION USER
+// ----------------------------
+function openUserDetailModal(user) {
+    const existing = document.getElementById('user-detail-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'user-detail-modal';
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.maxWidth = '520px';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    header.innerHTML = `<h3>👤 ${user.username || user.id.slice(0,8)}</h3>`;
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close-modal';
+    closeBtn.textContent = '×';
+    closeBtn.onclick = () => overlay.remove();
+    header.appendChild(closeBtn);
+
+    // Contenu — toujours textContent, jamais innerHTML avec données BDD
+    const body = document.createElement('div');
+    body.style.padding = '20px';
+
+    function infoRow(label, value, valueStyle = '') {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);align-items:center;';
+        const lbl = document.createElement('span');
+        lbl.style.cssText = 'color:var(--text-dim);font-size:13px;';
+        lbl.textContent = label;
+        const val = document.createElement('span');
+        val.style.cssText = `font-size:13px;font-weight:500;font-family:monospace;${valueStyle}`;
+        val.textContent = value || '—';
+        row.append(lbl, val);
+        return row;
+    }
+
+    body.appendChild(infoRow('ID', user.id));
+    body.appendChild(infoRow('Username', user.username));
+    body.appendChild(infoRow('Rôle', user.role));
+    body.appendChild(infoRow('Statut', user.is_banned ? 'Banni' : 'Actif',
+        user.is_banned ? 'color:#ff4757;' : 'color:#00ff88;'));
+    body.appendChild(infoRow('Inscription',
+        user.created_at ? new Date(user.created_at).toLocaleString('fr-FR') : null));
+    body.appendChild(infoRow('Dernière connexion',
+        user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString('fr-FR') : null));
+
+    // ── Modifier le rôle inline ──
+    const roleSection = document.createElement('div');
+    roleSection.style.cssText = 'margin-top:20px;';
+    const roleLabel = document.createElement('div');
+    roleLabel.style.cssText = 'font-size:13px;color:var(--text-dim);margin-bottom:8px;';
+    roleLabel.textContent = 'Modifier le rôle :';
+
+    const roleSelect = document.createElement('select');
+    roleSelect.style.cssText = 'background:rgba(0,0,0,0.5);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;';
+    [['user','👤 Utilisateur'],['collaborator','🤝 Collaborateur'],['admin','👑 Admin']].forEach(([v,l]) => {
+        const o = document.createElement('option');
+        o.value = v; o.textContent = l; o.selected = user.role === v;
+        roleSelect.appendChild(o);
+    });
+
+    // ── Modifier le username ──
+    const usernameSection = document.createElement('div');
+    usernameSection.style.cssText = 'margin-top:14px;';
+    const usernameLabel = document.createElement('div');
+    usernameLabel.style.cssText = 'font-size:13px;color:var(--text-dim);margin-bottom:8px;';
+    usernameLabel.textContent = 'Modifier le username :';
+    const usernameInput = document.createElement('input');
+    usernameInput.type = 'text';
+    usernameInput.value = user.username || '';
+    usernameInput.style.cssText = 'background:rgba(0,0,0,0.5);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;box-sizing:border-box;';
+
+    usernameSection.append(usernameLabel, usernameInput);
+    roleSection.append(roleLabel, roleSelect, usernameSection);
+    body.appendChild(roleSection);
+
+    // ── Footer ──
+    const footer = document.createElement('div');
+    footer.className = 'modal-footer';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-danger';
+    btnCancel.textContent = '❌ Fermer';
+    btnCancel.onclick = () => overlay.remove();
+
+    const btnSave = document.createElement('button');
+    btnSave.className = 'btn btn-success';
+    btnSave.textContent = '💾 Enregistrer';
+    btnSave.onclick = async () => {
+        try {
+            btnSave.disabled = true;
+            btnSave.textContent = '⏳ Enregistrement...';
+            const updates = {
+                role: roleSelect.value,
+                username: usernameInput.value.trim() || null,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabaseClient
+                .from('profiles')
+                .update(updates)
+                .eq('id', user.id);
+            if (error) throw error;
+            showToast('✅ Profil mis à jour !', 'success');
+            overlay.remove();
+            loadUsers();
+        } catch (err) {
+            showToast('❌ ' + err.message, 'danger');
+            btnSave.disabled = false;
+            btnSave.textContent = '💾 Enregistrer';
+        }
+    };
+
+    footer.append(btnCancel, btnSave);
+    content.append(header, body, footer);
+    overlay.appendChild(content);
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    document.body.appendChild(overlay);
+}
+
+// ----------------------------
+// CRÉER UN UTILISATEUR
+// ----------------------------
+function openCreateUserModal() {
+    const existing = document.getElementById('create-user-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'create-user-modal';
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.maxWidth = '460px';
+
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    header.innerHTML = '<h3>➕ Créer un utilisateur</h3>';
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close-modal'; closeBtn.textContent = '×';
+    closeBtn.onclick = () => overlay.remove();
+    header.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.style.padding = '20px';
+
+    function field(labelText, inputEl) {
+        const grp = document.createElement('div');
+        grp.className = 'form-group';
+        const lbl = document.createElement('label');
+        lbl.textContent = labelText;
+        grp.append(lbl, inputEl);
+        return grp;
+    }
+
+    const inputStyle = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;box-sizing:border-box;';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email'; emailInput.placeholder = 'email@exemple.com';
+    emailInput.style.cssText = inputStyle;
+
+    const usernameInput = document.createElement('input');
+    usernameInput.type = 'text'; usernameInput.placeholder = 'username';
+    usernameInput.style.cssText = inputStyle;
+
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password'; passwordInput.placeholder = 'Mot de passe (min. 8 car.)';
+    passwordInput.style.cssText = inputStyle;
+
+    const roleSelect = document.createElement('select');
+    roleSelect.style.cssText = inputStyle;
+    [['user','👤 Utilisateur'],['collaborator','🤝 Collaborateur'],['admin','👑 Admin']].forEach(([v,l]) => {
+        const o = document.createElement('option'); o.value = v; o.textContent = l;
+        roleSelect.appendChild(o);
+    });
+
+    body.append(
+        field('Email *', emailInput),
+        field('Username', usernameInput),
+        field('Mot de passe *', passwordInput),
+        field('Rôle', roleSelect)
+    );
+
+    // Avertissement sur l'Edge Function
+    const warn = document.createElement('div');
+    warn.style.cssText = 'margin-top:12px;padding:10px;background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:6px;font-size:12px;color:#ffc107;';
+    warn.textContent = '⚠️ Nécessite l\'Edge Function admin-users déployée (voir documentation).';
+    body.appendChild(warn);
+
+    const footer = document.createElement('div');
+    footer.className = 'modal-footer';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-danger'; btnCancel.textContent = '❌ Annuler';
+    btnCancel.onclick = () => overlay.remove();
+
+    const btnCreate = document.createElement('button');
+    btnCreate.className = 'btn btn-success';
+    btnCreate.innerHTML = '<i class="fa-solid fa-plus"></i> Créer';
+    btnCreate.onclick = async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const username = usernameInput.value.trim();
+        const role = roleSelect.value;
+
+        if (!email || !password) { showToast('⚠️ Email et mot de passe requis', 'warning'); return; }
+        if (password.length < 8) { showToast('⚠️ Mot de passe trop court (min. 8)', 'warning'); return; }
+
+        btnCreate.disabled = true;
+        btnCreate.textContent = '⏳ Création...';
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify({ action: 'create', email, password, username, role })
+            });
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+
+            showToast(`✅ Utilisateur ${email} créé !`, 'success');
+            overlay.remove();
+            loadUsers();
+        } catch (err) {
+            showToast('❌ ' + err.message, 'danger');
+            btnCreate.disabled = false;
+            btnCreate.innerHTML = '<i class="fa-solid fa-plus"></i> Créer';
+        }
+    };
+
+    footer.append(btnCancel, btnCreate);
+    content.append(header, body, footer);
+    overlay.appendChild(content);
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    document.body.appendChild(overlay);
+}
+
+// ----------------------------
+// INVITATION PAR EMAIL
+// ----------------------------
+function openInviteModal() {
+    const existing = document.getElementById('invite-user-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'invite-user-modal';
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.maxWidth = '420px';
+
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    header.innerHTML = '<h3>✉️ Inviter par email</h3>';
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close-modal'; closeBtn.textContent = '×';
+    closeBtn.onclick = () => overlay.remove();
+    header.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.style.padding = '20px';
+
+    const info = document.createElement('p');
+    info.style.cssText = 'color:var(--text-dim);font-size:13px;margin-bottom:16px;';
+    info.textContent = "L'utilisateur recevra un lien d'invitation pour définir son mot de passe.";
+
+    const inputStyle = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;box-sizing:border-box;';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email'; emailInput.placeholder = 'email@exemple.com';
+    emailInput.style.cssText = inputStyle;
+
+    const roleSelect = document.createElement('select');
+    roleSelect.style.cssText = 'margin-top:12px;' + inputStyle;
+    [['user','👤 Utilisateur'],['collaborator','🤝 Collaborateur'],['admin','👑 Admin']].forEach(([v,l]) => {
+        const o = document.createElement('option'); o.value = v; o.textContent = l;
+        roleSelect.appendChild(o);
+    });
+
+    body.append(info, emailInput, roleSelect);
+
+    const footer = document.createElement('div');
+    footer.className = 'modal-footer';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-danger'; btnCancel.textContent = '❌ Annuler';
+    btnCancel.onclick = () => overlay.remove();
+
+    const btnSend = document.createElement('button');
+    btnSend.className = 'btn btn-success';
+    btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoyer l\'invitation';
+    btnSend.onclick = async () => {
+        const email = emailInput.value.trim();
+        const role = roleSelect.value;
+        if (!email) { showToast('⚠️ Email requis', 'warning'); return; }
+
+        btnSend.disabled = true;
+        btnSend.textContent = '⏳ Envoi...';
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
+                body: JSON.stringify({ action: 'invite', email, role })
+            });
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+
+            showToast(`✅ Invitation envoyée à ${email} !`, 'success');
+            overlay.remove();
+        } catch (err) {
+            showToast('❌ ' + err.message, 'danger');
+            btnSend.disabled = false;
+            btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoyer l\'invitation';
+        }
+    };
+
+    footer.append(btnCancel, btnSend);
+    content.append(header, body, footer);
+    overlay.appendChild(content);
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    document.body.appendChild(overlay);
+}
+
+// ----------------------------
+// RESET MOT DE PASSE
+// ----------------------------
+async function resetUserPassword(user) {
+    // On ne peut envoyer le reset qu'à l'email du user.
+    // Le problème : profiles ne stocke PAS l'email (c'est dans auth.users).
+    // On passe par l'Edge Function qui a accès à auth.admin.
+
+    if (!confirm(`Envoyer un email de réinitialisation du mot de passe pour l'utilisateur "${user.username || user.id.slice(0,8)}" ?`)) return;
+
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({ action: 'reset_password', userId: user.id })
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+        showToast('✅ Email de réinitialisation envoyé !', 'success');
+    } catch (err) {
+        showToast('❌ ' + err.message, 'danger');
+    }
+}
+
+// ----------------------------
+// BAN / UNBAN
+// ----------------------------
+async function toggleBanUser(user) {
+    const action = user.is_banned ? 'débannir' : 'bannir';
+    if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} l'utilisateur "${user.username || user.id.slice(0,8)}" ?`)) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update({ is_banned: !user.is_banned, updated_at: new Date().toISOString() })
+            .eq('id', user.id);
+        if (error) throw error;
+
+        // Si on banne → forcer la déco via Edge Function
+        if (!user.is_banned) {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ action: 'force_signout', userId: user.id })
+                });
+            } catch (_) { /* non-bloquant */ }
+        }
+
+        showToast(user.is_banned ? '✅ Utilisateur débanni' : '🚫 Utilisateur banni', 'info');
+        loadUsers();
+    } catch (err) {
+        showToast('❌ ' + err.message, 'danger');
+    }
+}
+
+// ----------------------------
+// FORCER LA DÉCONNEXION
+// ----------------------------
+async function forceSignOut(user) {
+    if (!confirm(`Forcer la déconnexion de "${user.username || user.id.slice(0,8)}" sur tous les appareils ?`)) return;
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({ action: 'force_signout', userId: user.id })
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+        showToast('✅ Déconnexion forcée !', 'success');
+    } catch (err) {
+        showToast('❌ ' + err.message, 'danger');
+    }
+}
+
+// ----------------------------
+// HISTORIQUE DE CONNEXION
+// ----------------------------
+async function openLoginHistory(user) {
+    const existing = document.getElementById('login-history-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'login-history-modal';
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'flex';
+
+    const content = document.createElement('div');
+    content.className = 'modal-content';
+    content.style.maxWidth = '560px';
+
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    const h3 = document.createElement('h3');
+    h3.textContent = `📋 Historique — ${user.username || user.id.slice(0,8)}`;
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close-modal'; closeBtn.textContent = '×';
+    closeBtn.onclick = () => overlay.remove();
+    header.append(h3, closeBtn);
+
+    const body = document.createElement('div');
+    body.style.padding = '20px';
+
+    const loadingP = document.createElement('p');
+    loadingP.style.color = 'var(--text-dim)'; loadingP.textContent = 'Chargement...';
+    body.appendChild(loadingP);
+
+    content.append(header, body);
+    overlay.appendChild(content);
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    document.body.appendChild(overlay);
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('user_login_history')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('logged_in_at', { ascending: false })
+            .limit(30);
+
+        body.replaceChildren();
+
+        if (error) {
+            // Table probablement pas encore créée
+            const errDiv = document.createElement('div');
+            errDiv.style.cssText = 'padding:16px;background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:8px;font-size:13px;color:#ffc107;';
+            errDiv.textContent = '⚠️ Table user_login_history introuvable. Voir la section "Setup" du guide.';
+            body.appendChild(errDiv);
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            const empty = document.createElement('p');
+            empty.style.cssText = 'color:var(--text-dim);text-align:center;padding:20px;';
+            empty.textContent = 'Aucun historique disponible';
+            body.appendChild(empty);
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.innerHTML = '<thead><tr><th>Date</th><th>IP</th><th>User Agent</th></tr></thead>';
+        const tbody = document.createElement('tbody');
+        data.forEach(entry => {
+            const tr = document.createElement('tr');
+            const tdDate = document.createElement('td');
+            tdDate.style.cssText = 'font-size:12px;white-space:nowrap;';
+            tdDate.textContent = new Date(entry.logged_in_at).toLocaleString('fr-FR');
+            const tdIp = document.createElement('td');
+            tdIp.style.cssText = 'font-size:12px;font-family:monospace;';
+            tdIp.textContent = entry.ip_address || '—';
+            const tdUa = document.createElement('td');
+            tdUa.style.cssText = 'font-size:11px;color:var(--text-dim);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            tdUa.textContent = entry.user_agent || '—';
+            tdUa.title = entry.user_agent || '';
+            tr.append(tdDate, tdIp, tdUa);
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        body.appendChild(table);
+
+    } catch (err) {
+        body.replaceChildren();
+        const errP = document.createElement('p');
+        errP.style.color = 'var(--danger)'; errP.textContent = '❌ ' + err.message;
+        body.appendChild(errP);
+    }
+}
+
+// ----------------------------
+// SUPPRIMER UN UTILISATEUR
+// ----------------------------
+async function deleteUser(user) {
+    const confirm1 = confirm(`⚠️ Supprimer définitivement "${user.username || user.id.slice(0,8)}" ?\nCette action est irréversible et supprimera aussi son compte d'authentification.`);
+    if (!confirm1) return;
+
+    // Double confirmation
+    const confirm2 = confirm(`Dernière confirmation : supprimer cet utilisateur ?`);
+    if (!confirm2) return;
+
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({ action: 'delete', userId: user.id })
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+        showToast('✅ Utilisateur supprimé', 'info');
+        loadUsers();
+    } catch (err) {
+        showToast('❌ ' + err.message, 'danger');
+    }
+}
     </script>
 
     <script>
