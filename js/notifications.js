@@ -633,13 +633,15 @@ class NotificationSystem {
                 <i class="fa-solid ${icons[notification.type] || icons.info}"></i>
             </div>
             <div class="toast-content">
-                <div class="toast-title">${notification.title}</div>
-                <div class="toast-message">${notification.message}</div>
+                <div class="toast-title"></div>
+                <div class="toast-message"></div>
             </div>
             <button class="toast-close">
                 <i class="fa-solid fa-times"></i>
             </button>
         `;
+        toast.querySelector('.toast-title').textContent = notification.title;
+        toast.querySelector('.toast-message').textContent = notification.message;
 
         document.getElementById('toast-container').appendChild(toast);
 

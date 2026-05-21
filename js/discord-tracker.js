@@ -59,7 +59,9 @@ class AdvancedDiscordTracker {
     }
 
     generateSessionId() {
-        return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const array = new Uint32Array(2);
+        crypto.getRandomValues(array);
+        return `${Date.now()}-${array[0].toString(36)}${array[1].toString(36)}`;
     }
 
     async init() {
@@ -506,7 +508,8 @@ window.addEventListener('beforeunload', (event) => {
                     }
 
                     // Vérifier si c'est un lien externe (domaine différent)
-                    if (linkHost !== currentHost && linkHost !== '' && linkUrl.protocol !== 'javascript:') {
+                    const UNSAFE_PROTOCOLS = ['javascript:', 'data:', 'vbscript:'];
+                    if (linkHost !== currentHost && linkHost !== '' && !UNSAFE_PROTOCOLS.includes(linkUrl.protocol)) {
                         console.log('🔗 Lien externe détecté:', link.href);
                         
                         // S'assurer qu'on a une section
