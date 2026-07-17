@@ -2,3 +2,7 @@ test.txt
 js/auth.js
 autre.md
 test_sécurité_xss.js
+node_modules/
+supabase/
+AGENTS.md
+dist/

@@ -1,0 +1,18 @@
+{
+  "name": "minify-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minification HTML/CSS/JS vers dist/ sans toucher aux sources",
+  "scripts": {
+    "build": "node minify.js . dist"
+  },
+  "dependencies": {
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0",
+    "ignore": "^5.3.1",
+    "terser": "^5.31.0"
+  },
+  "devDependencies": {
+    "supabase": "^2.109.1"
+  }
+}
