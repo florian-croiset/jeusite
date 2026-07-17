@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr"><!-- Sortie de la version 1.4 -->
+<html lang="fr">
 <head>
   <!-- Google Tag Manager -->
 <!-- Google tag (gtag.js) -->
@@ -41,7 +41,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echo</title>
     <meta name="description" content="Découvrez Echo, un metroidvania intense signé Team Nightberry : exploration, plateformes et secrets dans un monde envoûtant.">
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">-->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/install.css">
     <link rel="stylesheet" href="css/lore.css">
@@ -71,19 +70,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </p>
         </div>
     </noscript>
-    <!--<div id="splash-screen">
-        <div class="splash-content">
-            <div class="splash-logo">ECHO</div>
-            <div class="splash-subtitle">PAR LA TEAM NIGHTBERRY</div>
-            <div class="splash-loader"></div>
-        </div>
-    </div>-->
         <div id="splash-screen">
         <!-- Grille cyberpunk -->
         <div class="cyber-grid"></div>
-
-        <!-- Particules d'arrière-plan -->
-        <!--<div class="splash-particles" id="splashParticles"></div>-->
 
         <!-- Contenu principal -->
         <div class="splash-content">
@@ -117,7 +106,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="scroll-progress" id="scrollProgress"></div><div class="custom-cursor" id="customCursor"></div>
     <nav class="navbar">
         <div class="nav-container">
-            <!--<div class="logo">Echo</div>-->
             <div class="logo-container"><div class="logo"><a href="#accueil" style="text-decoration:none;">Echo</a></div></div>
             <div class="burger" id="burger">
                 <span></span>
@@ -125,13 +113,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <span></span>
             </div>
             <ul class="nav-links" id="nav-links">
-                <!--<li><a href="#accueil">Accueil</a></li>-->
                 <li><a href="#team">Team Nightberry</a></li>
-                <li><a href="#install">Installer<!-- / désinstaller--> le jeu</a></li>
+                <li><a href="#install">Installer le jeu</a></li>
                 <li><a href="#gameplay">Gameplay</a></li>
-                <li><a href="#lore">Lore</a></li><!--<li>Thème</li>-->
-                <!--<li><a href="https://ink-bonobo-1b6.notion.site/ebd//2cd1f3f0470c80f4a04fe4ee7194cee0" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Donner mon avis sur le jeu</a></li>
-                <li><a href="feedback.html" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Feedback</a></li>-->
+                <li><a href="#lore">Lore</a></li>
                 <li><a href="feedback.html" class="btn-login"><i class="fa-solid fa-paper-plane"></i> Donner mon avis sur le jeu</a></li>
             </ul>
         </div>
@@ -165,7 +150,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
             </div>  
             <div class="cta-buttons">
-                <a href="executable/Echo_TeamNightberry_v1.exe" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a>
+                <a href="#install" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a>
                 <a href="#gameplay" class="btn btn-secondary">Découvrir les fonctionnalités</a>
             </div>
         </div>
@@ -199,25 +184,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     Téléchargez l'exécutable du jeu. Un simple clic suffit pour lancer l'installation et plonger dans l'univers sombre et mystérieux d'Echo.
                 </p>
 
-                <!-- ZONE DU BOUTON - NE PAS MODIFIER -->
-                <!--<div class="button-zone">-->
-                  <div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div>
-                <!--</div>-->
-
-                <!--<div class="security-badges">
-                    <div class="badge">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Fichier sécurisé</span>
-                    </div>
-                    <div class="badge">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>Installation rapide</span>
-                    </div>
-                    <div class="badge">
-                        <i class="fa-solid fa-gamepad"></i>
-                        <span>Prêt à jouer</span>
-                    </div>
-                </div>-->
+                <div class="cta-buttons" style="margin-top: 2rem;"><a href="#telecharger" class="btn btn-primary"><i class="fa-solid fa-download"></i> Télécharger le jeu</a></div>
             </div>
 
             <!-- Étapes d'installation -->
@@ -262,23 +229,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <i class="fa-solid fa-microchip"></i>
                     Configuration requise
                 </h3>
-                <span class="system-specs"><!--div-->
+                <span class="system-specs">
                     <span class="spec-item">
                         <i class="fa-brands fa-windows"></i>
-                        <span>Windows<!-- 10/11--></span>
+                        <span>Windows</span>
                     </span>
                     <span class="spec-item">
                         <i class="fa-solid fa-memory"></i>
-                        <span><!--4-->4 GB RAM minimum</span>
+                        <span>4 GB RAM minimum</span>
                     </span>
                     <span class="spec-item">
                         <i class="fa-solid fa-hard-drive"></i>
-                        <span><!--500-->70 MB d'espace disque</span>
+                        <span>70 MB d'espace disque</span>
                     </span>
-                    <!--<div class="spec-item">
-                        <i class="fa-solid fa-display"></i>
-                        <span>Résolution 1280x720 minimum</span>
-                    </div>-->
                 </span>
             </div>
         </div>
@@ -320,16 +283,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <p class="control-description">Sauter</p>
                     </div>
 
-                    <!--<div class="control-card">
-                        <div class="control-icon">
-                            <i class="fa-solid fa-bolt"></i>
-                        </div>
-                        <div class="key-display">
-                            <span class="key">Shift</span>
-                        </div>
-                        <p class="control-description">Dash / Sprint</p>
-                    </div>-->
-
                     <div class="control-card">
                         <div class="control-icon">
                             <i class="fa-solid fa-gun"></i>
@@ -350,35 +303,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <p class="control-description">Défense</p>
                     </div>
 
-                    <!--<div class="control-card">
-                        <div class="control-icon">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </div>
-                        <div class="key-display">
-                            <span class="key">E</span>
-                        </div>
-                        <p class="control-description">Interagir</p>
-                    </div>-->
-
-                    <!--<div class="control-card">
-                        <div class="control-icon">
-                            <i class="fa-solid fa-suitcase"></i>
-                        </div>
-                        <div class="key-display">
-                            <span class="key">Tab</span>
-                        </div>
-                        <p class="control-description">Inventaire</p>
-                    </div>-->
-
-                    <!--<div class="control-card">
-                        <div class="control-icon">
-                            <i class="fa-solid fa-map"></i>
-                        </div>
-                        <div class="key-display">
-                            <span class="key">M</span>
-                        </div>
-                        <p class="control-description">Carte</p>
-                    </div>-->
                 </div>
             </div>
 
@@ -386,7 +310,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div id="keyboardContainer" class="keyboard-visual mobile">
                 <div class="keyboard-header" id="toggleKeyboard">
 <h3 class="section-title" style="margin-bottom: 0;">Configuration Clavier</h3>
-        <button class="toggle-kb-btn">
+        <button class="toggle-kb-btn" aria-label="Afficher/masquer le clavier">
             <i class="fa-solid fa-chevron-down"></i>
         </button>            </div>
         <div class="keyboard-collapse-content">
@@ -520,7 +444,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <h3 class="act-title">Les Ombres de la Cité-Dôme</h3>
         </div>
         <p class="act-text">
-            Kaelen, ancien Nettoyeur, découvre la planque de son fils Jonas ravagée et apprend sa mort aux mains de Solaris. <!--Parmi les débris, il met la main sur des données révélant une vérité interdite sur le monde. -->Dévasté, il décide de s’opposer au système qui lui a tout pris.
+            Kaelen, ancien Nettoyeur, découvre la planque de son fils Jonas ravagée et apprend sa mort aux mains de Solaris. Dévasté, il décide de s’opposer au système qui lui a tout pris.
         </p>
     </div>
 
@@ -583,28 +507,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <audio id="backgroundMusic" src="assets/mp3compressmusique.mp3" loop preload="none"></audio>
 
-<!--<div id="secretModal" class="secret-modal">
-  <div class="secret-box"><h3><button id="sablierBtn" class="btn-sablier" title="Accélérer le compte à rebours"><i class="fa-solid fa-hourglass-half"></i>&nbsp;</button><span id="copyLock" title="Copier le code secret" style="cursor:pointer;">🔒</span>&nbsp;Accès restreint</h3>
-    <p>Entrez le code d’accès :</p>
-    <div class="input-paste-container">
-      <input type="password" id="secretInput" placeholder="Code..." />
-      <button id="clearBtn" class="btn-paste" title="Effacer le code"><i class="fa-solid fa-xmark"></i></button>
-      <button id="pasteBtn" class="btn-paste" title="Coller le code"><i class="fa-solid fa-paste"></i></button>
-    </div>
-    <div class="secret-actions">
-      <button id="cancelSecret" class="btn-cancel">Annuler</button>
-      <button id="confirmSecret" class="btn-confirm">Valider</button>
-    </div>
-  </div>
-</div>-->
-
-<!-- Bouton d'accès amélioré -->
-<!--<button id="adminPanelBtn" class="admin-access-btn">
-  <i class="fa-solid fa-shield-halved"></i>
-  <span class="pulse-ring"></span>
-</button>-->
-<!-- À ajouter dans index.html, juste avant la fermeture de bodyRemplace ou complète le bloc <div id="secretModal"> existant -->
-<!-- MODALE SECRÈTE AVANCÉE -->
 <div id="secretModal" class="secret-modal">
   <div class="secret-box">
     <!-- Header avec oscilloscope -->
@@ -1091,20 +993,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </div>
-    <!--Start of Tawk.to Script-->
-<!--<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/693eb2d1dfff06197e00b53f/1jceel0jg';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>-->
-<!--End of Tawk.to Script-->
-<!--<script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>693eb7c5bdb6af04d662ab4e,693eb74190e8e205d87db8ff</script>-->
 </body>
 <script>
 // Charger l'audio seulement quand l'utilisateur interagit

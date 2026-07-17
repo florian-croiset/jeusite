@@ -1,8 +1,4 @@
-/* =========================================================
-   MODAL-ADVANCED.JS - VERSION CORRIGÉE
-   Modale secrète avec sécurité avancée + 2FA + Oscilloscope
-   ========================================================= */
-
+// Modale secrète d'accès admin : tentatives limitées, 2FA, oscilloscope décoratif
 class AdvancedSecretModal {
   constructor() {
     this.modal = document.getElementById('secretModal');
@@ -20,20 +16,17 @@ class AdvancedSecretModal {
     this.devBadge = document.getElementById('devBadge');
     this.adminPanel = document.getElementById('adminPanel');
 
-    // 2FA
     this.twofaSection = document.getElementById('twofaSection');
     this.twofaInput = document.getElementById('twofaInput');
 
-    // État
     this.attemptsLeft = 3;
-    this._sessionAttempts = 3; // ← en mémoire, non modifiable depuis la console
+    this._sessionAttempts = 3; // copie en mémoire, non modifiable depuis la console
     this.isLocked = false;
     this.cooldownInterval = null;
     this.currentUser = null;
     this.require2FA = false;
     this.generated2FACode = null;
 
-    // Oscilloscope
     this.canvas = document.getElementById('waveCanvas');
     this.ctx = this.canvas?.getContext('2d');
     this.waveAnimation = null;
@@ -42,19 +35,16 @@ class AdvancedSecretModal {
   }
 
   async init() {
-    // Vérifier que les éléments essentiels existent
     if (!this.modal || !this.input || !this.confirmBtn) {
       console.warn('❌ Modal-advanced: Éléments HTML manquants');
       return;
     }
 
-    // Charger les tentatives depuis localStorage
     const savedAttempts = localStorage.getItem('modal_attempts');
     const savedLockTime = localStorage.getItem('modal_lock_time');
 
     if (savedAttempts) this.attemptsLeft = parseInt(savedAttempts);
 
-    // Vérifier si toujours en cooldown
     if (savedLockTime) {
       const lockTime = parseInt(savedLockTime);
       const now = Date.now();
@@ -71,12 +61,10 @@ class AdvancedSecretModal {
     this.startOscilloscope();
     this.updateAttemptsDisplay();
 
-    // Vérifier si déjà authentifié
     await this.checkAuthStatus();
   }
 
   setupEventListeners() {
-    // Ouvrir modale
     const versionBtn = document.getElementById('versionAccessBtn');
     if (versionBtn) {
       versionBtn.addEventListener('click', (e) => {
@@ -87,7 +75,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Fermer modale
     if (this.cancelBtn) {
       this.cancelBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -101,7 +88,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Valider
     if (this.confirmBtn) {
       this.confirmBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -118,7 +104,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Boutons utilitaires
     const clearBtn = document.getElementById('clearBtn');
     if (clearBtn) {
       clearBtn.addEventListener('click', (e) => {
@@ -133,7 +118,6 @@ class AdvancedSecretModal {
       pasteBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         try {
-          // Demander la permission explicitement
           const permission = await navigator.permissions.query({ name: 'clipboard-read' });
           if (permission.state === 'granted' || permission.state === 'prompt') {
             const text = await navigator.clipboard.readText();
@@ -143,7 +127,6 @@ class AdvancedSecretModal {
             this.showMessage('Permission refusée. Utilisez Ctrl+V', 'error');
           }
         } catch (err) {
-          // Fallback silencieux
           this.showMessage('Utilisez Ctrl+V pour coller', 'info');
         }
       });
@@ -157,7 +140,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Copier code secret (dev only)
     const copyLock = document.getElementById('copyLock');
     if (copyLock) {
       copyLock.addEventListener('click', async (e) => {
@@ -174,7 +156,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Admin panel
     const closeAdminBtn = document.getElementById('closeAdminPanel');
     if (closeAdminBtn) {
       closeAdminBtn.addEventListener('click', (e) => {
@@ -186,7 +167,6 @@ class AdvancedSecretModal {
     }
   }
 
-  // ========= OSCILLOSCOPE =========
   startOscilloscope() {
     if (!this.ctx) return;
 
@@ -226,7 +206,6 @@ class AdvancedSecretModal {
     }
   }
 
-  // ========= TYPEWRITER =========
   async typewriterEffect() {
     const code = await this.getSecretCode();
     if (!code) return;
@@ -244,7 +223,6 @@ class AdvancedSecretModal {
     }, 1000);
   }
 
-  // ========= VALIDATION =========
   async validateCode() {
     if (this.isLocked) {
       this.showMessage('Compte verrouillé. Attendez...', 'error');
@@ -262,20 +240,14 @@ class AdvancedSecretModal {
       return;
     }
 
-    // Vérifier le code dans la DB
     const result = await this.checkCode(enteredCode);
 
     if (result.valid) {
-      // Si 2FA requis ET section 2FA visible
       if (result.requires2FA && this.twofaSection && !this.twofaSection.classList.contains('hidden')) {
         await this.verify2FA();
-      }
-      // Si 2FA requis mais pas encore affiché
-      else if (result.requires2FA) {
+      } else if (result.requires2FA) {
         await this.initiate2FA(result.user);
-      }
-      // Pas de 2FA requis
-      else {
+      } else {
         await this.unlockSuccess(result.user);
       }
     } else {
@@ -333,61 +305,27 @@ class AdvancedSecretModal {
     }
   }
 
-  // ========= 2FA =========
-  /*async initiate2FA(user) {
-    if (!this.twofaSection) {
-      // Si pas de section 2FA, continuer sans
-      await this.unlockSuccess(user);
-      return;
-    }
-
-    this.currentUser = user;
-
-    // Générer code à 6 chiffres
-    this.generated2FACode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Envoyer sur Discord
-    await this.send2FAToDiscord(user.username, this.generated2FACode);
-
-    // Afficher section 2FA
-    this.twofaSection.classList.remove('hidden');
-    this.input.disabled = true;
-    this.showMessage('Code 2FA envoyé sur Discord', 'info');
-    if (this.twofaInput) this.twofaInput.focus();
-
-    // Expiration 2FA après 5 min
-    setTimeout(() => {
-      this.generated2FACode = null;
-      if (this.twofaSection) this.twofaSection.classList.add('hidden');
-      this.input.disabled = false;
-      this.showMessage('Code 2FA expiré', 'error');
-    }, 300000);
-  }*/
-
-
   async initiate2FA(user) {
       if (!this.twofaSection) return;
       this.currentUser = user;
 
-      // Appel Edge Function → code généré + envoyé sur Discord côté serveur
+      // Edge Function : le code est généré et envoyé sur Discord côté serveur
       const { data, error } = await window.EchoDB.supabase.functions.invoke('hyper-action', {
-          body: { 
+          body: {
               username: user.username,
               webhookUrl: window.webhookManager.webhooks.twofa || window.webhookManager.webhooks.main
           }
       });
 
-      console.log('2FA response:', data, error);
       if (error) throw new Error(error.message);
 
-      // On stocke uniquement le hash, jamais le vrai code
+      // Seul le hash est stocké côté client, jamais le vrai code
       this.generated2FACode = data.hash;
 
       this.twofaSection.classList.remove('hidden');
       this.showMessage('Code 2FA envoyé sur Discord', 'info');
       if (this.twofaInput) this.twofaInput.focus();
 
-      // Expiration 5 min
       setTimeout(() => {
           this.generated2FACode = null;
           if (this.twofaSection) this.twofaSection.classList.add('hidden');
@@ -409,26 +347,12 @@ class AdvancedSecretModal {
     }
   }
 
-  /*async verify2FA() {
-    if (!this.twofaInput) return;
-
-    const enteredCode = this.twofaInput.value.trim();
-
-    if (enteredCode === this.generated2FACode) {
-      await this.unlockSuccess(this.currentUser);
-    } else {
-      this.shake();
-      this.showMessage('Code 2FA incorrect', 'error');
-      this.twofaInput.value = '';
-    }
-  }*/
-
     async verify2FA() {
         if (!this.twofaInput) return;
 
         const enteredCode = this.twofaInput.value.trim();
 
-        // On hache ce que l'user a tapé et on compare les hash
+        // Hache la saisie et compare au hash stocké (le vrai code n'est jamais côté client)
         const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(enteredCode));
         const hashEntered = Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
 
@@ -440,9 +364,7 @@ class AdvancedSecretModal {
         }
     }
 
-  // ========= UNLOCK SUCCESS =========
   async unlockSuccess(user) {
-    // Vérifier que user n'est pas null
     if (!user) {
       console.error('❌ User is null in unlockSuccess');
       this.showMessage('Erreur d\'authentification', 'error');
@@ -451,36 +373,28 @@ class AdvancedSecretModal {
 
     this.currentUser = user;
 
-    // Progress bar animation
     if (this.unlockProgress && this.progressFill) {
       this.unlockProgress.classList.remove('hidden');
       this.progressFill.style.width = '100%';
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
-    // Fermer modale
     this.closeModal();
 
-    // Afficher badge
     if (this.devBadge) {
       this.devBadge.classList.remove('hidden');
       const badgeSpan = this.devBadge.querySelector('span');
       if (badgeSpan) badgeSpan.textContent = user.username || 'Admin';
     }
 
-    // Sauvegarder auth
     localStorage.setItem('admin_auth', JSON.stringify({
       user: user,
       timestamp: Date.now()
     }));
 
-    // Réinitialiser tentatives
     this.resetAttempts();
-
-    // Ouvrir panel admin
     this.openAdminPanel(user);
 
-    // Notification Discord
     if (typeof window.sendDiscordNotification === 'function') {
       await window.sendDiscordNotification('admin_login', {
         username: user.username || 'Admin',
@@ -489,13 +403,12 @@ class AdvancedSecretModal {
     }
   }
 
-  // ========= FAILED ATTEMPT =========
   handleFailedAttempt() {
     this.attemptsLeft--;
     this._sessionAttempts--;
     localStorage.setItem('modal_attempts', this.attemptsLeft);
 
-    // Vérifier aussi la valeur mémoire (non bypassable)
+    // Double vérification via la valeur mémoire, non falsifiable depuis la console
     if (this._sessionAttempts <= 0) {
         this.startCooldown(60);
         this.showMessage('Trop de tentatives !', 'error');
@@ -580,7 +493,6 @@ class AdvancedSecretModal {
     this.updateAttemptsDisplay();
   }
 
-  // ========= UI HELPERS =========
   shake() {
     if (!this.secretBox) return;
     this.secretBox.classList.add('shake');
@@ -611,7 +523,6 @@ class AdvancedSecretModal {
     if (!this.modal) return;
     this.modal.classList.remove('active');
 
-    // 🔥 AJOUT : Fermer aussi le panel admin
     if (this.adminPanel) {
       this.adminPanel.classList.add('hidden');
     }
@@ -623,7 +534,6 @@ class AdvancedSecretModal {
     if (this.input) this.input.disabled = false;
   }
 
-  // ========= ADMIN PANEL =========
   openAdminPanel(user) {
     if (!this.adminPanel) {
       return;
@@ -638,7 +548,6 @@ class AdvancedSecretModal {
 
     sectionsContainer.innerHTML = '';
 
-    // Générer cards selon permissions
     const availableCards = {
       'test_mode': {
         icon: 'fa-hourglass-half',
@@ -666,7 +575,6 @@ class AdvancedSecretModal {
       }
     };
 
-    // Filtrer selon permissions
     const userPerms = user.permissions || [];
     const hasAllPerms = userPerms.includes('all');
 
@@ -686,23 +594,17 @@ class AdvancedSecretModal {
   }
 
   activateTestMode() {
-    // Utiliser la fonction existante si elle existe
-    if (typeof window.activateTestCountdown === 'function') {
-      window.activateTestCountdown();
+    // Réutilise le bouton sablier du countdown (présent uniquement sur index.html)
+    const sablierBtn = document.getElementById('sablierBtn');
+    if (sablierBtn) {
+      sablierBtn.click();
     } else {
-      // Fallback : définir manuellement
-      const testDate = new Date(Date.now() + 60000);
-      localStorage.setItem('countdown_target_date', testDate.toISOString());
-
-      // Recharger le countdown
-      if (typeof window.updateCountdown === 'function') {
-        window.updateCountdown();
-      }
+      this.showMessage('Mode test disponible uniquement sur la page d\'accueil', 'error');
+      return;
     }
 
-    this.showMessage('Mode test activé ! Fin dans 1 minute', 'success');
+    this.showMessage('Mode test activé ! Fin dans 10 secondes', 'success');
 
-    // Notification Discord
     if (typeof window.sendDiscordNotification === 'function') {
       window.sendDiscordNotification('test_mode', {
         username: this.currentUser?.username || 'Admin',
@@ -710,7 +612,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Fermer le panel admin après 2 secondes
     setTimeout(() => {
       if (this.adminPanel) {
         this.adminPanel.classList.add('hidden');
@@ -719,7 +620,6 @@ class AdvancedSecretModal {
   }
 
   showSiteRecap() {
-    // Créer la modale si elle n'existe pas
     let recapModal = document.getElementById('siteRecapModal');
     if (!recapModal) {
       recapModal = document.createElement('div');
@@ -833,7 +733,6 @@ class AdvancedSecretModal {
     `;
       document.body.appendChild(recapModal);
 
-      // Event listener pour fermer
       document.getElementById('closeRecapModal').addEventListener('click', () => {
         recapModal.classList.remove('active');
         document.body.style.overflow = '';
@@ -847,7 +746,6 @@ class AdvancedSecretModal {
       });
     }
 
-    // Ouvrir la modale
     recapModal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
@@ -863,14 +761,13 @@ class AdvancedSecretModal {
     try {
         const { user, timestamp } = JSON.parse(auth);
 
-        // Vérifier l'expiration
         if (Date.now() - timestamp >= 86400000) {
             localStorage.removeItem('admin_auth');
             return;
         }
 
-        // ✅ Revalider le code en base de données
-        if (!user.codeId || !window.EchoDB) {
+        // Le code doit toujours être actif en DB, pas seulement dans le localStorage
+        if (!user.id || !window.EchoDB) {
             localStorage.removeItem('admin_auth');
             return;
         }
@@ -878,7 +775,7 @@ class AdvancedSecretModal {
         const { data, error } = await window.EchoDB.supabase
             .from('admin_access_codes')
             .select('id')
-            .eq('id', user.codeId)
+            .eq('id', user.id)
             .eq('is_active', true)
             .single();
 
@@ -887,7 +784,6 @@ class AdvancedSecretModal {
             return;
         }
 
-        // Code toujours valide en DB → restaurer la session
         this.currentUser = user;
         if (this.devBadge) {
             this.devBadge.classList.remove('hidden');
@@ -901,7 +797,6 @@ class AdvancedSecretModal {
 }
 }
 
-// Initialiser
 document.addEventListener('DOMContentLoaded', () => {
   window.advancedModal = new AdvancedSecretModal();
 });

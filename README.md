@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/version-2.5-blue)
+![Version](https://img.shields.io/badge/version-3.0-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-green)
 
 # 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
@@ -58,7 +58,7 @@ Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du pr
 * **Dashboard Admin** : Gestion complète de la Roadmap (Ajout, Modification, Suppression), activation du téléchargement, gestion des versions et du countdown
 * **Système de comptes** : Refonte du back-end avec base de données
 * **Page Settings** : Configuration globale du site et du système
-* **Bot Discord (Bêta)** : Suivi en temps réel des vues, statistiques, actions et téléchargements
+* **Tracking & Notifications Discord** : Suivi en temps réel des vues, statistiques, actions et téléchargements envoyé directement à Discord via webhooks (`js/discord-tracker.js`, `js/discord-webhook.js`), avec dashboard de suivi dans la section "📊 Tracking" d'`admin.html`
 * **Analyse** : Intégration de **Google Tag** pour le suivi d'audience
 
 ### Extras et accessibilité
@@ -78,13 +78,23 @@ Ce site web sert de **vitrine officielle** et de **plateforme de gestion** du pr
 ```
 Echo/
 │
-├── index.html
-├── executable/
-├── assets/
-├── css/
+├── index.html, admin.html, roadmap.html, versions.html, ...  # pages du site (multi-pages, sans routeur)
+├── assets/            # images, vidéos, musique, favicon, sprites
+├── css/                # une feuille de style par page/module
 ├── js/
+│   ├── main.js          # point d'entrée ES module (UI, curseur, navbar, musique...)
+│   ├── config/
+│   │   └── supabase.js  # client Supabase + API métier (window.EchoDB)
+│   ├── database.js, database-complete.js   # couches d'accès Supabase additionnelles
+│   ├── discord-webhook.js, discord-tracker.js  # notifications & analytics envoyées en direct à Discord (webhooks)
+│   ├── ui/               # composants d'interface réutilisables
+│   └── utils/            # utilitaires transverses (countdown, share, clipboard...)
+├── docs/                  # rapports PDF de soutenance (documentation académique)
+├── AGENTS.md
 └── README.md
 ```
+
+> Le dossier `executable/` mentionné dans d'anciennes versions du site a été retiré du dépôt. Le bot Discord (`bot/`) a également été retiré : le suivi analytics passe désormais uniquement par des webhooks Discord envoyés directement depuis le site (voir `js/discord-tracker.js`) et par la section "📊 Tracking" d'`admin.html` (l'ancien dashboard standalone `track.html` y a été fusionné).
 
 ---
 
@@ -92,6 +102,7 @@ Echo/
 
 | Version | Date | Changements clés |
 | --- | --- | --- |
+| **3.0** | 17 juil. 2026 | **Grand nettoyage & stabilisation**. Suppression du bot Discord, du tracking IP et des pages/scripts morts. Fusion de `track.html` dans l'admin (section Tracking). Onglet Stats GitHub. Correction du compteur de téléchargements. **Pipeline de build minifié + déploiement auto GitHub Pages**. |
 | **2.5** | 1 mars 2026 | Corrections de sécurité. Corrections bugs mineurs. Amélioration détection IP. Ajout `.gitignore`. Sécurisation formulaires. |
 | **2.4** | 12 janv. 2026 | **Refonte page Diapo** (soutenances). Amélioration Bot Discord (stats/inactifs). **Système Feedback**. Accessibilité doc. **Correction bug téléchargement** & RAM. |
 | **2.3** | 05 janv. 2026 | **Lancement Roadmap (bêta)** : suivi interactif + vote. Refonte page Versions (catégories/comparaison). **Dashboard Admin**. |
@@ -115,7 +126,7 @@ Echo/
 * **Intersection Observer API** (apparition fluide)
 * **Web Share API & Clipboard API** (partage et copie)
 * **Google Tag Manager** (Analytique)
-* **Discord API** (Bot de tracking)
+* **Discord Webhooks** (notifications & tracking en direct, sans bot serveur)
 
 ---
 
@@ -123,7 +134,6 @@ Echo/
 
 * **Système de notifications** en temps réel pour les mises à jour
 * **Finalisation de la page Design** (sprites et emojis manquants)
-* **Amélioration du bot discord**
 
 ---
 

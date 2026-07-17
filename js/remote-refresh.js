@@ -107,154 +107,6 @@ const Auth = {
 };
 
 // =============================================
-// MODULE DE CONTENU DU SITE
-// =============================================
-
-const Content = {
-  // Récupérer le contenu d'une section
-  async getSection(sectionName) {
-    const { data, error } = await supabaseClient
-      .from('site_content')
-      .select('*')
-      .eq('section', sectionName)
-      .eq('is_published', true)
-      .order('order_index', { ascending: true });
-    
-    if (error) {
-      console.error('Erreur contenu:', error);
-      return [];
-    }
-    return data;
-  },
-
-  // Mettre à jour le contenu (admin uniquement)
-  async updateContent(id, updates) {
-    const { data, error } = await supabaseClient
-      .from('site_content')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Erreur mise à jour:', error);
-      return { success: false, error: error.message };
-    }
-    return { success: true, data };
-  },
-
-  // Créer un nouveau contenu (admin)
-  async createContent(content) {
-    const user = await Auth.getCurrentUser();
-    const { data, error } = await supabaseClient
-      .from('site_content')
-      .insert({
-        ...content,
-        created_by: user?.id
-      })
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Erreur création:', error);
-      return { success: false, error: error.message };
-    }
-    return { success: true, data };
-  }
-};
-
-// =============================================
-// MODULE MÉDIAS
-// =============================================
-
-const Media = {
-  // Upload d'un fichier
-  async uploadFile(file, folder = 'uploads') {
-      try {
-          const user = await Auth.getCurrentUser();
-          if (!user) throw new Error('Utilisateur non connecté');
-
-          // Types autorisés explicitement (whitelist)
-          const ALLOWED_TYPES = [
-              'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-              'video/mp4', 'video/webm',
-              'audio/mpeg', 'audio/wav',
-              'application/pdf'
-          ];
-          const MAX_SIZE_MB = 20;
-
-          if (!ALLOWED_TYPES.includes(file.type)) {
-              throw new Error(`Type de fichier non autorisé : ${file.type}`);
-          }
-          if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-              throw new Error(`Fichier trop lourd (max ${MAX_SIZE_MB} Mo)`);
-          }
-
-          // Extension déduite du type MIME réel, pas du nom du fichier
-          const MIME_TO_EXT = {
-              'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif',
-              'image/webp': 'webp', 'image/svg+xml': 'svg',
-              'video/mp4': 'mp4', 'video/webm': 'webm',
-              'audio/mpeg': 'mp3', 'audio/wav': 'wav',
-              'application/pdf': 'pdf'
-          };
-          const ext = MIME_TO_EXT[file.type];
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-          const filePath = `${folder}/${fileName}`;
-
-          const { error: uploadError } = await supabaseClient.storage
-              .from('media')
-              .upload(filePath, file);
-          if (uploadError) throw uploadError;
-
-          const { data: { publicUrl } } = supabaseClient.storage
-              .from('media')
-              .getPublicUrl(filePath);
-
-          const { data, error: dbError } = await supabaseClient
-              .from('media')
-              .insert({
-                  name: file.name,
-                  type: file.type.split('/')[0],
-                  url: publicUrl,
-                  mime_type: file.type,
-                  file_size: file.size,
-                  uploaded_by: user.id
-              })
-              .select()
-              .single();
-          if (dbError) throw dbError;
-
-          return { success: true, data };
-      } catch (error) {
-          console.error('Erreur upload:', error);
-          return { success: false, error: error.message };
-      }
-  },
-
-  // Liste des médias
-  async getMedia(type = null, limit = 50) {
-    let query = supabaseClient
-      .from('media')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(limit);
-
-    if (type) {
-      query = query.eq('type', type);
-    }
-
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('Erreur récupération médias:', error);
-      return [];
-    }
-    return data;
-  }
-};
-
-// =============================================
 // MODULE VERSIONS DU JEU
 // =============================================
 
@@ -361,52 +213,6 @@ const Forms = {
 };
 
 // =============================================
-// MODULE ACTUALITÉS
-// =============================================
-
-const News = {
-  // Récupérer tous les articles publiés
-  async getPublished(limit = 10) {
-    const { data, error } = await supabaseClient
-      .from('news')
-      .select(`
-        *,
-        author:profiles(username, display_name),
-        cover:media(url, name)
-      `)
-      .eq('is_published', true)
-      .order('published_at', { ascending: false })
-      .limit(limit);
-    
-    if (error) {
-      console.error('Erreur actualités:', error);
-      return [];
-    }
-    return data;
-  },
-
-  // Récupérer un article par slug
-  async getBySlug(slug) {
-    const { data, error } = await supabaseClient
-      .from('news')
-      .select(`
-        *,
-        author:profiles(username, display_name),
-        cover:media(url, name)
-      `)
-      .eq('slug', slug)
-      .eq('is_published', true)
-      .single();
-    
-    if (error) {
-      console.error('Erreur article:', error);
-      return null;
-    }
-    return data;
-  }
-};
-
-// =============================================
 // EXPORT DES MODULES
 // =============================================
 
@@ -414,12 +220,9 @@ const News = {
 if (!window.EchoDB) {
   window.EchoDB = {
     Auth,
-    Content,
-    Media,
     GameVersions,
     Countdown,
     Forms,
-    News,
     supabase: supabaseClient // Accès direct au client si besoin
   };
   console.log('✅ Echo Database initialisée avec succès');
@@ -439,14 +242,12 @@ class RemoteRefreshManager {
 
     async init() {
         try {
-            // Attendre que EchoDB soit disponible
             if (typeof window.EchoDB === 'undefined') {
                 await this.waitForEchoDB();
             }
 
-            // S'abonner aux événements de refresh
             await this.subscribeToRefreshEvents();
-            
+
             console.log('✅ Remote Refresh Manager initialized');
         } catch (error) {
             console.error('❌ Remote Refresh Manager init error:', error);
@@ -455,17 +256,15 @@ class RemoteRefreshManager {
 
     waitForEchoDB() {
         return new Promise((resolve, reject) => {
-            // Si déjà dispo, résoudre immédiatement
             if (window.EchoDB) return resolve();
 
-            // Écouter l'event EchoDBReady
             const onReady = () => {
                 clearInterval(check);
                 resolve();
             };
             window.addEventListener('EchoDBReady', onReady, { once: true });
 
-            // Polling fallback (au cas où l'event est raté)
+            // Polling en fallback, au cas où l'event EchoDBReady soit raté
             const check = setInterval(() => {
                 if (window.EchoDB) {
                     clearInterval(check);
@@ -474,7 +273,6 @@ class RemoteRefreshManager {
                 }
             }, 100);
 
-            // Timeout après 10 secondes
             setTimeout(() => {
                 clearInterval(check);
                 window.removeEventListener('EchoDBReady', onReady);
@@ -484,7 +282,6 @@ class RemoteRefreshManager {
     }
 
     async subscribeToRefreshEvents() {
-        // Créer un canal Realtime sur la table 'remote_commands'
         this.channel = window.EchoDB.supabase
             .channel('remote-refresh')
             .on(
@@ -509,8 +306,7 @@ class RemoteRefreshManager {
         console.log('📡 Commande de refresh reçue:', payload);
 
         const now = Date.now();
-        
-        // Vérifier le cooldown pour éviter les refresh en boucle
+
         if (now - this.lastRefreshTime < this.refreshCooldown) {
             console.log('⏳ Cooldown actif, refresh ignoré');
             return;
@@ -519,14 +315,12 @@ class RemoteRefreshManager {
         this.lastRefreshTime = now;
 
         const data = payload.new;
-        
-        // Afficher une notification avant le refresh
+
         if (typeof window.sendDiscordNotification === 'function') {
-  window.sendDiscordNotification('remote_refresh_triggered', {});
-}
+            window.sendDiscordNotification('remote_refresh_triggered', {});
+        }
         this.showRefreshNotification(data.message || 'Mise à jour disponible');
 
-        // Attendre 2 secondes puis refresh
         setTimeout(() => {
             console.log('🔄 Rafraîchissement de la page...');
             window.location.reload();
@@ -534,7 +328,6 @@ class RemoteRefreshManager {
     }
 
     showRefreshNotification(message) {
-        // Créer une notification visuelle
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -560,13 +353,10 @@ class RemoteRefreshManager {
                 </div>
             </div>
         `;
-        // Ajouter au DOM D'ABORD
+        // L'élément doit être dans le DOM avant qu'on puisse le récupérer par ID
         document.body.appendChild(notification);
-
-        // PUIS accéder à l'élément
         document.getElementById('_refresh-msg').textContent = message;
 
-        // Ajouter l'animation CSS
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideIn {
@@ -584,14 +374,12 @@ class RemoteRefreshManager {
         document.body.appendChild(notification);
     }
 
-    // Méthode pour déclencher un refresh depuis l'admin
     static async triggerRefresh(message = 'Le site va se rafraîchir...') {
         try {
             if (typeof window.EchoDB === 'undefined') {
                 throw new Error('EchoDB not available');
             }
 
-            // Insérer une commande dans la table
             const { data: { user } } = await window.EchoDB.supabase.auth.getUser();
 
             const { data, error } = await window.EchoDB.supabase
@@ -605,7 +393,6 @@ class RemoteRefreshManager {
 
             if (error) throw error;
 
-            // ✅ AJOUT : Envoi de la notif qui sera routée vers le webhook réservé avec PING
             if (window.sendDiscordNotification) {
                 await window.sendDiscordNotification('remote_refresh_triggered', {
                     message: message,
@@ -627,11 +414,7 @@ class RemoteRefreshManager {
     }
 }
 
-// =============================================
-// INITIALISATION AUTOMATIQUE
-// =============================================
-
-// Créer une instance globale (sauf sur la page admin)
+// Pas d'auto-refresh sur la page admin elle-même
 if (!window.location.pathname.includes('admin.html')) {
     window.remoteRefreshManager = new RemoteRefreshManager();
     
@@ -640,26 +423,8 @@ if (!window.location.pathname.includes('admin.html')) {
     });
 }
 
-// =============================================
-// FONCTION HELPER POUR L'ADMIN
-// =============================================
-
 window.forceRefreshAllClients = async (message) => {
     return await RemoteRefreshManager.triggerRefresh(message);
 };
 
 console.log('✅ Remote Refresh Manager loaded');
-
-
-// =============================================
-// EXEMPLE D'UTILISATION DEPUIS LA CONSOLE ADMIN:
-// =============================================
-/*
-
-// Forcer le refresh de tous les clients:
-await forceRefreshAllClients('Nouvelle version disponible !');
-
-// Ou avec le message par défaut:
-await forceRefreshAllClients();
-
-*/

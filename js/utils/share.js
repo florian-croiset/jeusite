@@ -1,17 +1,8 @@
-/* =========================================================
-   SHARE.JS - VERSION BLINDÉE (Anti-conflit)
-   ========================================================= */
-
-// ---------------------------------------------------------
-// 1. CONFIGURATION
-// ---------------------------------------------------------
+// Configuration
 export const siteUrl = window.location.href;
 const titleText = 'Echo - Team Nightberry';
 const shareText = 'Découvrez Echo, une aventure intense dans un futur dystopique !';
 
-// ---------------------------------------------------------
-// 2. PARTAGE NATIF (API Web Share)
-// ---------------------------------------------------------
 export async function shareNative() {
   if (!navigator.share) return false;
   try {
@@ -20,11 +11,7 @@ export async function shareNative() {
   } catch (err) { return false; }
 }
 
-// ---------------------------------------------------------
-// 3. GESTION DE LA MODALE CLASSIQUE (QR Code)
-// ---------------------------------------------------------
 export function openShareModal() {
-  // SÉCURITÉ : On ferme d'abord la modale privée si elle est ouverte
   const privateModal = document.getElementById("privateShareModal");
   if (privateModal) privateModal.classList.remove("active");
 
@@ -40,7 +27,6 @@ export function openShareModal() {
   if (qrImg) qrImg.src = qrApiUrl;
 
   modal.classList.add('active');
-  // 📊 Tracking: Ouverture modale de partage
 if (typeof window.sendDiscordNotification === 'function') {
     window.sendDiscordNotification('share_modal_opened', {
         page: window.location.pathname
@@ -52,23 +38,17 @@ if (typeof window.sendDiscordNotification === 'function') {
 export function closeShareModal() {
   const modal = document.getElementById('shareModal');
   if (modal) modal.classList.remove('active');
-  // 📊 Tracking: Fermeture modale
 if (typeof window.sendDiscordNotification === 'function') {
     window.sendDiscordNotification('share_modal_closed', {});
 }
   document.body.style.overflow = '';
 }
 
-// ---------------------------------------------------------
-// 4. GESTION DE LA MODALE PRIVÉE (Interdit)
-// ---------------------------------------------------------
 export function openPrivateShareModal() {
-  // 🛑 SÉCURITÉ CRITIQUE : On force la fermeture de la modale normale
-  // Cela corrige le bug où les deux s'ouvrent en même temps
+  // Évite que les deux modales de partage soient ouvertes en même temps
   const publicModal = document.getElementById('shareModal');
   if (publicModal) {
       publicModal.classList.remove('active');
-      // On retire aussi le style inline s'il a été mis par erreur
       publicModal.style.display = ''; 
   }
 
@@ -85,9 +65,6 @@ export function closePrivateShareModal() {
   document.body.style.overflow = '';
 }
 
-// ---------------------------------------------------------
-// 5. COPIE DU LIEN
-// ---------------------------------------------------------
 const copyBtn = document.getElementById('copyLinkBtn');
 if (copyBtn) {
     copyBtn.addEventListener('click', () => {
@@ -95,7 +72,6 @@ if (copyBtn) {
             const original = copyBtn.textContent;
             copyBtn.textContent = 'Copié !';
             copyBtn.classList.add('copied');
-            // 📊 Tracking: Lien copié
 if (typeof window.sendDiscordNotification === 'function') {
     window.sendDiscordNotification('share_link_copied', {
         url: siteUrl
@@ -109,45 +85,31 @@ if (typeof window.sendDiscordNotification === 'function') {
     });
 }
 
-// ---------------------------------------------------------
-// 6. LOGIQUE CENTRALE (CLIC BOUTON)
-// ---------------------------------------------------------
 document.addEventListener("click", async function (e) {
     const btn = e.target.closest("#shareBtn");
     if (!btn) return;
 
-    // Empêche le comportement par défaut
     e.preventDefault();
-    // 🛑 Tente de stopper les autres scripts qui écouteraient le même bouton
+    // Empêche d'autres scripts d'écouter le même clic
     e.stopImmediatePropagation(); 
 
-    // Lecture stricte : doit être la chaîne de caractères "true"
     const isSharingAllowed = btn.getAttribute('data-allow-share') === "true";
 
-    console.log("Clic Share détecté. Autorisé ?", isSharingAllowed); // Pour debug
-
     if (isSharingAllowed) {
-        // --- CAS 1 : PARTAGE AUTORISÉ ---
         const success = await shareNative();
         if (!success) openShareModal();
     } else {
-        // --- CAS 2 : PARTAGE INTERDIT ---
-        // On appelle la fonction sécurisée qui ferme l'autre modale
         openPrivateShareModal();
     }
-}, true); // "true" ici force la priorité (capture phase)
+}, true); // Capture phase pour passer avant les autres écouteurs
 
-// ---------------------------------------------------------
-// 7. GESTION GLOBALE DES FERMETURES
-// ---------------------------------------------------------
+// Fermetures des modales au clic extérieur
 document.addEventListener("DOMContentLoaded", () => {
-    // Modale Classique
     const shareModal = document.getElementById('shareModal');
     const closeShareBtn = document.getElementById('closeShare');
     if (closeShareBtn) closeShareBtn.addEventListener('click', closeShareModal);
     if (shareModal) shareModal.addEventListener('click', (e) => { if(e.target===shareModal) closeShareModal(); });
 
-    // Modale Privée
     const privateModal = document.getElementById("privateShareModal");
     const closePrivateBtn = document.getElementById("closePrivateShare");
     const closePrivateX = privateModal ? privateModal.querySelector(".close-modal") : null;

@@ -1,9 +1,3 @@
-/* ============================================
-   ECHO ADMIN DASHBOARD - CSS Responsive v2
-   ============================================ */
-
-
-
 * {
     margin: 0;
     padding: 0;
@@ -16,6 +10,8 @@
     --debut-dim: rgba(0, 208, 198, 0.08);
     --finn: #8735b9;
     --finn-glow: rgba(135, 53, 185, 0.25);
+    --cyan: var(--debut);
+    --purple: var(--finn);
     --dark: #0a0a0a;
     --dark-lighter: #111118;
     --dark-card: #141418;
@@ -362,7 +358,6 @@ body {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ❌ Remove all the inline position:fixed / top hardcoded on sidebar-items */
 .sidebar-item {
     position: relative !important;
     top: auto !important;
@@ -617,26 +612,6 @@ tr:hover td { background: rgba(135, 53, 185, 0.06); }
     font-size: 16px;
 }
 
-.version-type-badge, .status-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 700;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.type-alpha   { background: rgba(255,171,0,0.15); color: var(--warning); border: 1px solid rgba(255,171,0,0.3); }
-.type-beta    { background: rgba(135,53,185,0.15); color: var(--finn); border: 1px solid rgba(135,53,185,0.3); }
-.type-release { background: rgba(0,230,118,0.15); color: var(--success); border: 1px solid rgba(0,230,118,0.3); }
-.type-patch   { background: rgba(0,208,198,0.15); color: var(--debut); border: 1px solid rgba(0,208,198,0.3); }
-
-.status-active   { background: rgba(0,230,118,0.12); color: var(--success); border: 1px solid rgba(0,230,118,0.3); }
-.status-inactive { background: rgba(255,23,68,0.12); color: var(--danger); border: 1px solid rgba(255,23,68,0.3); }
-.status-scheduled { background: rgba(255,171,0,0.12); color: var(--warning); border: 1px solid rgba(255,171,0,0.3); }
-
 /* ============================================
    MODAL
    ============================================ */
@@ -690,13 +665,6 @@ tr:hover td { background: rgba(135, 53, 185, 0.06); }
     font-weight: 700;
 }
 
-.version-down h3 {
-    color: var(--debut);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 18px;
-}
 
 .close-modal {
     cursor: pointer;
@@ -833,15 +801,6 @@ input:checked + .slider:before { transform: translateX(26px); }
 /* ============================================
    MISC COMPONENTS
    ============================================ */
-.form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-tr:has(.status-scheduled) { background: rgba(255, 171, 0, 0.03); }
-
 /* ============================================
    RESPONSIVE - TABLET (max 900px)
    ============================================ */

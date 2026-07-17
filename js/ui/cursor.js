@@ -1,8 +1,3 @@
-/* =========================================================
-   CURSOR.JS
-   Gestion du curseur personnalisé avec effet fluide
-   ========================================================= */
-
 const cursor = document.getElementById('customCursor');
 
 if (cursor) {
@@ -10,13 +5,11 @@ if (cursor) {
   let cursorX = 0, cursorY = 0;
   let isOverInteractive = false;
 
-  // Mouvement de la souris
   document.addEventListener('mousemove', e => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   });
 
-  // Animation fluide du curseur
   function animateCursor() {
     if (!isOverInteractive) {
       cursorX += (mouseX - cursorX) * 0.25;

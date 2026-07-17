@@ -1,27 +1,35 @@
-/* =========================================================
-   BUTTONS.JS - VERSION CORRIGÉE COMPLÈTE
-   ========================================================= */
-
-// 1. VARIABLES GLOBALES
+// Gère l'état (disponible / verrouillé / mobile) des boutons de téléchargement du jeu
 window.jeuDispo = false;
-window.jeuUrl = '#'; 
+window.jeuUrl = '#';
 window.jeuVersion = '';
-window.isTestMode = false; 
-window.testInterval = null; 
+window.isTestMode = false;
+window.testInterval = null;
 window._countdownInterval = null;
-window._countdownHasDecided = false; // ✅ Flag pour mémoriser la décision du countdown
+window._countdownHasDecided = false; // évite qu'une mise à jour DB écrase la décision du countdown
 let currentVersionId = null;
 
-// ---------------------------------------------------------
-// 2. LOGIQUE MOBILE
-// ---------------------------------------------------------
 function estSurMobile() {
   return window.innerWidth <= 768;
 }
 
-// ---------------------------------------------------------
-// 3. MISE À JOUR VISUELLE DES BOUTONS
-// ---------------------------------------------------------
+async function trackVersionDownload(versionId) {
+  try {
+    if (typeof window.EchoDB === 'undefined') return;
+    const user = await window.EchoDB.Auth.getCurrentUser();
+    await window.EchoDB.supabase
+      .from('downloads')
+      .insert({
+        version: window.jeuVersion || 'unknown',
+        user_id: user?.id || null,
+        download_url: window.jeuUrl || null,
+        user_agent: navigator.userAgent,
+        platform: navigator.platform || 'unknown'
+      });
+  } catch (error) {
+    console.error('Erreur tracking téléchargement:', error);
+  }
+}
+
 function appliquerDisponibiliteBouton(bouton) {
   if (!bouton) return;
 
@@ -65,18 +73,14 @@ function appliquerDisponibiliteBouton(bouton) {
       bouton.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.5)';
       bouton.style.animation = 'pulse 2s infinite';
 
-
-// 📥 Gestion du clic de téléchargement
 const handleDownloadClick = async (e) => {
     console.log('🎮 Téléchargement déclenché');
-    
-    // Empêcher le comportement par défaut
+
     if (e) e.preventDefault();
-    
-    // 🚨 IMPORTANT : Marquer qu'on télécharge (pas une vraie sortie)
+
+    // Marque qu'il s'agit d'un téléchargement et non d'une sortie de page (lu par le tracker)
     window._isDownloading = true;
-    
-    // 📊 TRACKING SPÉCIAL : Téléchargement du jeu
+
     try {
         if (typeof window.sendDiscordNotification === 'function') {
             await window.sendDiscordNotification('new_download', {
@@ -84,20 +88,17 @@ const handleDownloadClick = async (e) => {
                 url: window.jeuUrl || '#',
                 versionId: currentVersionId
             });
-            console.log('✅ Notification Discord envoyée');
         }
-        
-        // Tracking DB si disponible
-        if (currentVersionId && typeof window.trackVersionDownload === 'function') {
-            await window.trackVersionDownload(currentVersionId);
+
+        if (currentVersionId) {
+            await trackVersionDownload(currentVersionId);
         }
     } catch (error) {
         console.error('❌ Erreur tracking téléchargement:', error);
     }
-    
-    // Créer un lien invisible pour télécharger sans quitter la page
+
+    // Lien invisible pour déclencher le téléchargement sans quitter la page
     const link = document.createElement('a');
-    // Avant le link.href =
     const safeUrl = window.jeuUrl;
     if (!safeUrl.startsWith('http') && !safeUrl.startsWith('/') && !safeUrl.startsWith('executable/')) {
         console.error('URL de téléchargement invalide');
@@ -109,8 +110,7 @@ const handleDownloadClick = async (e) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
-    // Réinitialiser le flag après 2 secondes
+
     setTimeout(() => {
         window._isDownloading = false;
     }, 2000);
@@ -137,11 +137,6 @@ if (bouton.tagName === 'A') {
       
       if (bouton.tagName === 'A') {
         bouton.removeAttribute('href');
-        /*bouton.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        };*/
       } else {
         bouton.onclick = (e) => {
           e.preventDefault();
@@ -160,37 +155,27 @@ const btnHero = document.querySelector('.hero .btn-primary');
 const btnTelecharger = document.querySelector('#telecharger .btn-primary');
 const btnInstaller = document.querySelector('#install .btn-primary');
 
-
-// ---------------------------------------------------------
-// 4. CONNECTION AVEC LA DATABASE
-// ---------------------------------------------------------
-// AJOUTER CETTE FONCTION AVANT updateDownloadState
-
 window.updateDownloadState = function(isAvailable, url, version, versionId = null) {
     if (window.isTestMode) {
         console.log("Mode Test actif : update DB ignorée.");
-        return; 
+        return;
     }
-    
+
     if (window._countdownHasDecided && !isAvailable && window.jeuDispo === false) {
         console.log("⏰ Décision du compte à rebours prioritaire : téléchargement bloqué");
         return;
     }
-    
-    //console.log(`Mise à jour via DB : Dispo=${isAvailable}, URL=${url}, Version=${version}`);
+
     window.jeuDispo = isAvailable;
     window.jeuUrl = url;
     window.jeuVersion = version;
-    currentVersionId = versionId; // 🔥 NOUVEAU : Stocker l'ID
-    
+    currentVersionId = versionId;
+
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
     appliquerDisponibiliteBouton(btnInstaller);
 };
 
-// ---------------------------------------------------------
-// 5. VÉRIFICATION DE L'ÉTAT ADMIN
-// ---------------------------------------------------------
 async function verifierDisponibiliteAdmin() {
     try {
         if (typeof window.EchoDB === 'undefined') return false;
@@ -210,7 +195,6 @@ async function verifierDisponibiliteAdmin() {
             .from('game_versions')
             .select('*')
             .eq('is_published', true)
-            //.lte('release_date', now)
             .order('release_date', { ascending: false })
             .limit(1)
             .single();
@@ -224,7 +208,7 @@ async function verifierDisponibiliteAdmin() {
             available: true,
             url: data.download_url,
             version: data.version,
-            id: data.id // 🔥 NOUVEAU : Retourner l'ID
+            id: data.id
         };
     } catch (err) {
         console.error('Erreur vérification:', err);
@@ -232,9 +216,6 @@ async function verifierDisponibiliteAdmin() {
     }
 }
 
-// ---------------------------------------------------------
-// 6. FONCTION "FIN DU COMPTE À REBOURS" (CORRIGÉE)
-// ---------------------------------------------------------
 window.finishCountdown = async function(isTest = false) {
     console.log("🎉 FIN DU COMPTE À REBOURS");
 
@@ -243,7 +224,6 @@ window.finishCountdown = async function(isTest = false) {
     if (window.testInterval) clearInterval(window.testInterval);
     if (window._countdownInterval) clearInterval(window._countdownInterval);
 
-    // 2. CIBLER LA SECTION ENTIÈRE
     const sectionCountdown = document.querySelector('.countdown-section');
 
     if (sectionCountdown) {
@@ -255,41 +235,35 @@ window.finishCountdown = async function(isTest = false) {
                 <h2 style="color: var(--cyan); font-size: 2rem; margin: 0 0 10px 0; text-transform: uppercase; text-shadow: 0 0 20px var(--cyan);">
                     Lancé !
                 </h2>
-                <!--<div class="countdown-item"><span class="countdown-value">🎉</span><span class="countdown-label">Lancé&nbsp;!</span></div>-->
                 <p style="color: #e0e0e0; font-size: 1.1rem;" id="countdown-status-message">
                     Vérification de la disponibilité...
                 </p>
             </div>
        `;
-    } 
-    // ✅ NOUVEAU : Auto-publier la version associée au countdown
+    }
+
+    // Publie automatiquement la version associée à ce countdown
     if (!isTest && typeof window.EchoDB !== 'undefined') {
         try {
             const countdown = await window.EchoDB.Countdown.getActive();
-            
+
             if (countdown && countdown.version_id) {
                 console.log("🚀 Publication automatique de la version:", countdown.version_id);
-                
+
                 await window.EchoDB.supabase
                     .from('game_versions')
                     .update({ is_published: true })
                     .eq('id', countdown.version_id);
-                
-                console.log("✅ Version publiée automatiquement");
 
-                // ⭐ AJOUTER CES LIGNES
-            if (window.sendDiscordNotification) {
-                await window.sendDiscordNotification('countdown_finished', {});
-            }
+                if (window.sendDiscordNotification) {
+                    await window.sendDiscordNotification('countdown_finished', {});
+                }
             }
         } catch (err) {
             console.error("❌ Erreur auto-publication:", err);
         }
     }
 
-    // Reste du code inchangé...
-
-    // 3. VÉRIFIER L'ÉTAT ADMIN AVANT D'ACTIVER
     if (isTest) {
         console.log('🧪 Mode test : activation immédiate');
         window.jeuDispo = true;
@@ -325,21 +299,16 @@ window.finishCountdown = async function(isTest = false) {
             }
         }
     }
-    
-    // 4. Mettre à jour les boutons
+
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
     appliquerDisponibiliteBouton(btnInstaller);
 
-    // 5. Animation de célébration si activé
     if (window.jeuDispo) {
         creerAnimationCelebration();
     }
 };
 
-// ---------------------------------------------------------
-// 7. ANIMATION DE CÉLÉBRATION
-// ---------------------------------------------------------
 function creerAnimationCelebration() {
     const colors = ['#00d0c6', '#60F4D7', '#037778', '#338A90'];
     
@@ -365,7 +334,6 @@ function creerAnimationCelebration() {
     }
 }
 
-// Ajouter le CSS
 const style = document.createElement('style');
 style.textContent = `
     @keyframes confettiFall {
@@ -393,21 +361,17 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ---------------------------------------------------------
-// 8. GESTION DU MODE TEST (SABLIER)
-// ---------------------------------------------------------
 const sablierBtn = document.getElementById('sablierBtn');
 
 if (sablierBtn) {
   sablierBtn.addEventListener('click', () => {
     console.log("🧪 Lancement du Mode Test");
-    // 📊 Tracking: Mode test activé
-if (typeof window.sendDiscordNotification === 'function') {
-    window.sendDiscordNotification('test_mode_activated', {
-        countdown: 10
-    });
-}
-    
+    if (typeof window.sendDiscordNotification === 'function') {
+        window.sendDiscordNotification('test_mode_activated', {
+            countdown: 10
+        });
+    }
+
     window.isTestMode = true;
 
     if (window.testInterval) clearInterval(window.testInterval);
@@ -440,8 +404,7 @@ if (typeof window.sendDiscordNotification === 'function') {
         timeLeft--;
         const secElement = document.getElementById('seconds');
         if(secElement) secElement.textContent = timeLeft.toString();
-        // .padStart(2, '0')
-        
+
         if (timeLeft <= 0) {
             clearInterval(window.testInterval);
             window.finishCountdown(true);
@@ -450,21 +413,18 @@ if (typeof window.sendDiscordNotification === 'function') {
   });
 }
 
-// ---------------------------------------------------------
-// 9. INITIALISATION AU CHARGEMENT
-// ---------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Initialisation buttons.js');
-    
+
     appliquerDisponibiliteBouton(btnHero);
     appliquerDisponibiliteBouton(btnTelecharger);
     appliquerDisponibiliteBouton(btnInstaller);
-    
+
     setTimeout(() => {
         verifierDisponibiliteAdmin().then(state => {
             if (state && state.available) {
                 console.log("✅ Admin force l'ouverture du téléchargement");
-                window.updateDownloadState(true, state.url, state.version, state.id); // 🔥 Passer l'ID
+                window.updateDownloadState(true, state.url, state.version, state.id);
             } else {
                 if(window.jeuDispo) {
                      window.updateDownloadState(false, '#', '', null);

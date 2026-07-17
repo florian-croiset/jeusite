@@ -667,13 +667,6 @@
         </button>
     </div>
 
-    <!-- Bouton suggestion -->
-    <!--<div style="text-align:center; margin-top: 0.5rem;">
-        <button class="suggest-btn" onclick="openSuggestModal()">
-            <i class="fas fa-lightbulb"></i> Suggérer un ajout
-        </button>
-    </div>-->
-
     <div class="actions-container">
         <button class="suggest-btn" onclick="openSuggestModal()">
             <i class="fas fa-lightbulb"></i> Suggérer un ajout
@@ -848,20 +841,30 @@
             });
         }
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // Render single item
         function renderItem(item) {
             const hasVoted = userVotes.has(item.id);
             const priority = item.priority === 2 ? 'high' : item.priority === 1 ? 'medium' : 'low';
 
             return `
-                <div class="roadmap-item priority-${priority}" data-id="${item.id}" data-category="${item.category}">
+                <div class="roadmap-item priority-${priority}" data-id="${item.id}" data-category="${escapeHtml(item.category)}">
                     <div class="item-header">
-                        <div class="item-title">${item.title}</div>
+                        <div class="item-title">${escapeHtml(item.title)}</div>
                         <div class="item-badges">
-                            <span class="badge ${item.category}">${item.category}</span>
+                            <span class="badge ${escapeHtml(item.category)}">${escapeHtml(item.category)}</span>
                         </div>
                     </div>
-                    ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                    ${item.description ? `<div class="item-description">${escapeHtml(item.description)}</div>` : ''}
                     <div class="item-footer">
                         <div class="progress-bar-container">
                             <div class="progress-bar">
@@ -1044,12 +1047,10 @@
         // ===== SUGGESTIONS =====
 
         // Anti-spam : 1 suggestion par session + délai entre envois
-        //const SUGGEST_COOLDOWN_MS = 60 * 1000; // 1 minute
-        const SUGGEST_COOLDOWN_MS = 1000; // 1 minute
+        const SUGGEST_COOLDOWN_MS = 60 * 1000; // 1 minute
         let _lastSuggestTime = 0;
         let _suggestCount = 0;
-        //const SUGGEST_MAX_PER_SESSION = 3;
-        const SUGGEST_MAX_PER_SESSION = 15;
+        const SUGGEST_MAX_PER_SESSION = 3;
 
         // Sanitisation XSS basique (pas d'innerHTML avec données utilisateur)
         function sanitizeText(str, maxLen) {
@@ -1106,7 +1107,7 @@
 
             // ── Anti-spam session ──
             if (_suggestCount >= SUGGEST_MAX_PER_SESSION) {
-                showSuggestError('Limite atteinte : 3 suggestions maximum par session.');
+                showSuggestError(`Limite atteinte : ${SUGGEST_MAX_PER_SESSION} suggestions maximum par session.`);
                 return;
             }
             const now = Date.now();
@@ -1284,7 +1285,7 @@ function renderEisenhowerMatrix() {
         // 2. CALCUL DE L'URGENCE (Axe X : 0% = Urgent/Gauche, 100% = Non-Urgent/Droite)
         let xPos = 50; // Neutre par défaut
         
-        const dateStr = item.target_date || item.planned_date;
+        const dateStr = item.estimated_date;
         
         if (dateStr) {
             const target = new Date(dateStr);

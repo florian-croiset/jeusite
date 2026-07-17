@@ -1,12 +1,5 @@
-/* =========================================================
-   COMPONENTS.CSS  
-   Styles des composants UI : boutons, stats, scroll bar, countdown, icônes…
-   ========================================================= */
 
-
-/* ---------------------------------------------------------
-   1. BOUTONS GÉNÉRAUX
---------------------------------------------------------- */
+/* BOUTONS GÉNÉRAUX */
 .btn {
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
@@ -41,9 +34,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   2. BOUTONS PRIMAIRES & SECONDAIRES
---------------------------------------------------------- */
+/* BOUTONS PRIMAIRES & SECONDAIRES */
 .btn-primary {
     background: linear-gradient(135deg, var(--debut) 0%, var(--fin) 100%);
     color: white;
@@ -109,9 +100,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   3. BOUTON COLLAGE / MODALE
---------------------------------------------------------- */
+/* BOUTON COLLAGE / MODALE */
 .btn-paste {
     background: transparent;
     border: none;
@@ -132,9 +121,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   4. CTA (CALL‑TO‑ACTION)
---------------------------------------------------------- */
+/* CTA (CALL‑TO‑ACTION) */
 .cta-buttons {
     display: flex;
     gap: 1.5rem;
@@ -144,9 +131,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   5. BOUTONS FLOTTANTS (droite / gauche / musique / partage)
---------------------------------------------------------- */
+/* BOUTONS FLOTTANTS (droite / gauche / musique / partage) */
 .floating-buttons {
     position: fixed;
     bottom: 2rem;
@@ -180,8 +165,7 @@
     transition: all 0.3s;
 }
 
-.btn-scroll-top:hover svg,
-.btn-chatbot:hover svg {
+.btn-scroll-top:hover svg {
     stroke: var(--finn);
     transform: scale(1.2);
 }
@@ -332,37 +316,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   6. STATS
---------------------------------------------------------- */
-.stat-item {
-    text-align: center;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 15px;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    min-width: 200px;
-    transition: all 0.3s;
-}
-
-.stat-item:hover {
-    transform: translateY(-5px);
-    border-color: var(--debut);
-    background: rgba(102, 126, 234, 0.05);
-}
-
-.stat-number {
-    font-size: 4rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--debut) 0%, var(--fin) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: block;
-    margin-bottom: 0.5rem;
-    font-variant-numeric: tabular-nums;
-}
-
+/* STATS */
 .stat-label {
     font-size: 1rem;
     color: #b0b0b0;
@@ -372,9 +326,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   7. SCROLL PROGRESS BAR
---------------------------------------------------------- */
+/* SCROLL PROGRESS BAR */
 .scroll-progress {
     position: fixed;
     top: 0;
@@ -388,9 +340,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   8. COMPTE À REBOURS
---------------------------------------------------------- */
+/* COMPTE À REBOURS */
 .countdown-section {
     text-align: center;
     margin: 2rem 0;
@@ -436,9 +386,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   9. COPYLOCK
---------------------------------------------------------- */
+/* COPYLOCK */
 #copyLock:hover {
     color: var(--fin);
     transform: scale(1.1);
@@ -452,17 +400,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   10. TEXTES DIVERS
---------------------------------------------------------- */
-.feature-text {
-    font-size: 14px;
-}
-
-
-/* ---------------------------------------------------------
-   11. ICONES EMPILÉES
---------------------------------------------------------- */
+/* ICONES EMPILÉES */
 .icon-stack {
     position: absolute;
     padding-top: 2px;
@@ -478,14 +416,6 @@
     position: inherit;
 }
 
-
-
-
-
-/* =============================================
-   CSS À AJOUTER DANS VOTRE FICHIER style.css
-   Pour améliorer l'apparence des boutons désactivés
-   ============================================= */
 
 /* État désactivé du bouton */
 .btn-primary.disabled,

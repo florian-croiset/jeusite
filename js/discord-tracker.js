@@ -1,16 +1,10 @@
-// =============================================
-// DISCORD TRACKER AVANCÉ - Version 2.4
-// Tracking complet des interactions utilisateur
-// =============================================
-
+// Tracking complet des interactions utilisateur, envoyé vers Discord
 class AdvancedDiscordTracker {
     constructor() {
         this.version = "2.5";
         this.sessionId = this.generateSessionId();
         this.userIP = null;
         this.webhookUrl = null;
-        this.userName = null;
-        this.isKnownUser = false;
         this.startTime = Date.now();
         this.eventQueue = [];
         this.isProcessing = false;
@@ -75,8 +69,6 @@ class AdvancedDiscordTracker {
             return; // stop ici, pas de tracking complet
         }
         try {
-            //console.log('📡 Initialisation du tracker...');
-
             await this.getIPAndLocation();
             this.networkInfo = await this.getNetworkType();
             await this.loadWebhook();
@@ -90,10 +82,8 @@ class AdvancedDiscordTracker {
             }
             
             setInterval(() => this.checkInactivity(), 5000);
-
-            //console.log('✅ Advanced Discord Tracker initialized');
         } catch (error) {
-            //console.error('❌ Tracker init error:', error);
+            console.error('❌ Tracker init error:', error);
         }
     }
 
@@ -207,14 +197,12 @@ class AdvancedDiscordTracker {
                 await this.waitForIPDetector();
             }
 
-            // ✅ Attendre que la détection initiale soit terminée, sans la relancer
             let data = window.ipDetector.getData();
             if (!data || !data.ip) {
-                // Seulement si pas encore fait (premier chargement très rapide)
                 data = await window.ipDetector.detect();
             }
 
-            // Attendre l'enrichissement si encore incomplet (max 5s)
+            // Attendre l'enrichissement (géoloc) si encore incomplet, max 5s
             const deadline = Date.now() + 5000;
             while (Date.now() < deadline) {
                 data = window.ipDetector.getData();
@@ -267,23 +255,15 @@ class AdvancedDiscordTracker {
             }
 
             const { data, error } = await window.EchoDB.supabase
-                .rpc('get_webhook_for_ip', { user_ip: this.userIP });
-
-            if (error) throw error;
-
-            this.webhookUrl = data;
-
-            const { data: trackedUser } = await window.EchoDB.supabase
-                .from('tracked_users')
-                .select('first_name, ip_address')
-                .eq('ip_address', this.userIP)
+                .from('webhook_settings')
+                .select('webhook_url')
+                .eq('setting_key', 'main_webhook')
                 .eq('is_active', true)
                 .single();
 
-            if (trackedUser) {
-                this.isKnownUser = true;
-                this.userName = trackedUser.first_name;
-            }
+            if (error) throw error;
+
+            this.webhookUrl = data?.webhook_url || '';
 
         } catch (error) {
             console.error('Webhook load error:', error);
@@ -389,12 +369,12 @@ class AdvancedDiscordTracker {
                 .join('\n');
 
             const exitData = {
-                username: this.isKnownUser ? `Echo Tracker - ${this.userName}` : 'Echo Analytics',
+                username: 'Echo Analytics',
                 avatar_url: 'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
                 embeds: [{
-                    title: this.isKnownUser ? `👋 ${this.userName} quitte le site` : '🚪 Fin de session',
+                    title: '🚪 Fin de session',
                     description: `Session terminée après **${minutes}m ${seconds}s**`,
-                    color: this.isKnownUser ? 0xffa500 : 0x5865f2,
+                    color: 0x5865f2,
                     fields: [
                         { name: '⏱️ Durée totale', value: `${minutes}m ${seconds}s`, inline: true },
                         { name: '📊 Actions totales', value: `${this.clickedElements.length} clics`, inline: true },
@@ -500,22 +480,16 @@ window.addEventListener('beforeunload', (event) => {
                     const linkUrl = new URL(link.href);
                     const linkHost = linkUrl.hostname;
 
-                    // 🚨 IGNORER les liens de téléchargement (fichiers .exe, .zip, etc.)
+                    // Ignorer les liens de téléchargement (déjà trackés via download_attempt)
                     const isDownloadLink = /\.(exe|zip|rar|dmg|pkg|deb)$/i.test(linkUrl.pathname);
                     if (isDownloadLink) {
-                        console.log('📥 Lien de téléchargement ignoré du tracking externe');
                         return;
                     }
 
-                    // Vérifier si c'est un lien externe (domaine différent)
                     const UNSAFE_PROTOCOLS = ['javascript:', 'data:', 'vbscript:'];
                     if (linkHost !== currentHost && linkHost !== '' && !UNSAFE_PROTOCOLS.includes(linkUrl.protocol)) {
-                        console.log('🔗 Lien externe détecté:', link.href);
-                        
-                        // S'assurer qu'on a une section
                         const currentSection = this.currentSection || 'hero';
-                        
-                        // Envoyer immédiatement la notification
+
                         this.sendEventToDiscord('external_link_click', {
                             url: link.href,
                             text: link.textContent.trim().substring(0, 50) || 'Sans texte',
@@ -527,7 +501,6 @@ window.addEventListener('beforeunload', (event) => {
                 }
             }
         }, true);
-        //console.log('✅ All trackers initialized');
     }
 
     trackImportantElements() {
@@ -755,8 +728,8 @@ window.addEventListener('beforeunload', (event) => {
         if (fields.length > 0) {
             await this.sendToDiscord({
                 embeds: [{
-                    title: `📊 Activité ${this.isKnownUser ? `de ${this.userName}` : 'détectée'}`,
-                    color: this.isKnownUser ? 0x00ff00 : 0x8735b9,
+                    title: '📊 Activité détectée',
+                    color: 0x8735b9,
                     fields: fields.slice(0, 25),
                     footer: {
                         text: `${this.locationData.ip} • Session ${this.sessionId.substr(-8)} • v${this.version}`
@@ -772,13 +745,9 @@ window.addEventListener('beforeunload', (event) => {
     async trackPageView() {
         await this.sendToDiscord({
             embeds: [{
-                title: this.isKnownUser
-                    ? `👋 ${this.userName} est sur le site !`
-                    : '🌐 Nouvelle visite',
-                description: this.isKnownUser
-                    ? `Session de ${this.userName} commencée`
-                    : 'Un nouveau visiteur découvre Echo',
-                color: this.isKnownUser ? 0x00ff00 : 0x00d0c6,
+                title: '🌐 Nouvelle visite',
+                description: 'Un nouveau visiteur découvre Echo',
+                color: 0x00d0c6,
                 fields: [
                     { name: '📄 Page', value: window.location.pathname, inline: true },
                     { name: '🔗 IP', value: this.locationData.ip, inline: true },
@@ -805,27 +774,14 @@ window.addEventListener('beforeunload', (event) => {
         try {
             if (typeof window.EchoDB === 'undefined') return;
 
-            let trackedUserId = null;
-            if (this.isKnownUser) {
-                const { data } = await window.EchoDB.supabase
-                    .from('tracked_users')
-                    .select('id')
-                    .eq('ip_address', this.userIP)
-                    .single();
-                trackedUserId = data?.id;
-            }
-
             const { data, error } = await window.EchoDB.supabase
                 .from('user_sessions')
                 .insert({
-                    tracked_user_id: trackedUserId,
-                    ip_address: this.userIP,
                     session_id: this.sessionId,
                     page: window.location.pathname,
                     user_agent: navigator.userAgent,
                     device: this.getDeviceInfo(),
                     browser: this.getBrowserInfo(),
-                    location: `${this.locationData.city}, ${this.locationData.country}`,
                     referrer: this.getSource()
                 })
                 .select('id')
@@ -834,6 +790,8 @@ window.addEventListener('beforeunload', (event) => {
             if (error) throw error;
 
             this.dbSessionId = data.id;
+
+            await window.EchoDB.supabase.rpc('increment_page_view', { p_page: window.location.pathname });
         } catch (error) {
             console.error('DB session save error:', error);
         }
@@ -920,7 +878,7 @@ window.addEventListener('beforeunload', (event) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    username: this.isKnownUser ? `Echo Tracker - ${this.userName}` : 'Echo Analytics',
+                    username: 'Echo Analytics',
                     avatar_url: 'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
                     ...payload
                 })

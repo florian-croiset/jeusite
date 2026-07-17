@@ -1,12 +1,5 @@
-/* =========================================
-   RESPONSIVE.CSS 
-   Adaptations mobiles et tablettes
-   ========================================= */
 
-
-/* -----------------------------------------
-   1. Réglages généraux (≤768px)
------------------------------------------ */
+/* Réglages généraux (≤768px) */
 @media (max-width: 768px) {
 
     /* Typographie de base */
@@ -32,9 +25,7 @@
 }
 
 
-/* -----------------------------------------
-   2. Navigation mobile
------------------------------------------ */
+/* Navigation mobile */
 @media (max-width: 768px) {
 
     /* Conteneur nav */
@@ -79,9 +70,7 @@
 }
 
 
-/* -----------------------------------------
-   3. Hero section mobile
------------------------------------------ */
+/* Hero section mobile */
 @media (max-width: 768px) {
 
     .hero {
@@ -136,9 +125,7 @@
 }
 
 
-/* -----------------------------------------
-   4. Sections générales
------------------------------------------ */
+/* Sections générales */
 @media (max-width: 768px) {
 
     section {
@@ -148,30 +135,10 @@
     .about-content {
         grid-template-columns: 1fr;
     }
-
-    .services-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .contact-card {
-        padding: 1.5rem;
-    }
-
-    .contact-card input,
-    .contact-card textarea {
-        font-size: 1rem;
-    }
-
-    .contact-card button {
-        width: 100%;
-    }
 }
 
 
-/* -----------------------------------------
-   5. Menu burger (mobile)
------------------------------------------ */
+/* Menu burger (mobile) */
 
 /* Icône burger */
 .burger {
@@ -249,9 +216,7 @@
 }
 
 
-/* -----------------------------------------
-   6. Ajustements spécifiques pour petits écrans
------------------------------------------ */
+/* Ajustements spécifiques pour petits écrans */
 @media (max-width: 768px) {
 
     /* Countdown */

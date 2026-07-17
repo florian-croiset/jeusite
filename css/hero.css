@@ -1,12 +1,5 @@
-/* =========================================================
-   HERO.CSS  
-   Section d’accueil principale (Hero) : fond, vidéo, titre, effets holographiques
-   ========================================================= */
 
-
-/* ---------------------------------------------------------
-   1. STRUCTURE GÉNÉRALE DU HERO
---------------------------------------------------------- */
+/* STRUCTURE GÉNÉRALE DU HERO */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -17,11 +10,6 @@
   background: #0a0a0a;
   opacity: 1;
   transform: none;
-}
-
-/* Alignement pour scroll-snap activé */
-html.snap-enabled .hero {
-  scroll-snap-align: start;
 }
 
 /* Arrière-plan décoratif (radial animé) */
@@ -37,9 +25,7 @@ html.snap-enabled .hero {
 }
 
 
-/* ---------------------------------------------------------
-   2. CONTENU DU HERO
---------------------------------------------------------- */
+/* CONTENU DU HERO */
 .hero-content {
   text-align: center;
   z-index: 1;
@@ -98,9 +84,7 @@ html.snap-enabled .hero {
 }
 
 
-/* ---------------------------------------------------------
-   3. FOND & VIDÉO / IMAGE
---------------------------------------------------------- */
+/* FOND & VIDÉO / IMAGE */
 
 /* Vidéo d’arrière-plan */
 .background-video {

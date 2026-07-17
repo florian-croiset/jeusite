@@ -1,24 +1,10 @@
-/* =========================================================
-   MUSIC.JS
-   Contrôle de la musique de fond (lecture, pause, raccourcis)
-   ========================================================= */
-
-// ---------------------------------------------------------
-// 1. SÉLECTION DES ÉLÉMENTS
-// ---------------------------------------------------------
 const musicBtn = document.getElementById('musicBtn');
 const musique  = document.getElementById('backgroundMusic');
 
-
-// ---------------------------------------------------------
-// 2. INITIALISATION ET VOLUME
-// ---------------------------------------------------------
 if (musique && musicBtn) {
 
-  // Réglage volume de départ
-  musique.volume = 0.4;  
+  musique.volume = 0.4;
 
-  // Met à jour l’icône selon l’état
   function updateIcon() {
     const icon = musicBtn.querySelector('i');
     if (!icon) return;
@@ -34,9 +20,6 @@ if (musique && musicBtn) {
     }
   }
 
-  // -------------------------------------------------------
-  // 3. GESTION DU CLIC SUR LE BOUTON MUSIQUE
-  // -------------------------------------------------------
   musicBtn.addEventListener('click', () => {
     if (musique.paused) {
       musique.play().catch(err => console.warn('Lecture refusée :', err));
@@ -44,29 +27,15 @@ if (musique && musicBtn) {
       musique.pause();
     }
     updateIcon();
-    // 📊 Tracking: Musique play/pause
-if (typeof window.sendDiscordNotification === 'function') {
-    window.sendDiscordNotification('music_toggled', {
-        playing: !musique.paused
-    });
-}
+    if (typeof window.sendDiscordNotification === 'function') {
+        window.sendDiscordNotification('music_toggled', {
+            playing: !musique.paused
+        });
+    }
   });
 
 
-  // -------------------------------------------------------
-  // 4. DÉMARRAGE AUTOMATIQUE APRÈS INTERACTION
-  // -------------------------------------------------------
-  const activerMusique = () => {
-    musique.play()
-      .then(updateIcon)
-      .catch(() => { /* aucun log si refus */ });
-
-    ['click', 'scroll', 'keydown', 'mousemove', 'touchstart']
-      .forEach(evt => window.removeEventListener(evt, activerMusique));
-  };
-
-  ['click', 'scroll', 'keydown', 'mousemove', 'touchstart']
-    .forEach(evt => window.addEventListener(evt, activerMusique, { once: true }));
+  // Musique désactivée par défaut : l'utilisateur doit cliquer sur le bouton pour la lancer.
 
 
   // -------------------------------------------------------

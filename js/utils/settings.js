@@ -1,7 +1,3 @@
-/* =========================================================
-   SYSTÈME DE TRADUCTION
-   ========================================================= */
-
 const translations = {
     fr: {
         settings: "Paramètres",
@@ -125,10 +121,6 @@ const translations = {
     }
 };
 
-/* =========================================================
-   SYSTÈME DE PARAMÈTRES - SETTINGS MANAGER
-   ========================================================= */
-
 class SettingsManager {
     constructor() {
         this.settings = {
@@ -169,9 +161,6 @@ class SettingsManager {
         this.initGlobalShortcuts();
     }
     
-    /**
-     * Traduction
-     */
     t(key) {
         return translations[this.currentLang][key] || key;
     }
@@ -410,23 +399,21 @@ class SettingsManager {
      * Gestion des onglets
      */
     initTabs() {
-        // CORRECTION : On ne cible que les boutons DANS la modale de paramètres (.settings-tabs)
+        // Scoped à .settings-tabs pour ne pas interférer avec d'autres systèmes d'onglets de la page
         const tabs = document.querySelectorAll('.settings-tabs .tab-btn');
         const contents = document.querySelectorAll('.settings-content .tab-content');
-        
-        if(tabs.length === 0) return; // Sécurité
+
+        if (tabs.length === 0) return;
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const target = tab.dataset.tab;
-                
-                // On retire 'active' seulement des onglets paramètres
+
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
-                
+
                 tab.classList.add('active');
-                
-                // Sécurité pour éviter le crash si la cible n'existe pas
+
                 const targetContent = document.querySelector(`.settings-content .tab-content[data-content="${target}"]`);
                 if (targetContent) {
                     targetContent.classList.add('active');
@@ -526,7 +513,6 @@ class SettingsManager {
         this.settings.language = lang;
         this.currentLang = lang;
         this.saveSettings();
-        // 📊 Tracking: Changement de langue
 if (typeof window.sendDiscordNotification === 'function') {
     window.sendDiscordNotification('language_changed', {
         from: this.currentLang,
@@ -602,9 +588,6 @@ if (typeof window.sendDiscordNotification === 'function') {
     
     executeShortcut(action) {
         switch(action) {
-            /*case 'toggleMusic':
-                document.getElementById('musicBtn')?.click();
-                break;*/
             case 'openSettings':
                 this.openModal();
                 break;
@@ -643,7 +626,6 @@ if (typeof window.sendDiscordNotification === 'function') {
         if (modal) {
             this.modalStack.push('settingsModal');
             modal.classList.add('active');
-            // 📊 Tracking: Ouverture des paramètres
 if (typeof window.sendDiscordNotification === 'function') {
     window.sendDiscordNotification('settings_opened', {});
 }
@@ -813,7 +795,6 @@ if (typeof window.sendDiscordNotification === 'function') {
     resetSettings() {
         localStorage.removeItem('echoSettings');
         localStorage.removeItem('echoShortcuts');
-        // 📊 Tracking: Réinitialisation des paramètres
 if (typeof window.sendDiscordNotification === 'function') {
     window.sendDiscordNotification('settings_reset', {});
 }
@@ -838,9 +819,6 @@ if (typeof window.sendDiscordNotification === 'function') {
     }
 }
 
-/* =========================================================
-   INITIALISATION
-   ========================================================= */
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -849,5 +827,3 @@ if (document.readyState === 'loading') {
 } else {
     window.settingsManager = new SettingsManager();
 }
-
-//export { SettingsManager };

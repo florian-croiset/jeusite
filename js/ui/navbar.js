@@ -1,17 +1,10 @@
-/* =========================================================
-   NAVBAR.JS
-   Gère la navbar : réduction au scroll, burger menu,
-   et barre de progression de défilement
-   ========================================================= */
-
-// --- Réduction de la navbar au scroll ---
+// Réduction de la navbar au scroll
 const navbar = document.querySelector('nav');
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.pageYOffset > 50);
 });
 
-
-// --- Barre de progression du scroll ---
+// Barre de progression du scroll
 window.addEventListener('scroll', () => {
   const bar = document.getElementById('scrollProgress');
   if (!bar) return;
@@ -20,8 +13,6 @@ window.addEventListener('scroll', () => {
   bar.style.width = `${(scrollTop / height) * 100}%`;
 });
 
-
-// BURGER MENU
 const burger = document.getElementById("burger");
 const navLinks = document.getElementById("nav-links");
 

@@ -1,20 +1,12 @@
-// =============================================
-// DISCORD WEBHOOK HANDLER - Version 2.0
-// Gestion intelligente des webhooks avec DB
-// =============================================
-
 class DiscordWebhookManager {
 constructor() {
     this.webhooks = {
       main: null,
       twofa: null,
-      refresh: null,
-      user: null
+      refresh: null
     };
-    this.adminRoleId = null; // Sera chargé depuis la DB
+    this.adminRoleId = null;
     this.userIP = null;
-    this.isKnownUser = false;
-    this.userName = null;
     this.initialized = false;
   }
 
@@ -22,27 +14,21 @@ constructor() {
     if (this.initialized) return;
 
     try {
-      // Récupérer l'IP
       await this.fetchIP();
-
-      // Charger les webhooks depuis la DB
       await this.loadWebhooks();
 
       this.initialized = true;
       console.log('✅ Discord Webhook Manager initialized');
     } catch (error) {
       console.error('❌ Webhook manager init error:', error);
-      // Fallback sur webhook hardcodé en cas d'erreur
       this.mainWebhook = '';
     }
   }
 
   async fetchIP() {
     try {
-      // Utiliser le service de détection IP robuste
       if (!window.ipDetector) {
         console.warn('⚠️ ipDetector not loaded, trying direct fetch...');
-        // Fallback direct sur ipify
         const res = await fetch('https://api.ipify.org?format=json');
         const data = await res.json();
         this.userIP = data.ip;
@@ -85,12 +71,10 @@ constructor() {
     });
 }
 
-// --- MODIFICATION : Chargement des nouveaux webhooks et du rôle ---
   async loadWebhooks() {
     if (typeof window.EchoDB === 'undefined') return;
 
     try {
-      // 1. Charger les Webhooks réservés (2FA / Refresh)
       const { data: settings } = await window.EchoDB.supabase
         .from('webhook_settings')
         .select('setting_key, webhook_url')
@@ -104,7 +88,6 @@ constructor() {
         });
       }
 
-      // 2. Charger l'ID du rôle pour le Ping
       const { data: roleData } = await window.EchoDB.supabase
         .from('site_settings')
         .select('setting_value')
@@ -112,38 +95,19 @@ constructor() {
         .single();
       
       if (roleData) this.adminRoleId = roleData.setting_value;
-
-      // 3. Charger le webhook utilisateur perso (Logique existante)
-      const { data: trackedUser } = await window.EchoDB.supabase
-        .from('tracked_users')
-        .select('*')
-        .eq('ip_address', this.userIP)
-        .eq('is_active', true)
-        .single();
-
-      if (trackedUser) {
-        this.isKnownUser = true;
-        this.userName = trackedUser.first_name;
-        this.webhooks.user = trackedUser.webhook_url;
-      }
     } catch (e) { console.error("Erreur chargement webhooks DB:", e); }
   }
 
-  // --- MODIFICATION : Routage Prioritaire et Ping ---
   async sendNotification(type, data) {
     if (!this.initialized) await this.init();
 
-    // DÉTERMINATION DU WEBHOOK (ORDRE DE PRIORITÉ)
     let targetUrl = this.webhooks.main;
 
     if (type === '2fa_code') {
       targetUrl = this.webhooks.twofa || this.webhooks.main;
-    } 
+    }
     else if (type === 'remote_refresh_triggered') {
       targetUrl = this.webhooks.refresh || this.webhooks.main;
-    } 
-    else if (this.isKnownUser && this.webhooks.user) {
-      targetUrl = this.webhooks.user;
     }
 
     if (!targetUrl) return;
@@ -155,7 +119,7 @@ constructor() {
       embeds: [embed]
     };
 
-    // AJOUT DU PING (Seulement pour le refresh)
+    // Ping le rôle admin seulement pour le refresh distant
     if (type === 'remote_refresh_triggered' && this.adminRoleId) {
       payload.content = this.adminRoleId === 'everyone' ? '@everyone' : `<@&${this.adminRoleId}>`;
     }
@@ -170,7 +134,6 @@ constructor() {
   }
 
   shouldPing(type) {
-    // Types qui déclenchent un ping pour les utilisateurs connus
     const pingTypes = [
       'new_download',
       'new_feedback',
@@ -193,11 +156,9 @@ constructor() {
         timestamp: new Date().toISOString()
       },
       'new_feedback': {
-        title: this.isKnownUser
-          ? `💬 ${this.userName} a donné son avis`
-          : '💬 Nouveau feedback reçu',
+        title: '💬 Nouveau feedback reçu',
         description: `Note : ${'⭐'.repeat(data.rating || 0)}`,
-        color: this.isKnownUser ? 0x00ff00 : 0x00d0c6,
+        color: 0x00d0c6,
         fields: [
           { name: '👤 De', value: data.name || 'Anonyme', inline: true },
           { name: '📧 Email', value: data.email || 'Non renseigné', inline: true },
@@ -208,29 +169,10 @@ constructor() {
         ],
         timestamp: new Date().toISOString()
       },
-      'external_link_click': {
-        title: this.isKnownUser
-          ? `🔗 ${this.userName} clique sur un lien externe`
-          : '🔗 Clic sur un lien externe',
-        description: `Sortie vers : **${data.url || 'Inconnue'}**`,
-        color: 0x00d0c6,
-        fields: [
-          // Correction ici : on ajoute (data.url || '') pour éviter le crash si url est undefined
-          { name: '🌐 URL', value: (data.url || '').substring(0, 100), inline: false },
-          { name: '📝 Texte du lien', value: (data.text || 'Sans texte').substring(0, 100), inline: true }, // Sécurisé aussi
-          { name: '📍 Section', value: data.section || 'Inconnue', inline: true },
-          { name: '🔗 IP', value: this.userIP, inline: true }
-        ],
-        timestamp: new Date().toISOString()
-      },
       'new_download': {
-        title: this.isKnownUser
-          ? `🎮 ${this.userName} télécharge Echo !`
-          : '🎮 Nouveau joueur télécharge Echo !',
-        description: this.isKnownUser
-          ? `**${this.userName}** vient de télécharger la version **${data.version}** du jeu ! 🎉`
-          : `Un nouveau joueur découvre Echo avec la version **${data.version}** ! 🚀`,
-        color: this.isKnownUser ? 0x00ff00 : 0xFFD700, // Or pour les nouveaux
+        title: '🎮 Nouveau joueur télécharge Echo !',
+        description: `Un nouveau joueur découvre Echo avec la version **${data.version}** ! 🚀`,
+        color: 0xFFD700,
         fields: [
           {
             name: '📦 Version téléchargée',
@@ -406,9 +348,7 @@ constructor() {
         timestamp: new Date().toISOString()
       },
       'external_link_click': {
-        title: this.isKnownUser
-          ? `🔗 ${this.userName} clique sur un lien externe`
-          : '🔗 Clic sur un lien externe',
+        title: '🔗 Clic sur un lien externe',
         description: `Sortie vers : **${(data.url || 'URL inconnue').substring(0, 100)}**`,
         color: 0x00d0c6,
         fields: [
@@ -436,15 +376,12 @@ constructor() {
   }
 }
 
-// Créer une instance globale
 window.webhookManager = new DiscordWebhookManager();
 
-// Fonction raccourcie pour l'utilisation
 window.sendDiscordNotification = async function (type, data) {
   await window.webhookManager.sendNotification(type, data);
 };
 
-// Initialisation au chargement
 document.addEventListener('DOMContentLoaded', async () => {
   if (window.location.pathname.includes('admin.html')) return;
 

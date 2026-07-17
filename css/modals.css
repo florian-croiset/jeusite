@@ -1,12 +1,5 @@
-/* =========================================================
-   MODALS.CSS  
-   Fenêtres modales : accès secret & partage
-   ========================================================= */
 
-
-/* ---------------------------------------------------------
-   1. MODALE SECRET (fenêtre mot de passe / code)
---------------------------------------------------------- */
+/* MODALE SECRET (fenêtre mot de passe / code) */
 .secret-modal {
   position: fixed;
   top: 0;
@@ -90,9 +83,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   2. MODALE DE PARTAGE (QR / lien)
---------------------------------------------------------- */
+/* MODALE DE PARTAGE (QR / lien) */
 .share-box {
   text-align: center;
   max-width: 350px !important;
@@ -146,9 +137,7 @@
   border-color: var(--debut);
 }
 
-/* ---------------------------------------------------------
-   3. BOUTONS D’ACTION DES MODALES (annuler / confirmer)
---------------------------------------------------------- */
+/* BOUTONS D’ACTION DES MODALES (annuler / confirmer) */
 .btn-cancel,
 .btn-confirm {
   padding: 0.5rem 1.2rem;

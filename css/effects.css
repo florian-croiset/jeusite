@@ -1,12 +1,5 @@
-/* =========================================================
-   EFFECTS.CSS  
-   Animations et effets visuels globaux du site
-   ========================================================= */
 
-
-/* ---------------------------------------------------------
-   1. ANIMATIONS VISUELLES GÉNÉRALES
---------------------------------------------------------- */
+/* ANIMATIONS VISUELLES GÉNÉRALES */
 
 /* Étincelles / scintillement */
 @keyframes twinkle {
@@ -64,9 +57,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   2. ANIMATIONS DE BOUTONS ET HALO
---------------------------------------------------------- */
+/* ANIMATIONS DE BOUTONS ET HALO */
 
 /* Pulsation de boutons */
 @keyframes pulse-btn {
@@ -101,9 +92,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   3. ANIMATIONS DES PARTICULES
---------------------------------------------------------- */
+/* ANIMATIONS DES PARTICULES */
 
 /* Montée des particules décoratives */
 @keyframes floatParticle {
@@ -128,9 +117,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   4. AUTRES ANIMATIONS DE STYLE
---------------------------------------------------------- */
+/* AUTRES ANIMATIONS DE STYLE */
 
 /* Défilement du dégradé de la “version text” */
 @keyframes versionFlow {

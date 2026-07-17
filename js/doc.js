@@ -16,7 +16,6 @@ const colorPalette = [
     { name: "Brun Rouillé", hex: "#4A2D31", rgb: [74, 45, 49] }
 ];
 
-// Couleurs par défaut
 const defaultColors = {
     toc: "Cyan Clair",
     h1: "Cyan Primaire",
@@ -28,10 +27,9 @@ const defaultColors = {
     quote: "Cyan Primaire"
 };
 
-// Initialiser les sélecteurs de couleur
 function initColorSelectors() {
     const selectors = ['colorTOC', 'colorH1', 'colorH2', 'colorH3', 'colorH4', 'colorContent', 'colorTable', 'colorQuote'];
-    
+
     selectors.forEach(selectorId => {
         const select = document.getElementById(selectorId);
         colorPalette.forEach(color => {
@@ -42,8 +40,7 @@ function initColorSelectors() {
             select.appendChild(option);
         });
     });
-    
-    // Appliquer les couleurs par défaut
+
     document.getElementById('colorTOC').value = defaultColors.toc;
     document.getElementById('colorH1').value = defaultColors.h1;
     document.getElementById('colorH2').value = defaultColors.h2;
@@ -54,13 +51,12 @@ function initColorSelectors() {
     document.getElementById('colorQuote').value = defaultColors.quote;
 }
 
-// Initialiser les sélecteurs de couleur pour la page finale
 function initFinalPageColorSelectors() {
     const selectors = ['finalColorTitle', 'finalColorText', 'finalColorAccent'];
-    
+
     selectors.forEach(selectorId => {
         const select = document.getElementById(selectorId);
-        select.innerHTML = ''; // Vider d'abord
+        select.innerHTML = '';
         colorPalette.forEach(color => {
             const option = document.createElement('option');
             option.value = color.name;
@@ -69,39 +65,33 @@ function initFinalPageColorSelectors() {
             select.appendChild(option);
         });
     });
-    
-    // Valeurs par défaut
+
     document.getElementById('finalColorTitle').value = "Cyan Primaire";
     document.getElementById('finalColorText').value = "Noir Spatial";
     document.getElementById('finalColorAccent').value = "Turquoise Moyen";
 }
 
-// Basculer la modale
 function toggleFinalPageModal() {
     const modal = document.getElementById('finalPageModal');
     modal.classList.toggle('active');
 }
 
-// Fermer la modale en cliquant en dehors
 function closeFinalPageModal(event) {
     if (event.target.id === 'finalPageModal') {
         toggleFinalPageModal();
     }
 }
 
-// Sauvegarder les paramètres
 function saveFinalPageSettings() {
     toggleFinalPageModal();
     showSuccess('Paramètres de la page finale enregistrés !');
 }
 
-// Fonction pour obtenir la couleur RGB depuis le nom
 function getColorRGB(colorName) {
     const color = colorPalette.find(c => c.name === colorName);
     return color ? color.rgb : [0, 0, 0];
 }
 
-// Basculer l'affichage du panneau de couleurs
 function toggleColorPanel() {
     const panel = document.getElementById('colorPanel');
     if (panel.style.display === 'none') {
@@ -111,7 +101,6 @@ function toggleColorPanel() {
     }
 }
 
-// Réinitialiser les couleurs
 function resetColors() {
     document.getElementById('colorTOC').value = defaultColors.toc;
     document.getElementById('colorH1').value = defaultColors.h1;
@@ -121,11 +110,10 @@ function resetColors() {
     document.getElementById('colorContent').value = defaultColors.content;
     document.getElementById('colorTable').value = defaultColors.table;
     document.getElementById('colorQuote').value = defaultColors.quote;
-    
+
     showSuccess('Couleurs réinitialisées !');
 }
 
-// Configuration de marked
 const markedInstance = window.marked.marked ? window.marked.marked : window.marked;
 
 markedInstance.setOptions({
@@ -138,25 +126,22 @@ function updatePreview() {
     const renderer = new markedInstance.Renderer();
 const originalHtml = renderer.html.bind(renderer);
 renderer.html = (html) => {
-    // Bloquer script, iframe, etc.
+    // Bloque script/iframe/javascript: (XSS)
     if (/<script|<iframe|javascript:/i.test(html.text || html)) return '';
     return originalHtml(html);
 };
 markedInstance.setOptions({ breaks: true, gfm: true, renderer });
 
-    // Mise à jour du compteur de mots
+    preview.innerHTML = markedInstance.parse(markdown);
+
     const text = markdown.trim();
     const words = text ? text.split(/\s+/).length : 0;
     document.getElementById('wordCount').textContent = `${words} mots`;
 }
 
-// Mise à jour de l'aperçu en temps réel
 markdownInput.addEventListener('input', updatePreview);
-
-// Initialiser l'aperçu
 updatePreview();
 
-// Fonctions d'insertion Markdown
 function insertMarkdown(before, after) {
     const start = markdownInput.selectionStart;
     const end = markdownInput.selectionEnd;
@@ -199,7 +184,6 @@ function insertTable() {
     insertMarkdown(table, '');
 }
 
-// Copier le Markdown
 function copyMarkdown() {
     markdownInput.select();
     document.execCommand('copy');
@@ -212,7 +196,6 @@ function copyMarkdown() {
     }, 2000);
 }
 
-// Télécharger le fichier Markdown
 function downloadMarkdown() {
     const markdown = markdownInput.value;
     const docTitle = document.getElementById('docTitle').value || 'document';
@@ -220,7 +203,6 @@ function downloadMarkdown() {
     downloadFile(blob, `${docTitle}.md`);
 }
 
-// Générer la table des matières
 function generateTOC(markdown) {
     const lines = markdown.split('\n');
     const toc = [];
@@ -256,7 +238,7 @@ function generateTOC(markdown) {
     return toc.join('\n');
 }
 
-// Export PDF - VERSION COMPLÈTE AVEC TEXTE NATIF
+// Export PDF
 async function exportToPDF() {
     showLoading('Génération du fichier PDF...');
 
@@ -264,7 +246,6 @@ async function exportToPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('p', 'mm', 'a4');
 
-        // Chargement de la police Silkscreen
         try {
             const fontUrl = 'Silkscreen-Bold.ttf';
             const fontResp = await fetch(fontUrl);
@@ -286,7 +267,6 @@ async function exportToPDF() {
         const usePageNumbers = document.getElementById('optPageNumbers').checked;
         const isEcoMode = document.getElementById('optEcoPrint').checked;
 
-        // Métadonnées du document
         doc.setProperties({
             title: docTitle,
             author: docAuthor,
@@ -296,7 +276,6 @@ async function exportToPDF() {
             producer: 'Echo Docs 1.0'
         });
 
-        // Couleurs personnalisées (PAGE DE GARDE INTACTE)
         const customColors = {
             toc: getColorRGB(document.getElementById('colorTOC').value),
             h1: getColorRGB(document.getElementById('colorH1').value),
@@ -332,7 +311,6 @@ async function exportToPDF() {
             doc.rect(0, 0, pageWidth, pageHeight, 'F');
         }
 
-        // Bordure décorative
         doc.setDrawColor(...colors.primary);
         doc.setLineWidth(1);
         doc.rect(10, 10, 190, 277);
@@ -340,7 +318,6 @@ async function exportToPDF() {
         doc.setLineWidth(0.3);
         doc.rect(12, 12, 186, 273);
 
-        // Logo
         const logoUrl = "https://florian-croiset.github.io/jeusite/assets/pnglogoEcercle.png";
         try {
             doc.addImage(logoUrl, 'PNG', 70, 120, 70, 70);
@@ -348,7 +325,7 @@ async function exportToPDF() {
             console.warn("Logo non chargé");
         }
 
-        // Titre ECHO en utilisant canvas pour la police Silkscreen
+        // Titre ECHO rendu via canvas (police Silkscreen)
         try {
             await document.fonts.load('1em Silkscreen');
             const canvas = document.createElement('canvas');
@@ -366,19 +343,16 @@ async function exportToPDF() {
             console.warn('Titre ECHO en image non généré');
         }
 
-        // Titre du document
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(28);
         const titleColor = isEcoMode ? colors.accent : colors.primaryLight;
         doc.setTextColor(...titleColor);
         doc.text(docTitle.toUpperCase(), pageWidth / 2, 90, { align: 'center' });
 
-        // Auteur
         doc.setFontSize(16);
         doc.setTextColor(...colors.accent);
         doc.text(`Par ${docAuthor}`, pageWidth / 2, 200, { align: 'center' });
 
-        // Lien Team Nightberry
         doc.setFontSize(10);
         doc.setTextColor(...colors.accent);
         const text = 'Par la Team Nightberry';
@@ -399,12 +373,10 @@ if (useVersion) {
     doc.text(`Version ${version}`, pageWidth / 2, 252, { align: 'center' });
 }
 
-        // Date
         doc.setFontSize(12);
         doc.setTextColor(...colors.primaryLight);
         doc.text(new Date().toLocaleDateString('fr-FR'), pageWidth / 2, 260, { align: 'center' });
 
-        // Ligne décorative
         doc.setDrawColor(...colors.primary);
         doc.setLineWidth(0.5);
         doc.line(60, 100, 150, 100);
@@ -458,13 +430,13 @@ if (useVersion) {
 const useFinalPage = document.getElementById('optFinalPage').checked;
 if (useFinalPage) {
     doc.addPage();
-    
+
     const finalColors = {
         title: getColorRGB(document.getElementById('finalColorTitle').value),
         text: getColorRGB(document.getElementById('finalColorText').value),
         accent: getColorRGB(document.getElementById('finalColorAccent').value)
     };
-    
+
     const showTitle = document.getElementById('finalShowTitle').checked;
     const showVersion = document.getElementById('finalShowVersion').checked;
     const showDate = document.getElementById('finalShowDate').checked;
@@ -473,15 +445,13 @@ if (useFinalPage) {
     const showDesc = document.getElementById('finalShowDesc').checked;
     const showCustomText = document.getElementById('finalShowCustomText').checked;
     const showPageNum = document.getElementById('finalShowPageNum').checked;
-    
+
     let yFinal = 40;
-    
-    // Bordure décorative
+
     doc.setDrawColor(...finalColors.accent);
     doc.setLineWidth(0.5);
     doc.rect(15, 15, pageWidth - 30, pageHeight - 30);
-    
-    // Titre
+
     if (showTitle) {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(26);
@@ -489,8 +459,7 @@ if (useFinalPage) {
         doc.text(docTitle.toUpperCase(), pageWidth / 2, yFinal, { align: 'center' });
         yFinal += 20;
     }
-    
-    // Version
+
     if (showVersion && useVersion) {
         const version = document.getElementById('docVersion').value || 'v1.0';
         doc.setFont('helvetica', 'normal');
@@ -499,8 +468,7 @@ if (useFinalPage) {
         doc.text(`Version ${version}`, pageWidth / 2, yFinal, { align: 'center' });
         yFinal += 12;
     }
-    
-    // Date
+
     if (showDate) {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(12);
@@ -508,14 +476,12 @@ if (useFinalPage) {
         doc.text(new Date().toLocaleDateString('fr-FR'), pageWidth / 2, yFinal, { align: 'center' });
         yFinal += 15;
     }
-    
-    // Ligne séparatrice
+
     doc.setDrawColor(...finalColors.accent);
     doc.setLineWidth(0.3);
     doc.line(40, yFinal, pageWidth - 40, yFinal);
     yFinal += 15;
-    
-    // Auteur principal
+
     if (showAuthor) {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
@@ -528,8 +494,7 @@ if (useFinalPage) {
         doc.text(docAuthor, pageWidth / 2, yFinal, { align: 'center' });
         yFinal += 15;
     }
-    
-    // Liste des auteurs
+
     if (showAuthors) {
         const authorsList = document.getElementById('finalAuthorsList').value;
         if (authorsList.trim()) {
@@ -538,7 +503,7 @@ if (useFinalPage) {
             doc.setTextColor(...finalColors.accent);
             doc.text('CONTRIBUTEURS', pageWidth / 2, yFinal, { align: 'center' });
             yFinal += 8;
-            
+
             const authors = authorsList.split('\n').filter(a => a.trim());
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
@@ -550,8 +515,7 @@ if (useFinalPage) {
             yFinal += 10;
         }
     }
-    
-    // Description
+
     if (showDesc) {
         const description = document.getElementById('finalDescription').value;
         if (description.trim()) {
@@ -560,7 +524,7 @@ if (useFinalPage) {
             doc.setTextColor(...finalColors.accent);
             doc.text('DESCRIPTION', pageWidth / 2, yFinal, { align: 'center' });
             yFinal += 8;
-            
+
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
             doc.setTextColor(...finalColors.text);
@@ -572,8 +536,7 @@ if (useFinalPage) {
             yFinal += 10;
         }
     }
-    
-    // Texte personnalisé
+
     if (showCustomText) {
         const customText = document.getElementById('finalCustomText').value;
         if (customText.trim()) {
@@ -587,25 +550,24 @@ if (useFinalPage) {
             });
         }
     }
-    
-    // Numéro de page personnalisé
+
     if (showPageNum) {
         const pageNumPos = document.getElementById('finalPageNumPos').value;
         const customPageNum = document.getElementById('finalCustomPageNum').value;
         const pageText = customPageNum || `${doc.internal.getNumberOfPages()}`;
-        
+
         doc.setFontSize(10);
         doc.setTextColor(...finalColors.accent);
-        
+
         let xPos = pageWidth / 2;
         let yPos = pageHeight - 10;
         let align = 'center';
-        
+
         if (pageNumPos.includes('left')) { xPos = 20; align = 'left'; }
         else if (pageNumPos.includes('right')) { xPos = pageWidth - 20; align = 'right'; }
-        
+
         if (pageNumPos.startsWith('top')) yPos = 15;
-        
+
         doc.text(pageText, xPos, yPos, { align: align });
     }
 }
@@ -621,7 +583,6 @@ if (useFinalPage) {
     }
 }
 
-// Fonction principale de rendu Markdown vers PDF
 async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, colors, customColors, margin, contentWidth, pageWidth, pageHeight) {
     const lines = markdown.split('\n');
     let yPos = margin;
@@ -680,16 +641,13 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
 
             checkPageBreak(blockHeight + 5);
 
-            // Fond du bloc de code
             doc.setFillColor(...colors.codeGray);
             doc.roundedRect(margin, yPos, contentWidth, blockHeight, 3, 3, 'F');
 
-            // Bordure
             doc.setDrawColor(...colors.lightGray);
             doc.setLineWidth(0.1);
             doc.roundedRect(margin, yPos, contentWidth, blockHeight, 3, 3, 'S');
 
-            // Texte du code
             doc.setFont('courier', 'normal');
             doc.setFontSize(9);
             doc.setTextColor(...colors.black);
@@ -911,11 +869,9 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
         yPos += 5;
     }
 
-    // Parcours des lignes
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
 
-        // Gestion des blocs de code
         if (line.startsWith('```')) {
             if (!inCodeBlock) {
                 inCodeBlock = true;
@@ -931,7 +887,6 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Détection de tableau
         if (line.match(/^\|(.+)\|$/)) {
             if (!inTable) {
                 inTable = true;
@@ -945,7 +900,6 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             tableLines = [];
         }
 
-        // Saut de ligne avec <br>
         if (line.includes('<br>')) {
             const cleanLine = line.replace(/<br>/g, '').replace(/\s+$/, '');
             if (cleanLine.trim()) {
@@ -956,14 +910,13 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Ligne vide
         if (line.trim() === '') {
             yPos += 5;
             lastBlockType = 'empty';
             continue;
         }
 
-        // Titres H1
+        // H1
         if (line.startsWith('# ')) {
             checkPageBreak(20);
             sectionNumber.h1++;
@@ -985,7 +938,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Titres H2
+        // H2
         if (line.startsWith('## ')) {
             checkPageBreak(15);
             sectionNumber.h2++;
@@ -1006,7 +959,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Titres H3
+        // H3
         if (line.startsWith('### ')) {
             checkPageBreak(12);
             sectionNumber.h3++;
@@ -1021,7 +974,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Titres H4
+        // H4
         if (line.startsWith('#### ')) {
             checkPageBreak(10);
             const text = line.substring(5);
@@ -1034,7 +987,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Titres H5
+        // H5
         if (line.startsWith('##### ')) {
             checkPageBreak(8);
             const text = line.substring(6);
@@ -1047,7 +1000,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Titres H6
+        // H6
         if (line.startsWith('###### ')) {
             checkPageBreak(8);
             const text = line.substring(7);
@@ -1070,7 +1023,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             checkPageBreak(8);
 
             if (lastBlockType === 'paragraph') {
-                yPos -= 2; 
+                yPos -= 2;
             }
 
             const bulletX = margin + (level * 10);
@@ -1089,7 +1042,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Listes numérotées
+        // Liste numérotée
         if (line.match(/^(\s*)(\d+\.)\s(.+)$/)) {
             const match = line.match(/^(\s*)(\d+\.)\s(.+)$/);
             const indent = match[1].length;
@@ -1119,7 +1072,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Citations
+        // Citation
         if (line.startsWith('> ')) {
             checkPageBreak(10);
             const quoteText = line.substring(2);
@@ -1143,7 +1096,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Séparateurs
+        // Séparateur
         if (line.trim() === '---') {
             checkPageBreak(8);
             doc.setDrawColor(...colors.lightGray);
@@ -1153,7 +1106,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Images
+        // Image
         if (line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)) {
             const match = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
             const alt = match[1];
@@ -1188,7 +1141,7 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
             continue;
         }
 
-        // Paragraphes normaux
+        // Paragraphe
         if (line.trim()) {
             checkPageBreak(8);
             renderParagraphWithFormatting(line, 11, 6);
@@ -1197,12 +1150,10 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
         }
     }
 
-    // Rendu final des éléments en attente
     if (inTable && tableLines.length > 0) {
         renderTable(tableLines);
     }
 
-    // Dernière page number
     if (usePageNumbers) {
         doc.setFontSize(10);
         doc.setTextColor(...colors.accent);
@@ -1210,7 +1161,6 @@ async function renderMarkdownToPDF(doc, markdown, useNumbering, usePageNumbers, 
     }
 }
 
-// Fonction pour charger une image en base64
 async function loadImageAsBase64(url) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -1228,7 +1178,6 @@ async function loadImageAsBase64(url) {
     });
 }
 
-// Fonctions utilitaires
 function showLoading(message) {
     loadingText.textContent = message;
     loadingModal.classList.add('active');
@@ -1286,11 +1235,8 @@ function showWarning(message) {
     }, 3000);
 }
 
-// ========================================
-// IMPORT / EXPORT DE CONFIGURATION
-// ========================================
+// ===== IMPORT / EXPORT DE CONFIGURATION =====
 
-// Fonction pour collecter tous les paramètres
 function collectSettings() {
     return {
         version: "1.0",
@@ -1338,21 +1284,18 @@ function collectSettings() {
     };
 }
 
-// Fonction pour appliquer les paramètres
 function applySettings(settings) {
     if (!settings || settings.version !== "1.0") {
         showWarning('Format de configuration non reconnu');
         return;
     }
 
-    // Document
     if (settings.document) {
         document.getElementById('docTitle').value = settings.document.title || 'Document Echo';
         document.getElementById('docAuthor').value = settings.document.author || 'Team Nightberry';
         document.getElementById('docVersion').value = settings.document.version || 'v1.0';
     }
 
-    // Options
     if (settings.options) {
         document.getElementById('optTOC').checked = settings.options.toc !== false;
         document.getElementById('optNumbering').checked = settings.options.numbering !== false;
@@ -1361,7 +1304,6 @@ function applySettings(settings) {
         document.getElementById('optVersion').checked = settings.options.showVersion || false;
     }
 
-    // Couleurs
     if (settings.colors) {
         document.getElementById('colorTOC').value = settings.colors.toc || defaultColors.toc;
         document.getElementById('colorH1').value = settings.colors.h1 || defaultColors.h1;
@@ -1373,7 +1315,6 @@ function applySettings(settings) {
         document.getElementById('colorQuote').value = settings.colors.quote || defaultColors.quote;
     }
 
-    // Page finale
     if (settings.finalPage) {
         document.getElementById('optFinalPage').checked = settings.finalPage.enabled || false;
         document.getElementById('finalShowTitle').checked = settings.finalPage.showTitle !== false;
@@ -1397,7 +1338,6 @@ function applySettings(settings) {
     showSuccess('Configuration importée avec succès !');
 }
 
-// Export des paramètres
 function exportSettings() {
     const settings = collectSettings();
     const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
@@ -1406,7 +1346,6 @@ function exportSettings() {
     showSuccess('Configuration exportée !');
 }
 
-// Import des paramètres
 function importSettings() {
     document.getElementById('settingsFileInput').click();
 }
@@ -1426,14 +1365,12 @@ function handleSettingsImport(event) {
         }
     };
     reader.readAsText(file);
-    
+
     // Reset input pour permettre de réimporter le même fichier
     event.target.value = '';
 }
 
-// ========================================
-// IMPORT DE FICHIERS MARKDOWN
-// ========================================
+// ===== IMPORT DE FICHIERS MARKDOWN =====
 
 function importMarkdown() {
     document.getElementById('mdFileInput').click();
@@ -1446,7 +1383,7 @@ function handleMdImport(event) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const content = e.target.result;
-        
+
         // Demander confirmation si l'éditeur contient déjà du texte
         if (markdownInput.value.trim() && markdownInput.value !== markdownInput.defaultValue) {
             if (!confirm('Remplacer le contenu actuel par le fichier importé ?')) {
@@ -1454,19 +1391,18 @@ function handleMdImport(event) {
                 return;
             }
         }
-        
+
         markdownInput.value = content;
         updatePreview();
         localStorage.setItem('echo_content', content);
         showSuccess(`Fichier "${file.name}" importé avec succès !`);
     };
     reader.readAsText(file);
-    
+
     // Reset input pour permettre de réimporter le même fichier
     event.target.value = '';
 }
 
-// Au chargement
 window.onload = () => {
     initColorSelectors();
     initFinalPageColorSelectors();
@@ -1477,7 +1413,7 @@ window.onload = () => {
     }
 };
 
-// Sauvegarde automatique
+// Sauvegarde automatique dans localStorage
 markdownInput.addEventListener('input', () => {
     updatePreview();
     localStorage.setItem('echo_content', markdownInput.value);

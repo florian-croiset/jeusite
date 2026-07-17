@@ -1,12 +1,4 @@
-/* =========================================================
-   BASE.CSS  
-   Styles de base et réinitialisation globale
-   ========================================================= */
-
-
-/* ---------------------------------------------------------
-   1. RESET GÉNÉRAL
---------------------------------------------------------- */
+/* RESET GÉNÉRAL */
 * {
   margin: 0;
   padding: 0;
@@ -14,9 +6,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   2. STYLE GLOBAL DU BODY
---------------------------------------------------------- */
+/* STYLE GLOBAL DU BODY */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #0a0a0a;
@@ -28,9 +18,7 @@ body {
 }
 
 
-/* ---------------------------------------------------------
-   3. DÉSACTIVATION DE LA SÉLECTION DE TEXTE
---------------------------------------------------------- */
+/* DÉSACTIVATION DE LA SÉLECTION DE TEXTE */
 body {
   -webkit-user-select: none; /* Safari, Chrome, Opera */
   -moz-user-select: none;    /* Firefox */

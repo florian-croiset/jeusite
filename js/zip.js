@@ -1,4 +1,4 @@
-// Liste de tous vos fichiers assets (à mettre à jour selon votre dossier)
+// Fichiers assets inclus dans le kit complet téléchargeable
 const assetFiles = [
     'assets/favicon.ico',
     'assets/jpgLogoEGA.jpg',
@@ -24,10 +24,7 @@ const assetFiles = [
     'assets/svgQRCode.svg'
 ];
 
-// ═══════════════════════════════════════════════════════════════════
-// ECHO - KIT COMPLET CHARTE GRAPHIQUE - FONCTION COMPLÈTE
-// Par Team Nightberry
-// ═══════════════════════════════════════════════════════════════════
+// Génère et télécharge le kit complet de la charte graphique (ZIP)
 let siteVersion = '2.0'; // Version par défaut
 try {
     const { data } = await window.EchoDB.supabase
@@ -52,7 +49,6 @@ window.downloadCharter = async function () {
 
         const zip = new JSZip();
 
-        // Message de chargement
         const progressMsg = document.createElement('div');
         progressMsg.style.cssText = `
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -72,9 +68,7 @@ window.downloadCharter = async function () {
             document.getElementById('kitProgress').textContent = msg;
         };
 
-        // ═══════════════════════════════════════════════════════════════
         // 1. DOSSIER ASSETS - Tous les fichiers visuels existants
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📦 Chargement des assets...');
         const assetsFolder = zip.folder("assets");
 
@@ -91,9 +85,7 @@ window.downloadCharter = async function () {
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
         // 2. DOCUMENTATION
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📄 Génération de la documentation...');
         const docFolder = zip.folder("documentation");
 
@@ -396,9 +388,7 @@ body, p {
 `;
         docFolder.file("typographie.txt", typoGuide);
 
-        // ═══════════════════════════════════════════════════════════════
         // 3. TEMPLATES HTML/CSS
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('🎨 Création des templates...');
         const templatesFolder = zip.folder("templates");
 
@@ -700,9 +690,7 @@ body, p {
 </html>`;
         templatesFolder.file("card_template.html", cardTemplate);
 
-        // ═══════════════════════════════════════════════════════════════
         // 4. COMPOSANTS UI
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('🧩 Génération des composants...');
         const componentsFolder = zip.folder("components");
 
@@ -787,9 +775,7 @@ body, p {
 </html>`;
         componentsFolder.file("navbar.html", navbarComponent);
 
-        // ═══════════════════════════════════════════════════════════════
         // 5. GUIDES D'INTÉGRATION
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📚 Rédaction des guides d\'intégration...');
         const integrationFolder = zip.folder("integration");
 
@@ -967,9 +953,7 @@ Assets/
 `;
         integrationFolder.file("unity_guide.txt", unityGuide);
 
-        // ═══════════════════════════════════════════════════════════════
         // 6. LAYOUT & GRID SYSTEM
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📐 Création du système de grille...');
         const layoutFolder = zip.folder("layout");
 
@@ -1080,9 +1064,7 @@ POURQUOI 8PX ?
 `;
         layoutFolder.file("spacing_system.txt", spacingDoc);
 
-        // ═══════════════════════════════════════════════════════════════
         // 7. BEST PRACTICES
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('✨ Rédaction des bonnes pratiques...');
         const bestPracticesFolder = zip.folder("best_practices");
 
@@ -1227,9 +1209,7 @@ CHECKLIST PERFORMANCE
 `;
         bestPracticesFolder.file("performance.txt", performanceGuide);
 
-        // ═══════════════════════════════════════════════════════════════
         // 8. SOCIAL MEDIA ASSETS (Structure)
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📱 Préparation des templates réseaux sociaux...');
         const socialFolder = zip.folder("social_media");
 
@@ -1297,9 +1277,7 @@ TEMPLATES À CRÉER
 `;
         socialFolder.file("README_social_media.txt", socialGuide);
 
-        // ═══════════════════════════════════════════════════════════════
         // 9. APP ICONS (Structure)
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📲 Configuration des icônes d\'application...');
         const appIconsFolder = zip.folder("app_icons");
 
@@ -1352,9 +1330,7 @@ Compression: Optimale sans perte de qualité
 `;
         appIconsFolder.file("README_app_icons.txt", iconGuide);
 
-        // ═══════════════════════════════════════════════════════════════
         // 10. HUD ELEMENTS (Structure)
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('🎮 Création des éléments HUD...');
         const hudFolder = zip.folder("hud_elements");
 
@@ -1429,9 +1405,7 @@ FICHIERS À CRÉER
 `;
         hudFolder.file("README_hud_elements.txt", hudGuide);
 
-        // ═══════════════════════════════════════════════════════════════
         // 11. TOOLS (Générateurs)
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('🛠️ Création des outils...');
         const toolsFolder = zip.folder("tools");
 
@@ -1578,9 +1552,7 @@ background: \${gradient};
 </html>`;
         toolsFolder.file("gradient_generator.html", colorPickerTool);
 
-        // ═══════════════════════════════════════════════════════════════
         // 12. CHECKLISTS
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('✅ Génération des checklists...');
         const checklistFolder = zip.folder("checklist");
 
@@ -1768,9 +1740,7 @@ COMMUNICATION
 `;
         checklistFolder.file("launch_checklist.txt", launchChecklist);
 
-        // ═══════════════════════════════════════════════════════════════
         // 13. LICENCE & CERTIFICAT
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('📜 Génération de la licence...');
 
         const licence = `═══════════════════════════════════════════════════════════════════════
@@ -1961,9 +1931,7 @@ VERSION 1.0 - [Date antérieure]
 `;
         zip.file("CHANGELOG.txt", changelog);
 
-        // ═══════════════════════════════════════════════════════════════
         // FINALISATION & TÉLÉCHARGEMENT
-        // ═══════════════════════════════════════════════════════════════
         updateProgress('⚡ Finalisation du pack...');
 
         const content = await zip.generateAsync({
@@ -1980,10 +1948,8 @@ VERSION 1.0 - [Date antérieure]
         link.click();
         URL.revokeObjectURL(url);
 
-        // Retirer le message de chargement
         document.body.removeChild(progressMsg);
 
-        // Message de succès
         const successMsg = document.createElement('div');
         successMsg.style.cssText = `
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);

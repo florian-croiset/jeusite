@@ -7,14 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔬 Echo Test -Database & Files</title>
-    <!-- REMPLACE ces lignes dans le <head> : -->
-<!-- <script src="js/ip-detection.js"></script> -->
-<!-- <script type="module" src="js/discord-webhook.js"></script> -->
-<!-- <script src="js/discord-tracker.js"></script> -->
-<!-- <script type="module" src="js/remote-refresh.js"></script> -->
-<!-- <script>...(ancien script protection)...</script> -->
-
-<!-- PAR : -->
+    <script src="js/ip-detection.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
@@ -43,6 +36,8 @@
             if (!profile || profile.role !== 'admin') throw new Error('rôle insuffisant');
 
             // ✅ Accès autorisé
+            window._adminUser = user;
+            window._adminProfile = profile;
             document.body.style.visibility = 'visible';
 
         } catch {
@@ -587,6 +582,25 @@
             </div>
 
     </div>
+
+        <!-- Détection IP & Profil -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:20px;margin-top:20px;">
+            <div class="test-section">
+                <h2><i class="fas fa-location-crosshairs"></i> Détection IP</h2>
+                <div class="controls" style="justify-content:flex-start;margin:0 0 15px 0;">
+                    <button onclick="testIPDetection()">🚀 Détecter mon IP</button>
+                    <button onclick="testAllIPServices()">🧪 Tester les services</button>
+                    <button onclick="testIPEnrichment()">✨ Enrichissement</button>
+                </div>
+                <div id="ip-detection-results"></div>
+            </div>
+
+            <div class="test-section">
+                <h2><i class="fas fa-user-shield"></i> Mon profil</h2>
+                <div id="profile-info"></div>
+            </div>
+        </div>
+
         <!-- Console de logs -->
         <div class="console-log">
             <h2><i class="fas fa-terminal"></i> Console de logs</h2>
@@ -606,17 +620,15 @@
         // Tables à tester
         const TABLES = {
             main: [
-                'admin_access_codes', 'birthdays', 'bot_status', 'countdown', 'deadlines',
+                'admin_access_codes', 'countdown',
                 'download_packs', 'downloads', 'form_responses', 'forms', 'game_versions',
-                'links', 'lore', 'media', 'meetings', 'news', 'notifications', 'profiles',
-                'remote_commands', 'roadmap_items', 'roadmap_votes', 'role_changes',
-                'site_content', 'site_settings', 'suggestions', 'tasks', 'time_tracking',
-                'tracked_users', 'tracking_events', 'user_sessions', 'webhook_settings'
+                'page_views', 'profiles',
+                'remote_commands', 'roadmap_items', 'roadmap_suggestions', 'roadmap_votes',
+                'site_settings',
+                'user_sessions', 'webhook_settings'
             ],
             stats: [
-                'download_settings', 'download_stats', 'downloads_by_version',
-                'recent_activity', 'stats_overview', 'tracked_users_stats',
-                'user_permissions', 'version_stats'
+                'download_settings'
             ]
         };
 
@@ -653,11 +665,9 @@
 
             // ===== CSS =====
             'https://florian-croiset.github.io/jeusite/css/admin.css',
-            'https://florian-croiset.github.io/jeusite/css/auth.css',
             'https://florian-croiset.github.io/jeusite/css/components.css',
             'https://florian-croiset.github.io/jeusite/css/couleurs.css',
             'https://florian-croiset.github.io/jeusite/css/cursor.css',
-            'https://florian-croiset.github.io/jeusite/css/database-styles.css',
             'https://florian-croiset.github.io/jeusite/css/design.css',
             'https://florian-croiset.github.io/jeusite/css/doc.css',
             'https://florian-croiset.github.io/jeusite/css/effects.css',
@@ -675,9 +685,7 @@
             'https://florian-croiset.github.io/jeusite/css/style.css',
 
             // ===== JS racine =====
-            'https://florian-croiset.github.io/jeusite/js/auth.js',
             'https://florian-croiset.github.io/jeusite/js/database.js',
-            'https://florian-croiset.github.io/jeusite/js/database-complete.js',
             'https://florian-croiset.github.io/jeusite/js/design.js',
             'https://florian-croiset.github.io/jeusite/js/discord-tracker.js',
             'https://florian-croiset.github.io/jeusite/js/discord-webhook.js',
@@ -686,7 +694,6 @@
             'https://florian-croiset.github.io/jeusite/js/liens.js',
             'https://florian-croiset.github.io/jeusite/js/main.js',
             'https://florian-croiset.github.io/jeusite/js/modal-advanced.js',
-            'https://florian-croiset.github.io/jeusite/js/notifications.js',
             'https://florian-croiset.github.io/jeusite/js/remote-refresh.js',
             'https://florian-croiset.github.io/jeusite/js/zip.js',
 
@@ -696,14 +703,12 @@
             // ===== JS/ui =====
             'https://florian-croiset.github.io/jeusite/js/ui/buttons.js',
             'https://florian-croiset.github.io/jeusite/js/ui/cursor.js',
-            'https://florian-croiset.github.io/jeusite/js/ui/modal.js',
             'https://florian-croiset.github.io/jeusite/js/ui/music.js',
             'https://florian-croiset.github.io/jeusite/js/ui/navbar.js',
             'https://florian-croiset.github.io/jeusite/js/ui/scroll.js',
 
             // ===== JS/utils =====
             'https://florian-croiset.github.io/jeusite/js/utils/clipboard.js',
-            'https://florian-croiset.github.io/jeusite/js/utils/countdown.js',
             'https://florian-croiset.github.io/jeusite/js/utils/screen.js',
             'https://florian-croiset.github.io/jeusite/js/utils/settings.js',
             'https://florian-croiset.github.io/jeusite/js/utils/share.js',
@@ -716,14 +721,10 @@
             'https://florian-croiset.github.io/jeusite/diapo.html',
             'https://florian-croiset.github.io/jeusite/doc.html',
             'https://florian-croiset.github.io/jeusite/feedback.html',
-            'https://florian-croiset.github.io/jeusite/int.html',
             'https://florian-croiset.github.io/jeusite/liens.html',
             'https://florian-croiset.github.io/jeusite/links.html',
             'https://florian-croiset.github.io/jeusite/roadmap.html',
-            'https://florian-croiset.github.io/jeusite/versions.html',
-
-            // ===== Exécutable =====
-            'https://florian-croiset.github.io/jeusite/executable/Echo_TeamNightberry_v1.exe'
+            'https://florian-croiset.github.io/jeusite/versions.html'
         ];
 
         // Logging
@@ -811,7 +812,7 @@
 
             // Modules EchoDB
             if (hasEchoDB) {
-                const modules = ['Auth', 'Content', 'Media', 'GameVersions', 'Countdown', 'Forms', 'News'];
+                const modules = ['Auth', 'GameVersions', 'Countdown', 'Forms'];
                 let allModules = true;
                 modules.forEach(mod => {
                     if (!window.EchoDB[mod]) allModules = false;
@@ -937,9 +938,6 @@
                 const { count: profils } = await window.EchoDB.supabase.from('profiles').select('*', { count: 'exact', head: true });
                 displayTestResult('db-data-info', 'Profils', 'info', `${profils || 0} utilisateurs`);
 
-                const { count: medias } = await window.EchoDB.supabase.from('media').select('*', { count: 'exact', head: true });
-                displayTestResult('db-data-info', 'Médias', 'info', `${medias || 0} fichiers`);
-
                 log('Données récupérées avec succès', 'success');
             } catch (e) {
                 displayTestResult('db-data-info', 'Erreur critique', false, e.message);
@@ -948,6 +946,11 @@
 
         // Test complet de la base de données
         async function testDatabase() {
+            if (document.getElementById('btn-run-all').disabled) {
+                log('⏳ Un test complet est déjà en cours, patientez...', 'warning');
+                return;
+            }
+
             log('=== DÉBUT TEST DATABASE ===');
             testResults = { success: 0, error: 0, total: 0 };
 
@@ -978,6 +981,11 @@
 
         // Lancer tous les tests
         async function runAllTests() {
+            if (document.getElementById('btn-db').disabled) {
+                log('⏳ Un test de base de données est déjà en cours, patientez...', 'warning');
+                return;
+            }
+
             log('');
             log('🚀 DÉBUT DES TESTS COMPLETS');
             log('============================');
@@ -1033,6 +1041,88 @@
             document.getElementById('btn-github').disabled = false;
         }
 
+        // ===== Détection IP (repris de ip.html) =====
+        async function testIPDetection() {
+            const container = document.getElementById('ip-detection-results');
+            container.innerHTML = '';
+            if (!window.ipDetector) {
+                displayTestResult('ip-detection-results', 'Service IP', false, 'js/ip-detection.js non chargé');
+                return;
+            }
+            try {
+                const data = await window.ipDetector.detect();
+                displayTestResult('ip-detection-results', 'Adresse IP', true, data.ip);
+                displayTestResult('ip-detection-results', 'Ville', 'info', data.city || 'N/A');
+                displayTestResult('ip-detection-results', 'Pays', 'info', `${data.country || 'N/A'} ${data.country_emoji || ''}`);
+                displayTestResult('ip-detection-results', 'FAI', 'info', data.isp || 'N/A');
+                log('Détection IP réussie', 'success');
+            } catch (error) {
+                displayTestResult('ip-detection-results', 'Détection IP', false, error.message);
+                log('Erreur détection IP: ' + error.message, 'error');
+            }
+        }
+
+        async function testAllIPServices() {
+            const container = document.getElementById('ip-detection-results');
+            container.innerHTML = '';
+            const services = [
+                { name: 'ip-api', url: 'http://ip-api.com/json/', parse: (data) => ({ ip: data.query, city: data.city }) }
+            ];
+            for (const service of services) {
+                try {
+                    const response = await fetch(service.url);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = service.parse(await response.json());
+                    displayTestResult('ip-detection-results', service.name, true, JSON.stringify(data));
+                } catch (error) {
+                    displayTestResult('ip-detection-results', service.name, false, error.message);
+                }
+            }
+        }
+
+        async function testIPEnrichment() {
+            const container = document.getElementById('ip-detection-results');
+            container.innerHTML = '';
+            if (!window.ipDetector) {
+                displayTestResult('ip-detection-results', 'Service IP', false, 'js/ip-detection.js non chargé');
+                return;
+            }
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const ipData = await response.json();
+                window.ipDetector.ipData = { ip: ipData.ip };
+                await window.ipDetector.enrichData();
+                displayTestResult('ip-detection-results', 'Avant enrichissement', 'info', ipData.ip);
+                displayTestResult('ip-detection-results', 'Après enrichissement', true, window.ipDetector.getLocationString());
+            } catch (error) {
+                displayTestResult('ip-detection-results', 'Enrichissement', false, error.message);
+            }
+        }
+
+        // ===== Mon profil (repris de profile.html) =====
+        function loadProfileInfo() {
+            const container = document.getElementById('profile-info');
+            container.innerHTML = '';
+            const user = window._adminUser;
+            const profile = window._adminProfile;
+            if (!user) {
+                displayTestResult('profile-info', 'Session', false, 'Non connecté');
+                return;
+            }
+            displayTestResult('profile-info', 'Email', 'info', user.email);
+            displayTestResult('profile-info', 'ID utilisateur', 'info', user.id);
+            displayTestResult('profile-info', 'Rôle', true, profile?.role || 'inconnu');
+
+            const logoutBtn = document.createElement('button');
+            logoutBtn.style.marginTop = '15px';
+            logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
+            logoutBtn.onclick = async () => {
+                await _supabase.auth.signOut();
+                window.location.href = 'index.html';
+            };
+            container.appendChild(logoutBtn);
+        }
+
         // Attendre EchoDB
         function waitForEchoDB() {
             return new Promise((resolve) => {
@@ -1056,22 +1146,11 @@
 
             await waitForEchoDB();
             log('EchoDB détecté !', 'success');
+            log('Prêt. Cliquez sur un bouton pour lancer les tests.');
 
-            // Auto-lancement après 2 secondes
-            setTimeout(() => {
-                runAllTests();
-            }, 2000);
+            loadProfileInfo();
         });
     </script>
-    <script>
-    // Charger le SDK une seule fois
-    if (!window._supabaseLoaded) {
-        window._supabaseLoaded = true;
-    }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script type="module" src="js/config/supabase.js"></script>
-<script type="module" src="js/database.js"></script>
-</body>
+    </body>
 
 </html>

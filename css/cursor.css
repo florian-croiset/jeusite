@@ -1,12 +1,5 @@
-/* =========================================================
-   CURSOR.CSS  
-   Curseur personnalisé du site (effet halo + survol)
-   ========================================================= */
 
-
-/* ---------------------------------------------------------
-   1. CURSEUR PERSONNALISÉ (cercle principal)
---------------------------------------------------------- */
+/* CURSEUR PERSONNALISÉ (cercle principal) */
 .custom-cursor {
   position: fixed;
   width: 20px;
@@ -37,9 +30,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   2. ÉTAT : SURVOL D’ÉLÉMENTS INTERACTIFS
---------------------------------------------------------- */
+/* ÉTAT : SURVOL D’ÉLÉMENTS INTERACTIFS */
 .custom-cursor.hover {
   transform: scale(1.5);
   border-color: rgba(240, 147, 251, 0.8);
@@ -50,9 +41,7 @@
 }
 
 
-/* ---------------------------------------------------------
-   3. MASQUAGE DU CURSEUR PAR DÉFAUT
---------------------------------------------------------- */
+/* MASQUAGE DU CURSEUR PAR DÉFAUT */
 /* On désactive le curseur système sur les éléments cliquables
    pour garder uniquement le curseur personnalisé */
 a,

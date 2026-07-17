@@ -1,18 +1,10 @@
-// =============================================
-// CONFIGURATION SUPABASE POUR ECHO
-// Fichier : js/config/supabase.js
-// =============================================
-
-// ⚠️ REMPLACEZ ces valeurs par vos identifiants Supabase
 const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
 
-// Vérifier que Supabase SDK est chargé
 if (typeof window.supabase === 'undefined') {
   console.error('❌ Supabase SDK non chargé ! Vérifiez que le script CDN est inclus AVANT supabase.js');
 }
 
-// Initialisation du client Supabase (pas de redéclaration)
 let supabaseClient;
 if (!window.EchoSupabase) {
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -21,12 +13,9 @@ if (!window.EchoSupabase) {
   supabaseClient = window.EchoSupabase;
 }
 
-// =============================================
-// MODULE D'AUTHENTIFICATION
-// =============================================
+// ===== AUTHENTIFICATION =====
 
 const Auth = {
-  // Inscription d'un nouvel utilisateur
   async signUp(email, password, username) {
     try {
       const { data, error } = await supabaseClient.auth.signUp({
@@ -48,7 +37,6 @@ const Auth = {
     }
   },
 
-  // Connexion
   async signIn(email, password) {
     try {
       const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -64,7 +52,6 @@ const Auth = {
     }
   },
 
-  // Déconnexion
   async signOut() {
     try {
       const { error } = await supabaseClient.auth.signOut();
@@ -76,13 +63,11 @@ const Auth = {
     }
   },
 
-  // Récupérer l'utilisateur actuel
   async getCurrentUser() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     return user;
   },
 
-  // Récupérer le profil complet
   async getUserProfile(userId) {
     const { data, error } = await supabaseClient
       .from('profiles')
@@ -97,7 +82,6 @@ const Auth = {
     return data;
   },
 
-  // Écouter les changements d'authentification
   onAuthStateChange(callback) {
     supabaseClient.auth.onAuthStateChange((event, session) => {
       callback(event, session);
@@ -105,160 +89,9 @@ const Auth = {
   }
 };
 
-// =============================================
-// MODULE DE CONTENU DU SITE
-// =============================================
-
-const Content = {
-  // Récupérer le contenu d'une section
-  async getSection(sectionName) {
-    const { data, error } = await supabaseClient
-      .from('site_content')
-      .select('*')
-      .eq('section', sectionName)
-      .eq('is_published', true)
-      .order('order_index', { ascending: true });
-    
-    if (error) {
-      console.error('Erreur contenu:', error);
-      return [];
-    }
-    return data;
-  },
-
-  // Mettre à jour le contenu (admin uniquement)
-  async updateContent(id, updates) {
-    const { data, error } = await supabaseClient
-      .from('site_content')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Erreur mise à jour:', error);
-      return { success: false, error: error.message };
-    }
-    return { success: true, data };
-  },
-
-  // Créer un nouveau contenu (admin)
-  async createContent(content) {
-    const user = await Auth.getCurrentUser();
-    const { data, error } = await supabaseClient
-      .from('site_content')
-      .insert({
-        ...content,
-        created_by: user?.id
-      })
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Erreur création:', error);
-      return { success: false, error: error.message };
-    }
-    return { success: true, data };
-  }
-};
-
-// =============================================
-// MODULE MÉDIAS
-// =============================================
-
-const Media = {
-  // Upload d'un fichier
-  async uploadFile(file, folder = 'uploads') {
-      try {
-          const user = await Auth.getCurrentUser();
-          if (!user) throw new Error('Utilisateur non connecté');
-
-          // Types autorisés explicitement (whitelist)
-          const ALLOWED_TYPES = [
-              'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
-              'video/mp4', 'video/webm',
-              'audio/mpeg', 'audio/wav',
-              'application/pdf'
-          ];
-          const MAX_SIZE_MB = 20;
-
-          if (!ALLOWED_TYPES.includes(file.type)) {
-              throw new Error(`Type de fichier non autorisé : ${file.type}`);
-          }
-          if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-              throw new Error(`Fichier trop lourd (max ${MAX_SIZE_MB} Mo)`);
-          }
-
-          // Extension déduite du type MIME réel, pas du nom du fichier
-          const MIME_TO_EXT = {
-              'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif',
-              'image/webp': 'webp', 'image/svg+xml': 'svg',
-              'video/mp4': 'mp4', 'video/webm': 'webm',
-              'audio/mpeg': 'mp3', 'audio/wav': 'wav',
-              'application/pdf': 'pdf'
-          };
-          const ext = MIME_TO_EXT[file.type];
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-          const filePath = `${folder}/${fileName}`;
-
-          const { error: uploadError } = await supabaseClient.storage
-              .from('media')
-              .upload(filePath, file);
-          if (uploadError) throw uploadError;
-
-          const { data: { publicUrl } } = supabaseClient.storage
-              .from('media')
-              .getPublicUrl(filePath);
-
-          const { data, error: dbError } = await supabaseClient
-              .from('media')
-              .insert({
-                  name: file.name,
-                  type: file.type.split('/')[0],
-                  url: publicUrl,
-                  mime_type: file.type,
-                  file_size: file.size,
-                  uploaded_by: user.id
-              })
-              .select()
-              .single();
-          if (dbError) throw dbError;
-
-          return { success: true, data };
-      } catch (error) {
-          console.error('Erreur upload:', error);
-          return { success: false, error: error.message };
-      }
-  },
-
-  // Liste des médias
-  async getMedia(type = null, limit = 50) {
-    let query = supabaseClient
-      .from('media')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(limit);
-
-    if (type) {
-      query = query.eq('type', type);
-    }
-
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('Erreur récupération médias:', error);
-      return [];
-    }
-    return data;
-  }
-};
-
-// =============================================
-// MODULE VERSIONS DU JEU
-// =============================================
+// ===== VERSIONS DU JEU =====
 
 const GameVersions = {
-  // Récupérer toutes les versions
   async getAll() {
     const { data, error } = await supabaseClient
       .from('game_versions')
@@ -272,15 +105,13 @@ const GameVersions = {
     return data;
   },
 
-// Récupérer la dernière version dont l'heure de sortie est passée
-// Dans GameVersions
 async getLatest() {
     const now = new Date().toISOString();
 
     const { data, error } = await supabaseClient
       .from('game_versions')
       .select('*')
-      .eq('is_published', true)  // ✅ Changé : is_published au lieu de is_active
+      .eq('is_published', true)
       .lte('release_date', now)
       .order('release_date', { ascending: false })
       .limit(1)
@@ -291,12 +122,9 @@ async getLatest() {
 }
 };
 
-// =============================================
-// MODULE COMPTE À REBOURS
-// =============================================
+// ===== COMPTE À REBOURS =====
 
 const Countdown = {
-  // Récupérer le compte à rebours actif
   async getActive() {
     const { data, error } = await supabaseClient
       .from('countdown')
@@ -314,12 +142,9 @@ const Countdown = {
   }
 };
 
-// =============================================
-// MODULE FORMULAIRES
-// =============================================
+// ===== FORMULAIRES =====
 
 const Forms = {
-  // Soumettre une réponse
   async submitResponse(formId, responses) {
     try {
       const user = await Auth.getCurrentUser();
@@ -342,7 +167,6 @@ const Forms = {
     }
   },
 
-  // Récupérer un formulaire
   async getForm(formId) {
     const { data, error } = await supabaseClient
       .from('forms')
@@ -359,83 +183,29 @@ const Forms = {
   }
 };
 
-// =============================================
-// MODULE ACTUALITÉS
-// =============================================
-
-const News = {
-  // Récupérer tous les articles publiés
-  async getPublished(limit = 10) {
-    const { data, error } = await supabaseClient
-      .from('news')
-      .select(`
-        *,
-        author:profiles(username, display_name),
-        cover:media(url, name)
-      `)
-      .eq('is_published', true)
-      .order('published_at', { ascending: false })
-      .limit(limit);
-    
-    if (error) {
-      console.error('Erreur actualités:', error);
-      return [];
-    }
-    return data;
-  },
-
-  // Récupérer un article par slug
-  async getBySlug(slug) {
-    const { data, error } = await supabaseClient
-      .from('news')
-      .select(`
-        *,
-        author:profiles(username, display_name),
-        cover:media(url, name)
-      `)
-      .eq('slug', slug)
-      .eq('is_published', true)
-      .single();
-    
-    if (error) {
-      console.error('Erreur article:', error);
-      return null;
-    }
-    return data;
-  }
-};
-
-
 supabaseClient.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
-        // Si on est sur une page protégée, rediriger
+        // Si on est sur une page protégée, rediriger vers le login
         const isProtectedPage = window.location.pathname.includes('admin');
         if (isProtectedPage) {
             console.warn('Session expirée, redirection...');
-            window.location.href = '/admin.html'; // recharge = retour login
+            window.location.href = '/admin.html';
         }
     }
 });
 
+// ===== EXPORT =====
 
-
-// =============================================
-// EXPORT DES MODULES
-// =============================================
-
-// Exporter seulement si pas déjà défini
 if (!window.EchoDB) {
   window.EchoDB = {
     Auth,
-    Content,
-    Media,
     GameVersions,
     Countdown,
     Forms,
-    News,
-    supabase: supabaseClient // Accès direct au client si besoin
+    supabase: supabaseClient
   };
   console.log('✅ Echo Database initialisée avec succès');
+  window.dispatchEvent(new CustomEvent('EchoDBReady'));
 } else {
   console.log('⚠️ EchoDB déjà initialisé');
 }

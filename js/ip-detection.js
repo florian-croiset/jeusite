@@ -1,9 +1,4 @@
-// =============================================
-// SERVICE DE DÉTECTION IP ROBUSTE - v2.1
-// Fichier: js/ip-detection.js
-// Utilise plusieurs APIs en fallback
-// =============================================
-
+// Détection IP avec fallback multi-APIs et enrichissement géoloc
 class IPDetectionService {
     constructor() {
         this.ipData = null;
@@ -18,11 +13,8 @@ class IPDetectionService {
     }
 
     async detect() {
-        // Essayer chaque service dans l'ordre
         for (const service of this.services) {
             try {
-                //console.log(`🔍 Tentative avec ${service.name}...`);
-                
                 const response = await fetch(service.url, {
                     method: 'GET',
                     headers: {
@@ -31,7 +23,6 @@ class IPDetectionService {
                 });
 
                 if (!response.ok) {
-                    //console.warn(`⚠️ ${service.name} failed: ${response.status}`);
                     continue;
                 }
 
@@ -47,26 +38,18 @@ class IPDetectionService {
                 if (data.ip) {
                     data.ip = this.normalizeIP(data.ip);
                     this.ipData = data;
-                    //console.log(`✅ IP détectée avec ${service.name}:`, data.ip);
-                    
-                    // ✅ CORRECTION: Enrichir IMMÉDIATEMENT si nécessaire
+
                     if (!data.city || service.name === 'ipify-v4') {
-                        //console.log('🔄 Enrichissement immédiat en cours...');
                         await this.enrichData();
-                    } else {
-                        //console.log('✅ Données déjà complètes');
                     }
-                    
+
                     return this.ipData;
                 }
             } catch (error) {
-                //console.warn(`❌ ${service.name} error:`, error.message);
                 continue;
             }
         }
 
-        // Si tous échouent, utiliser une IP par défaut
-        //console.warn('⚠️ Tous les services ont échoué, utilisation IP par défaut');
         this.ipData = {
             ip: 'Unknown',
             city: 'Unknown',
@@ -79,27 +62,20 @@ class IPDetectionService {
     }
 
     normalizeIP(ip) {
-        if (!ip || !ip.includes(':')) return ip; // IPv4, on touche pas
+        if (!ip || !ip.includes(':')) return ip; // IPv4, inchangée
         try {
-            // Expand puis recompress l'IPv6
             const sections = ip.split(':');
             return sections.map(s => parseInt(s, 16).toString(16)).join(':');
         } catch(e) { return ip; }
     }
 
     async enrichData() {
-        // Si on a seulement l'IP (via ipify), essayer d'obtenir plus d'infos
-        if (!this.ipData) {
-            //console.warn('⚠️ Pas de données IP à enrichir');
-            return;
-        }
+        if (!this.ipData) return;
 
         if (this.ipData.city && this.ipData.city !== 'Unknown' && this.ipData.isp && this.ipData.isp !== 'Unknown') {
-            //console.log('✅ Données déjà enrichies');
             return;
         }
 
-        // Essayer plusieurs services pour l'enrichissement
         const enrichmentServices = [
             {
                 name: 'ipapi',
@@ -117,29 +93,22 @@ class IPDetectionService {
 
         for (const service of enrichmentServices) {
             try {
-                //console.log(`🔄 Enrichissement via ${service.name}...`);
-                
                 const response = await fetch(service.url);
                 if (response.ok) {
                     const data = await response.json();
                     const enrichedData = service.parse(data);
-                    
-                    // Fusionner les données enrichies
+
                     this.ipData = {
                         ...this.ipData,
                         ...enrichedData
                     };
-                    
-                    //console.log('✅ Données enrichies:', this.ipData);
+
                     return;
                 }
             } catch (error) {
-                //console.warn(`❌ Enrichissement ${service.name} échoué:`, error.message);
                 continue;
             }
         }
-
-        //console.warn('⚠️ Enrichissement échoué pour tous les services');
     }
 
     getCountryEmoji(countryCode) {
@@ -173,14 +142,7 @@ class IPDetectionService {
     }
 }
 
-// Instance globale
 window.ipDetector = new IPDetectionService();
-
-// Export pour utilisation
 window.IPDetectionService = IPDetectionService;
 
-// ✅ AUTO-DÉMARRAGE: Détecter l'IP dès le chargement
-//console.log('🚀 Démarrage auto de la détection IP...');
-window.ipDetector.detect().then(() => {
-    //console.log('✅ Détection IP terminée au chargement');
-});
+window.ipDetector.detect();
