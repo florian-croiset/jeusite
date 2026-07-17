@@ -20,8 +20,7 @@
   background: radial-gradient(circle at center,
               rgba(102, 126, 234, 0.2) 0%,
               transparent 70%);
-  /* animation pulse-bg retirée : elle forçait un recompositing plein écran (moteur GPU 3D)
-     à chaque frame, en permanence, pendant tout l'affichage du hero. Fond statique. */
+  animation: pulse-bg 5s ease-in-out infinite;
   z-index: 0;
 }
 
@@ -50,8 +49,6 @@
   background-size: 200% 200%;
   position: relative;
   min-height: 140px;
-  /* Glow STATIQUE (le drop-shadow animé permanent est retiré, voir screen.css) */
-  filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.4));
 }
 
 /* Effet holographique sur le titre */
@@ -69,8 +66,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Animation clip-path retirée : repeindre un titre de 192px découpé en texte
-     à chaque frame saturait le GPU. Calque holographique statique. */
+  animation: hologram-scan 3s linear infinite;
   opacity: 0.3;
 }
 

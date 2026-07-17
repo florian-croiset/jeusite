@@ -211,17 +211,7 @@
     transform: rotate(20deg);
 }
 
-/* Halo pulsé */
-.btn-music::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.4),
-        0 0 20px rgba(135, 53, 185, 0.3);
-    animation: musicHalo 2.8s ease-in-out infinite alternate;
-    z-index: -1;
-}
+/* Halo pulsé retiré définitivement (animation infinie musicHalo = compositing continu). */
 
 /* Bouton secret (gauche bas) */
 .btn-hidden-access {
@@ -238,7 +228,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    box-shadow: none; /* halo coloré retiré */
     z-index: 9999;
 }
 
@@ -274,7 +264,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    box-shadow: none; /* halo coloré retiré */
     z-index: 9999;
 }
 

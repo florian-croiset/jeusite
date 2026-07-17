@@ -563,10 +563,9 @@ section.visible {
 }
 
 /* --- DÉCLENCHEMENT APRÈS SPLASH --- */
-/* Le titre apparaît en premier (glow permanent retiré : il animait un drop-shadow
-   sur un titre de 192px = repaint GPU à chaque frame. Glow désormais statique via hero.css) */
+/* Le titre apparaît en premier */
 .loaded .hero h1 {
-    animation: fadeInUp 1s ease-out forwards;
+    animation: fadeInUp 1s ease-out forwards, glow 3s ease-in-out infinite;
 }
 
 

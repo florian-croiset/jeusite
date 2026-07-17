@@ -9,8 +9,11 @@
   pointer-events: none;
   /* mix-blend-mode: difference retiré : Firefox reblendait le curseur sur tout le
      fond (vidéo + animations) à chaque frame -> GPU ~95%. Curseur en couleur fixe. */
+  top: 0;
+  left: 0;
   will-change: transform;
-  transition: transform 0.15s ease;
+  /* Pas de transition sur transform : le déplacement est déjà lissé en JS (lerp).
+     Une transition ici ajouterait un lag de position. */
   z-index: 999999; /* au-dessus de tout */
   /* Halo STATIQUE : l'animation cursorHalo animait un box-shadow en boucle infinie
      (repaint + reblend mix-blend-mode à chaque frame, même souris immobile). */

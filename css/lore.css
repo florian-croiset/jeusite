@@ -58,8 +58,9 @@
 .glow-orb-lore {
     position: absolute;
     border-radius: 50%;
+    filter: blur(120px);
     pointer-events: none;
-    /* filter: blur() SUPPRIMÉ (coûteux sur le moteur GPU 3D de Firefox) : le dégradé radial suffit. */
+    animation: float 30s ease-in-out infinite;
 }
 
 .glow-orb-lore-1 {

@@ -24,8 +24,9 @@
 .glow-orb-gameplay {
     position: absolute;
     border-radius: 50%;
+    filter: blur(100px);
     pointer-events: none;
-    /* filter: blur() SUPPRIMÉ (coûteux sur le moteur GPU 3D de Firefox) : le dégradé radial suffit. */
+    animation: floatGameplay 25s ease-in-out infinite;
 }
 
 .glow-orb-gameplay-1 {

@@ -194,7 +194,7 @@ footer p {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    background-size: 300%;
-    animation: versionFlow 6s linear infinite,
-        versionGlowSoft 4s ease-in-out infinite alternate;
+    background-size: 100%;
+    /* Animations versionFlow/versionGlowSoft retirées (background-position + text-shadow
+       animés en boucle infinie = compositing/repaint continu). Dégradé statique. */
 }

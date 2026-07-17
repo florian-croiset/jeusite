@@ -262,7 +262,7 @@ class SplashLoader {
 
         // Met la vidéo du hero en pause quand elle n'est plus visible (économie GPU :
         // plus de décodage vidéo permanent quand on lit les autres sections).
-        const heroVideo = document.querySelector('.hero .background-video');
+        const heroVideo = document.querySelector('.hero video.background-video');
         if (heroVideo && 'IntersectionObserver' in window) {
             const videoObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {

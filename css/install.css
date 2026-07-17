@@ -31,10 +31,9 @@
 .glow-orb {
     position: absolute;
     border-radius: 50%;
+    filter: blur(80px);
     pointer-events: none;
-    /* filter: blur() SUPPRIMÉ : sur Firefox le blur est ~10x plus lent que sur Chrome
-       (bug Mozilla 925025) et rasterisé sur le moteur GPU 3D. Le dégradé radial
-       (color -> transparent) donne déjà l'aspect halo diffus, sans coût de blur. */
+    animation: float 20s ease-in-out infinite;
 }
 
 .glow-orb-1 {
