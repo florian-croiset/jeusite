@@ -24,9 +24,8 @@
 .glow-orb-gameplay {
     position: absolute;
     border-radius: 50%;
-    filter: blur(28px);
     pointer-events: none;
-    /* Orbe statique + rayon de blur réduit (100->28px) : le dégradé radial suffit à la douceur. */
+    /* filter: blur() SUPPRIMÉ (coûteux sur le moteur GPU 3D de Firefox) : le dégradé radial suffit. */
 }
 
 .glow-orb-gameplay-1 {

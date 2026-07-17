@@ -20,7 +20,8 @@
   background: radial-gradient(circle at center,
               rgba(102, 126, 234, 0.2) 0%,
               transparent 70%);
-  animation: pulse-bg 5s ease-in-out infinite;
+  /* animation pulse-bg retirée : elle forçait un recompositing plein écran (moteur GPU 3D)
+     à chaque frame, en permanence, pendant tout l'affichage du hero. Fond statique. */
   z-index: 0;
 }
 

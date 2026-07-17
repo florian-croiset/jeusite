@@ -31,10 +31,10 @@
 .glow-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(24px);
     pointer-events: none;
-    /* Orbe statique + rayon de blur réduit (80->24px). Le dégradé radial assure déjà
-       la douceur ; un grand rayon de blur est très coûteux à rasteriser (surtout Firefox). */
+    /* filter: blur() SUPPRIMÉ : sur Firefox le blur est ~10x plus lent que sur Chrome
+       (bug Mozilla 925025) et rasterisé sur le moteur GPU 3D. Le dégradé radial
+       (color -> transparent) donne déjà l'aspect halo diffus, sans coût de blur. */
 }
 
 .glow-orb-1 {
