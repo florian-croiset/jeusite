@@ -31,10 +31,10 @@
 .glow-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
+    filter: blur(24px);
     pointer-events: none;
-    /* Animation retirée : le flou géant animé saturait le GPU (recalcul du blur à chaque frame).
-       Orbe statique = flou calculé une seule fois puis mis en cache. */
+    /* Orbe statique + rayon de blur réduit (80->24px). Le dégradé radial assure déjà
+       la douceur ; un grand rayon de blur est très coûteux à rasteriser (surtout Firefox). */
 }
 
 .glow-orb-1 {

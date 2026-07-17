@@ -12,10 +12,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../assets/pngarrieretrans.png'); /* IMAGE À REMPLACER */
+    background-image: url('../assets/pngarrieretrans.webp');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    /* background-attachment: fixed retiré : forçait un repaint du fond à chaque
+       frame de scroll (coût GPU notable, surtout sur Firefox). */
     opacity: 0.7; /* alt: 0.15 */
     filter: blur(2px);
 }
@@ -57,9 +58,9 @@
 .glow-orb-lore {
     position: absolute;
     border-radius: 50%;
-    filter: blur(120px);
+    filter: blur(32px);
     pointer-events: none;
-    /* Animation retirée : flou géant animé = GPU saturé. Orbe statique = flou mis en cache. */
+    /* Orbe statique + rayon de blur réduit (120->32px) : le dégradé radial suffit à la douceur. */
 }
 
 .glow-orb-lore-1 {

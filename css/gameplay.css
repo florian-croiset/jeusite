@@ -24,9 +24,9 @@
 .glow-orb-gameplay {
     position: absolute;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(28px);
     pointer-events: none;
-    /* Animation retirée : flou géant animé = GPU saturé. Orbe statique = flou mis en cache. */
+    /* Orbe statique + rayon de blur réduit (100->28px) : le dégradé radial suffit à la douceur. */
 }
 
 .glow-orb-gameplay-1 {

@@ -7,7 +7,8 @@
   border: 2px solid rgba(102, 126, 234, 0.6);
   border-radius: 50%;
   pointer-events: none;
-  mix-blend-mode: difference;
+  /* mix-blend-mode: difference retiré : Firefox reblendait le curseur sur tout le
+     fond (vidéo + animations) à chaque frame -> GPU ~95%. Curseur en couleur fixe. */
   will-change: transform;
   transition: transform 0.15s ease;
   z-index: 999999; /* au-dessus de tout */
