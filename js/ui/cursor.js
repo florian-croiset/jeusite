@@ -1,0 +1,1 @@
+const cursor=document.getElementById("customCursor");if(cursor){let e=0,t=0,r=0,o=0,n=!1;function animateCursor(){n||(r+=.25*(e-r),o+=.25*(t-o),cursor.style.left=`${r}px`,cursor.style.top=`${o}px`),requestAnimationFrame(animateCursor)}document.addEventListener("mousemove",r=>{e=r.clientX,t=r.clientY}),animateCursor()}
