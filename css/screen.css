@@ -25,10 +25,10 @@
     align-items: center;
     z-index: 100000;
     overflow: hidden;
-    /* Transitions plus fluides et plus longues */
-    transition: 
-        opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
-        transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Transition de sortie (doit correspondre au délai JS dans screen.js : 500ms) */
+    transition:
+        opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     /* États initiaux */
     opacity: 1;
     transform: scale(1);
@@ -563,9 +563,10 @@ section.visible {
 }
 
 /* --- DÉCLENCHEMENT APRÈS SPLASH --- */
-/* Le titre apparaît en premier */
+/* Le titre apparaît en premier (glow permanent retiré : il animait un drop-shadow
+   sur un titre de 192px = repaint GPU à chaque frame. Glow désormais statique via hero.css) */
 .loaded .hero h1 {
-    animation: fadeInUp 1s ease-out forwards, glow 3s ease-in-out infinite;
+    animation: fadeInUp 1s ease-out forwards;
 }
 
 

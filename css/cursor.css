@@ -11,8 +11,9 @@
   will-change: transform;
   transition: transform 0.15s ease;
   z-index: 999999; /* au-dessus de tout */
-  box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
-  animation: cursorHalo 2.5s ease-in-out infinite alternate;
+  /* Halo STATIQUE : l'animation cursorHalo animait un box-shadow en boucle infinie
+     (repaint + reblend mix-blend-mode à chaque frame, même souris immobile). */
+  box-shadow: 0 0 18px rgba(102, 126, 234, 0.5);
 }
 
 /* Point central du curseur */

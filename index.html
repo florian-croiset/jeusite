@@ -1,42 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Google Tag Manager -->
-<!-- Google tag (gtag.js) -->
-<script>
-    window.addEventListener('load', function() {
-        const script = document.createElement('script');
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-JHJEB1CE3S';
-        script.async = true;
-        document.head.appendChild(script);
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-JHJEB1CE3S');
-    });
-</script>
-<!-- End Google Tag Manager -->
-  <!-- Vercel Web Analytics -->
+  <!-- Vercel Web Analytics (seul outil d'analytics conservé) -->
   <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
-  <!-- Préconnexion aux domaines externes -->
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="dns-prefetch" href="https://www.googletagmanager.com">
 <!-- Précharger les ressources critiques -->
 <link rel="preload" as="video" href="assets/mp4compressFlamme.mp4" type="video/mp4">
-<link rel="preload" as="image" href="assets/arriere.png">
-<!-- Précharger la police critique -->
-<link rel="preload" 
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2" 
-      as="font" 
-      type="font/woff2" 
-      crossorigin>
-
-<!-- Charger Font Awesome en asynchrone -->
-<link rel="stylesheet" 
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-      media="print" 
-      onload="this.media='all'">
+<link rel="preload" as="image" href="assets/arriere.webp">
+<!-- Précharger la police d'icônes (subset local ~7 Ko au lieu de ~270 Ko depuis le CDN) -->
+<link rel="preload" href="assets/fonts/fa-solid-900.subset.woff2" as="font" type="font/woff2" crossorigin>
+<!-- Font Awesome — subset local (uniquement les icônes utilisées sur cette page) -->
+<link rel="stylesheet" href="css/fontawesome-subset.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echo</title>
@@ -56,10 +29,6 @@
 
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWP7WV3B"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
       <noscript>
         <div style="position: fixed; inset: 0; background: #0a0a0a; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; text-align: center; padding: 2rem;">
             <h1 style="font-size: 3rem; margin-bottom: 1rem; color: #00d0c6;">⚠️</h1>
@@ -162,7 +131,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <p>Nous sommes la <strong>Team Nightberry</strong>, un groupe de cinq étudiants en informatique : <strong>Amaury Giraud-Laforet</strong>, <strong>Gaspard Sapin</strong>, <strong>Florian Croiset</strong>, <strong>Eric Sahakian</strong> et <strong>Jules Cohen</strong>.</p>
                 <br><p>Chacun apporte ses compétences dans des domaines clés comme le <strong>game design</strong>, la <strong>programmation</strong>, le <strong>pixel-art</strong>, le <strong>level design</strong> ou encore la <strong>conception sonore</strong>.</p>
             </div>
-            <div class="about-visual" style="overflow: hidden; background: rgba(102, 126, 234, 0.6); background-size:cover; background-position:center; background-image: url('assets/arriere.png');"> </div>
+            <div class="about-visual" style="overflow: hidden; background: rgba(102, 126, 234, 0.6); background-size:cover; background-position:center; background-image: url('assets/arriere.webp');"> </div>
         </div>
     </section>
     <section id="install" class="installversion">

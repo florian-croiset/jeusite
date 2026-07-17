@@ -59,7 +59,7 @@
     border-radius: 50%;
     filter: blur(120px);
     pointer-events: none;
-    animation: float 30s ease-in-out infinite;
+    /* Animation retirée : flou géant animé = GPU saturé. Orbe statique = flou mis en cache. */
 }
 
 .glow-orb-lore-1 {
@@ -76,7 +76,6 @@
     background: radial-gradient(circle, rgba(0, 208, 198, 0.2), rgba(135, 53, 185, 0.1), transparent);
     bottom: -10%;
     left: -10%;
-    animation-delay: -15s;
 }
 
 .glow-orb-lore-3 {
@@ -86,7 +85,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    animation-delay: -7s;
 }
 
 @keyframes float {

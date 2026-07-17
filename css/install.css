@@ -33,7 +33,8 @@
     border-radius: 50%;
     filter: blur(80px);
     pointer-events: none;
-    animation: float 20s ease-in-out infinite;
+    /* Animation retirée : le flou géant animé saturait le GPU (recalcul du blur à chaque frame).
+       Orbe statique = flou calculé une seule fois puis mis en cache. */
 }
 
 .glow-orb-1 {
@@ -50,7 +51,6 @@
     background: radial-gradient(circle, rgba(135, 53, 185, 0.15), transparent);
     bottom: 20%;
     right: -5%;
-    animation-delay: -10s;
 }
 
 @keyframes float {

@@ -113,19 +113,24 @@ class SplashLoader {
             this.resourceLoaded();
         }
 
-        if (document.readyState === 'complete') {
-            this.completeLoading();
+        // On ne bloque PLUS sur window.load (qui attend TOUTES les ressources :
+        // vidéo, polices, images, analytics...). Le splash se termine dès que le DOM
+        // est prêt — le hero est alors affichable (il a sa propre transition d'apparition,
+        // la vidéo démarre en autoplay quand elle est prête).
+        const finish = () => this.completeLoading();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', finish, { once: true });
         } else {
-            window.addEventListener('load', () => this.completeLoading());
+            finish();
         }
 
-        // Filet de sécurité : évite un splash bloqué si une ressource ne charge jamais
+        // Filet de sécurité : évite un splash bloqué si quelque chose plante
         setTimeout(() => {
             if (this.currentProgress < 100) {
                 console.warn('⏱️ Timeout atteint, forçage du chargement...');
                 this.forceComplete();
             }
-        }, 10000);
+        }, 5000);
     }
 
     trackImage(img) {
@@ -166,7 +171,7 @@ class SplashLoader {
     updateProgress(targetProgress) {
         const animate = () => {
             if (this.currentProgress < targetProgress) {
-                this.currentProgress += 2;
+                this.currentProgress += 5;
 
                 if (this.currentProgress > targetProgress) {
                     this.currentProgress = targetProgress;
@@ -194,7 +199,7 @@ class SplashLoader {
 
         setTimeout(() => {
             this.hideSplash();
-        }, 800);
+        }, 350);
     }
 
     forceComplete() {
@@ -227,7 +232,7 @@ class SplashLoader {
                 this.splash.remove();
                 document.body.classList.add('loaded');
                 this.initApp();
-            }, 1000); // Doit correspondre au temps de transition CSS (0.8s + marge)
+            }, 500); // Doit correspondre au temps de transition CSS (0.5s)
         });
     }
 
@@ -254,6 +259,22 @@ class SplashLoader {
         sections.forEach(section => {
             sectionObserver.observe(section);
         });
+
+        // Met la vidéo du hero en pause quand elle n'est plus visible (économie GPU :
+        // plus de décodage vidéo permanent quand on lit les autres sections).
+        const heroVideo = document.querySelector('.hero .background-video');
+        if (heroVideo && 'IntersectionObserver' in window) {
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        heroVideo.play().catch(() => {});
+                    } else {
+                        heroVideo.pause();
+                    }
+                });
+            }, { threshold: 0.1 });
+            videoObserver.observe(heroVideo);
+        }
     }
 }
 

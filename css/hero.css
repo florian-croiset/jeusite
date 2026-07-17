@@ -49,6 +49,8 @@
   background-size: 200% 200%;
   position: relative;
   min-height: 140px;
+  /* Glow STATIQUE (le drop-shadow animé permanent est retiré, voir screen.css) */
+  filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.4));
 }
 
 /* Effet holographique sur le titre */
@@ -66,7 +68,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: hologram-scan 3s linear infinite;
+  /* Animation clip-path retirée : repeindre un titre de 192px découpé en texte
+     à chaque frame saturait le GPU. Calque holographique statique. */
   opacity: 0.3;
 }
 
@@ -95,7 +98,19 @@
   height: 100%;
   object-fit: cover;       /* couvre tout sans déformation */
   z-index: 0;              /* derrière le contenu */
-  filter: brightness(0.7); /* légère obscurcissement */
+  /* filter: brightness() retiré : il était réappliqué sur CHAQUE frame de la vidéo
+     (coût GPU permanent). L'obscurcissement passe maintenant par un calque
+     statique .hero::after (peint une seule fois). */
+}
+
+/* Calque d'obscurcissement statique par-dessus la vidéo (remplace filter: brightness) */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Arrière-plan image alternative */
