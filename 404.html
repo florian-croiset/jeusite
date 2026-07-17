@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <!-- Vercel Web Analytics -->
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
@@ -17,12 +18,16 @@
     <link rel="icon" href="https://florian-croiset.github.io/jeusite/assets/favicon.ico" type="image/x-icon">
 </head>
 <style>
-html, body {
-  overflow: hidden!important; /* Empêche tout défilement */
-  height: 100%!important;     /* Assure que la hauteur reste fixe */
-  cursor: default!important;
-}
+    html,
+    body {
+        overflow: hidden !important;
+        /* Empêche tout défilement */
+        height: 100% !important;
+        /* Assure que la hauteur reste fixe */
+        cursor: default !important;
+    }
 </style>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -35,13 +40,16 @@ html, body {
                 <span></span>
             </div>
             <ul class="nav-links" id="nav-links">
-                <li><a href="https://florian-croiset.github.io/jeusite/" class="btn-login"><i class="fa-solid fa-hand-point-right"></i> Retour au site principal <i class="fa-solid fa-hand-point-left"></i></a></li>
+                <li><a href="https://florian-croiset.github.io/jeusite/" class="btn-login"><i
+                            class="fa-solid fa-hand-point-right"></i> Retour au site principal <i
+                            class="fa-solid fa-hand-point-left"></i></a></li>
             </ul>
         </div>
     </nav>
     <section class="hero" style="opacity: 1!important;">
         <video autoplay muted loop playsinline class="background-video">
-            <source src="https://florian-croiset.github.io/jeusite/assets/mp4compressFlamme.mp4" type="video/mp4">Votre navigateur ne supporte pas la
+            <source src="https://florian-croiset.github.io/jeusite/assets/mp4compressFlamme.mp4" type="video/mp4">Votre
+            navigateur ne supporte pas la
             lecture vidéo.
         </video>
         <div class="arriere" id="accueil"></div>
@@ -49,51 +57,76 @@ html, body {
         <div class="hero-content">
             <h1 style="opacity: 1;"><span id="dynamicTitle"></span></h1>
             <p class="nav-links" style="gap:inherit!important; place-items: center; margin-left: 135px;"><span
-                    style="display: inline-block; text-align: center; margin-right:100px;">par la&nbsp;<a href="https://florian-croiset.github.io/jeusite/index.html#team"
-                        style="font-size: 2rem;">Team Nightberry</a></span></p>
+                    style="display: inline-block; text-align: center; margin-right:100px;">par la&nbsp;<a
+                        href="https://florian-croiset.github.io/jeusite/index.html#team" style="font-size: 2rem;">Team
+                        Nightberry</a></span></p>
             <div class="cta-buttons">
-                <a href="https://florian-croiset.github.io/jeusite/" class="btn btn-secondary" rel="noopener noreferrer">Aller au site principal</a>
+                <a href="https://florian-croiset.github.io/jeusite/" class="btn btn-secondary"
+                    rel="noopener noreferrer">Aller au site principal</a>
             </div>
         </div>
     </section>
 </body>
 <script>
-document.body.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
 </script>
 <style>
-    #dynamicTitle {transition: opacity 0.5s ease;}
-    .fade-out {opacity: 0;}
-    .fade-in {opacity: 1;}
-    .cta-buttons{margin-top:40px;}
-    .btn{margin-top: 30px;}
-@media (max-width: 768px) {
-    .cta-buttons{display:inline-block;margin-top:60px!important;width: 100%;}
-    .cta-buttons::marker{display: none;}
-}
+    #dynamicTitle {
+        transition: opacity 0.5s ease;
+    }
+
+    .fade-out {
+        opacity: 0;
+    }
+
+    .fade-in {
+        opacity: 1;
+    }
+
+    .cta-buttons {
+        margin-top: 40px;
+    }
+
+    .btn {
+        margin-top: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .cta-buttons {
+            display: inline-block;
+            margin-top: 60px !important;
+            width: 100%;
+        }
+
+        .cta-buttons::marker {
+            display: none;
+        }
+    }
 </style>
 <script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    let titleIndex = 0;
-    const titles = ["404", "404"];
-    const titleElement = document.getElementById('dynamicTitle');
-    function changeTitle() {
-        titleElement.classList.add('fade-out');
-        setTimeout(() => {
-            titleIndex = (titleIndex + 1) % titles.length;
-            titleElement.textContent = titles[titleIndex];
-            titleElement.classList.remove('fade-out');
-            titleElement.classList.add('fade-in');
-        }, 500);
-        setTimeout(() => {
-            titleElement.classList.remove('fade-in');
-        }, 500); 
-    }
-    changeTitle();
-    setInterval(changeTitle, 2800);
-  });
+    window.addEventListener('DOMContentLoaded', (event) => {
+        let titleIndex = 0;
+        const titles = ["404", "404"];
+        const titleElement = document.getElementById('dynamicTitle');
+        function changeTitle() {
+            titleElement.classList.add('fade-out');
+            setTimeout(() => {
+                titleIndex = (titleIndex + 1) % titles.length;
+                titleElement.textContent = titles[titleIndex];
+                titleElement.classList.remove('fade-out');
+                titleElement.classList.add('fade-in');
+            }, 500);
+            setTimeout(() => {
+                titleElement.classList.remove('fade-in');
+            }, 500);
+        }
+        changeTitle();
+        setInterval(changeTitle, 2800);
+    });
 </script>
 <script src="https://florian-croiset.github.io/jeusite/js/ip-detection.js"></script>
 <script type="module" src="https://florian-croiset.github.io/jeusite/js/discord-webhook.js"></script>
 <script src="https://florian-croiset.github.io/jeusite/js/discord-tracker.js"></script>
 <script type="module" src="js/remote-refresh.js"></script>
+
 </html>

@@ -8,45 +8,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔬 Echo Test -Database & Files</title>
     <script src="js/ip-detection.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
 
-    const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.style.visibility = 'hidden';
-    });
-
-    (async () => {
-        await new Promise(r => {
-            if (document.readyState !== 'loading') r();
-            else document.addEventListener('DOMContentLoaded', r, { once: true });
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.visibility = 'hidden';
         });
 
-        document.body.style.visibility = 'hidden';
+        (async () => {
+            await new Promise(r => {
+                if (document.readyState !== 'loading') r();
+                else document.addEventListener('DOMContentLoaded', r, { once: true });
+            });
 
-        try {
-            const { data: { user } } = await _supabase.auth.getUser();
-            if (!user) throw new Error('non connecté');
+            document.body.style.visibility = 'hidden';
 
-            const { data: profile } = await _supabase
-                .from('profiles').select('role').eq('id', user.id).single();
-            if (!profile || profile.role !== 'admin') throw new Error('rôle insuffisant');
+            try {
+                const { data: { user } } = await _supabase.auth.getUser();
+                if (!user) throw new Error('non connecté');
 
-            // ✅ Accès autorisé
-            window._adminUser = user;
-            window._adminProfile = profile;
-            document.body.style.visibility = 'visible';
+                const { data: profile } = await _supabase
+                    .from('profiles').select('role').eq('id', user.id).single();
+                if (!profile || profile.role !== 'admin') throw new Error('rôle insuffisant');
 
-        } catch {
-            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#0a0a0f;color:#ff0055;font-size:1.5rem;">🔒 Accès refusé</div>';
-        }
-    })();
-</script>
-<style>
-    
+                // ✅ Accès autorisé
+                window._adminUser = user;
+                window._adminProfile = profile;
+                document.body.style.visibility = 'visible';
+
+            } catch {
+                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#0a0a0f;color:#ff0055;font-size:1.5rem;">🔒 Accès refusé</div>';
+            }
+        })();
+    </script>
+    <style>
         /* --- VARIABLES & RESET --- */
         * {
             margin: 0;
@@ -88,10 +87,19 @@
             -webkit-text-fill-color: transparent;
             animation: glow 3s ease-in-out infinite;
         }
+
         @keyframes glow {
-            0%, 100% { text-shadow: 0 0 20px rgba(0, 208, 198, 0.5); }
-            50% { text-shadow: 0 0 40px rgba(135, 53, 185, 0.8); }
+
+            0%,
+            100% {
+                text-shadow: 0 0 20px rgba(0, 208, 198, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(135, 53, 185, 0.8);
+            }
         }
+
         .header-info {
             background: rgba(0, 208, 198, 0.1);
             border: 2px solid var(--debut);
@@ -109,7 +117,8 @@
             gap: 10px;
             font-size: 14px;
         }
-.info-item i {
+
+        .info-item i {
             font-size: 20px;
             color: var(--finn);
         }
@@ -122,6 +131,7 @@
             color: var(--success);
             font-weight: bold;
         }
+
         .liengit {
             color: var(--success);
             transition: color 0.3s ease;
@@ -267,15 +277,16 @@
             /* Empêche de casser la largeur */
         }
 
-.test-info-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    flex-wrap: wrap; /* Ajoute ceci pour que le message descende si besoin */
-    gap: 5px;
-}
+        .test-info-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+            /* Ajoute ceci pour que le message descende si besoin */
+            gap: 5px;
+        }
 
         .test-name {
             font-weight: bold;
@@ -331,7 +342,7 @@
             color: var(--warning);
         }
 
-                .badge.unrestricted {
+        .badge.unrestricted {
             background: rgba(255, 170, 0, 0.3);
             color: var(--warning);
         }
@@ -362,7 +373,8 @@
             font-weight: bold;
             color: var(--debut);
         }
-                .stat-card .label {
+
+        .stat-card .label {
             font-size: 12px;
             color: rgba(0, 208, 198, 0.7);
             text-transform: uppercase;
@@ -405,7 +417,7 @@
         }
 
 
-        
+
         pre {
             background: var(--bg-dark);
             padding: 15px;
@@ -418,40 +430,39 @@
         }
 
         /* REMPLACE l'ancienne règle #github-files-tests */
-#github-files-tests {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 6px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--finn) transparent;
-}
+        #github-files-tests {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--finn) transparent;
+        }
 
-/* Idem pour les tables principales qui peuvent aussi s'allonger */
-#main-tables-tests {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 6px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--finn) transparent;
-}
+        /* Idem pour les tables principales qui peuvent aussi s'allonger */
+        #main-tables-tests {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--finn) transparent;
+        }
 
-#stats-tables-tests {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 6px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--finn) transparent;
-}
-
+        #stats-tables-tests {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--finn) transparent;
+        }
     </style>
 </head>
 
@@ -530,20 +541,22 @@
                 </div>
                 <!-- Fichiers GitHub -->
                 <div class="test-section">
-                    <h2><i class="fab fa-github"></i> Fichiers GitHub <span style="font-size:11px;color:var(--text-dim);font-weight:normal;margin-left:8px;">↕ scroll</span></h2>
+                    <h2><i class="fab fa-github"></i> Fichiers GitHub <span
+                            style="font-size:11px;color:var(--text-dim);font-weight:normal;margin-left:8px;">↕
+                            scroll</span></h2>
                     <div id="github-files-tests"></div>
                 </div>
 
 
-                
+
             </div>
-                        <div>
+            <div>
                 <!-- Tables principales -->
                 <div class="test-section">
                     <h2><i class="fas fa-table"></i> Tables principales</h2>
                     <div id="main-tables-tests"></div>
                 </div>
-<!-- Statistiques -->
+                <!-- Statistiques -->
 
                 <div class="test-section">
                     <h2><i class="fas fa-chart-pie"></i> Statistiques</h2>
@@ -566,13 +579,14 @@
 
 
 
-            </div><div>
-                            <!-- Tables de stats -->
+            </div>
+            <div>
+                <!-- Tables de stats -->
                 <div class="test-section">
                     <h2><i class="fas fa-chart-line"></i> Tables statistiques</h2>
                     <div id="stats-tables-tests"></div>
                 </div>
-            
+
 
                 <!-- Données DB -->
                 <div class="test-section">
@@ -581,7 +595,7 @@
                 </div>
             </div>
 
-    </div>
+        </div>
 
         <!-- Détection IP & Profil -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:20px;margin-top:20px;">
@@ -606,161 +620,161 @@
             <h2><i class="fas fa-terminal"></i> Console de logs</h2>
             <pre id="console-output">En attente du lancement des tests...</pre>
         </div>
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="js/config/supabase.js"></script>
-    <script type="module" src="js/database.js"></script>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script type="module" src="js/config/supabase.js"></script>
+        <script type="module" src="js/database.js"></script>
 
-    <script>
-        // Variables globales
-        let startTime;
-        let testResults = { success: 0, error: 0, total: 0 };
-        let currentProgress = 0;
+        <script>
+            // Variables globales
+            let startTime;
+            let testResults = { success: 0, error: 0, total: 0 };
+            let currentProgress = 0;
 
-        // Tables à tester
-        const TABLES = {
-            main: [
-                'admin_access_codes', 'countdown',
-                'download_packs', 'downloads', 'form_responses', 'forms', 'game_versions',
-                'page_views', 'profiles',
-                'remote_commands', 'roadmap_items', 'roadmap_suggestions', 'roadmap_votes',
-                'site_settings',
-                'user_sessions', 'webhook_settings'
-            ],
-            stats: [
-                'download_settings'
-            ]
-        };
+            // Tables à tester
+            const TABLES = {
+                main: [
+                    'admin_access_codes', 'countdown',
+                    'download_packs', 'downloads', 'form_responses', 'forms', 'game_versions',
+                    'page_views', 'profiles',
+                    'remote_commands', 'roadmap_items', 'roadmap_suggestions', 'roadmap_votes',
+                    'site_settings',
+                    'user_sessions', 'webhook_settings'
+                ],
+                stats: [
+                    'download_settings'
+                ]
+            };
 
-        // Fichiers GitHub à tester
-        const GITHUB_FILES = [
-            // ===== ASSETS =====
-            'https://florian-croiset.github.io/jeusite/assets/anim.mp4',
-            'https://florian-croiset.github.io/jeusite/assets/arriere.png',
-            'https://florian-croiset.github.io/jeusite/assets/favicon.ico',
-            'https://florian-croiset.github.io/jeusite/assets/jpgLogoEGA.jpg',
-            'https://florian-croiset.github.io/jeusite/assets/mp3compressmusique.mp3',
-            'https://florian-croiset.github.io/jeusite/assets/mp3musique.mp3',
-            'https://florian-croiset.github.io/jeusite/assets/mp4compressFlamme.mp4',
-            'https://florian-croiset.github.io/jeusite/assets/mp4Flamme.mp4',
-            'https://florian-croiset.github.io/jeusite/assets/musique.mp3',
-            'https://florian-croiset.github.io/jeusite/assets/pngArriere.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngarrieretrans.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngcristal.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngDecorPixel.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngLogoE.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngLogoEA.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngLogoEC.png',
-            'https://florian-croiset.github.io/jeusite/assets/pnglogoEcercle.png',
-            'https://florian-croiset.github.io/jeusite/assets/pnglogoEcercleblanc.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngLogoEP.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngLogoG.png',
-            'https://florian-croiset.github.io/jeusite/assets/pnglogononpixel.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngQRCode.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngSpriteperso.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngteamcercle.png',
-            'https://florian-croiset.github.io/jeusite/assets/pngTorche.png',
-            'https://florian-croiset.github.io/jeusite/assets/svgQRCode.svg',
+            // Fichiers GitHub à tester
+            const GITHUB_FILES = [
+                // ===== ASSETS =====
+                'https://florian-croiset.github.io/jeusite/assets/anim.mp4',
+                'https://florian-croiset.github.io/jeusite/assets/arriere.png',
+                'https://florian-croiset.github.io/jeusite/assets/favicon.ico',
+                'https://florian-croiset.github.io/jeusite/assets/jpgLogoEGA.jpg',
+                'https://florian-croiset.github.io/jeusite/assets/mp3compressmusique.mp3',
+                'https://florian-croiset.github.io/jeusite/assets/mp3musique.mp3',
+                'https://florian-croiset.github.io/jeusite/assets/mp4compressFlamme.mp4',
+                'https://florian-croiset.github.io/jeusite/assets/mp4Flamme.mp4',
+                'https://florian-croiset.github.io/jeusite/assets/musique.mp3',
+                'https://florian-croiset.github.io/jeusite/assets/pngArriere.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngarrieretrans.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngcristal.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngDecorPixel.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngLogoE.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngLogoEA.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngLogoEC.png',
+                'https://florian-croiset.github.io/jeusite/assets/pnglogoEcercle.png',
+                'https://florian-croiset.github.io/jeusite/assets/pnglogoEcercleblanc.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngLogoEP.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngLogoG.png',
+                'https://florian-croiset.github.io/jeusite/assets/pnglogononpixel.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngLogoTeam.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngQRCode.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngSpriteperso.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngteamcercle.png',
+                'https://florian-croiset.github.io/jeusite/assets/pngTorche.png',
+                'https://florian-croiset.github.io/jeusite/assets/svgQRCode.svg',
 
-            // ===== CSS =====
-            'https://florian-croiset.github.io/jeusite/css/admin.css',
-            'https://florian-croiset.github.io/jeusite/css/components.css',
-            'https://florian-croiset.github.io/jeusite/css/couleurs.css',
-            'https://florian-croiset.github.io/jeusite/css/cursor.css',
-            'https://florian-croiset.github.io/jeusite/css/design.css',
-            'https://florian-croiset.github.io/jeusite/css/doc.css',
-            'https://florian-croiset.github.io/jeusite/css/effects.css',
-            'https://florian-croiset.github.io/jeusite/css/feedback.css',
-            'https://florian-croiset.github.io/jeusite/css/gameplay.css',
-            'https://florian-croiset.github.io/jeusite/css/hero.css',
-            'https://florian-croiset.github.io/jeusite/css/install.css',
-            'https://florian-croiset.github.io/jeusite/css/layout.css',
-            'https://florian-croiset.github.io/jeusite/css/lore.css',
-            'https://florian-croiset.github.io/jeusite/css/main.css',
-            'https://florian-croiset.github.io/jeusite/css/modals.css',
-            'https://florian-croiset.github.io/jeusite/css/responsive.css',
-            'https://florian-croiset.github.io/jeusite/css/screen.css',
-            'https://florian-croiset.github.io/jeusite/css/settings.css',
-            'https://florian-croiset.github.io/jeusite/css/style.css',
+                // ===== CSS =====
+                'https://florian-croiset.github.io/jeusite/css/admin.css',
+                'https://florian-croiset.github.io/jeusite/css/components.css',
+                'https://florian-croiset.github.io/jeusite/css/couleurs.css',
+                'https://florian-croiset.github.io/jeusite/css/cursor.css',
+                'https://florian-croiset.github.io/jeusite/css/design.css',
+                'https://florian-croiset.github.io/jeusite/css/doc.css',
+                'https://florian-croiset.github.io/jeusite/css/effects.css',
+                'https://florian-croiset.github.io/jeusite/css/feedback.css',
+                'https://florian-croiset.github.io/jeusite/css/gameplay.css',
+                'https://florian-croiset.github.io/jeusite/css/hero.css',
+                'https://florian-croiset.github.io/jeusite/css/install.css',
+                'https://florian-croiset.github.io/jeusite/css/layout.css',
+                'https://florian-croiset.github.io/jeusite/css/lore.css',
+                'https://florian-croiset.github.io/jeusite/css/main.css',
+                'https://florian-croiset.github.io/jeusite/css/modals.css',
+                'https://florian-croiset.github.io/jeusite/css/responsive.css',
+                'https://florian-croiset.github.io/jeusite/css/screen.css',
+                'https://florian-croiset.github.io/jeusite/css/settings.css',
+                'https://florian-croiset.github.io/jeusite/css/style.css',
 
-            // ===== JS racine =====
-            'https://florian-croiset.github.io/jeusite/js/database.js',
-            'https://florian-croiset.github.io/jeusite/js/design.js',
-            'https://florian-croiset.github.io/jeusite/js/discord-tracker.js',
-            'https://florian-croiset.github.io/jeusite/js/discord-webhook.js',
-            'https://florian-croiset.github.io/jeusite/js/doc.js',
-            'https://florian-croiset.github.io/jeusite/js/ip-detection.js',
-            'https://florian-croiset.github.io/jeusite/js/liens.js',
-            'https://florian-croiset.github.io/jeusite/js/main.js',
-            'https://florian-croiset.github.io/jeusite/js/modal-advanced.js',
-            'https://florian-croiset.github.io/jeusite/js/remote-refresh.js',
-            'https://florian-croiset.github.io/jeusite/js/zip.js',
+                // ===== JS racine =====
+                'https://florian-croiset.github.io/jeusite/js/database.js',
+                'https://florian-croiset.github.io/jeusite/js/design.js',
+                'https://florian-croiset.github.io/jeusite/js/discord-tracker.js',
+                'https://florian-croiset.github.io/jeusite/js/discord-webhook.js',
+                'https://florian-croiset.github.io/jeusite/js/doc.js',
+                'https://florian-croiset.github.io/jeusite/js/ip-detection.js',
+                'https://florian-croiset.github.io/jeusite/js/liens.js',
+                'https://florian-croiset.github.io/jeusite/js/main.js',
+                'https://florian-croiset.github.io/jeusite/js/modal-advanced.js',
+                'https://florian-croiset.github.io/jeusite/js/remote-refresh.js',
+                'https://florian-croiset.github.io/jeusite/js/zip.js',
 
-            // ===== JS/config =====
-            'https://florian-croiset.github.io/jeusite/js/config/supabase.js',
+                // ===== JS/config =====
+                'https://florian-croiset.github.io/jeusite/js/config/supabase.js',
 
-            // ===== JS/ui =====
-            'https://florian-croiset.github.io/jeusite/js/ui/buttons.js',
-            'https://florian-croiset.github.io/jeusite/js/ui/cursor.js',
-            'https://florian-croiset.github.io/jeusite/js/ui/music.js',
-            'https://florian-croiset.github.io/jeusite/js/ui/navbar.js',
-            'https://florian-croiset.github.io/jeusite/js/ui/scroll.js',
+                // ===== JS/ui =====
+                'https://florian-croiset.github.io/jeusite/js/ui/buttons.js',
+                'https://florian-croiset.github.io/jeusite/js/ui/cursor.js',
+                'https://florian-croiset.github.io/jeusite/js/ui/music.js',
+                'https://florian-croiset.github.io/jeusite/js/ui/navbar.js',
+                'https://florian-croiset.github.io/jeusite/js/ui/scroll.js',
 
-            // ===== JS/utils =====
-            'https://florian-croiset.github.io/jeusite/js/utils/clipboard.js',
-            'https://florian-croiset.github.io/jeusite/js/utils/screen.js',
-            'https://florian-croiset.github.io/jeusite/js/utils/settings.js',
-            'https://florian-croiset.github.io/jeusite/js/utils/share.js',
+                // ===== JS/utils =====
+                'https://florian-croiset.github.io/jeusite/js/utils/clipboard.js',
+                'https://florian-croiset.github.io/jeusite/js/utils/screen.js',
+                'https://florian-croiset.github.io/jeusite/js/utils/settings.js',
+                'https://florian-croiset.github.io/jeusite/js/utils/share.js',
 
-            // ===== HTML =====
-            'https://florian-croiset.github.io/jeusite/index.html',
-            'https://florian-croiset.github.io/jeusite/404.html',
-            'https://florian-croiset.github.io/jeusite/admin.html',
-            'https://florian-croiset.github.io/jeusite/design.html',
-            'https://florian-croiset.github.io/jeusite/diapo.html',
-            'https://florian-croiset.github.io/jeusite/doc.html',
-            'https://florian-croiset.github.io/jeusite/feedback.html',
-            'https://florian-croiset.github.io/jeusite/liens.html',
-            'https://florian-croiset.github.io/jeusite/links.html',
-            'https://florian-croiset.github.io/jeusite/roadmap.html',
-            'https://florian-croiset.github.io/jeusite/versions.html'
-        ];
+                // ===== HTML =====
+                'https://florian-croiset.github.io/jeusite/index.html',
+                'https://florian-croiset.github.io/jeusite/404.html',
+                'https://florian-croiset.github.io/jeusite/admin.html',
+                'https://florian-croiset.github.io/jeusite/design.html',
+                'https://florian-croiset.github.io/jeusite/diapo.html',
+                'https://florian-croiset.github.io/jeusite/doc.html',
+                'https://florian-croiset.github.io/jeusite/feedback.html',
+                'https://florian-croiset.github.io/jeusite/liens.html',
+                'https://florian-croiset.github.io/jeusite/links.html',
+                'https://florian-croiset.github.io/jeusite/roadmap.html',
+                'https://florian-croiset.github.io/jeusite/versions.html'
+            ];
 
-        // Logging
-        function log(message, type = 'info') {
-            const output = document.getElementById('console-output');
-            const timestamp = new Date().toLocaleTimeString();
-            const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
-            const icon = icons[type] || 'ℹ️';
+            // Logging
+            function log(message, type = 'info') {
+                const output = document.getElementById('console-output');
+                const timestamp = new Date().toLocaleTimeString();
+                const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
+                const icon = icons[type] || 'ℹ️';
 
-            output.textContent += `\n[${timestamp}] ${icon} ${message}`;
-            output.scrollTop = output.scrollHeight;
-        }
+                output.textContent += `\n[${timestamp}] ${icon} ${message}`;
+                output.scrollTop = output.scrollHeight;
+            }
 
-        function clearLogs() {
-            document.getElementById('console-output').textContent = 'Logs effacés. Prêt pour de nouveaux tests.';
-            log('Logs effacés', 'info');
-        }
+            function clearLogs() {
+                document.getElementById('console-output').textContent = 'Logs effacés. Prêt pour de nouveaux tests.';
+                log('Logs effacés', 'info');
+            }
 
-        // Mise à jour de la progression
-        function updateProgress(percent) {
-            currentProgress = percent;
-            document.getElementById('progress-bar').style.width = percent + '%';
-        }
+            // Mise à jour de la progression
+            function updateProgress(percent) {
+                currentProgress = percent;
+                document.getElementById('progress-bar').style.width = percent + '%';
+            }
 
-        function displayTestResult(containerId, name, status, message = '', badge = null) {
-            const container = document.getElementById(containerId);
-            const resultClass = status === true ? 'success' : (status === false ? 'error' : 'info');
-            const icon = status === true ? '✅' : (status === false ? '❌' : 'ℹ️');
+            function displayTestResult(containerId, name, status, message = '', badge = null) {
+                const container = document.getElementById(containerId);
+                const resultClass = status === true ? 'success' : (status === false ? 'error' : 'info');
+                const icon = status === true ? '✅' : (status === false ? '❌' : 'ℹ️');
 
-            // Calcul pour savoir si on doit passer en pleine largeur
-            const isLong = (name.length + (message ? message.toString().length : 0)) > 35;
-            const widthClass = isLong ? 'full-width' : '';
+                // Calcul pour savoir si on doit passer en pleine largeur
+                const isLong = (name.length + (message ? message.toString().length : 0)) > 35;
+                const widthClass = isLong ? 'full-width' : '';
 
-            const badgeHtml = badge ? `<span class="badge ${badge}">${badge.toUpperCase()}</span>` : '';
+                const badgeHtml = badge ? `<span class="badge ${badge}">${badge.toUpperCase()}</span>` : '';
 
-            const html = `
+                const html = `
         <div class="test-result ${resultClass} ${widthClass}">
             <div style="font-size: 17pxpx; flex-shrink: 0;">${icon}</div>
             <span class="test-info-content" style="flex: 1; display: flex; justify-content: space-between; flex-wrap: wrap;">
@@ -771,386 +785,386 @@
     `;
 
 
-            container.insertAdjacentHTML('beforeend', html);
+                container.insertAdjacentHTML('beforeend', html);
 
-            // Ne pas compter les "info" dans les stats de succès/échec
-            if (status !== 'info') {
-                testResults.total++;
-                if (status) testResults.success++;
-                else testResults.error++;
-                updateStats();
-            }
-        }
-
-        // Mise à jour des statistiques
-        function updateStats() {
-            document.getElementById('stat-success').textContent = testResults.success;
-            document.getElementById('stat-error').textContent = testResults.error;
-            const rate = testResults.total > 0
-                ? Math.round((testResults.success / testResults.total) * 100)
-                : 0;
-            document.getElementById('stat-rate').textContent = rate + '%';
-        }
-
-        // Test 1: Configuration
-        async function testConfiguration() {
-            const container = document.getElementById('config-tests');
-            container.innerHTML = '';
-
-            log('Test de la configuration...');
-
-            // SDK Supabase
-            const hasSupabase = typeof window.supabase !== 'undefined';
-            displayTestResult('config-tests', 'SDK Supabase', hasSupabase);
-            log(`SDK Supabase: ${hasSupabase ? 'OK' : 'MANQUANT'}`, hasSupabase ? 'success' : 'error');
-
-            // EchoDB
-            await new Promise(resolve => setTimeout(resolve, 500));
-            const hasEchoDB = typeof window.EchoDB !== 'undefined';
-            displayTestResult('config-tests', 'EchoDB initialisé', hasEchoDB);
-            log(`EchoDB: ${hasEchoDB ? 'OK' : 'MANQUANT'}`, hasEchoDB ? 'success' : 'error');
-
-            // Modules EchoDB
-            if (hasEchoDB) {
-                const modules = ['Auth', 'GameVersions', 'Countdown', 'Forms'];
-                let allModules = true;
-                modules.forEach(mod => {
-                    if (!window.EchoDB[mod]) allModules = false;
-                });
-                displayTestResult('config-tests', 'Modules EchoDB', allModules, modules.length + ' modules');
-                log(`Modules: ${allModules ? 'TOUS OK' : 'INCOMPLET'}`, allModules ? 'success' : 'error');
+                // Ne pas compter les "info" dans les stats de succès/échec
+                if (status !== 'info') {
+                    testResults.total++;
+                    if (status) testResults.success++;
+                    else testResults.error++;
+                    updateStats();
+                }
             }
 
-            // Status
-            document.getElementById('supabase-status').textContent = hasSupabase && hasEchoDB ? 'Connecté ✅' : 'Erreur ❌';
+            // Mise à jour des statistiques
+            function updateStats() {
+                document.getElementById('stat-success').textContent = testResults.success;
+                document.getElementById('stat-error').textContent = testResults.error;
+                const rate = testResults.total > 0
+                    ? Math.round((testResults.success / testResults.total) * 100)
+                    : 0;
+                document.getElementById('stat-rate').textContent = rate + '%';
+            }
 
-            return hasSupabase && hasEchoDB;
-        }
+            // Test 1: Configuration
+            async function testConfiguration() {
+                const container = document.getElementById('config-tests');
+                container.innerHTML = '';
 
-        // Test 2: Tables principales
-        async function testMainTables() {
-            const container = document.getElementById('main-tables-tests');
-            container.innerHTML = '';
+                log('Test de la configuration...');
 
-            log('Test des tables principales...');
+                // SDK Supabase
+                const hasSupabase = typeof window.supabase !== 'undefined';
+                displayTestResult('config-tests', 'SDK Supabase', hasSupabase);
+                log(`SDK Supabase: ${hasSupabase ? 'OK' : 'MANQUANT'}`, hasSupabase ? 'success' : 'error');
 
-            let successCount = 0; // Nouveau compteur spécifique
+                // EchoDB
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const hasEchoDB = typeof window.EchoDB !== 'undefined';
+                displayTestResult('config-tests', 'EchoDB initialisé', hasEchoDB);
+                log(`EchoDB: ${hasEchoDB ? 'OK' : 'MANQUANT'}`, hasEchoDB ? 'success' : 'error');
 
-            for (const table of TABLES.main) {
+                // Modules EchoDB
+                if (hasEchoDB) {
+                    const modules = ['Auth', 'GameVersions', 'Countdown', 'Forms'];
+                    let allModules = true;
+                    modules.forEach(mod => {
+                        if (!window.EchoDB[mod]) allModules = false;
+                    });
+                    displayTestResult('config-tests', 'Modules EchoDB', allModules, modules.length + ' modules');
+                    log(`Modules: ${allModules ? 'TOUS OK' : 'INCOMPLET'}`, allModules ? 'success' : 'error');
+                }
+
+                // Status
+                document.getElementById('supabase-status').textContent = hasSupabase && hasEchoDB ? 'Connecté ✅' : 'Erreur ❌';
+
+                return hasSupabase && hasEchoDB;
+            }
+
+            // Test 2: Tables principales
+            async function testMainTables() {
+                const container = document.getElementById('main-tables-tests');
+                container.innerHTML = '';
+
+                log('Test des tables principales...');
+
+                let successCount = 0; // Nouveau compteur spécifique
+
+                for (const table of TABLES.main) {
+                    try {
+                        const { data, error, count } = await window.EchoDB.supabase
+                            .from(table)
+                            .select('*', { count: 'exact', head: false })
+                            .limit(1);
+
+                        const success = !error;
+                        if (success) successCount++; // Incrémenter si succès
+
+                        // --> const message = success ? `${count || 0} entrées` : error.message.substring(0, 30);
+                        const message = success ? `${count || 0}` : error.message.substring(0, 30);
+                        displayTestResult('main-tables-tests', table, success, message);
+                        log(`Table ${table}: ${success ? 'OK' : 'ERREUR'}`, success ? 'success' : 'error');
+
+                    } catch (e) {
+                        displayTestResult('main-tables-tests', table, false, e.message.substring(0, 30));
+                        log(`Table ${table}: ERREUR - ${e.message}`, 'error');
+                    }
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                return successCount; // On retourne le nombre de tables réussies
+            }
+
+            // Test 3: Tables de stats
+            async function testStatsTables() {
+                const container = document.getElementById('stats-tables-tests');
+                container.innerHTML = '';
+
+                log('Test des tables statistiques...');
+
+                let successCount = 0; // Nouveau compteur spécifique
+
+                for (const table of TABLES.stats) {
+                    try {
+                        const { error, count } = await window.EchoDB.supabase
+                            .from(table)
+                            .select('*', { count: 'exact', head: true });
+
+                        const success = !error;
+                        if (success) successCount++; // Incrémenter si succès
+
+                        // --> const message = success ? `${count || 0} entrées` : '';
+                        const message = success ? `${count || 0}` : '';
+                        const badge = table.includes('unrestricted') || ['download_settings', 'downloads_by_version', 'recent_activity', 'stats_overview', 'user_permissions', 'version_stats'].includes(table) ? '🔒' : '';
+                        // 'unrestricted' : null
+
+                        displayTestResult('stats-tables-tests', table, success, message, badge);
+                        log(`Table ${table}: ${success ? 'OK' : 'ERREUR'}`, success ? 'success' : 'error');
+                    } catch (e) {
+                        displayTestResult('stats-tables-tests', table, false, e.message.substring(0, 30), 'unrestricted');
+                        log(`Table ${table}: ERREUR - ${e.message}`, 'error');
+                    }
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                return successCount; // On retourne le nombre de tables réussies
+            }
+
+            // Test 4: Fichiers GitHub
+            async function testGitHubFiles() {
+                const container = document.getElementById('github-files-tests');
+                container.innerHTML = '';
+
+                log('Test des fichiers GitHub...');
+
+                let testedFiles = 0;
+                for (const fileUrl of GITHUB_FILES) {
+                    const fileName = fileUrl.split('/').pop();
+                    try {
+                        const response = await fetch(fileUrl, { method: 'HEAD' });
+                        const success = response.ok;
+                        const size = response.headers.get('content-length');
+                        const message = success ? `${(size / 1024).toFixed(2)} KB` : `${response.status}`;
+
+                        displayTestResult('github-files-tests', fileName, success, message);
+                        log(`Fichier ${fileName}: ${success ? 'OK' : 'ERREUR ' + response.status}`, success ? 'success' : 'error');
+                        testedFiles++;
+                    } catch (e) {
+                        displayTestResult('github-files-tests', fileName, false, 'Inaccessible');
+                        log(`Fichier ${fileName}: ERREUR - ${e.message}`, 'error');
+                    }
+                    await new Promise(r => setTimeout(r, 200));
+                }
+
+                document.getElementById('files-tested').textContent = testedFiles;
+            }
+
+            async function testDatabaseData() {
+                const container = document.getElementById('db-data-info');
+                container.innerHTML = '';
+                log('Récupération des données...');
+
                 try {
-                    const { data, error, count } = await window.EchoDB.supabase
-                        .from(table)
-                        .select('*', { count: 'exact', head: false })
-                        .limit(1);
+                    const countdown = await window.EchoDB.Countdown.getActive();
+                    displayTestResult('db-data-info', 'Countdown', 'info', countdown ? countdown.event_name : 'Aucune version prévue.');
 
-                    const success = !error;
-                    if (success) successCount++; // Incrémenter si succès
+                    const version = await window.EchoDB.GameVersions.getLatest();
+                    displayTestResult('db-data-info', 'Version', 'info', version ? version.version : 'Inconnue');
 
-                    // --> const message = success ? `${count || 0} entrées` : error.message.substring(0, 30);
-                    const message = success ? `${count || 0}` : error.message.substring(0, 30);
-                    displayTestResult('main-tables-tests', table, success, message);
-                    log(`Table ${table}: ${success ? 'OK' : 'ERREUR'}`, success ? 'success' : 'error');
+                    const { count: profils } = await window.EchoDB.supabase.from('profiles').select('*', { count: 'exact', head: true });
+                    displayTestResult('db-data-info', 'Profils', 'info', `${profils || 0} utilisateurs`);
 
+                    log('Données récupérées avec succès', 'success');
                 } catch (e) {
-                    displayTestResult('main-tables-tests', table, false, e.message.substring(0, 30));
-                    log(`Table ${table}: ERREUR - ${e.message}`, 'error');
-                }
-                await new Promise(r => setTimeout(r, 100));
-            }
-            return successCount; // On retourne le nombre de tables réussies
-        }
-
-        // Test 3: Tables de stats
-        async function testStatsTables() {
-            const container = document.getElementById('stats-tables-tests');
-            container.innerHTML = '';
-
-            log('Test des tables statistiques...');
-
-            let successCount = 0; // Nouveau compteur spécifique
-
-            for (const table of TABLES.stats) {
-                try {
-                    const { error, count } = await window.EchoDB.supabase
-                        .from(table)
-                        .select('*', { count: 'exact', head: true });
-
-                    const success = !error;
-                    if (success) successCount++; // Incrémenter si succès
-
-                    // --> const message = success ? `${count || 0} entrées` : '';
-                    const message = success ? `${count || 0}` : '';
-                    const badge = table.includes('unrestricted') || ['download_settings', 'downloads_by_version', 'recent_activity', 'stats_overview', 'user_permissions', 'version_stats'].includes(table) ? '🔒' : '';
-                    // 'unrestricted' : null
-
-                    displayTestResult('stats-tables-tests', table, success, message, badge);
-                    log(`Table ${table}: ${success ? 'OK' : 'ERREUR'}`, success ? 'success' : 'error');
-                } catch (e) {
-                    displayTestResult('stats-tables-tests', table, false, e.message.substring(0, 30), 'unrestricted');
-                    log(`Table ${table}: ERREUR - ${e.message}`, 'error');
-                }
-                await new Promise(r => setTimeout(r, 100));
-            }
-            return successCount; // On retourne le nombre de tables réussies
-        }
-
-        // Test 4: Fichiers GitHub
-        async function testGitHubFiles() {
-            const container = document.getElementById('github-files-tests');
-            container.innerHTML = '';
-
-            log('Test des fichiers GitHub...');
-
-            let testedFiles = 0;
-            for (const fileUrl of GITHUB_FILES) {
-                const fileName = fileUrl.split('/').pop();
-                try {
-                    const response = await fetch(fileUrl, { method: 'HEAD' });
-                    const success = response.ok;
-                    const size = response.headers.get('content-length');
-                    const message = success ? `${(size / 1024).toFixed(2)} KB` : `${response.status}`;
-
-                    displayTestResult('github-files-tests', fileName, success, message);
-                    log(`Fichier ${fileName}: ${success ? 'OK' : 'ERREUR ' + response.status}`, success ? 'success' : 'error');
-                    testedFiles++;
-                } catch (e) {
-                    displayTestResult('github-files-tests', fileName, false, 'Inaccessible');
-                    log(`Fichier ${fileName}: ERREUR - ${e.message}`, 'error');
-                }
-                await new Promise(r => setTimeout(r, 200));
-            }
-
-            document.getElementById('files-tested').textContent = testedFiles;
-        }
-
-        async function testDatabaseData() {
-            const container = document.getElementById('db-data-info');
-            container.innerHTML = '';
-            log('Récupération des données...');
-
-            try {
-                const countdown = await window.EchoDB.Countdown.getActive();
-                displayTestResult('db-data-info', 'Countdown', 'info', countdown ? countdown.event_name : 'Aucune version prévue.');
-
-                const version = await window.EchoDB.GameVersions.getLatest();
-                displayTestResult('db-data-info', 'Version', 'info', version ? version.version : 'Inconnue');
-
-                const { count: profils } = await window.EchoDB.supabase.from('profiles').select('*', { count: 'exact', head: true });
-                displayTestResult('db-data-info', 'Profils', 'info', `${profils || 0} utilisateurs`);
-
-                log('Données récupérées avec succès', 'success');
-            } catch (e) {
-                displayTestResult('db-data-info', 'Erreur critique', false, e.message);
-            }
-        }
-
-        // Test complet de la base de données
-        async function testDatabase() {
-            if (document.getElementById('btn-run-all').disabled) {
-                log('⏳ Un test complet est déjà en cours, patientez...', 'warning');
-                return;
-            }
-
-            log('=== DÉBUT TEST DATABASE ===');
-            testResults = { success: 0, error: 0, total: 0 };
-
-            document.getElementById('btn-db').disabled = true;
-
-            await testConfiguration();
-            updateProgress(25);
-
-            // On récupère les succès spécifiques
-            const mainSuccess = await testMainTables();
-            updateProgress(50);
-
-            const statsSuccess = await testStatsTables();
-            updateProgress(75);
-
-            await testDatabaseData();
-            updateProgress(100);
-
-            const totalTables = TABLES.main.length + TABLES.stats.length;
-            const totalSuccess = mainSuccess + statsSuccess;
-
-            // Affichage correct : Succès Tables / Total Tables
-            document.getElementById('tables-count').textContent = `${totalSuccess}/${totalTables}`;
-
-            document.getElementById('btn-db').disabled = false;
-            log('=== FIN TEST DATABASE ===', 'success');
-        }
-
-        // Lancer tous les tests
-        async function runAllTests() {
-            if (document.getElementById('btn-db').disabled) {
-                log('⏳ Un test de base de données est déjà en cours, patientez...', 'warning');
-                return;
-            }
-
-            log('');
-            log('🚀 DÉBUT DES TESTS COMPLETS');
-            log('============================');
-
-            startTime = Date.now();
-            testResults = { success: 0, error: 0, total: 0 };
-
-            // Désactiver les boutons
-            document.getElementById('btn-run-all').disabled = true;
-            document.getElementById('btn-db').disabled = true;
-            document.getElementById('btn-github').disabled = true;
-
-            // Tests
-            await testConfiguration();
-            updateProgress(15);
-
-            // On récupère les résultats spécifiques aux tables
-            const mainSuccess = await testMainTables();
-            updateProgress(40);
-
-            const statsSuccess = await testStatsTables();
-            updateProgress(65);
-
-            await testDatabaseData();
-            updateProgress(80);
-
-            await testGitHubFiles();
-            updateProgress(100);
-
-            // Durée
-            const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-            document.getElementById('test-duration').textContent = duration + 's';
-
-            // Résultat final CORRIGÉ pour les tables uniquement
-            const totalTables = TABLES.main.length + TABLES.stats.length;
-            const totalTableSuccess = mainSuccess + statsSuccess;
-            document.getElementById('tables-count').textContent = `${totalTableSuccess}/${totalTables}`;
-
-            log('============================');
-            log(`✅ Tests terminés en ${duration}s`);
-            // Le taux global reste calculé sur l'ensemble des tests (config + tables + fichiers)
-            log(`📊 Réussite globale: ${testResults.success}/${testResults.total} (${Math.round((testResults.success / testResults.total) * 100)}%)`);
-
-            if (testResults.error === 0) {
-                log('🎉 TOUS LES TESTS SONT PASSÉS !', 'success');
-            } else {
-                log(`⚠️ ${testResults.error} test(s) échoué(s)`, 'warning');
-            }
-
-            // Réactiver les boutons
-            document.getElementById('btn-run-all').disabled = false;
-            document.getElementById('btn-db').disabled = false;
-            document.getElementById('btn-github').disabled = false;
-        }
-
-        // ===== Détection IP (repris de ip.html) =====
-        async function testIPDetection() {
-            const container = document.getElementById('ip-detection-results');
-            container.innerHTML = '';
-            if (!window.ipDetector) {
-                displayTestResult('ip-detection-results', 'Service IP', false, 'js/ip-detection.js non chargé');
-                return;
-            }
-            try {
-                const data = await window.ipDetector.detect();
-                displayTestResult('ip-detection-results', 'Adresse IP', true, data.ip);
-                displayTestResult('ip-detection-results', 'Ville', 'info', data.city || 'N/A');
-                displayTestResult('ip-detection-results', 'Pays', 'info', `${data.country || 'N/A'} ${data.country_emoji || ''}`);
-                displayTestResult('ip-detection-results', 'FAI', 'info', data.isp || 'N/A');
-                log('Détection IP réussie', 'success');
-            } catch (error) {
-                displayTestResult('ip-detection-results', 'Détection IP', false, error.message);
-                log('Erreur détection IP: ' + error.message, 'error');
-            }
-        }
-
-        async function testAllIPServices() {
-            const container = document.getElementById('ip-detection-results');
-            container.innerHTML = '';
-            const services = [
-                { name: 'ip-api', url: 'http://ip-api.com/json/', parse: (data) => ({ ip: data.query, city: data.city }) }
-            ];
-            for (const service of services) {
-                try {
-                    const response = await fetch(service.url);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const data = service.parse(await response.json());
-                    displayTestResult('ip-detection-results', service.name, true, JSON.stringify(data));
-                } catch (error) {
-                    displayTestResult('ip-detection-results', service.name, false, error.message);
+                    displayTestResult('db-data-info', 'Erreur critique', false, e.message);
                 }
             }
-        }
 
-        async function testIPEnrichment() {
-            const container = document.getElementById('ip-detection-results');
-            container.innerHTML = '';
-            if (!window.ipDetector) {
-                displayTestResult('ip-detection-results', 'Service IP', false, 'js/ip-detection.js non chargé');
-                return;
+            // Test complet de la base de données
+            async function testDatabase() {
+                if (document.getElementById('btn-run-all').disabled) {
+                    log('⏳ Un test complet est déjà en cours, patientez...', 'warning');
+                    return;
+                }
+
+                log('=== DÉBUT TEST DATABASE ===');
+                testResults = { success: 0, error: 0, total: 0 };
+
+                document.getElementById('btn-db').disabled = true;
+
+                await testConfiguration();
+                updateProgress(25);
+
+                // On récupère les succès spécifiques
+                const mainSuccess = await testMainTables();
+                updateProgress(50);
+
+                const statsSuccess = await testStatsTables();
+                updateProgress(75);
+
+                await testDatabaseData();
+                updateProgress(100);
+
+                const totalTables = TABLES.main.length + TABLES.stats.length;
+                const totalSuccess = mainSuccess + statsSuccess;
+
+                // Affichage correct : Succès Tables / Total Tables
+                document.getElementById('tables-count').textContent = `${totalSuccess}/${totalTables}`;
+
+                document.getElementById('btn-db').disabled = false;
+                log('=== FIN TEST DATABASE ===', 'success');
             }
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const ipData = await response.json();
-                window.ipDetector.ipData = { ip: ipData.ip };
-                await window.ipDetector.enrichData();
-                displayTestResult('ip-detection-results', 'Avant enrichissement', 'info', ipData.ip);
-                displayTestResult('ip-detection-results', 'Après enrichissement', true, window.ipDetector.getLocationString());
-            } catch (error) {
-                displayTestResult('ip-detection-results', 'Enrichissement', false, error.message);
-            }
-        }
 
-        // ===== Mon profil (repris de profile.html) =====
-        function loadProfileInfo() {
-            const container = document.getElementById('profile-info');
-            container.innerHTML = '';
-            const user = window._adminUser;
-            const profile = window._adminProfile;
-            if (!user) {
-                displayTestResult('profile-info', 'Session', false, 'Non connecté');
-                return;
-            }
-            displayTestResult('profile-info', 'Email', 'info', user.email);
-            displayTestResult('profile-info', 'ID utilisateur', 'info', user.id);
-            displayTestResult('profile-info', 'Rôle', true, profile?.role || 'inconnu');
+            // Lancer tous les tests
+            async function runAllTests() {
+                if (document.getElementById('btn-db').disabled) {
+                    log('⏳ Un test de base de données est déjà en cours, patientez...', 'warning');
+                    return;
+                }
 
-            const logoutBtn = document.createElement('button');
-            logoutBtn.style.marginTop = '15px';
-            logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
-            logoutBtn.onclick = async () => {
-                await _supabase.auth.signOut();
-                window.location.href = 'index.html';
-            };
-            container.appendChild(logoutBtn);
-        }
+                log('');
+                log('🚀 DÉBUT DES TESTS COMPLETS');
+                log('============================');
 
-        // Attendre EchoDB
-        function waitForEchoDB() {
-            return new Promise((resolve) => {
-                if (window.EchoDB) {
-                    resolve();
+                startTime = Date.now();
+                testResults = { success: 0, error: 0, total: 0 };
+
+                // Désactiver les boutons
+                document.getElementById('btn-run-all').disabled = true;
+                document.getElementById('btn-db').disabled = true;
+                document.getElementById('btn-github').disabled = true;
+
+                // Tests
+                await testConfiguration();
+                updateProgress(15);
+
+                // On récupère les résultats spécifiques aux tables
+                const mainSuccess = await testMainTables();
+                updateProgress(40);
+
+                const statsSuccess = await testStatsTables();
+                updateProgress(65);
+
+                await testDatabaseData();
+                updateProgress(80);
+
+                await testGitHubFiles();
+                updateProgress(100);
+
+                // Durée
+                const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+                document.getElementById('test-duration').textContent = duration + 's';
+
+                // Résultat final CORRIGÉ pour les tables uniquement
+                const totalTables = TABLES.main.length + TABLES.stats.length;
+                const totalTableSuccess = mainSuccess + statsSuccess;
+                document.getElementById('tables-count').textContent = `${totalTableSuccess}/${totalTables}`;
+
+                log('============================');
+                log(`✅ Tests terminés en ${duration}s`);
+                // Le taux global reste calculé sur l'ensemble des tests (config + tables + fichiers)
+                log(`📊 Réussite globale: ${testResults.success}/${testResults.total} (${Math.round((testResults.success / testResults.total) * 100)}%)`);
+
+                if (testResults.error === 0) {
+                    log('🎉 TOUS LES TESTS SONT PASSÉS !', 'success');
                 } else {
-                    const checkInterval = setInterval(() => {
-                        if (window.EchoDB) {
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 100);
+                    log(`⚠️ ${testResults.error} test(s) échoué(s)`, 'warning');
                 }
+
+                // Réactiver les boutons
+                document.getElementById('btn-run-all').disabled = false;
+                document.getElementById('btn-db').disabled = false;
+                document.getElementById('btn-github').disabled = false;
+            }
+
+            // ===== Détection IP (repris de ip.html) =====
+            async function testIPDetection() {
+                const container = document.getElementById('ip-detection-results');
+                container.innerHTML = '';
+                if (!window.ipDetector) {
+                    displayTestResult('ip-detection-results', 'Service IP', false, 'js/ip-detection.js non chargé');
+                    return;
+                }
+                try {
+                    const data = await window.ipDetector.detect();
+                    displayTestResult('ip-detection-results', 'Adresse IP', true, data.ip);
+                    displayTestResult('ip-detection-results', 'Ville', 'info', data.city || 'N/A');
+                    displayTestResult('ip-detection-results', 'Pays', 'info', `${data.country || 'N/A'} ${data.country_emoji || ''}`);
+                    displayTestResult('ip-detection-results', 'FAI', 'info', data.isp || 'N/A');
+                    log('Détection IP réussie', 'success');
+                } catch (error) {
+                    displayTestResult('ip-detection-results', 'Détection IP', false, error.message);
+                    log('Erreur détection IP: ' + error.message, 'error');
+                }
+            }
+
+            async function testAllIPServices() {
+                const container = document.getElementById('ip-detection-results');
+                container.innerHTML = '';
+                const services = [
+                    { name: 'ip-api', url: 'http://ip-api.com/json/', parse: (data) => ({ ip: data.query, city: data.city }) }
+                ];
+                for (const service of services) {
+                    try {
+                        const response = await fetch(service.url);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        const data = service.parse(await response.json());
+                        displayTestResult('ip-detection-results', service.name, true, JSON.stringify(data));
+                    } catch (error) {
+                        displayTestResult('ip-detection-results', service.name, false, error.message);
+                    }
+                }
+            }
+
+            async function testIPEnrichment() {
+                const container = document.getElementById('ip-detection-results');
+                container.innerHTML = '';
+                if (!window.ipDetector) {
+                    displayTestResult('ip-detection-results', 'Service IP', false, 'js/ip-detection.js non chargé');
+                    return;
+                }
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await response.json();
+                    window.ipDetector.ipData = { ip: ipData.ip };
+                    await window.ipDetector.enrichData();
+                    displayTestResult('ip-detection-results', 'Avant enrichissement', 'info', ipData.ip);
+                    displayTestResult('ip-detection-results', 'Après enrichissement', true, window.ipDetector.getLocationString());
+                } catch (error) {
+                    displayTestResult('ip-detection-results', 'Enrichissement', false, error.message);
+                }
+            }
+
+            // ===== Mon profil (repris de profile.html) =====
+            function loadProfileInfo() {
+                const container = document.getElementById('profile-info');
+                container.innerHTML = '';
+                const user = window._adminUser;
+                const profile = window._adminProfile;
+                if (!user) {
+                    displayTestResult('profile-info', 'Session', false, 'Non connecté');
+                    return;
+                }
+                displayTestResult('profile-info', 'Email', 'info', user.email);
+                displayTestResult('profile-info', 'ID utilisateur', 'info', user.id);
+                displayTestResult('profile-info', 'Rôle', true, profile?.role || 'inconnu');
+
+                const logoutBtn = document.createElement('button');
+                logoutBtn.style.marginTop = '15px';
+                logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Déconnexion';
+                logoutBtn.onclick = async () => {
+                    await _supabase.auth.signOut();
+                    window.location.href = 'index.html';
+                };
+                container.appendChild(logoutBtn);
+            }
+
+            // Attendre EchoDB
+            function waitForEchoDB() {
+                return new Promise((resolve) => {
+                    if (window.EchoDB) {
+                        resolve();
+                    } else {
+                        const checkInterval = setInterval(() => {
+                            if (window.EchoDB) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            }
+                        }, 100);
+                    }
+                });
+            }
+
+            // Initialisation
+            window.addEventListener('load', async () => {
+                log('Page de test chargée');
+                log('Attente de l\'initialisation EchoDB...');
+
+                await waitForEchoDB();
+                log('EchoDB détecté !', 'success');
+                log('Prêt. Cliquez sur un bouton pour lancer les tests.');
+
+                loadProfileInfo();
             });
-        }
-
-        // Initialisation
-        window.addEventListener('load', async () => {
-            log('Page de test chargée');
-            log('Attente de l\'initialisation EchoDB...');
-
-            await waitForEchoDB();
-            log('EchoDB détecté !', 'success');
-            log('Prêt. Cliquez sur un bouton pour lancer les tests.');
-
-            loadProfileInfo();
-        });
-    </script>
-    </body>
+        </script>
+</body>
 
 </html>

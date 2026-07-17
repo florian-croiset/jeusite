@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <!-- Vercel Web Analytics -->
     <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
@@ -14,8 +15,9 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body, html {
+
+        body,
+        html {
             height: 100%;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -187,19 +189,19 @@
             .logo-title {
                 font-size: 2.5rem;
             }
-            
+
             .logo-subtitle {
                 font-size: 1.3rem;
             }
-            
+
             .selection-container {
                 padding: 30px 20px;
             }
-            
+
             h2 {
                 font-size: 1.4rem;
             }
-            
+
             .presentation-btn {
                 padding: 15px 20px;
                 font-size: 1rem;
@@ -207,13 +209,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="selection-screen" id="selectionScreen">
         <div class="logo-container">
             <div class="logo-title">ECHO</div>
             <div class="logo-subtitle">Soutencance n°3</div>
         </div>
-        
+
         <div class="selection-container">
             <h2>Choisissez une présentation</h2>
             <div class="presentation-buttons">
@@ -240,28 +243,28 @@
             const iframeContainer = document.getElementById('iframeContainer');
             const backButton = document.getElementById('backButton');
             const iframe = document.getElementById('presentationFrame');
-            
+
             // Construire l'URL de la présentation
             const embedUrl = `https://www.canva.com/design/${presentationId}/view?embed`;
-            
+
             // Charger l'iframe
             iframe.src = embedUrl;
-            
+
             // Masquer l'écran de sélection et afficher l'iframe
             selectionScreen.style.display = 'none';
             iframeContainer.classList.add('active');
             backButton.classList.add('active');
         }
-        
+
         function backToSelection() {
             const selectionScreen = document.getElementById('selectionScreen');
             const iframeContainer = document.getElementById('iframeContainer');
             const backButton = document.getElementById('backButton');
             const iframe = document.getElementById('presentationFrame');
-            
+
             // Arrêter la lecture de l'iframe
             iframe.src = '';
-            
+
             // Afficher l'écran de sélection et masquer l'iframe
             selectionScreen.style.display = 'flex';
             iframeContainer.classList.remove('active');
@@ -269,4 +272,5 @@
         }
     </script>
 </body>
+
 </html>
