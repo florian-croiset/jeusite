@@ -18,6 +18,11 @@ const { minify: minifyHtml } = require('html-minifier-terser');
 const { minify: minifyJs } = require('terser');
 const CleanCSS = require('clean-css');
 
+// Logs de debug/statut retirés du bundle livré (console.error/warn conservés,
+// utiles pour du vrai débogage en prod). Les sources elles-mêmes ne sont pas
+// touchées : les logs restent en dev, seul le build les strip.
+const CONSOLE_COMPRESS = { pure_funcs: ['console.log', 'console.debug', 'console.info'] };
+
 const SRC = path.resolve(process.argv[2] || '.');
 const DIST = path.resolve(process.argv[3] || 'dist');
 
@@ -58,7 +63,7 @@ const HTML_OPTIONS = {
   removeStyleLinkTypeAttributes: true,
   useShortDoctype: true,
   minifyCSS: true,   // minifie le CSS inline (<style>) via clean-css
-  minifyJS: true,    // minifie le JS inline (<script>) via terser
+  minifyJS: { compress: CONSOLE_COMPRESS },   // minifie le JS inline (<script>) via terser
   collapseBooleanAttributes: true,
   removeEmptyAttributes: false, // garde value="" etc. utiles ici (placeholders, etc.)
 };
@@ -141,7 +146,7 @@ async function processFile(srcFile) {
     const hasTopLevelAwait = /(^|[;{}()\s])await\s/m.test(content);
     const isModule = hasImportExport || hasTopLevelAwait;
     try {
-      const out = await minifyJs(content, { module: isModule });
+      const out = await minifyJs(content, { module: isModule, compress: CONSOLE_COMPRESS });
       await ensureDir(destFile);
       await fs.writeFile(destFile, out.code, 'utf8');
       report(srcFile, content.length, out.code.length, 'js');

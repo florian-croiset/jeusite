@@ -1,0 +1,15 @@
+/* === error.css === */
+/* Sous-ensemble de style.css nécessaire à 404.html uniquement (pas de splash,
+   settings, modals, lore/gameplay/install : cette page n'en a pas besoin). */
+
+@import url("main.css");
+@import url("couleurs.css");
+@import url("layout.css");
+@import url("components.css");
+@import url("effects.css");
+@import url("hero.css");
+
+/* Responsive en dernier : les media queries doivent primer sur les règles de
+   base à spécificité égale (ordre précédent de 404.html les chargeait en
+   premier, ce qui pouvait faire perdre les surcharges responsive). */
+@import url("responsive.css");

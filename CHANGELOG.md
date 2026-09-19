@@ -35,7 +35,13 @@ Nettoyage post-projet : le développement (et la soutenance EPITA) étant termin
 ### Modifié
 - `js/utils/settings.js`, `js/utils/share.js`, `js/ui/music.js` : nettoyage de code, fonctionnalités conservées intactes
 - `install.css`, `lore.css`, `gameplay.css` (chargées uniquement par `index.html`, toujours ensemble) fusionnées dans la chaîne `@import` de `css/style.css` au lieu d'être des `<link>` séparés — réduit le nombre de requêtes CSS sans changer l'ordre de cascade (déjà inliné en un seul fichier au build par `minify.js`/clean-css)
+- `css/fontawesome-subset.css` fusionné dans la même chaîne `@import` : `index.html` ne charge plus qu'un seul fichier CSS local en prod (contre 5 avant)
+- `404.html` : ses 7 `<link>` CSS individuels (URLs absolues) remplacés par un unique `css/error.css`, qui `@import` uniquement le sous-ensemble nécessaire — au passage, `responsive.css` repassé en dernier import (il était chargé en premier, ce qui pouvait faire perdre ses surcharges face aux règles de base à spécificité égale)
+- Ordre des `@import` de `css/style.css` : `screen.css` (styles du splash screen, premier écran visible) passé en tête de chaîne au lieu de 10ᵉ/14
+- CSS critique du splash screen (fond + positionnement de `#splash-screen`) dupliqué en inline dans le `<head>` d'`index.html`, pour s'appliquer sans attendre le chargement réseau de `style.css` et éviter un flash blanc au premier paint — les règles réelles de `style.css` prennent le relais automatiquement une fois chargées (même sélecteur, définies après)
 - README.md et AGENTS.md réécrits pour refléter l'état actuel du projet (sans historique de versions dans le README)
+- `minify.js` retire désormais `console.log`/`console.debug`/`console.info` du bundle livré (`console.error`/`console.warn` conservés) — sources non modifiées, dev inchangé
+- `assets/favicon.ico` reconstruit en `.ico` multi-résolution (16/32/48, compression PNG) au lieu d'une unique image 256×256 non compressée : 57,1 Ko → 7,8 Ko (-86 %), aucune autre page ne référençant une résolution plus grande
 
 ### Notes
 - `vercel.json` et `.github/workflows/deploy.yml` conservés tels quels : les deux pipelines de déploiement sont utilisés

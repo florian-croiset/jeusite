@@ -1,5 +1,11 @@
 /* === style.css === */
 
+/* Icônes (Font Awesome, subset local) */
+@import url("fontawesome-subset.css");
+
+/* Splash screen : en premier, c'est le tout premier écran visible au chargement */
+@import url("screen.css");
+
 /* Main : reset, variables, couleurs */
 @import url("main.css");
 
@@ -26,9 +32,6 @@
 
 /* Responsive (à la fin) */
 @import url("responsive.css");
-
-/* Screen */
-@import url("screen.css");
 
 /* Settings */
 @import url("settings.css");
