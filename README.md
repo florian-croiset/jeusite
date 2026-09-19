@@ -1,3 +1,4 @@
+![Version](https://img.shields.io/badge/version-2-blue)
 ![Statut](https://img.shields.io/badge/statut-stable-green)
 
 # 🌌 Echo – Site Officiel du Jeu (Team Nightberry)
@@ -7,6 +8,11 @@
 **Echo** est un jeu narratif développé par **Team Nightberry**, un collectif de cinq étudiants passionnés par le game design et les univers immersifs.
 
 Ce site web sert de **vitrine officielle** du projet : présentation de l'équipe, téléchargement du jeu, aperçu du gameplay et du lore, historique des versions du jeu, et un dashboard administrateur pour l'équipe.
+
+> Cette branche (v2) est une version allégée du site original : le projet
+> étant terminé, les pages, outils et données qui ne servaient qu'à
+> l'équipe pendant le développement ont été retirés pour ne garder que
+> l'essentiel à la présentation publique du jeu.
 
 ---
 
