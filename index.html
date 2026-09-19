@@ -541,7 +541,7 @@
             </div>
 
             <div class="link-share-area">
-                <input type="text" id="shareLinkInput" readonly>
+                <input type="text" id="shareLinkInput" aria-label="Lien de partage du site" readonly>
                 <button id="copyLinkBtn" class="btn-confirm">Copier</button>
             </div>
 
@@ -551,15 +551,6 @@
         </div>
     </div>
 </body>
-<script>
-    // Charger l'audio seulement quand l'utilisateur interagit
-    document.getElementById('musicBtn').addEventListener('click', function () {
-        const audio = document.getElementById('backgroundMusic');
-        if (!audio.src) {
-            audio.load();
-        }
-    }, { once: true });
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" integrity="sha384-JBR+x8blGwjDRO63aHCGiZMD4VNiTR4ZUGA+N6ZKLf3zNt1fK8IBpcgPaMrxqWBp" crossorigin="anonymous"></script>
 <script type="module" src="js/config/supabase.js"></script>
 <script type="module" src="js/database.js"></script>
