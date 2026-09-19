@@ -1,0 +1,34 @@
+/* === style.css === */
+
+/* Main : reset, variables, couleurs */
+@import url("main.css");
+
+/* Couleurs */
+@import url("couleurs.css");
+
+/* Structure & disposition globale */
+@import url("layout.css");
+
+/* Styles des composants */
+@import url("components.css");
+
+/* Effets et animations */
+@import url("effects.css");
+
+/* Curseur personnalisé */
+@import url("cursor.css");
+
+/* Section Hero */
+@import url("hero.css");
+
+/* Fenêtres modales & accès secret */
+@import url("modals.css");
+
+/* Responsive (à la fin) */
+@import url("responsive.css");
+
+/* Screen */
+@import url("screen.css");
+
+/* Settings */
+@import url("settings.css");

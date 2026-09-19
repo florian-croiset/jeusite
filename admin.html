@@ -1,0 +1,3236 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <!-- Vercel Web Analytics -->
+    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Echo Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/admin.css">
+    <style>
+        /* Mobile sidebar fix: override inline styles on sidebar-items */
+        .sidebar-item {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Section Authentification -->
+    <div id="auth-container">
+        <div class="auth-box">
+            <h2>🔐 Admin Echo</h2>
+            <div id="error-container"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required placeholder="admin@echo.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn"
+                    style="font-size: 16px; padding: 12px 24px; width: 100%;">Connexion</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Admin -->
+    <div id="dashboard">
+        <div class="dashboard-header">
+            <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <h1>⚡ Echo Dashboard</h1>
+            <div class="user-info">
+                <span id="user-email"></span>
+                <span id="user-role-badge" class="role-badge"></span>
+                <button class="btn btn-small btn-danger" onclick="logout()" id="logout-btn">
+                    <span class="logout-text">Déconnexion</span>
+                    <span class="logout-icon">🚪</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- Overlay mobile -->
+            <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-item active" data-section="overview">📊 Vue d'ensemble</div>
+                <div class="sidebar-item" data-section="versions">🎮 Versions du jeu</div>
+                <div class="sidebar-item" data-section="forms">📋 Formulaires</div>
+                <div class="sidebar-item" data-section="downloads-manage">📥 Téléchargements</div>
+                <div class="sidebar-item" data-section="github-stats">🐙 Stats GitHub</div>
+                <div class="sidebar-item" data-section="tracking">🔗 Webhooks</div>
+                <div class="sidebar-item" data-section="users">👥 Utilisateurs</div>
+                <div class="sidebar-item" data-section="site-settings">⚙️ Paramètres</div>
+            </div>
+
+            <div class="main-content">
+                <!-- Vue d'ensemble -->
+                <div class="section active" id="overview">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Utilisateurs</div>
+                            <div class="stat-value" id="stats-users">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Réponses</div>
+                            <div class="stat-value" id="stats-responses">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Téléchargements</div>
+                            <div class="stat-value" id="stats-downloads">-</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Refresh</h2>
+                        <div>
+                            <p>await forceRefreshAllClients('Nouvelle version disponible !');</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>🔄 Forcer le rechargement des clients</h2>
+                        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 20px;">
+                            Envoie un signal de rechargement à <strong>tous les navigateurs connectés</strong> sur le
+                            site.
+                        </p>
+
+                        <div class="form-group">
+                            <label>Message affiché aux utilisateurs</label>
+                            <input type="text" id="refresh-message" placeholder="Nouvelle version disponible !"
+                                value="Nouvelle version disponible !" maxlength="100">
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                            <button class="btn btn-warning" id="refresh-btn" onclick="handleForceRefresh()">
+                                <i class="fa-solid fa-rotate"></i> Forcer le rechargement
+                            </button>
+                            <span id="refresh-status" style="font-size: 13px; color: var(--text-dim);"></span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Dernières activités</h2>
+                        <div id="recent-activity">
+                            <p class="loading">Chargement</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Versions du jeu -->
+                <div class="section" id="versions">
+
+                    <!-- Bandeau accès public téléchargement -->
+                    <div class="card"
+                        style="margin-bottom: 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 20px;">
+                        <i class="fa-solid fa-power-off" style="font-size: 20px; color: var(--cyan);"></i>
+                        <div style="flex: 1; min-width: 180px;">
+                            <div style="font-weight: 600; font-size: 14px;">Téléchargement public</div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 2px;">Activer ou bloquer
+                                l'accès au téléchargement pour tous les visiteurs</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label class="switch"
+                                style="display: inline-block; position: relative; width: 50px; height: 24px; flex-shrink: 0;">
+                                <input type="checkbox" id="globalDownloadSwitch" onchange="toggleDownloadState(this)">
+                                <span class="slider round"
+                                    style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                            </label>
+                            <span id="switchStatusText"
+                                style="font-size: 13px; font-weight: 500; min-width: 240px;">Chargement...</span>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard stats versions -->
+                    <div id="versions-dashboard"></div>
+
+                    <!-- Countdown actif affiché -->
+                    <div id="countdown-status-card" style="display:none;" class="card" style="margin-bottom: 16px;">
+                    </div>
+
+                    <!-- Tableau des versions -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="version-header-actions">
+                            <h2>🎮 Gestion des versions</h2>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="openVersionModal()"
+                                    title="Créer une nouvelle version">
+                                    <i class="fa-solid fa-plus"></i> Nouvelle version
+                                </button>
+                                <button class="btn btn-success" onclick="publishNextVersion()"
+                                    title="Publier immédiatement la version marquée comme prochaine">
+                                    <i class="fa-solid fa-rocket"></i> Publier suivante
+                                </button>
+                                <button class="btn"
+                                    style="background: linear-gradient(135deg, #7b2ff7, #00bcd4); color:#fff;"
+                                    onclick="openScheduleModal()"
+                                    title="Programmer une sortie : lie la version, le countdown et la date en une seule action">
+                                    <i class="fa-solid fa-calendar-plus"></i> Programmer une sortie
+                                </button>
+                                <button class="btn" style="background: #6c757d;" onclick="showArchives()"
+                                    title="Voir les versions archivées">
+                                    <i class="fa-solid fa-archive"></i> Archives
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Légende statuts -->
+                        <div
+                            style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; color: var(--text-dim);">
+                            <span><span
+                                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00ff88;margin-right:4px;"></span>Publiée</span>
+                            <span><span
+                                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7b2ff7;margin-right:4px;"></span>Sortie
+                                programmée (countdown + auto-publish)</span>
+                            <span><span
+                                    style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#6c757d;margin-right:4px;"></span>Brouillon</span>
+                        </div>
+
+                        <div id="versions-container">
+                            <p class="loading">Chargement des versions</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section" id="site-settings">
+                    <div class="card">
+                        <h2>⚙️ Paramètres du site</h2>
+
+                        <div class="form-group">
+                            <label>Version du site *</label>
+                            <input type="text" id="site-version-input" placeholder="2.1 Beta">
+                            <small style="color: var(--accent); display: block; margin-top: 5px;">
+                                Format recommandé : "X.X Beta" ou "X.X"
+                            </small>
+                        </div>
+
+                        <button class="btn btn-success" onclick="saveSiteVersion()">
+                            💾 Enregistrer la version
+                        </button>
+
+                        <div
+                            style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid var(--primary);">
+                            <strong>Version actuelle :</strong>
+                            <span id="current-site-version"
+                                style="color: var(--cyan); font-size: 1.1rem; margin-left: 10px;">
+                                Chargement...
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="section" id="forms">
+                    <div class="card">
+                        <div class="forms-toolbar">
+                            <h2>📋 Réponses au formulaire</h2>
+                            <div class="forms-toolbar-actions">
+                                <span id="forms-count"></span>
+                                <button class="btn btn-small" onclick="exportFormResponses()" title="Exporter en CSV">
+                                    <i class="fa-solid fa-download"></i> CSV
+                                </button>
+                                <button class="btn btn-small btn-primary" onclick="loadFormResponses()"
+                                    title="Rafraîchir">
+                                    <i class="fa-solid fa-rotate"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="forms-filters">
+                            <input type="text" id="forms-search" placeholder="🔍 Rechercher nom / email / message..."
+                                oninput="filterFormResponses()">
+                            <select id="forms-sort" onchange="filterFormResponses()">
+                                <option value="desc">Plus récentes d'abord</option>
+                                <option value="asc">Plus anciennes d'abord</option>
+                            </select>
+                        </div>
+
+                        <div id="forms-list">
+                            <p class="forms-empty">Chargement...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section" id="users">
+                    <div class="card">
+                        <h2>👥 Gestion des utilisateurs</h2>
+                        <div id="users-list">
+                            <p class="loading">Chargement</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gestion des téléchargements -->
+                <div class="section" id="downloads-manage">
+                    <div class="card">
+                        <h2>🔧 Gestion des téléchargements</h2>
+
+                        <div class="download-controls">
+                            <div class="control-item">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="toggle-kit" class="download-toggle">
+                                    <span class="switch-slider"></span>
+                                    <span class="control-text">Kit Complet</span>
+                                </label>
+                            </div>
+                            <div class="control-item">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="toggle-pdf" class="download-toggle">
+                                    <span class="switch-slider"></span>
+                                    <span class="control-text">PDF Charte Graphique</span>
+                                </label>
+                            </div>
+                            <div class="control-item">
+                                <label class="switch-label">
+                                    <input type="checkbox" id="toggle-assets" class="download-toggle">
+                                    <span class="switch-slider"></span>
+                                    <span class="control-text">Assets Pack</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="saveDownloadSettings()" style="margin-top: 20px;">
+                            💾 Enregistrer les modifications
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section Stats GitHub -->
+                <div class="section" id="github-stats">
+                    <div class="card">
+                        <div class="version-header-actions">
+                            <h2>🐙 Statistiques GitHub (projetjeu)</h2>
+                            <button class="btn btn-small" onclick="loadGithubStats()" title="Rafraîchir">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
+                        </div>
+                        <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px;">
+                            Données publiques de l'API GitHub — <a
+                                href="https://github.com/florian-croiset/projetjeu/releases" target="_blank"
+                                rel="noopener"
+                                style="color: var(--cyan);">github.com/florian-croiset/projetjeu/releases</a>
+                        </p>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">⭐ Stars</div>
+                                <div class="stat-value" id="github-stat-stars">-</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">🍴 Forks</div>
+                                <div class="stat-value" id="github-stat-forks">-</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">📦 Releases</div>
+                                <div class="stat-value" id="github-stat-releases">-</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">⬇️ Téléchargements totaux</div>
+                                <div class="stat-value" id="github-stat-total-downloads">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>🕐 Dernier commit</h2>
+                        <div id="github-last-commit">
+                            <p class="loading">Chargement</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>👥 Contributeurs</h2>
+                        <div id="github-contributors">
+                            <p class="loading">Chargement</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <details>
+                            <summary style="cursor:pointer;">
+                                <h2 style="display:inline;margin-bottom:0;">🔀 Comparatif clics site vs téléchargements
+                                    GitHub</h2>
+                            </summary>
+                            <p style="color: var(--text-dim); font-size: 13px; margin: 12px 0;">
+                                Compare le nombre de clics sur le bouton de téléchargement du site (table
+                                <code>downloads</code>) au nombre réel de téléchargements du fichier sur GitHub, par
+                                version.
+                            </p>
+                            <div id="github-comparison-chart">
+                                <p class="loading">Chargement</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="card">
+                        <details>
+                            <summary style="cursor:pointer;">
+                                <h2 style="display:inline;margin-bottom:0;">📊 Téléchargements par release</h2>
+                            </summary>
+                            <div id="github-downloads-chart" style="margin-top:12px;">
+                                <p class="loading">Chargement</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="card">
+                        <h2>📋 Détail par release</h2>
+                        <div id="github-releases-list">
+                            <p class="loading">Chargement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Webhooks -->
+                <div class="section" id="tracking">
+                    <div class="card">
+                        <div class="version-header-actions">
+                            <h2>🔗 Webhooks</h2>
+                            <button class="btn btn-small" onclick="loadTracking()" title="Rafraîchir">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-label">Webhooks Actifs</div>
+                                <div class="stat-value" id="stats-tracking-webhooks">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>🔗 Configuration Webhook Principal</h2>
+                        <div id="webhook-config">
+                            <p class="loading">Chargement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL WEBHOOK -->
+    <div id="editWebhookModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Modifier le webhook principal</h3>
+                <span class="close-modal" onclick="closeEditWebhookModal()">&times;</span>
+            </div>
+            <form id="editWebhookForm">
+                <div class="form-group">
+                    <label>URL du webhook *</label>
+                    <input type="url" id="main-webhook-url" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="webhook-description" rows="2"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeEditWebhookModal()">❌ Annuler</button>
+                    <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL VERSION -->
+    <div id="version-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nouvelle version</h3>
+                <span class="close-modal" onclick="closeVersionModal()">&times;</span>
+            </div>
+            <form id="version-form">
+                <input type="hidden" id="v-id">
+
+                <!-- SECTION 1 : INFOS DE BASE -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📋 Informations</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Numéro de version *</label>
+                            <input type="text" id="v-number" required placeholder="1.5.0">
+                        </div>
+                        <div class="form-group">
+                            <label>Date de sortie *</label>
+                            <input type="datetime-local" id="v-date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="v-title" required placeholder="Grande mise à jour">
+                    </div>
+                    <div class="form-group">
+                        <label>Description courte</label>
+                        <textarea id="v-description" rows="2" placeholder="Résumé en 1-2 lignes..."></textarea>
+                    </div>
+                </div>
+
+                <!-- SECTION 2 : CHANGELOG -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📝 Notes de mise à jour</h4>
+                    <div class="form-group">
+                        <textarea id="v-notes" rows="6"
+                            placeholder="- Ajout de...&#10;- Correction de...&#10;- Amélioration de..."></textarea>
+                        <small style="color: var(--text-dim);">Une ligne = un point de changelog</small>
+                    </div>
+                </div>
+
+                <!-- SECTION 3 : TÉLÉCHARGEMENT -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">📥 Fichiers</h4>
+                    <div class="form-group">
+                        <label>Lien de téléchargement (URL)</label>
+                        <input type="url" id="v-url" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>Taille du fichier</label>
+                        <input type="text" id="v-size" placeholder="150 MB">
+                        <small style="color: var(--text-dim);">Optionnel, pour l'affichage</small>
+                    </div>
+                </div>
+
+                <!-- SECTION 4 : PUBLICATION -->
+                <div class="form-section">
+                    <h4 style="color: var(--cyan); margin-bottom: 15px;">🚀 Publication</h4>
+
+                    <div class="checkbox-group"
+                        style="background: rgba(0,255,136,0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--success); margin-bottom: 12px;">
+                        <input type="checkbox" id="v-published">
+                        <label for="v-published">
+                            <strong>Publier cette version immédiatement</strong><br>
+                            <small style="color: var(--text-dim);">Si décoché, reste en brouillon. Pour programmer une
+                                sortie avec countdown, utilise le bouton "Programmer une sortie".</small>
+                        </label>
+                    </div>
+
+                    <!-- Info sortie programmée si existante -->
+                    <div id="v-schedule-info"
+                        style="display:none; padding: 10px 14px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px; color: #ce93d8;">
+                        <i class="fa-solid fa-calendar-check" style="margin-right:6px;"></i>
+                        <span id="v-schedule-info-text"></span>
+                        <button type="button" onclick="cancelScheduleFromVersion()"
+                            style="background:none;border:none;color:#ff4757;cursor:pointer;font-size:12px;margin-left:8px;"
+                            title="Annuler la programmation">✕ Annuler</button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeVersionModal()">❌ Annuler</button>
+                    <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PROGRAMMER UNE SORTIE (unifié countdown + scheduled_publish_at) -->
+    <div id="schedule-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🗓️ Programmer une sortie</h3>
+                <span class="close-modal" onclick="closeScheduleModal()">&times;</span>
+            </div>
+
+            <!-- Sortie déjà programmée -->
+            <div id="sm-active-info"
+                style="display:none; margin-bottom: 16px; padding: 12px 16px; background: rgba(123,47,247,0.1); border: 1px solid #7b2ff7; border-radius: 8px; font-size: 13px;">
+                <div style="font-weight: 600; color: #ce93d8; margin-bottom: 6px;">
+                    <i class="fa-solid fa-calendar-check"></i> Sortie déjà programmée
+                </div>
+                <div id="sm-active-detail" style="color: var(--text-dim); line-height: 1.6;"></div>
+                <button type="button" class="btn btn-danger" style="font-size: 12px; margin-top: 10px;"
+                    onclick="cancelSchedule()">
+                    <i class="fa-solid fa-xmark"></i> Annuler cette programmation
+                </button>
+            </div>
+
+            <form id="schedule-modal-form">
+                <input type="hidden" id="sm-countdown-id">
+                <input type="hidden" id="sm-version-id-prev">
+
+                <!-- Explication visuelle du flux -->
+                <div
+                    style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap;">
+                    <span style="color:#ce93d8;"><i class="fa-solid fa-box"></i> Version choisie</span>
+                    <span style="color: var(--text-dim);">→</span>
+                    <span style="color:#00bcd4;"><i class="fa-solid fa-clock"></i> Countdown sur le site</span>
+                    <span style="color: var(--text-dim);">→</span>
+                    <span style="color:#ffc107;"><i class="fa-solid fa-hourglass-end"></i> Countdown = 0</span>
+                    <span style="color: var(--text-dim);">→</span>
+                    <span style="color:#00ff88;"><i class="fa-solid fa-rocket"></i> Publication + 🎉</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Version à publier *</label>
+                    <select id="sm-version" required onchange="onScheduleVersionChange()">
+                        <option value="">— Choisir une version —</option>
+                    </select>
+                    <small id="sm-version-hint"
+                        style="color: var(--text-dim); margin-top: 4px; display: block;"></small>
+                </div>
+
+                <div class="form-group">
+                    <label>Date et heure de lancement *</label>
+                    <input type="datetime-local" id="sm-target-date" required onchange="onScheduleDateChange()">
+                    <small id="sm-date-hint" style="margin-top: 4px; display: block;"></small>
+                </div>
+
+                <div class="form-group">
+                    <label>Nom affiché sur le site *</label>
+                    <input type="text" id="sm-event-name" required placeholder="Lancement de Echo v2.1 !">
+                    <small style="color: var(--text-dim);">Titre affiché au-dessus du countdown sur le site
+                        public</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Description <small style="color: var(--text-dim);">(optionnel)</small></label>
+                    <textarea id="sm-description" rows="2" placeholder="Texte affiché sous le countdown..."></textarea>
+                </div>
+
+                <!-- Récap visuel avant confirmation -->
+                <div id="sm-recap"
+                    style="display:none; padding: 12px 16px; background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.25); border-radius: 8px; font-size: 13px; margin-top: 4px;">
+                    <div style="font-weight: 600; color: #00ff88; margin-bottom: 8px;"><i
+                            class="fa-solid fa-circle-check"></i> Ce qui va se passer</div>
+                    <div id="sm-recap-text" style="color: var(--text-dim); line-height: 1.8;"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeScheduleModal()">Annuler</button>
+                    <button type="submit" class="btn btn-success" id="sm-submit-btn">
+                        <i class="fa-solid fa-calendar-plus"></i> Programmer la sortie
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        const ROLE_PERMISSIONS = {
+            admin: ['overview', 'versions', 'forms', 'downloads-manage', 'github-stats', 'tracking', 'users', 'site-settings'],
+            user: []
+        };
+
+        // Configuration Supabase (utiliser une variable locale pour éviter la redéclaration)
+        const SUPABASE_URL = 'https://apwhdqpdugvhwdvjlbee.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_U4b6xa4sBwEEs1heHmcEGg_M7MA5sB1';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUserProfile = null;
+
+        function applyRoleUI(role) {
+            const allowed = ROLE_PERMISSIONS[role] || [];
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                const section = item.dataset.section;
+                item.style.display = allowed.includes(section) ? '' : 'none';
+            });
+        }
+
+        function getSupabase() {
+            // On cherche le client partout où il pourrait être défini
+            return window.EchoSupabase || window.supabaseClient || (window.EchoDB ? window.EchoDB.supabase : null);
+        }
+
+        async function waitForSupabase() {
+            return new Promise(resolve => {
+                const client = getSupabase();
+                if (client) return resolve(client);
+
+                const interval = setInterval(() => {
+                    const clientNow = getSupabase();
+                    if (clientNow) {
+                        clearInterval(interval);
+                        resolve(clientNow);
+                    }
+                }, 100);
+            });
+        }
+
+        // ===== AUTHENTIFICATION =====
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                const { data: profile } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profile && profile.role === 'admin') {
+                    currentUserProfile = profile;
+                    showDashboard(data.user, profile);
+                } else {
+                    showLoginError('Accès refusé : vous devez être administrateur');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showLoginError('Erreur de connexion : ' + error.message);
+            }
+
+            return false;
+        });
+
+        function showLoginError(message) {
+            const div = document.createElement('div');
+            div.className = 'error-message';
+            div.textContent = message;
+            document.getElementById('error-container').replaceChildren(div);
+        }
+
+        function showDashboard(user, profile) {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('user-email').textContent = user.email;
+
+            const roleBadge = document.getElementById('user-role-badge');
+            roleBadge.textContent = 'Admin';
+            roleBadge.className = `role-badge role-${profile.role}`;
+
+            loadDashboardData();
+        }
+
+        window.logout = async function () {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        };
+
+        // ===== NAVIGATION =====
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.dataset.section;
+                const allowedSections = ROLE_PERMISSIONS[currentUserProfile?.role] || [];
+
+                if (!allowedSections.includes(section)) {
+                    showToast('❌ Accès refusé', 'danger');
+                    return;
+                }
+
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+
+                if (section === 'users') loadUsers();
+                if (section === 'forms') loadFormResponses();
+                if (section === 'tracking') loadTracking();
+                if (section === 'github-stats') loadGithubStats();
+                // etc.
+            });
+        });
+
+        // ===== CHARGEMENT DES DONNÉES =====
+        async function loadDashboardData() {
+            try {
+                const [users, responses, downloads] = await Promise.all([
+                    supabaseClient.from('profiles').select('id', { count: 'exact', head: true }),
+                    supabaseClient.from('form_responses').select('id', { count: 'exact', head: true }),
+                    supabaseClient.from('downloads').select('id', { count: 'exact', head: true })
+                ]);
+
+                document.getElementById('stats-users').textContent = users.count || 0;
+                document.getElementById('stats-responses').textContent = responses.count || 0;
+                document.getElementById('stats-downloads').textContent = downloads.count || 0;
+
+                await loadRecentActivity();
+            } catch (error) {
+                console.error('Erreur chargement stats:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('downloads')
+                    .select('*')
+                    .order('downloaded_at', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+
+                const container = document.getElementById('recent-activity');
+                container.replaceChildren();
+                if (data && data.length > 0) {
+                    const table = document.createElement('table');
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = '<tr><th>Type</th><th>Version</th><th>Date</th></tr>'; // statique ✅
+                    const tbody = document.createElement('tbody');
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        const tdType = document.createElement('td');
+                        tdType.textContent = '📥 Téléchargement';
+                        const tdVersion = document.createElement('td');
+                        tdVersion.textContent = item.version || '—';
+                        const tdDate = document.createElement('td');
+                        tdDate.textContent = new Date(item.downloaded_at).toLocaleString('fr-FR');
+                        tr.append(tdType, tdVersion, tdDate);
+                        tbody.appendChild(tr);
+                    });
+                    table.append(thead, tbody);
+                    container.appendChild(table);
+                } else {
+                    const p = document.createElement('p');
+                    p.style.color = 'var(--purple)';
+                    p.textContent = 'Aucune activité récente';
+                    container.appendChild(p);
+                }
+            } catch (error) {
+                console.error('Erreur activités:', error);
+            }
+        }
+
+
+        // Charger l'état des téléchargements
+        async function loadDownloadSettings() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('download_packs')
+                    .select('*')
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('toggle-assets').checked = data.assets_pack_enabled;
+                document.getElementById('toggle-pdf').checked = data.pdf_charter_enabled;
+                document.getElementById('toggle-kit').checked = data.complete_kit_enabled;
+            } catch (error) {
+                console.error('Erreur chargement settings:', error);
+            }
+        }
+
+        // Sauvegarder les paramètres
+        window.saveDownloadSettings = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            try {
+                const settings = {
+                    assets_pack_enabled: document.getElementById('toggle-assets').checked,
+                    pdf_charter_enabled: document.getElementById('toggle-pdf').checked,
+                    complete_kit_enabled: document.getElementById('toggle-kit').checked,
+                    updated_at: new Date().toISOString()
+                };
+
+                const user = await supabaseClient.auth.getUser();
+                if (user.data.user) {
+                    settings.updated_by = user.data.user.id;
+                }
+
+                const { error } = await supabaseClient
+                    .from('download_packs')
+                    .update(settings)
+                    .eq('id', '00000000-0000-0000-0000-000000000001');
+
+                if (error) throw error;
+
+                alert('✅ Paramètres sauvegardés avec succès !');
+            } catch (error) {
+                console.error('Erreur sauvegarde:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
+        };
+
+        // Charger au clic sur la section
+        document.querySelector('[data-section="downloads-manage"]')?.addEventListener('click', () => {
+            loadDownloadSettings();
+        });
+
+
+        // ===== TOAST (remplace les alert) =====
+        function showToast(message, type = 'success') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;';
+                document.body.appendChild(container);
+            }
+            const colors = { success: '#00ff88', danger: '#ff4757', warning: '#ffc107', info: '#00bcd4' };
+            const toast = document.createElement('div');
+            toast.style.cssText = `background:#1a1a2e;border-left:4px solid ${colors[type] || colors.success};color:#fff;padding:12px 18px;border-radius:8px;font-size:14px;max-width:350px;box-shadow:0 4px 20px rgba(0,0,0,0.4);animation:slideIn .2s ease;`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+        const style = document.createElement('style');
+        style.textContent = '@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';
+        document.head.appendChild(style);
+
+        // ===== MODAL VERSION =====
+        window.openVersionModal = function () {
+            document.getElementById('version-form').reset();
+            document.getElementById('v-id').value = '';
+            document.getElementById('modal-title').textContent = 'Nouvelle version';
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('v-date').value = now.toISOString().slice(0, 16);
+            document.getElementById('v-published').checked = false;
+            document.getElementById('v-schedule-info').style.display = 'none';
+            document.getElementById('version-modal').style.display = 'flex';
+        };
+
+        window.closeVersionModal = function () {
+            document.getElementById('version-modal').style.display = 'none';
+        };
+
+        // ===== ÉDITER VERSION — lit game_versions directement pour avoir tous les champs =====
+        window.editVersion = async function (id) {
+            try {
+                const { data: version, error } = await supabaseClient
+                    .from('game_versions')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                if (error || !version) throw error || new Error('Version introuvable');
+
+                document.getElementById('v-id').value = version.id;
+                document.getElementById('v-number').value = version.version || '';
+                document.getElementById('v-title').value = version.title || '';
+                document.getElementById('v-description').value = version.description || '';
+                document.getElementById('v-url').value = version.download_url || '';
+                document.getElementById('v-size').value = version.file_size || '';
+                document.getElementById('v-date').value = version.release_date ? version.release_date.slice(0, 16) : '';
+                document.getElementById('v-published').checked = version.is_published || false;
+
+                if (version.changelog && Array.isArray(version.changelog)) {
+                    document.getElementById('v-notes').value = version.changelog.join('\n');
+                } else if (typeof version.changelog === 'string') {
+                    document.getElementById('v-notes').value = version.changelog;
+                } else {
+                    document.getElementById('v-notes').value = '';
+                }
+
+                // Afficher info sortie programmée si existante
+                const scheduleInfo = document.getElementById('v-schedule-info');
+                const scheduleInfoText = document.getElementById('v-schedule-info-text');
+                if (version.scheduled_publish_at && !version.is_published) {
+                    const d = new Date(version.scheduled_publish_at);
+                    scheduleInfoText.textContent = `Sortie programmée le ${d.toLocaleString('fr-FR')} — countdown lié`;
+                    scheduleInfo.style.display = 'block';
+                } else {
+                    scheduleInfo.style.display = 'none';
+                }
+
+                document.getElementById('modal-title').textContent = `Modifier — v${version.version}`;
+                document.getElementById('version-modal').style.display = 'flex';
+            } catch (err) {
+                showToast('❌ Impossible de charger la version : ' + err.message, 'danger');
+            }
+        };
+
+        // ===== SOUMETTRE FORMULAIRE VERSION =====
+        document.getElementById('version-form').addEventListener('submit', async (e) => {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            e.preventDefault();
+            const id = document.getElementById('v-id').value;
+            const notesText = document.getElementById('v-notes').value;
+            const changelog = notesText ? notesText.split('\n').filter(l => l.trim()) : null;
+
+            const data = {
+                version: document.getElementById('v-number').value.trim(),
+                title: document.getElementById('v-title').value.trim(),
+                description: document.getElementById('v-description').value.trim() || null,
+                changelog: changelog,
+                download_url: document.getElementById('v-url').value.trim() || null,
+                file_size: document.getElementById('v-size').value.trim() || null,
+                release_date: document.getElementById('v-date').value,
+                is_published: document.getElementById('v-published').checked
+            };
+
+            try {
+                if (id) {
+                    const { error } = await supabaseClient.from('game_versions').update(data).eq('id', id);
+                    if (error) throw error;
+                    showToast('✅ Version mise à jour !', 'success');
+                } else {
+                    const { error } = await supabaseClient.from('game_versions').insert([data]);
+                    if (error) throw error;
+                    showToast('✅ Version créée !', 'success');
+                }
+                closeVersionModal();
+                loadVersions();
+                loadVersionsDashboard();
+            } catch (err) {
+                showToast('❌ Erreur : ' + err.message, 'danger');
+            }
+        });
+
+        // ===== PUBLIER / DÉPUBLIER =====
+        window.publishVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Publier cette version ?')) return;
+            try {
+                const { error } = await supabaseClient.from('game_versions')
+                    .update({ is_published: true }).eq('id', id);
+                if (error) throw error;
+                showToast('✅ Version publiée !', 'success');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        window.unpublishVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Dépublier cette version ? Elle passera en brouillon.')) return;
+            try {
+                const { error } = await supabaseClient.from('game_versions')
+                    .update({ is_published: false }).eq('id', id);
+                if (error) throw error;
+                showToast('Version dépubliée', 'info');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // ===== PUBLIER LA PROCHAINE VERSION (is_next) — corrigé =====
+        window.publishNextVersion = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            try {
+                const { data: nextVersion, error: fetchError } = await supabaseClient
+                    .from('game_versions').select('*').eq('is_next', true).single();
+                if (fetchError || !nextVersion) {
+                    showToast('⚠️ Aucune version marquée comme "prochaine"', 'warning'); return;
+                }
+                if (!confirm(`Publier la version ${nextVersion.version} maintenant ?`)) return;
+                const { error } = await supabaseClient.from('game_versions').update({
+                    release_date: new Date().toISOString(),
+                    is_published: true,   // ← était manquant
+                    is_next: false,
+                    scheduled_publish_at: null
+                }).eq('id', nextVersion.id);
+                if (error) throw error;
+                showToast(`✅ Version ${nextVersion.version} publiée !`, 'success');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // ===== MARQUER COMME PROCHAINE VERSION =====
+        window.setAsNext = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Marquer cette version comme "prochaine sortie" ?')) return;
+            try {
+                await supabaseClient.from('game_versions').update({ is_next: false }).neq('id', id);
+                const { error } = await supabaseClient.from('game_versions').update({ is_next: true }).eq('id', id);
+                if (error) throw error;
+                showToast('✅ Marquée comme prochaine version !', 'success');
+                loadVersions();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // ===== SUPPRIMER VERSION =====
+        window.deleteVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('⚠️ Supprimer définitivement cette version ? Cette action est irréversible.')) return;
+            try {
+                const { error } = await supabaseClient.from('game_versions').delete().eq('id', id);
+                if (error) throw error;
+                showToast('Version supprimée', 'info');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // ===== ARCHIVAGE =====
+        window.archiveVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Archiver cette version ? Elle sera masquée mais pas supprimée.')) return;
+            try {
+                const { error } = await supabaseClient.from('game_versions').update({ is_archived: true }).eq('id', id);
+                if (error) throw error;
+                showToast('Version archivée', 'info');
+                loadVersions(); loadVersionsDashboard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        window.unarchiveVersion = async function (id) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            try {
+                const { error } = await supabaseClient.from('game_versions').update({ is_archived: false }).eq('id', id);
+                if (error) throw error;
+                document.querySelector('.custom-modal')?.remove();
+                showToast('✅ Version restaurée !', 'success');
+                loadVersions();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        window.showArchives = async function () {
+            const { data: archived } = await supabaseClient
+                .from('game_versions').select('*')
+                .eq('is_archived', true).order('release_date', { ascending: false });
+
+            let content;
+            if (archived && archived.length > 0) {
+                const table = document.createElement('table');
+                table.innerHTML = '<thead><tr><th>Version</th><th>Titre</th><th>Date</th><th>Action</th></tr></thead>'; // statique ✅
+                const tbody = document.createElement('tbody');
+                archived.forEach(v => {
+                    const tr = document.createElement('tr');
+                    const tdV = document.createElement('td'); const s = document.createElement('strong'); s.textContent = v.version; tdV.appendChild(s);
+                    const tdT = document.createElement('td'); tdT.textContent = v.title || '-';
+                    const tdD = document.createElement('td'); tdD.textContent = new Date(v.release_date).toLocaleDateString('fr-FR');
+                    const tdA = document.createElement('td');
+                    const btn = document.createElement('button'); btn.className = 'action-btn btn-edit'; btn.title = 'Restaurer'; btn.textContent = '📤 Restaurer';
+                    btn.addEventListener('click', () => unarchiveVersion(v.id));
+                    tdA.appendChild(btn);
+                    tr.append(tdV, tdT, tdD, tdA);
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                content = table;
+            } else {
+                const p = document.createElement('p');
+                p.style.cssText = 'text-align:center;color:var(--text-dim);padding:20px;';
+                p.textContent = 'Aucune version archivée';
+                content = p;
+            }
+            createModal('📁 Versions archivées', content);
+        };
+
+        // ===== CHARGEMENT TABLEAU VERSIONS — lit game_versions directement =====
+        async function loadVersions() {
+            const container = document.getElementById('versions-container');
+            const loadingP = document.createElement('p');
+            loadingP.className = 'loading';
+            loadingP.textContent = 'Chargement';
+            container.replaceChildren(loadingP);
+            try {
+                const { data: versions, error } = await supabaseClient
+                    .from('game_versions')
+                    .select('*')
+                    .eq('is_archived', false)
+                    .order('release_date', { ascending: false });
+                if (error) throw error;
+
+                if (!versions || versions.length === 0) {
+                    const emptyP = document.createElement('p');
+                    emptyP.style.cssText = 'text-align:center;color:var(--text-dim);padding:30px;';
+                    emptyP.textContent = 'Aucune version. Créez-en une !';
+                    container.replaceChildren(emptyP);
+                    return;
+                }
+
+                const downloadCounts = {};
+                const { data: downloadRows } = await supabaseClient.from('downloads').select('version');
+                (downloadRows || []).forEach(row => {
+                    downloadCounts[row.version] = (downloadCounts[row.version] || 0) + 1;
+                });
+
+                const now = new Date();
+
+                function makeStatusBadge(v, releaseDate, scheduledDate) {
+                    const span = document.createElement('span');
+                    span.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;';
+                    const dot = document.createElement('span');
+                    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;';
+                    if (v.is_published && releaseDate <= now) {
+                        span.style.background = 'rgba(0,255,136,0.12)'; span.style.color = '#00ff88'; span.style.border = '1px solid rgba(0,255,136,0.3)';
+                        dot.style.background = '#00ff88'; span.append(dot); span.append(' Publiée');
+                    } else if (v.is_published && releaseDate > now) {
+                        span.style.background = 'rgba(0,188,212,0.12)'; span.style.color = '#00bcd4'; span.style.border = '1px solid rgba(0,188,212,0.3)';
+                        dot.style.background = '#00bcd4'; span.append(dot); span.append(' Publiée · ' + releaseDate.toLocaleDateString('fr-FR'));
+                    } else if (!v.is_published && scheduledDate && scheduledDate > now) {
+                        span.style.background = 'rgba(123,47,247,0.15)'; span.style.color = '#ce93d8'; span.style.border = '1px solid rgba(123,47,247,0.4)';
+                        span.title = 'Countdown actif · publication automatique à cette date';
+                        dot.style.background = '#7b2ff7'; span.append(dot); span.append(' ⏰ ' + scheduledDate.toLocaleDateString('fr-FR'));
+                    } else if (!v.is_published && scheduledDate && scheduledDate <= now) {
+                        span.style.background = 'rgba(255,71,87,0.12)'; span.style.color = '#ff4757'; span.style.border = '1px solid rgba(255,71,87,0.3)';
+                        span.title = 'Date de sortie passée — countdown expiré ?';
+                        dot.style.background = '#ff4757'; span.append(dot); span.append(' Expirée ?');
+                    } else {
+                        span.style.background = 'rgba(108,117,125,0.12)'; span.style.color = '#adb5bd'; span.style.border = '1px solid rgba(108,117,125,0.3)'; span.style.fontWeight = '400';
+                        dot.style.background = '#6c757d'; span.append(dot); span.append(' Brouillon');
+                    }
+                    return span;
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-wrapper';
+                const table = document.createElement('table');
+                // thead statique ✅
+                table.innerHTML = `<thead><tr>
+                    <th>Version</th><th>Titre</th><th>Date de sortie</th>
+                    <th style="text-align:center;">Lien</th><th style="text-align:center;">Téléchargements</th><th>Statut</th><th>Actions</th>
+                </tr></thead>`;
+                const tbody = document.createElement('tbody');
+
+                versions.forEach(v => {
+                    const releaseDate = new Date(v.release_date);
+                    const scheduledDate = v.scheduled_publish_at ? new Date(v.scheduled_publish_at) : null;
+                    const tr = document.createElement('tr');
+
+                    // Version + badge suivante
+                    const tdVer = document.createElement('td');
+                    const strong = document.createElement('strong');
+                    strong.style.fontSize = '14px';
+                    strong.textContent = v.version;
+                    tdVer.appendChild(strong);
+                    if (v.is_next) {
+                        const nextBadge = document.createElement('span');
+                        nextBadge.style.cssText = 'background:rgba(156,39,176,0.15);color:#ce93d8;padding:2px 7px;border-radius:12px;font-size:11px;margin-left:4px;border:1px solid rgba(156,39,176,0.3);';
+                        nextBadge.textContent = 'Suivante';
+                        tdVer.appendChild(nextBadge);
+                    }
+
+                    // Titre + description
+                    const tdTitle = document.createElement('td');
+                    tdTitle.style.maxWidth = '160px';
+                    const titleDiv = document.createElement('div');
+                    titleDiv.style.fontSize = '13px';
+                    titleDiv.textContent = v.title || '—';
+                    tdTitle.appendChild(titleDiv);
+                    if (v.description) {
+                        const descDiv = document.createElement('div');
+                        descDiv.style.cssText = 'font-size:11px;color:var(--text-dim);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px;';
+                        descDiv.title = v.description;
+                        descDiv.textContent = v.description;
+                        tdTitle.appendChild(descDiv);
+                    }
+
+                    // Date
+                    const tdDate = document.createElement('td');
+                    tdDate.style.cssText = 'font-size:13px;white-space:nowrap;';
+                    tdDate.textContent = releaseDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+                    // Lien téléchargement
+                    const tdDl = document.createElement('td');
+                    tdDl.style.textAlign = 'center';
+                    if (v.download_url) {
+                        try {
+                            const url = new URL(v.download_url);
+                            if (url.protocol === 'https:' || url.protocol === 'http:') {
+                                const a = document.createElement('a');
+                                a.href = v.download_url;
+                                a.target = '_blank';
+                                a.title = 'Voir le lien';
+                                a.style.cssText = 'color:var(--cyan);font-size:12px;';
+                                a.innerHTML = '<i class="fa-solid fa-link"></i>'; // icône statique ✅
+                                tdDl.appendChild(a);
+                            } else { tdDl.textContent = '—'; }
+                        } catch { tdDl.textContent = '—'; }
+                    } else {
+                        const dash = document.createElement('span');
+                        dash.style.cssText = 'color:var(--text-dim);font-size:12px;';
+                        dash.title = 'Pas de lien'; dash.textContent = '—';
+                        tdDl.appendChild(dash);
+                    }
+
+                    // Téléchargements
+                    const tdDlCount = document.createElement('td');
+                    tdDlCount.style.cssText = 'text-align:center;font-size:13px;';
+                    tdDlCount.textContent = downloadCounts[v.version] || 0;
+
+                    // Statut
+                    const tdStatus = document.createElement('td');
+                    tdStatus.appendChild(makeStatusBadge(v, releaseDate, scheduledDate));
+
+                    // Actions
+                    const tdActions = document.createElement('td');
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'action-btn btn-edit'; editBtn.title = 'Modifier'; editBtn.textContent = '✏️';
+                    editBtn.addEventListener('click', () => editVersion(v.id));
+
+                    const pubBtn = document.createElement('button');
+                    if (!v.is_published) {
+                        pubBtn.className = 'action-btn btn-publish'; pubBtn.title = 'Publier maintenant'; pubBtn.textContent = '🚀';
+                        pubBtn.addEventListener('click', () => publishVersion(v.id));
+                    } else {
+                        pubBtn.className = 'action-btn'; pubBtn.style.cssText = 'background:rgba(255,152,0,0.2);color:#ff9800;';
+                        pubBtn.title = 'Dépublier (→ brouillon)'; pubBtn.textContent = '📦';
+                        pubBtn.addEventListener('click', () => unpublishVersion(v.id));
+                    }
+
+                    actionsDiv.append(editBtn, pubBtn);
+
+                    if (!v.is_next && !v.is_published) {
+                        const nextBtn = document.createElement('button');
+                        nextBtn.className = 'action-btn'; nextBtn.style.cssText = 'background:rgba(156,39,176,0.2);color:#ce93d8;';
+                        nextBtn.title = 'Marquer comme prochaine version'; nextBtn.textContent = '⭐';
+                        nextBtn.addEventListener('click', () => setAsNext(v.id));
+                        actionsDiv.appendChild(nextBtn);
+                    }
+
+                    const archBtn = document.createElement('button');
+                    archBtn.className = 'action-btn'; archBtn.style.cssText = 'background:rgba(108,117,125,0.2);color:#adb5bd;';
+                    archBtn.title = 'Archiver'; archBtn.textContent = '📁';
+                    archBtn.addEventListener('click', () => archiveVersion(v.id));
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'action-btn btn-delete'; delBtn.title = 'Supprimer définitivement'; delBtn.textContent = '🗑️';
+                    delBtn.addEventListener('click', () => deleteVersion(v.id));
+
+                    actionsDiv.append(archBtn, delBtn);
+                    tdActions.appendChild(actionsDiv);
+
+                    tr.append(tdVer, tdTitle, tdDate, tdDl, tdDlCount, tdStatus, tdActions);
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                wrapper.appendChild(table);
+                container.replaceChildren(wrapper);
+            } catch (err) {
+                const errP = document.createElement('p');
+                errP.style.cssText = 'color:var(--danger);padding:20px;';
+                errP.textContent = '❌ Erreur de chargement : ' + err.message;
+                container.replaceChildren(errP);
+            }
+        }
+
+        // ===== DASHBOARD STATS =====
+        async function loadVersionsDashboard() {
+            try {
+                const [publishedRes, nextRes, draftRes] = await Promise.all([
+                    supabaseClient.from('game_versions').select('*').eq('is_published', true).eq('is_archived', false)
+                        .order('release_date', { ascending: false }).limit(1).maybeSingle(),
+                    supabaseClient.from('game_versions').select('*').eq('is_published', false).eq('is_archived', false)
+                        .not('scheduled_publish_at', 'is', null).order('scheduled_publish_at', { ascending: true }).limit(1).maybeSingle(),
+                    supabaseClient.from('game_versions').select('id', { count: 'exact', head: true })
+                        .eq('is_published', false).eq('is_archived', false)
+                ]);
+
+                const current = publishedRes.data;
+                const next = nextRes.data;
+                const draftCount = draftRes.count || 0;
+
+                const container = document.getElementById('versions-dashboard');
+                if (!container) return;
+                container.replaceChildren();
+
+                const grid = document.createElement('div');
+                grid.className = 'stats-grid';
+                grid.style.marginBottom = '20px';
+
+                function makeStatCard(borderColor, label, valueText, detailText, detailColor) {
+                    const card = document.createElement('div');
+                    card.className = 'stat-card';
+                    card.style.borderColor = borderColor;
+                    const lbl = document.createElement('div'); lbl.className = 'stat-label'; lbl.textContent = label;
+                    const val = document.createElement('div'); val.className = 'stat-value'; val.style.color = borderColor; val.textContent = valueText;
+                    const det = document.createElement('div'); det.style.cssText = `font-size:11px;color:${detailColor || 'var(--text-dim)'};margin-top:4px;`; det.textContent = detailText;
+                    card.append(lbl, val, det);
+                    return card;
+                }
+
+                grid.appendChild(makeStatCard('#00ff88', 'Version publiée',
+                    current ? `v${current.version}` : '—',
+                    current ? (current.title || '') : 'Aucune version publiée'));
+
+                grid.appendChild(makeStatCard('#ffc107', 'Publication auto prévue',
+                    next ? `v${next.version}` : '—',
+                    next?.scheduled_publish_at ? new Date(next.scheduled_publish_at).toLocaleString('fr-FR') : 'Aucune programmée'));
+
+                grid.appendChild(makeStatCard('#6c757d', 'Brouillons',
+                    String(draftCount), 'En attente de publication', '#adb5bd'));
+
+                container.appendChild(grid);
+            } catch (err) { console.error('Erreur dashboard:', err); }
+        }
+
+        // ===== MODAL UNIFIÉ "PROGRAMMER UNE SORTIE" =====
+
+        window.openScheduleModal = async function () {
+            document.getElementById('schedule-modal-form').reset();
+            document.getElementById('sm-countdown-id').value = '';
+            document.getElementById('sm-version-id-prev').value = '';
+            document.getElementById('sm-active-info').style.display = 'none';
+            document.getElementById('sm-recap').style.display = 'none';
+            document.getElementById('sm-version-hint').textContent = '';
+            document.getElementById('sm-date-hint').textContent = '';
+            document.getElementById('sm-submit-btn').innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Programmer la sortie';
+
+            // Charger la liste des versions brouillon
+            await loadVersionsForSchedule();
+
+            // Chercher une sortie déjà programmée (countdown actif lié à une version)
+            try {
+                const { data: active } = await supabaseClient
+                    .from('countdown').select('*').eq('is_active', true).maybeSingle();
+
+                if (active && active.version_id) {
+                    document.getElementById('sm-countdown-id').value = active.id;
+                    document.getElementById('sm-version-id-prev').value = active.version_id;
+
+                    const target = new Date(active.target_date);
+                    const isPast = target < new Date();
+                    const diff = target - new Date();
+                    const days = Math.abs(Math.floor(diff / 86400000));
+                    const hours = Math.abs(Math.floor((diff % 86400000) / 3600000));
+
+                    const detail = document.getElementById('sm-active-detail');
+                    detail.replaceChildren();
+                    detail.appendChild(document.createTextNode('Version : '));
+                    const strong = document.createElement('strong');
+                    strong.style.color = '#ce93d8';
+                    strong.textContent = active.event_name;
+                    detail.appendChild(strong);
+                    detail.appendChild(document.createElement('br'));
+                    detail.appendChild(document.createTextNode('Date : ' + target.toLocaleString('fr-FR')));
+                    if (isPast) {
+                        const warn = document.createElement('span');
+                        warn.style.color = '#ff4757';
+                        warn.textContent = ` · ⚠️ Expirée depuis ${days}j ${hours}h`;
+                        detail.appendChild(warn);
+                    } else {
+                        const ok = document.createElement('span');
+                        ok.style.color = '#00ff88';
+                        ok.textContent = ` · dans ${days}j ${hours}h`;
+                        detail.appendChild(ok);
+                    }
+                    document.getElementById('sm-active-info').style.display = 'block';
+
+                    // Pré-remplir le formulaire avec les valeurs existantes
+                    document.getElementById('sm-event-name').value = active.event_name || '';
+                    document.getElementById('sm-target-date').value = active.target_date ? active.target_date.slice(0, 16) : '';
+                    document.getElementById('sm-description').value = active.description || '';
+                    document.getElementById('sm-submit-btn').innerHTML = '<i class="fa-solid fa-rotate"></i> Mettre à jour';
+
+                    // Sélectionner la version après chargement du select
+                    setTimeout(() => {
+                        const sel = document.getElementById('sm-version');
+                        if (sel) { sel.value = active.version_id; onScheduleVersionChange(); }
+                    }, 300);
+                }
+            } catch (err) { console.error('Erreur chargement sortie programmée:', err); }
+
+            document.getElementById('schedule-modal').style.display = 'flex';
+        };
+
+        window.closeScheduleModal = function () {
+            document.getElementById('schedule-modal').style.display = 'none';
+        };
+
+        // Rétrocompat : l'ancien openCountdownModal pointe sur le nouveau
+        window.openCountdownModal = window.openScheduleModal;
+        window.closeCountdownModal = window.closeScheduleModal;
+
+        async function loadVersionsForSchedule() {
+            const select = document.getElementById('sm-version');
+            const { data: versions } = await supabaseClient
+                .from('game_versions').select('id, version, title, is_published, scheduled_publish_at')
+                .eq('is_archived', false).order('release_date', { ascending: false });
+            select.replaceChildren();
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = ''; defaultOpt.textContent = '— Choisir une version —';
+            select.appendChild(defaultOpt);
+            versions?.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                const statusTag = v.is_published ? ' ✅' : (v.scheduled_publish_at ? ' ⏰' : ' ⚫');
+                opt.textContent = v.version + (v.title ? ' — ' + v.title : '') + statusTag;
+                select.appendChild(opt);
+            });
+        }
+
+        window.onScheduleVersionChange = function () {
+            const sel = document.getElementById('sm-version');
+            const selected = sel.options[sel.selectedIndex];
+            const hint = document.getElementById('sm-version-hint');
+            if (sel.value) {
+                const label = selected.text;
+                hint.replaceChildren();
+                const hintSpan = document.createElement('span');
+                hintSpan.style.color = '#ce93d8';
+                hintSpan.textContent = 'Version sélectionnée : ' + label;
+                hint.appendChild(hintSpan);
+                // Auto-remplir le nom si vide
+                const nameField = document.getElementById('sm-event-name');
+                if (!nameField.value.trim()) {
+                    const versionNum = label.split(' — ')[0];
+                    nameField.value = `Lancement de Echo ${versionNum} !`;
+                }
+            } else {
+                hint.textContent = '';
+            }
+            updateScheduleRecap();
+        };
+
+        window.onScheduleDateChange = function () {
+            const dateVal = document.getElementById('sm-target-date').value;
+            const hint = document.getElementById('sm-date-hint');
+            hint.replaceChildren();
+
+            if (dateVal) {
+                const target = new Date(dateVal);
+                const diff = target - new Date();
+                const days = Math.abs(Math.floor(diff / 86400000));
+                const hours = Math.abs(Math.floor((diff % 86400000) / 3600000));
+                const mins = Math.abs(Math.floor((diff % 3600000) / 60000));
+
+                const dateSpan = document.createElement('span');
+                if (diff < 0) {
+                    dateSpan.style.color = '#ff4757';
+                    dateSpan.textContent = '⚠️ Cette date est dans le passé';
+                } else {
+                    dateSpan.style.color = '#00ff88';
+                    dateSpan.textContent = `→ dans ${days}j ${hours}h ${mins}min`;
+                }
+                hint.appendChild(dateSpan);
+            }
+
+            updateScheduleRecap();
+        };
+
+        function updateScheduleRecap() {
+            const versionSel = document.getElementById('sm-version');
+            const dateVal = document.getElementById('sm-target-date').value;
+            const recap = document.getElementById('sm-recap');
+            const recapText = document.getElementById('sm-recap-text');
+
+            if (!versionSel.value || !dateVal) { recap.style.display = 'none'; return; }
+
+            const versionLabel = versionSel.options[versionSel.selectedIndex].text.replace(/ [✅⏰⚫]$/, '');
+            const target = new Date(dateVal);
+
+            recapText.replaceChildren();
+
+            function recapLine(iconClass, iconColor, textBefore, boldText) {
+                const line = document.createElement('div');
+                const icon = document.createElement('i');
+                icon.className = iconClass; icon.style.cssText = `color:${iconColor};margin-right:6px;`;
+                const textNode = document.createTextNode(textBefore);
+                const bold = document.createElement('strong'); bold.textContent = boldText;
+                line.append(icon, textNode, bold);
+                return line;
+            }
+
+            recapText.appendChild(recapLine('fa-solid fa-clock', '#00bcd4', 'Countdown activé sur le site jusqu\'au ', target.toLocaleString('fr-FR')));
+            recapText.appendChild(recapLine('fa-solid fa-box', '#ce93d8', 'Version ', versionLabel + ' liée au countdown'));
+            const lastLine = recapLine('fa-solid fa-rocket', '#00ff88', 'Quand le countdown atteint 0 → ', 'publication automatique + 🎉');
+            recapText.appendChild(lastLine);
+
+            recap.style.display = 'block';
+        }
+
+        // Annuler une sortie programmée (depuis le modal ou depuis le modal version)
+        window.cancelSchedule = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Annuler cette sortie programmée ? Le countdown sera désactivé et la version restera en brouillon.')) return;
+            try {
+                // Désactiver le countdown
+                await supabaseClient.from('countdown').update({ is_active: false }).eq('is_active', true);
+                // Retirer scheduled_publish_at de la version
+                const prevId = document.getElementById('sm-version-id-prev').value;
+                if (prevId) {
+                    await supabaseClient.from('game_versions').update({ scheduled_publish_at: null }).eq('id', prevId);
+                }
+                showToast('Sortie programmée annulée', 'info');
+                closeScheduleModal();
+                loadVersions();
+                loadVersionsDashboard();
+                loadCountdownStatusCard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // Annuler depuis le modal d'édition d'une version
+        window.cancelScheduleFromVersion = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            const id = document.getElementById('v-id').value;
+            if (!id) return;
+            if (!confirm('Annuler la programmation ? Le countdown associé sera aussi désactivé.')) return;
+            try {
+                await supabaseClient.from('game_versions').update({ scheduled_publish_at: null }).eq('id', id);
+                // Désactiver le countdown lié à cette version
+                await supabaseClient.from('countdown').update({ is_active: false }).eq('version_id', id);
+                document.getElementById('v-schedule-info').style.display = 'none';
+                showToast('Programmation annulée', 'info');
+                loadVersions(); loadCountdownStatusCard();
+            } catch (err) { showToast('❌ ' + err.message, 'danger'); }
+        };
+
+        // Soumettre : écrit countdown + scheduled_publish_at sur la version
+        document.getElementById('schedule-modal-form').addEventListener('submit', async (e) => {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            e.preventDefault();
+            e.stopPropagation();
+
+            const versionId = document.getElementById('sm-version').value;
+            const targetDateRaw = document.getElementById('sm-target-date').value;
+            const eventName = document.getElementById('sm-event-name').value.trim();
+            const description = document.getElementById('sm-description').value.trim() || null;
+            const existingCountdownId = document.getElementById('sm-countdown-id').value;
+            const prevVersionId = document.getElementById('sm-version-id-prev').value;
+
+            if (!versionId) { showToast('⚠️ Choisissez une version', 'warning'); return; }
+            if (!targetDateRaw) { showToast('⚠️ Choisissez une date', 'warning'); return; }
+            if (!eventName) { showToast('⚠️ Saisissez un nom pour l\'événement', 'warning'); return; }
+
+            const targetDate = new Date(targetDateRaw);
+            if (targetDate < new Date()) {
+                if (!confirm('⚠️ La date est dans le passé. Continuer quand même ?')) return;
+            }
+
+            const btn = document.getElementById('sm-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enregistrement...';
+
+            try {
+                // 1. Si on change de version, retirer scheduled_publish_at de l'ancienne
+                if (prevVersionId && prevVersionId !== versionId) {
+                    await supabaseClient.from('game_versions')
+                        .update({ scheduled_publish_at: null }).eq('id', prevVersionId);
+                }
+
+                // 2. Écrire scheduled_publish_at sur la nouvelle version
+                const { error: verErr } = await supabaseClient.from('game_versions')
+                    .update({ scheduled_publish_at: targetDate.toISOString(), is_published: false })
+                    .eq('id', versionId);
+                if (verErr) throw verErr;
+
+                // 3. Créer ou mettre à jour le countdown
+                const countdownPayload = {
+                    event_name: eventName,
+                    target_date: targetDate.toISOString(),
+                    description,
+                    version_id: versionId,
+                    is_active: true
+                };
+
+                if (existingCountdownId) {
+                    const { error } = await supabaseClient.from('countdown')
+                        .update(countdownPayload).eq('id', existingCountdownId);
+                    if (error) throw error;
+                } else {
+                    // Désactiver les éventuels autres countdowns actifs
+                    await supabaseClient.from('countdown').update({ is_active: false }).eq('is_active', true);
+                    const { error } = await supabaseClient.from('countdown').insert(countdownPayload);
+                    if (error) throw error;
+                }
+
+                showToast('🚀 Sortie programmée ! Countdown actif sur le site.', 'success');
+                closeScheduleModal();
+                loadVersions();
+                loadVersionsDashboard();
+                loadCountdownStatusCard();
+
+            } catch (err) {
+                showToast('❌ Erreur : ' + err.message, 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Programmer la sortie';
+            }
+            return false;
+        });
+
+        // Carte de statut countdown dans la section versions
+        async function loadCountdownStatusCard() {
+            const card = document.getElementById('countdown-status-card');
+            if (!card) return;
+            try {
+                const { data: active } = await supabaseClient.from('countdown').select('*').eq('is_active', true).maybeSingle();
+                if (active && active.target_date) {
+                    const target = new Date(active.target_date);
+                    const now = new Date();
+                    const diff = target - now;
+                    const isPast = diff < 0;
+                    const days = Math.abs(Math.floor(diff / 86400000));
+                    const hours = Math.abs(Math.floor((diff % 86400000) / 3600000));
+                    const mins = Math.abs(Math.floor((diff % 3600000) / 60000));
+                    card.style.display = 'block';
+                    card.replaceChildren();
+
+                    const flex = document.createElement('div');
+                    flex.style.cssText = 'display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
+
+                    const icon = document.createElement('span');
+                    icon.style.fontSize = '22px';
+                    icon.textContent = isPast ? '⚠️' : '⏰';
+
+                    const info = document.createElement('div');
+                    info.style.flex = '1';
+
+                    const titleRow = document.createElement('div');
+                    titleRow.style.cssText = 'font-weight:600;font-size:14px;';
+                    titleRow.appendChild(document.createTextNode('Sortie programmée : '));
+                    const nameSpan = document.createElement('span');
+                    nameSpan.style.color = '#ce93d8';
+                    nameSpan.textContent = active.event_name;
+                    titleRow.appendChild(nameSpan);
+
+                    const dateRow = document.createElement('div');
+                    dateRow.style.cssText = 'font-size:12px;color:var(--text-dim);margin-top:3px;';
+                    dateRow.appendChild(document.createTextNode(target.toLocaleString('fr-FR')));
+                    const timeSpan = document.createElement('span');
+                    timeSpan.style.cssText = `color:${isPast ? '#ff4757' : '#00ff88'};margin-left:8px;`;
+                    timeSpan.textContent = isPast
+                        ? `· Expirée depuis ${days}j ${hours}h ${mins}min — le countdown a dû se déclencher`
+                        : `· dans ${days}j ${hours}h ${mins}min`;
+                    dateRow.appendChild(timeSpan);
+
+                    info.appendChild(titleRow);
+                    info.appendChild(dateRow);
+
+                    if (active.description) {
+                        const descRow = document.createElement('div');
+                        descRow.style.cssText = 'font-size:11px;color:var(--text-dim);margin-top:2px;';
+                        descRow.textContent = active.description;
+                        info.appendChild(descRow);
+                    }
+
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn';
+                    editBtn.style.cssText = 'background:linear-gradient(135deg,#7b2ff7,#00bcd4);color:#fff;font-size:12px;';
+                    editBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Modifier'; // statique ✅
+                    editBtn.addEventListener('click', () => openScheduleModal());
+
+                    flex.append(icon, info, editBtn);
+                    card.appendChild(flex);
+                } else {
+                    card.style.display = 'none';
+                }
+            } catch (err) { card.style.display = 'none'; }
+        }
+
+        // ===== LISTENER UNIQUE sur la section versions =====
+        document.querySelector('[data-section="versions"]')?.addEventListener('click', () => {
+            loadVersionsDashboard();
+            loadVersions();
+            loadCountdownStatusCard();
+            initDownloadSwitch();
+        });
+
+
+        // Charger la version du site
+        async function loadSiteVersion() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('site_settings')
+                    .select('setting_value')
+                    .eq('setting_key', 'site_version')
+                    .single();
+
+                if (error) throw error;
+
+                const versionDisplay = document.getElementById('current-site-version');
+                const versionInput = document.getElementById('site-version-input');
+
+                if (versionDisplay) versionDisplay.textContent = data.setting_value;
+                if (versionInput) versionInput.value = data.setting_value;
+            } catch (error) {
+                console.error('Erreur chargement version:', error);
+            }
+        }
+
+        // Sauvegarder la version du site
+        window.saveSiteVersion = async function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            const newVersion = document.getElementById('site-version-input').value.trim();
+
+            if (!newVersion) {
+                alert('⚠️ Veuillez entrer une version');
+                return;
+            }
+
+            try {
+                const user = await supabaseClient.auth.getUser();
+
+                const { error } = await supabaseClient
+                    .from('site_settings')
+                    .update({
+                        setting_value: newVersion,
+                        updated_at: new Date().toISOString(),
+                        updated_by: user.data.user?.id
+                    })
+                    .eq('setting_key', 'site_version');
+
+                if (error) throw error;
+
+                alert('✅ Version mise à jour avec succès !');
+                loadSiteVersion();
+            } catch (error) {
+                console.error('Erreur sauvegarde version:', error);
+                alert('❌ Erreur : ' + error.message);
+            }
+        };
+
+        // Charger au clic sur la section
+        document.querySelector('[data-section="site-settings"]')?.addEventListener('click', () => {
+            loadSiteVersion();
+        });
+        // ===== SWITCH GLOBAL =====
+        async function initDownloadSwitch() {
+            try {
+                const { data } = await supabaseClient
+                    .from('download_settings')
+                    .select('*')
+                    .single();
+
+                if (data) {
+                    const switchEl = document.getElementById('globalDownloadSwitch');
+                    const labelEl = document.getElementById('switchStatusText');
+
+                    switchEl.checked = data.enabled;
+                    labelEl.textContent = data.enabled
+                        ? "✅ ACTIF (Téléchargement autorisé)"
+                        : "🚫 INACTIF (Téléchargements bloqués)";
+                    labelEl.style.color = data.enabled ? "var(--success)" : "var(--danger)";
+                }
+            } catch (err) {
+                console.error("Erreur switch:", err);
+            }
+        }
+
+        window.toggleDownloadState = async function (checkbox) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); checkbox.checked = !checkbox.checked; return; }
+            const newState = checkbox.checked;
+            const labelEl = document.getElementById('switchStatusText');
+            labelEl.textContent = "⏳ Mise à jour...";
+
+            try {
+                const { error } = await supabaseClient
+                    .from('download_settings')
+                    .update({ enabled: newState, updated_at: new Date().toISOString() })
+                    .eq('id', (await supabaseClient.from('download_settings').select('id').single()).data.id);
+
+                if (error) throw error;
+
+                labelEl.textContent = newState
+                    ? "✅ ACTIF (Téléchargement autorisé)"
+                    : "🚫 INACTIF (Téléchargements bloqués)";
+                labelEl.style.color = newState ? "var(--success)" : "var(--danger)";
+
+                if (window.sendDiscordNotification) {
+                    await window.sendDiscordNotification(
+                        newState ? 'download_enabled' : 'download_disabled',
+                        {}
+                    );
+                }
+
+                alert(newState ? "✅ Téléchargements ACTIVÉS globalement" : "🚫 Téléchargements BLOQUÉS globalement");
+            } catch (err) {
+                console.error("Erreur:", err);
+                checkbox.checked = !newState;
+                labelEl.textContent = "❌ Erreur";
+            }
+        };
+
+        // Lancer au chargement de la page
+        document.addEventListener('DOMContentLoaded', initDownloadSwitch);
+
+        // =============================================
+        // STATS GITHUB (releases publiques de projetjeu)
+        // =============================================
+
+        const GITHUB_REPO = 'florian-croiset/projetjeu';
+        let _githubStatsCache = null;
+        let _githubStatsCacheAt = 0;
+
+        function renderLastCommit(commit) {
+            const container = document.getElementById('github-last-commit');
+            if (!commit) {
+                container.innerHTML = '<p class="loading">Aucun commit trouvé</p>';
+                return;
+            }
+            const message = (commit.commit.message || '').split('\n')[0];
+            const author = commit.commit.author?.name || 'Inconnu';
+            const date = commit.commit.author?.date
+                ? new Date(commit.commit.author.date).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : '—';
+            container.innerHTML = `
+                <p><strong>${escapeHtml(message)}</strong></p>
+                <p style="color:var(--text-dim);font-size:13px;margin-top:6px;">
+                    ${escapeHtml(author)} · ${escapeHtml(date)} · <code>${escapeHtml(commit.sha.slice(0, 7))}</code>
+                    · <a href="${escapeHtml(commit.html_url)}" target="_blank" rel="noopener" style="color:var(--cyan);">voir sur GitHub</a>
+                </p>
+            `;
+        }
+
+        function renderContributors(contributors) {
+            const container = document.getElementById('github-contributors');
+            if (!contributors || contributors.length === 0) {
+                container.innerHTML = '<p class="loading">Aucun contributeur trouvé</p>';
+                return;
+            }
+            container.innerHTML = `
+                <div style="display:flex;flex-wrap:wrap;gap:14px;">
+                    ${contributors.map(c => `
+                        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);padding:6px 12px;border-radius:20px;">
+                            <img src="${escapeHtml(c.avatar_url)}" alt="${escapeHtml(c.login)}" style="width:24px;height:24px;border-radius:50%;">
+                            <a href="${escapeHtml(c.html_url)}" target="_blank" rel="noopener" style="color:var(--text);font-size:13px;">${escapeHtml(c.login)}</a>
+                            <span style="color:var(--text-dim);font-size:12px;">${c.contributions}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function renderComparisonChart(releases) {
+            const container = document.getElementById('github-comparison-chart');
+            try {
+                const [versionsRes, downloadsRes] = await Promise.all([
+                    supabaseClient.from('game_versions').select('version, download_url, release_date').order('release_date', { ascending: true }),
+                    supabaseClient.from('downloads').select('version')
+                ]);
+
+                if (versionsRes.error) throw versionsRes.error;
+                if (downloadsRes.error) throw downloadsRes.error;
+
+                const siteCounts = {};
+                (downloadsRes.data || []).forEach(row => {
+                    siteCounts[row.version] = (siteCounts[row.version] || 0) + 1;
+                });
+
+                const assetsByUrl = {};
+                releases.forEach(rel => {
+                    rel.assets.forEach(a => { assetsByUrl[a.browser_download_url] = a.download_count; });
+                });
+
+                const rows = (versionsRes.data || [])
+                    .map(v => ({
+                        label: v.version,
+                        site: siteCounts[v.version] || 0,
+                        github: assetsByUrl[v.download_url] ?? null
+                    }))
+                    .filter(r => r.github !== null);
+
+                if (rows.length === 0) {
+                    container.innerHTML = '<p class="loading">Aucune version avec un lien GitHub reconnu</p>';
+                    return;
+                }
+
+                const max = Math.max(...rows.map(r => Math.max(r.site, r.github)), 1);
+                container.innerHTML = `
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        ${rows.map(r => `
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:40px;font-size:11px;color:var(--text-dim);">v${escapeHtml(r.label)}</div>
+                                <div style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div style="width:14px;font-size:11px;" title="Site">🖱️</div>
+                                        <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+                                            <div style="width:${Math.max((r.site / max) * 100, 2)}%;background:var(--cyan);padding:1px 6px;font-size:10px;font-weight:600;white-space:nowrap;">${r.site}</div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <div style="width:14px;font-size:11px;" title="GitHub">🐙</div>
+                                        <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+                                            <div style="width:${Math.max((r.github / max) * 100, 2)}%;background:var(--purple);padding:1px 6px;font-size:10px;font-weight:600;white-space:nowrap;">${r.github}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Erreur chargement comparatif téléchargements:', error);
+                container.innerHTML = `<p style="color:var(--danger);">❌ Erreur de chargement : ${escapeHtml(error.message)}</p>`;
+            }
+        }
+
+        function renderDownloadsChart(releases) {
+            const container = document.getElementById('github-downloads-chart');
+            const rows = [...releases]
+                .sort((a, b) => new Date(a.published_at || 0) - new Date(b.published_at || 0))
+                .map(rel => ({
+                    label: rel.name || rel.tag_name,
+                    total: rel.assets.reduce((s, a) => s + a.download_count, 0)
+                }))
+                .filter(r => r.total > 0);
+
+            if (rows.length === 0) {
+                container.innerHTML = '<p class="loading">Aucun téléchargement enregistré</p>';
+                return;
+            }
+
+            const max = Math.max(...rows.map(r => r.total));
+            container.innerHTML = `
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                    ${rows.map(r => `
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:90px;font-size:11px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(r.label)}</div>
+                            <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+                                <div style="width:${Math.max((r.total / max) * 100, 3)}%;background:linear-gradient(90deg, var(--cyan), var(--purple));padding:2px 8px;font-size:11px;font-weight:600;white-space:nowrap;">${r.total}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function loadGithubStats() {
+            const listContainer = document.getElementById('github-releases-list');
+            try {
+                const now = Date.now();
+                let repo, releases, commits, contributors;
+                if (_githubStatsCache && (now - _githubStatsCacheAt) < 5 * 60 * 1000) {
+                    ({ repo, releases, commits, contributors } = _githubStatsCache);
+                } else {
+                    const [repoRes, releasesRes, commitsRes, contributorsRes] = await Promise.all([
+                        fetch(`https://api.github.com/repos/${GITHUB_REPO}`),
+                        fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=100`),
+                        fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?per_page=1`),
+                        fetch(`https://api.github.com/repos/${GITHUB_REPO}/contributors?per_page=20`)
+                    ]);
+
+                    if (!repoRes.ok || !releasesRes.ok || !commitsRes.ok || !contributorsRes.ok) {
+                        throw new Error(`GitHub API a répondu ${repoRes.status}/${releasesRes.status}/${commitsRes.status}/${contributorsRes.status} (limite de requêtes atteinte ?)`);
+                    }
+
+                    repo = await repoRes.json();
+                    releases = await releasesRes.json();
+                    commits = await commitsRes.json();
+                    contributors = await contributorsRes.json();
+                    _githubStatsCache = { repo, releases, commits, contributors };
+                    _githubStatsCacheAt = now;
+                }
+
+                const totalDownloads = releases.reduce((sum, rel) =>
+                    sum + rel.assets.reduce((s, a) => s + a.download_count, 0), 0);
+
+                document.getElementById('github-stat-stars').textContent = repo.stargazers_count ?? 0;
+                document.getElementById('github-stat-forks').textContent = repo.forks_count ?? 0;
+                document.getElementById('github-stat-releases').textContent = releases.length;
+                document.getElementById('github-stat-total-downloads').textContent = totalDownloads;
+
+                renderLastCommit(Array.isArray(commits) ? commits[0] : null);
+                renderContributors(Array.isArray(contributors) ? contributors : []);
+                renderDownloadsChart(releases);
+                renderComparisonChart(releases);
+
+                if (releases.length === 0) {
+                    listContainer.innerHTML = '<p class="loading">Aucune release publiée</p>';
+                    return;
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-wrapper';
+                const table = document.createElement('table');
+                table.innerHTML = '<thead><tr><th>Release</th><th>Publiée le</th><th>Assets</th><th style="text-align:center;">Téléchargements</th></tr></thead>';
+                const tbody = document.createElement('tbody');
+
+                releases.forEach(rel => {
+                    const tr = document.createElement('tr');
+
+                    const tdName = document.createElement('td');
+                    const strong = document.createElement('strong');
+                    strong.textContent = rel.name || rel.tag_name;
+                    tdName.appendChild(strong);
+                    if (rel.prerelease) {
+                        const pre = document.createElement('span');
+                        pre.style.cssText = 'margin-left:6px;font-size:11px;color:#ce93d8;';
+                        pre.textContent = '(pré-release)';
+                        tdName.appendChild(pre);
+                    }
+
+                    const tdDate = document.createElement('td');
+                    tdDate.style.cssText = 'font-size:13px;white-space:nowrap;';
+                    tdDate.textContent = rel.published_at
+                        ? new Date(rel.published_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+                        : '—';
+
+                    const tdAssets = document.createElement('td');
+                    tdAssets.style.fontSize = '12px';
+                    if (rel.assets.length === 0) {
+                        tdAssets.textContent = '—';
+                    } else {
+                        rel.assets.forEach(a => {
+                            const line = document.createElement('div');
+                            line.textContent = `${a.name} — ${a.download_count}`;
+                            tdAssets.appendChild(line);
+                        });
+                    }
+
+                    const tdTotal = document.createElement('td');
+                    tdTotal.style.cssText = 'text-align:center;font-weight:600;';
+                    tdTotal.textContent = rel.assets.reduce((s, a) => s + a.download_count, 0);
+
+                    tr.append(tdName, tdDate, tdAssets, tdTotal);
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                wrapper.appendChild(table);
+                listContainer.replaceChildren(wrapper);
+            } catch (error) {
+                console.error('Erreur chargement stats GitHub:', error);
+                listContainer.innerHTML = `<p style="color:var(--danger);">❌ Erreur de chargement : ${escapeHtml(error.message)}</p>`;
+            }
+        }
+
+        // =============================================
+        // GESTION DU TRACKING (webhooks, sessions, vues)
+        // =============================================
+
+        function maskWebhook(url) {
+            if (!url) return 'Non configuré';
+            const parts = url.split('/');
+            if (parts.length >= 2) {
+                const token = parts[parts.length - 1];
+                return url.replace(token, token.substring(0, 10) + '...' + token.substring(token.length - 5));
+            }
+            return url;
+        }
+
+        async function loadTrackingStats() {
+            try {
+                const { count } = await supabaseClient.from('webhook_settings').select('id', { count: 'exact', head: true });
+                document.getElementById('stats-tracking-webhooks').textContent = count || 0;
+            } catch (error) {
+                console.error('Erreur chargement stats webhooks:', error);
+            }
+        }
+
+        async function loadWebhookConfig() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('webhook_settings')
+                    .select('*')
+                    .eq('setting_key', 'main_webhook')
+                    .single();
+
+                if (error) throw error;
+
+                const container = document.getElementById('webhook-config');
+                container.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1;">
+                            <p><strong>URL :</strong> <code>${escapeHtml(maskWebhook(data.webhook_url))}</code></p>
+                            <p><strong>Description :</strong> ${escapeHtml(data.description) || 'N/A'}</p>
+                            <p><strong>Statut :</strong>
+                                <span style="color: ${data.is_active ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
+                                    ${data.is_active ? '✅ Actif' : '❌ Inactif'}
+                                </span>
+                            </p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="openEditWebhookModal('${data.id}')">
+                                Modifier
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.dataset.webhookUrl = data.webhook_url || '';
+                container.dataset.webhookDescription = data.description || '';
+            } catch (error) {
+                console.error('Erreur chargement webhook:', error);
+                document.getElementById('webhook-config').innerHTML =
+                    '<p style="color:var(--danger);">❌ Erreur de chargement</p>';
+            }
+        }
+
+        window.openEditWebhookModal = function () {
+            const container = document.getElementById('webhook-config');
+            document.getElementById('main-webhook-url').value = container.dataset.webhookUrl || '';
+            document.getElementById('webhook-description').value = container.dataset.webhookDescription || '';
+            document.getElementById('editWebhookModal').style.display = 'flex';
+        };
+
+        window.closeEditWebhookModal = function () {
+            document.getElementById('editWebhookModal').style.display = 'none';
+        };
+
+        document.getElementById('editWebhookForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const url = document.getElementById('main-webhook-url').value;
+            const description = document.getElementById('webhook-description').value;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('webhook_settings')
+                    .update({ webhook_url: url, description })
+                    .eq('setting_key', 'main_webhook');
+
+                if (error) throw error;
+
+                showToast('✅ Webhook mis à jour !', 'success');
+                closeEditWebhookModal();
+                loadWebhookConfig();
+            } catch (error) {
+                console.error('Erreur mise à jour webhook:', error);
+                showToast('❌ ' + error.message, 'danger');
+            }
+        });
+
+        function loadTracking() {
+            loadTrackingStats();
+            loadWebhookConfig();
+        }
+
+        // ===== INITIALISATION =====
+        (async () => {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+
+            if (user) {
+                const { data: profile } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profile && profile.role === 'admin') {
+                    currentUserProfile = profile;
+                    showDashboard(user, profile);
+                }
+            }
+        })();
+
+        // ===== FORMULAIRES =====
+        let _allFormResponses = [];
+
+        async function loadFormResponses() {
+            const container = document.getElementById('forms-list');
+            const countEl = document.getElementById('forms-count');
+
+            container.replaceChildren();
+            const loading = document.createElement('p');
+            loading.className = 'forms-empty';
+            loading.textContent = 'Chargement...';
+            container.appendChild(loading);
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('form_responses')
+                    .select('*')
+                    .order('submitted_at', { ascending: false });
+
+                if (error) throw error;
+
+                _allFormResponses = data || [];
+                const n = _allFormResponses.length;
+                countEl.textContent = `${n} réponse${n > 1 ? 's' : ''}`;
+                renderFormResponses(_allFormResponses);
+
+            } catch (err) {
+                container.replaceChildren();
+                const errEl = document.createElement('p');
+                errEl.className = 'forms-empty';
+                errEl.textContent = '❌ Erreur de chargement : ' + err.message;
+                errEl.style.color = 'var(--danger)';
+                container.appendChild(errEl);
+            }
+        }
+
+        function renderFormResponses(data) {
+            const container = document.getElementById('forms-list');
+            container.replaceChildren();
+
+            if (!data || data.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'forms-empty';
+                empty.textContent = 'Aucune réponse pour le moment.';
+                container.appendChild(empty);
+                return;
+            }
+
+            const ratingColor = n => n >= 4 ? '#00ff88' : n >= 3 ? '#ffc107' : '#ff4757';
+
+            data.forEach(row => {
+                const r = row.responses || {};
+                const rating = parseInt(r.rating) || 0;
+                const date = row.submitted_at
+                    ? new Date(row.submitted_at).toLocaleString('fr-FR')
+                    : '—';
+
+                // Carte
+                const card = document.createElement('div');
+                card.className = 'form-response-card';
+
+                // ── Header ──
+                const header = document.createElement('div');
+                header.className = 'form-response-header';
+
+                // Meta (nom + email + date)
+                const meta = document.createElement('div');
+                meta.className = 'form-response-meta';
+
+                const name = document.createElement('div');
+                name.className = 'form-response-name';
+                name.textContent = r.name || '—';
+
+                const info = document.createElement('div');
+                info.className = 'form-response-info';
+
+                if (r.email) {
+                    const emailLink = document.createElement('a');
+                    emailLink.href = 'mailto:' + r.email;
+                    emailLink.textContent = r.email;
+                    info.appendChild(emailLink);
+                    info.appendChild(document.createTextNode(' · '));
+                }
+                info.appendChild(document.createTextNode(date));
+
+                meta.appendChild(name);
+                meta.appendChild(info);
+
+                // Actions (étoiles + bouton supprimer)
+                const actions = document.createElement('div');
+                actions.className = 'form-response-actions';
+
+                if (rating) {
+                    const stars = document.createElement('div');
+                    stars.className = 'form-stars';
+                    stars.title = `${rating}/5`;
+                    stars.style.color = ratingColor(rating);
+                    stars.textContent = '★'.repeat(rating) + '☆'.repeat(Math.max(0, 5 - rating));
+                    actions.appendChild(stars);
+                }
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-delete-response';
+                delBtn.title = 'Supprimer cette réponse';
+                delBtn.textContent = '🗑️ Supprimer';
+                delBtn.addEventListener('click', () => deleteFormResponse(row.id, card));
+                actions.appendChild(delBtn);
+
+                header.appendChild(meta);
+                header.appendChild(actions);
+                card.appendChild(header);
+
+                // ── Blocs contenu ──
+                const sections = [
+                    { key: 'positive', label: '👍 Points positifs', cls: 'block-positive' },
+                    { key: 'negative', label: '👎 Points négatifs', cls: 'block-negative' },
+                    { key: 'suggestions', label: '💡 Suggestions', cls: 'block-suggestions' },
+                ];
+
+                sections.forEach(({ key, label, cls }) => {
+                    if (!r[key]) return;
+                    const block = document.createElement('div');
+                    block.className = `form-response-block ${cls}`;
+
+                    const lbl = document.createElement('div');
+                    lbl.className = 'form-response-block-label';
+                    lbl.textContent = label;
+
+                    const content = document.createElement('div');
+                    content.className = 'form-response-block-content';
+                    content.textContent = r[key];
+
+                    block.appendChild(lbl);
+                    block.appendChild(content);
+                    card.appendChild(block);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        async function deleteFormResponse(id, cardElement) {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!confirm('Supprimer définitivement cette réponse ?')) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('form_responses')
+                    .delete()
+                    .eq('id', id);
+                if (error) throw error;
+
+                // Retirer du tableau local
+                _allFormResponses = _allFormResponses.filter(r => r.id !== id);
+
+                // Supprimer la carte avec animation
+                cardElement.style.transition = 'opacity .25s, transform .25s';
+                cardElement.style.opacity = '0';
+                cardElement.style.transform = 'translateX(20px)';
+                setTimeout(() => cardElement.remove(), 250);
+
+                // Mettre à jour le compteur
+                const n = _allFormResponses.length;
+                document.getElementById('forms-count').textContent =
+                    `${n} réponse${n > 1 ? 's' : ''}`;
+
+                showToast('Réponse supprimée', 'info');
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        }
+
+        function filterFormResponses() {
+            const search = document.getElementById('forms-search').value.toLowerCase();
+            const sort = document.getElementById('forms-sort').value;
+
+            let filtered = _allFormResponses.filter(row => {
+                const r = row.responses || {};
+                return ['name', 'email', 'positive', 'negative', 'suggestions']
+                    .some(k => r[k] && r[k].toLowerCase().includes(search));
+            });
+
+            filtered.sort((a, b) => {
+                const da = new Date(a.submitted_at), db = new Date(b.submitted_at);
+                return sort === 'desc' ? db - da : da - db;
+            });
+
+            const total = _allFormResponses.length;
+            const shown = filtered.length;
+            document.getElementById('forms-count').textContent =
+                shown === total
+                    ? `${total} réponse${total > 1 ? 's' : ''}`
+                    : `${shown} / ${total} réponse${total > 1 ? 's' : ''}`;
+
+            renderFormResponses(filtered);
+        }
+
+        window.exportFormResponses = function () {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            if (!_allFormResponses.length) { showToast('Aucune donnée à exporter', 'warning'); return; }
+            const headers = ['Date', 'Nom', 'Email', 'Note', 'Positif', 'Négatif', 'Suggestions'];
+            const rows = _allFormResponses.map(row => {
+                const r = row.responses || {};
+                return [
+                    new Date(row.submitted_at).toLocaleString('fr-FR'),
+                    r.name || '', r.email || '', r.rating || '',
+                    r.positive || '', r.negative || '', r.suggestions || ''
+                ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+            });
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `form_responses_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ Export CSV téléchargé !', 'success');
+        };
+
+        document.querySelector('[data-section="forms"]')?.addEventListener('click', loadFormResponses);
+
+
+    </script>
+
+    <script>
+        // Charger au clic sur la section site-settings
+        document.addEventListener('DOMContentLoaded', () => {
+            const siteSettingsTab = document.querySelector('[data-section="site-settings"]');
+            if (siteSettingsTab) {
+                siteSettingsTab.addEventListener('click', () => {
+                    // Charger la version du site
+                    if (typeof loadSiteVersion === 'function') {
+                        loadSiteVersion();
+                    }
+                });
+            }
+        });
+
+
+        // =============================================
+        // GESTION AVANCÉE DES UTILISATEURS
+        // À intégrer dans le <script> principal de admin.html
+        // =============================================
+
+        // ----------------------------
+        // ÉTAT LOCAL
+        // ----------------------------
+        let _allUsers = [];
+        let _usersFilter = { search: '', role: 'all', status: 'all' };
+
+        // ----------------------------
+        // CHARGEMENT PRINCIPAL
+        // ----------------------------
+        async function loadUsers() {
+            if (currentUserProfile?.role !== 'admin') {
+                document.getElementById('users-list').innerHTML =
+                    '<p style="color:var(--danger)">Accès refusé - Admin uniquement</p>';
+                return;
+            }
+
+            const container = document.getElementById('users-list');
+            container.innerHTML = '<p class="loading">Chargement</p>';
+
+            try {
+                const { data: users, error } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                _allUsers = users || [];
+                renderUsersPanel();
+            } catch (err) {
+                container.innerHTML = `<p style="color:var(--danger)">❌ ${err.message}</p>`;
+            }
+        }
+
+        // ----------------------------
+        // RENDU DU PANEL COMPLET
+        // ----------------------------
+        function renderUsersPanel() {
+            const container = document.getElementById('users-list');
+            container.replaceChildren();
+
+            // ── Toolbar ──
+            const toolbar = document.createElement('div');
+            toolbar.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px;';
+
+            // Search
+            const search = document.createElement('input');
+            search.type = 'text';
+            search.placeholder = '🔍 Rechercher username / email...';
+            search.value = _usersFilter.search;
+            search.style.cssText = 'flex:1;min-width:200px;background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px 12px;border-radius:6px;';
+            search.oninput = (e) => { _usersFilter.search = e.target.value; renderUsersTable(); };
+
+            // Role filter
+            const roleFilter = document.createElement('select');
+            roleFilter.style.cssText = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px;border-radius:6px;';
+            [['all', 'Tous les rôles'], ['user', 'Utilisateurs'], ['admin', 'Admins']].forEach(([v, l]) => {
+                const o = document.createElement('option'); o.value = v; o.textContent = l;
+                if (_usersFilter.role === v) o.selected = true;
+                roleFilter.appendChild(o);
+            });
+            roleFilter.onchange = (e) => { _usersFilter.role = e.target.value; renderUsersTable(); };
+
+            // Status filter
+            const statusFilter = document.createElement('select');
+            statusFilter.style.cssText = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:8px;border-radius:6px;';
+            [['all', 'Tous les statuts'], ['active', 'Actifs'], ['banned', 'Bannis']].forEach(([v, l]) => {
+                const o = document.createElement('option'); o.value = v; o.textContent = l;
+                if (_usersFilter.status === v) o.selected = true;
+                statusFilter.appendChild(o);
+            });
+            statusFilter.onchange = (e) => { _usersFilter.status = e.target.value; renderUsersTable(); };
+
+            // Boutons d'action globaux
+            const btnCreate = document.createElement('button');
+            btnCreate.className = 'btn btn-primary';
+            btnCreate.innerHTML = '<i class="fa-solid fa-plus"></i> Créer un user';
+            btnCreate.onclick = () => openCreateUserModal();
+
+            const btnInvite = document.createElement('button');
+            btnInvite.className = 'btn btn-success';
+            btnInvite.innerHTML = '<i class="fa-solid fa-envelope"></i> Inviter par email';
+            btnInvite.onclick = () => openInviteModal();
+
+            const btnRefresh = document.createElement('button');
+            btnRefresh.className = 'btn';
+            btnRefresh.style.cssText = 'background:rgba(255,255,255,0.05);';
+            btnRefresh.innerHTML = '<i class="fa-solid fa-rotate"></i>';
+            btnRefresh.onclick = loadUsers;
+
+            const countSpan = document.createElement('span');
+            countSpan.id = 'users-count-label';
+            countSpan.style.cssText = 'font-size:13px;color:var(--text-dim);margin-left:auto;';
+
+            toolbar.append(search, roleFilter, statusFilter, btnCreate, btnInvite, btnRefresh, countSpan);
+            container.appendChild(toolbar);
+
+            // ── Table wrapper ──
+            const tableWrap = document.createElement('div');
+            tableWrap.id = 'users-table-wrap';
+            tableWrap.className = 'table-wrapper';
+            container.appendChild(tableWrap);
+
+            renderUsersTable();
+        }
+
+        // ----------------------------
+        // RENDU TABLE (filtrable)
+        // ----------------------------
+        function renderUsersTable() {
+            const wrap = document.getElementById('users-table-wrap');
+            if (!wrap) return;
+
+            const { search, role, status } = _usersFilter;
+            let filtered = _allUsers.filter(u => {
+                const matchSearch = !search ||
+                    (u.username || '').toLowerCase().includes(search.toLowerCase()) ||
+                    (u.id || '').toLowerCase().includes(search.toLowerCase());
+                const matchRole = role === 'all' || u.role === role;
+                const matchStatus = status === 'all' ||
+                    (status === 'banned' ? u.is_banned : !u.is_banned);
+                return matchSearch && matchRole && matchStatus;
+            });
+
+            const countLabel = document.getElementById('users-count-label');
+            if (countLabel) {
+                countLabel.textContent = filtered.length === _allUsers.length
+                    ? `${_allUsers.length} utilisateur${_allUsers.length > 1 ? 's' : ''}`
+                    : `${filtered.length} / ${_allUsers.length}`;
+            }
+
+            if (filtered.length === 0) {
+                wrap.innerHTML = '<p style="text-align:center;color:var(--text-dim);padding:30px;">Aucun résultat</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.innerHTML = `<thead><tr>
+        <th>Utilisateur</th>
+        <th>Rôle</th>
+        <th>Statut</th>
+        <th>Inscription</th>
+        <th>Dernière co.</th>
+        <th style="text-align:right;">Actions</th>
+    </tr></thead>`;
+
+            const tbody = document.createElement('tbody');
+
+            filtered.forEach(user => {
+                const tr = document.createElement('tr');
+                if (user.is_banned) tr.style.opacity = '0.6';
+
+                // ── Utilisateur ──
+                const tdUser = document.createElement('td');
+                const userDiv = document.createElement('div');
+                userDiv.style.cssText = 'display:flex;align-items:center;gap:10px;';
+
+                const avatar = document.createElement('div');
+                avatar.style.cssText = `width:32px;height:32px;border-radius:50%;background:${stringToColor(user.id)};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:#fff;flex-shrink:0;`;
+                avatar.textContent = (user.username || '?')[0].toUpperCase();
+
+                const nameBlock = document.createElement('div');
+                const nameSpan = document.createElement('div');
+                nameSpan.style.cssText = 'font-size:13px;font-weight:600;';
+                nameSpan.textContent = user.username || '—';
+                const idSpan = document.createElement('div');
+                idSpan.style.cssText = 'font-size:10px;color:var(--text-dim);font-family:monospace;';
+                idSpan.textContent = user.id.slice(0, 8) + '…';
+                idSpan.title = user.id;
+                nameBlock.append(nameSpan, idSpan);
+                userDiv.append(avatar, nameBlock);
+                tdUser.appendChild(userDiv);
+
+                // ── Rôle ──
+                const tdRole = document.createElement('td');
+                const safeRole = ['user', 'admin'].includes(user.role) ? user.role : 'user';
+                const roleBadge = document.createElement('span');
+                roleBadge.className = `role-badge role-${safeRole}`;
+                roleBadge.textContent = user.role;
+                tdRole.appendChild(roleBadge);
+
+                // ── Statut ──
+                const tdStatus = document.createElement('td');
+                const statusBadge = document.createElement('span');
+                statusBadge.style.cssText = `padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;${user.is_banned
+                        ? 'background:rgba(255,71,87,0.15);color:#ff4757;border:1px solid rgba(255,71,87,0.3);'
+                        : 'background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.2);'
+                    }`;
+                statusBadge.textContent = user.is_banned ? '🚫 Banni' : '✅ Actif';
+                tdStatus.appendChild(statusBadge);
+
+                // ── Dates ──
+                const tdCreated = document.createElement('td');
+                tdCreated.style.cssText = 'font-size:12px;color:var(--text-dim);white-space:nowrap;';
+                tdCreated.textContent = user.created_at
+                    ? new Date(user.created_at).toLocaleDateString('fr-FR')
+                    : '—';
+
+                const tdLastLogin = document.createElement('td');
+                tdLastLogin.style.cssText = 'font-size:12px;color:var(--text-dim);white-space:nowrap;';
+                tdLastLogin.textContent = user.last_sign_in_at
+                    ? new Date(user.last_sign_in_at).toLocaleString('fr-FR')
+                    : '—';
+
+                // ── Actions ──
+                const tdActions = document.createElement('td');
+                tdActions.style.textAlign = 'right';
+                const actDiv = document.createElement('div');
+                actDiv.style.cssText = 'display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap;';
+
+                const btnDetail = makeActionBtn('🔍', 'btn-edit', 'Détail / modifier', () => openUserDetailModal(user));
+                const btnPwd = makeActionBtn('🔑', '', 'Réinitialiser le mot de passe', () => resetUserPassword(user));
+                btnPwd.style.background = 'rgba(255,193,7,0.2)'; btnPwd.style.color = '#ffc107';
+
+                const btnBan = makeActionBtn(
+                    user.is_banned ? '✅' : '🚫',
+                    '',
+                    user.is_banned ? 'Débannir' : 'Bannir',
+                    () => toggleBanUser(user)
+                );
+                btnBan.style.background = user.is_banned
+                    ? 'rgba(0,255,136,0.1)' : 'rgba(255,71,87,0.15)';
+                btnBan.style.color = user.is_banned ? '#00ff88' : '#ff4757';
+
+                const btnForceOut = makeActionBtn('🔌', '', 'Forcer la déconnexion', () => forceSignOut(user));
+                btnForceOut.style.background = 'rgba(255,152,0,0.15)'; btnForceOut.style.color = '#ff9800';
+
+                const btnDel = makeActionBtn('🗑️', 'btn-delete', 'Supprimer définitivement', () => deleteUser(user));
+
+                actDiv.append(btnDetail, btnPwd, btnBan, btnForceOut, btnDel);
+                tdActions.appendChild(actDiv);
+
+                tr.append(tdUser, tdRole, tdStatus, tdCreated, tdLastLogin, tdActions);
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+            wrap.replaceChildren(table);
+        }
+
+        // ----------------------------
+        // HELPER : couleur déterministe depuis un string (UUID)
+        // ----------------------------
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            const h = Math.abs(hash) % 360;
+            return `hsl(${h},55%,40%)`;
+        }
+
+        function makeActionBtn(icon, extraClass, title, onClick) {
+            const btn = document.createElement('button');
+            btn.className = `action-btn ${extraClass}`;
+            btn.title = title;
+            btn.textContent = icon;
+            btn.onclick = onClick;
+            return btn;
+        }
+
+        // ----------------------------
+        // MODAL DÉTAIL / ÉDITION USER
+        // ----------------------------
+        function openUserDetailModal(user) {
+            const existing = document.getElementById('user-detail-modal');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'user-detail-modal';
+            overlay.className = 'modal-overlay';
+            overlay.style.display = 'flex';
+
+            const content = document.createElement('div');
+            content.className = 'modal-content';
+            content.style.maxWidth = '520px';
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'modal-header';
+            header.innerHTML = `<h3>👤 ${escapeHtml(user.username) || user.id.slice(0, 8)}</h3>`;
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'close-modal';
+            closeBtn.textContent = '×';
+            closeBtn.onclick = () => overlay.remove();
+            header.appendChild(closeBtn);
+
+            // Contenu — toujours textContent, jamais innerHTML avec données BDD
+            const body = document.createElement('div');
+            body.style.padding = '20px';
+
+            function infoRow(label, value, valueStyle = '') {
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);align-items:center;';
+                const lbl = document.createElement('span');
+                lbl.style.cssText = 'color:var(--text-dim);font-size:13px;';
+                lbl.textContent = label;
+                const val = document.createElement('span');
+                val.style.cssText = `font-size:13px;font-weight:500;font-family:monospace;${valueStyle}`;
+                val.textContent = value || '—';
+                row.append(lbl, val);
+                return row;
+            }
+
+            body.appendChild(infoRow('ID', user.id));
+            body.appendChild(infoRow('Username', user.username));
+            body.appendChild(infoRow('Rôle', user.role));
+            body.appendChild(infoRow('Statut', user.is_banned ? 'Banni' : 'Actif',
+                user.is_banned ? 'color:#ff4757;' : 'color:#00ff88;'));
+            body.appendChild(infoRow('Inscription',
+                user.created_at ? new Date(user.created_at).toLocaleString('fr-FR') : null));
+            body.appendChild(infoRow('Dernière connexion',
+                user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString('fr-FR') : null));
+
+            // ── Modifier le rôle inline ──
+            const roleSection = document.createElement('div');
+            roleSection.style.cssText = 'margin-top:20px;';
+            const roleLabel = document.createElement('div');
+            roleLabel.style.cssText = 'font-size:13px;color:var(--text-dim);margin-bottom:8px;';
+            roleLabel.textContent = 'Modifier le rôle :';
+
+            const roleSelect = document.createElement('select');
+            roleSelect.style.cssText = 'background:rgba(0,0,0,0.5);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;';
+            [['user', '👤 Utilisateur'], ['admin', '👑 Admin']].forEach(([v, l]) => {
+                const o = document.createElement('option');
+                o.value = v; o.textContent = l; o.selected = user.role === v;
+                roleSelect.appendChild(o);
+            });
+
+            // ── Modifier le username ──
+            const usernameSection = document.createElement('div');
+            usernameSection.style.cssText = 'margin-top:14px;';
+            const usernameLabel = document.createElement('div');
+            usernameLabel.style.cssText = 'font-size:13px;color:var(--text-dim);margin-bottom:8px;';
+            usernameLabel.textContent = 'Modifier le username :';
+            const usernameInput = document.createElement('input');
+            usernameInput.type = 'text';
+            usernameInput.value = user.username || '';
+            usernameInput.style.cssText = 'background:rgba(0,0,0,0.5);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;box-sizing:border-box;';
+
+            usernameSection.append(usernameLabel, usernameInput);
+            roleSection.append(roleLabel, roleSelect, usernameSection);
+            body.appendChild(roleSection);
+
+            // ── Footer ──
+            const footer = document.createElement('div');
+            footer.className = 'modal-footer';
+
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn btn-danger';
+            btnCancel.textContent = '❌ Fermer';
+            btnCancel.onclick = () => overlay.remove();
+
+            const btnSave = document.createElement('button');
+            btnSave.className = 'btn btn-success';
+            btnSave.textContent = '💾 Enregistrer';
+            btnSave.onclick = async () => {
+                try {
+                    btnSave.disabled = true;
+                    btnSave.textContent = '⏳ Enregistrement...';
+                    const updates = {
+                        role: roleSelect.value,
+                        username: usernameInput.value.trim() || null,
+                        updated_at: new Date().toISOString()
+                    };
+                    const { error } = await supabaseClient
+                        .from('profiles')
+                        .update(updates)
+                        .eq('id', user.id);
+                    if (error) throw error;
+                    showToast('✅ Profil mis à jour !', 'success');
+                    overlay.remove();
+                    loadUsers();
+                } catch (err) {
+                    showToast('❌ ' + err.message, 'danger');
+                    btnSave.disabled = false;
+                    btnSave.textContent = '💾 Enregistrer';
+                }
+            };
+
+            footer.append(btnCancel, btnSave);
+            content.append(header, body, footer);
+            overlay.appendChild(content);
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
+
+        // ----------------------------
+        // CRÉER UN UTILISATEUR
+        // ----------------------------
+        function openCreateUserModal() {
+            const existing = document.getElementById('create-user-modal');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'create-user-modal';
+            overlay.className = 'modal-overlay';
+            overlay.style.display = 'flex';
+
+            const content = document.createElement('div');
+            content.className = 'modal-content';
+            content.style.maxWidth = '460px';
+
+            const header = document.createElement('div');
+            header.className = 'modal-header';
+            header.innerHTML = '<h3>➕ Créer un utilisateur</h3>';
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'close-modal'; closeBtn.textContent = '×';
+            closeBtn.onclick = () => overlay.remove();
+            header.appendChild(closeBtn);
+
+            const body = document.createElement('div');
+            body.style.padding = '20px';
+
+            function field(labelText, inputEl) {
+                const grp = document.createElement('div');
+                grp.className = 'form-group';
+                const lbl = document.createElement('label');
+                lbl.textContent = labelText;
+                grp.append(lbl, inputEl);
+                return grp;
+            }
+
+            const inputStyle = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;box-sizing:border-box;';
+
+            const emailInput = document.createElement('input');
+            emailInput.type = 'email'; emailInput.placeholder = 'email@exemple.com';
+            emailInput.style.cssText = inputStyle;
+
+            const usernameInput = document.createElement('input');
+            usernameInput.type = 'text'; usernameInput.placeholder = 'username';
+            usernameInput.style.cssText = inputStyle;
+
+            const passwordInput = document.createElement('input');
+            passwordInput.type = 'password'; passwordInput.placeholder = 'Mot de passe (min. 8 car.)';
+            passwordInput.style.cssText = inputStyle;
+
+            const roleSelect = document.createElement('select');
+            roleSelect.style.cssText = inputStyle;
+            [['user', '👤 Utilisateur'], ['admin', '👑 Admin']].forEach(([v, l]) => {
+                const o = document.createElement('option'); o.value = v; o.textContent = l;
+                roleSelect.appendChild(o);
+            });
+
+            body.append(
+                field('Email *', emailInput),
+                field('Username', usernameInput),
+                field('Mot de passe *', passwordInput),
+                field('Rôle', roleSelect)
+            );
+
+            // Avertissement sur l'Edge Function
+            const warn = document.createElement('div');
+            warn.style.cssText = 'margin-top:12px;padding:10px;background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:6px;font-size:12px;color:#ffc107;';
+            warn.textContent = '⚠️ Nécessite l\'Edge Function admin-users déployée (voir documentation).';
+            body.appendChild(warn);
+
+            const footer = document.createElement('div');
+            footer.className = 'modal-footer';
+
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn btn-danger'; btnCancel.textContent = '❌ Annuler';
+            btnCancel.onclick = () => overlay.remove();
+
+            const btnCreate = document.createElement('button');
+            btnCreate.className = 'btn btn-success';
+            btnCreate.innerHTML = '<i class="fa-solid fa-plus"></i> Créer';
+            btnCreate.onclick = async () => {
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const username = usernameInput.value.trim();
+                const role = roleSelect.value;
+
+                if (!email || !password) { showToast('⚠️ Email et mot de passe requis', 'warning'); return; }
+                if (password.length < 8) { showToast('⚠️ Mot de passe trop court (min. 8)', 'warning'); return; }
+
+                btnCreate.disabled = true;
+                btnCreate.textContent = '⏳ Création...';
+                try {
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${session.access_token}`
+                        },
+                        body: JSON.stringify({ action: 'create', email, password, username, role })
+                    });
+                    const result = await res.json();
+                    if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+
+                    showToast(`✅ Utilisateur ${email} créé !`, 'success');
+                    overlay.remove();
+                    loadUsers();
+                } catch (err) {
+                    showToast('❌ ' + err.message, 'danger');
+                    btnCreate.disabled = false;
+                    btnCreate.innerHTML = '<i class="fa-solid fa-plus"></i> Créer';
+                }
+            };
+
+            footer.append(btnCancel, btnCreate);
+            content.append(header, body, footer);
+            overlay.appendChild(content);
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
+
+        // ----------------------------
+        // INVITATION PAR EMAIL
+        // ----------------------------
+        function openInviteModal() {
+            const existing = document.getElementById('invite-user-modal');
+            if (existing) existing.remove();
+
+            const overlay = document.createElement('div');
+            overlay.id = 'invite-user-modal';
+            overlay.className = 'modal-overlay';
+            overlay.style.display = 'flex';
+
+            const content = document.createElement('div');
+            content.className = 'modal-content';
+            content.style.maxWidth = '420px';
+
+            const header = document.createElement('div');
+            header.className = 'modal-header';
+            header.innerHTML = '<h3>✉️ Inviter par email</h3>';
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'close-modal'; closeBtn.textContent = '×';
+            closeBtn.onclick = () => overlay.remove();
+            header.appendChild(closeBtn);
+
+            const body = document.createElement('div');
+            body.style.padding = '20px';
+
+            const info = document.createElement('p');
+            info.style.cssText = 'color:var(--text-dim);font-size:13px;margin-bottom:16px;';
+            info.textContent = "L'utilisateur recevra un lien d'invitation pour définir son mot de passe.";
+
+            const inputStyle = 'background:rgba(0,0,0,0.4);color:#fff;border:1px solid rgba(255,255,255,0.15);padding:8px;border-radius:6px;width:100%;box-sizing:border-box;';
+
+            const emailInput = document.createElement('input');
+            emailInput.type = 'email'; emailInput.placeholder = 'email@exemple.com';
+            emailInput.style.cssText = inputStyle;
+
+            const roleSelect = document.createElement('select');
+            roleSelect.style.cssText = 'margin-top:12px;' + inputStyle;
+            [['user', '👤 Utilisateur'], ['admin', '👑 Admin']].forEach(([v, l]) => {
+                const o = document.createElement('option'); o.value = v; o.textContent = l;
+                roleSelect.appendChild(o);
+            });
+
+            body.append(info, emailInput, roleSelect);
+
+            const footer = document.createElement('div');
+            footer.className = 'modal-footer';
+
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn btn-danger'; btnCancel.textContent = '❌ Annuler';
+            btnCancel.onclick = () => overlay.remove();
+
+            const btnSend = document.createElement('button');
+            btnSend.className = 'btn btn-success';
+            btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoyer l\'invitation';
+            btnSend.onclick = async () => {
+                const email = emailInput.value.trim();
+                const role = roleSelect.value;
+                if (!email) { showToast('⚠️ Email requis', 'warning'); return; }
+
+                btnSend.disabled = true;
+                btnSend.textContent = '⏳ Envoi...';
+                try {
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${session.access_token}`
+                        },
+                        body: JSON.stringify({ action: 'invite', email, role })
+                    });
+                    const result = await res.json();
+                    if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+
+                    showToast(`✅ Invitation envoyée à ${email} !`, 'success');
+                    overlay.remove();
+                } catch (err) {
+                    showToast('❌ ' + err.message, 'danger');
+                    btnSend.disabled = false;
+                    btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Envoyer l\'invitation';
+                }
+            };
+
+            footer.append(btnCancel, btnSend);
+            content.append(header, body, footer);
+            overlay.appendChild(content);
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+            document.body.appendChild(overlay);
+        }
+
+        // ----------------------------
+        // RESET MOT DE PASSE
+        // ----------------------------
+        async function resetUserPassword(user) {
+            // On ne peut envoyer le reset qu'à l'email du user.
+            // Le problème : profiles ne stocke PAS l'email (c'est dans auth.users).
+            // On passe par l'Edge Function qui a accès à auth.admin.
+
+            if (!confirm(`Envoyer un email de réinitialisation du mot de passe pour l'utilisateur "${user.username || user.id.slice(0, 8)}" ?`)) return;
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ action: 'reset_password', userId: user.id })
+                });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+                showToast('✅ Email de réinitialisation envoyé !', 'success');
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        }
+
+        // ----------------------------
+        // BAN / UNBAN
+        // ----------------------------
+        async function toggleBanUser(user) {
+            const action = user.is_banned ? 'débannir' : 'bannir';
+            if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} l'utilisateur "${user.username || user.id.slice(0, 8)}" ?`)) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('profiles')
+                    .update({ is_banned: !user.is_banned, updated_at: new Date().toISOString() })
+                    .eq('id', user.id);
+                if (error) throw error;
+
+                // Si on banne → forcer la déco via Edge Function
+                if (!user.is_banned) {
+                    try {
+                        const { data: { session } } = await supabaseClient.auth.getSession();
+                        await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${session.access_token}`
+                            },
+                            body: JSON.stringify({ action: 'force_signout', userId: user.id })
+                        });
+                    } catch (_) { /* non-bloquant */ }
+                }
+
+                showToast(user.is_banned ? '✅ Utilisateur débanni' : '🚫 Utilisateur banni', 'info');
+                loadUsers();
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        }
+
+        // ----------------------------
+        // FORCER LA DÉCONNEXION
+        // ----------------------------
+        async function forceSignOut(user) {
+            if (!confirm(`Forcer la déconnexion de "${user.username || user.id.slice(0, 8)}" sur tous les appareils ?`)) return;
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ action: 'force_signout', userId: user.id })
+                });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+                showToast('✅ Déconnexion forcée !', 'success');
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        }
+
+        // ----------------------------
+        // SUPPRIMER UN UTILISATEUR
+        // ----------------------------
+        async function deleteUser(user) {
+            const confirm1 = confirm(`⚠️ Supprimer définitivement "${user.username || user.id.slice(0, 8)}" ?\nCette action est irréversible et supprimera aussi son compte d'authentification.`);
+            if (!confirm1) return;
+
+            // Double confirmation
+            const confirm2 = confirm(`Dernière confirmation : supprimer cet utilisateur ?`);
+            if (!confirm2) return;
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ action: 'delete', userId: user.id })
+                });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || 'Erreur inconnue');
+                showToast('✅ Utilisateur supprimé', 'info');
+                loadUsers();
+            } catch (err) {
+                showToast('❌ ' + err.message, 'danger');
+            }
+        }
+    </script>
+
+    <script>
+        // ---- Mobile Sidebar ----
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const btn = document.getElementById('hamburger-btn');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+            btn.classList.toggle('open');
+        }
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const btn = document.getElementById('hamburger-btn');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            btn.classList.remove('open');
+        }
+        // Close sidebar when a section is selected on mobile
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) closeSidebar();
+                });
+            });
+        });
+
+
+        async function handleForceRefresh() {
+            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
+            const btn = document.getElementById('refresh-btn');
+            const status = document.getElementById('refresh-status');
+            const messageInput = document.getElementById('refresh-message');
+
+            // 1. Vérification du rôle côté client (première barrière)
+            try {
+                const { data: { user } } = await window.EchoDB.supabase.auth.getUser();
+                if (!user) throw new Error('Non authentifié');
+
+                const { data: profile, error } = await window.EchoDB.supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error || !profile) throw new Error('Profil introuvable');
+                if (profile.role !== 'admin') throw new Error('Accès refusé : rôle admin requis');
+
+            } catch (err) {
+                status.textContent = '❌ ' + err.message;
+                status.style.color = 'var(--danger)';
+                return; // On arrête tout ici
+            }
+
+            // 2. Confirmation explicite (évite les clics accidentels)
+            const message = messageInput.value.trim() || 'Le site va se rafraîchir...';
+            const confirmed = confirm(`⚠️ Tous les clients connectés vont recharger la page.\n\nMessage : "${message}"\n\nConfirmer ?`);
+            if (!confirmed) return;
+
+            // 3. Envoi de la commande (la RLS Supabase est le vrai verrou côté serveur)
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
+                status.textContent = '';
+
+                await forceRefreshAllClients(message);
+
+                status.textContent = '✅ Commande envoyée avec succès';
+                status.style.color = 'var(--success)';
+
+            } catch (err) {
+                console.error('Erreur refresh:', err);
+                status.textContent = '❌ Erreur : ' + err.message;
+                status.style.color = 'var(--danger)';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-rotate"></i> Forcer le rechargement';
+            }
+        }
+    </script>
+    <script type="module" src="js/remote-refresh.js"></script>
+</body>
+
+</html>
