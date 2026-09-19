@@ -23,12 +23,19 @@ Nettoyage post-projet : le développement (et la soutenance EPITA) étant termin
 - Résidus CSS de la modale secrète oubliés hors du bloc inline d'`index.html` : `.btn-paste` (`css/components.css`), `#secretInput`/`.input-paste-container` (`css/modals.css`)
 - Résidus CSS du remapping de raccourcis clavier : `.shortcuts-desc`, `.shortcuts-list`, `.shortcut-item`, `.shortcut-info`, `.shortcut-input`, `.capturing` + variantes responsive (`css/settings.css`)
 - Types de notification `new_version` et `error` dans `js/discord-webhook.js`, jamais appelés par aucun code (code mort préexistant)
+- Assets non utilisés (~13 Mo) : versions non compressées de fichiers déjà présents en version optimisée (`anim.mp4`, `arriere.png`, `mp3musique.mp3`, `musique.mp3`, `pngArriere.png`), jamais chargées par aucune page
+- Dossier `docs/` (rapports de soutenance EPITA, ~39 Mo), archivé ailleurs, retiré du dépôt
+- Section admin "🔧 Gestion des téléchargements" (sidebar "📥 Téléchargements") : pilotait des toggles (Kit Complet, PDF Charte Graphique, Assets Pack) pour les exports de `design.html`, supprimée avec cette page — plus aucune page ne consommait ces réglages. Table Supabase `download_packs` supprimée (aucune FK/trigger externe), CSS mort associé (`.download-controls`, `.control-item`, `.switch-label`, `.control-text`) retiré de `css/admin.css`
+- Carte "Refresh" de la vue d'ensemble admin : doublon inerte (un `<p>` affichant du texte brut `await forceRefreshAllClients(...)`, jamais exécuté) de la vraie carte "🔄 Forcer le rechargement des clients" juste en dessous
 
 ### Sécurité
 - Webhook Discord du formulaire de feedback (`feedback.html`), auparavant codé en dur et exposé publiquement dans `js/database.js`, régénéré et déplacé dans `webhook_settings` (même pattern que `main_webhook`/`twofa_webhook`/`refresh_webhook`)
+- Ajout de Subresource Integrity (`integrity`/`crossorigin`) sur toutes les ressources chargées depuis un CDN (Font Awesome, marked.js, SDK Supabase) suite à une alerte CodeQL (`js/functionality-from-untrusted-source`) ; SDK Supabase épinglé à une version exacte (`2.116.0`) au passage, une version flottante (`@2`) étant incompatible avec SRI
 
 ### Modifié
 - `js/utils/settings.js`, `js/utils/share.js`, `js/ui/music.js` : nettoyage de code, fonctionnalités conservées intactes
+- `install.css`, `lore.css`, `gameplay.css` (chargées uniquement par `index.html`, toujours ensemble) fusionnées dans la chaîne `@import` de `css/style.css` au lieu d'être des `<link>` séparés — réduit le nombre de requêtes CSS sans changer l'ordre de cascade (déjà inliné en un seul fichier au build par `minify.js`/clean-css)
+- README.md et AGENTS.md réécrits pour refléter l'état actuel du projet (sans historique de versions dans le README)
 
 ### Notes
 - `vercel.json` et `.github/workflows/deploy.yml` conservés tels quels : les deux pipelines de déploiement sont utilisés

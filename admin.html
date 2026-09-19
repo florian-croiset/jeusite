@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Echo Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha384-/o6I2CkkWC//PSjvWC/eYN7l3xM3tJm8ZzVkCOfp//W05QcE3mlGskpoHB6XqI+B" crossorigin="anonymous">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/admin.css">
     <style>
@@ -66,7 +66,6 @@
                 <div class="sidebar-item active" data-section="overview">📊 Vue d'ensemble</div>
                 <div class="sidebar-item" data-section="versions">🎮 Versions du jeu</div>
                 <div class="sidebar-item" data-section="forms">📋 Formulaires</div>
-                <div class="sidebar-item" data-section="downloads-manage">📥 Téléchargements</div>
                 <div class="sidebar-item" data-section="github-stats">🐙 Stats GitHub</div>
                 <div class="sidebar-item" data-section="tracking">🔗 Webhooks</div>
                 <div class="sidebar-item" data-section="users">👥 Utilisateurs</div>
@@ -88,12 +87,6 @@
                         <div class="stat-card">
                             <div class="stat-label">Téléchargements</div>
                             <div class="stat-value" id="stats-downloads">-</div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h2>Refresh</h2>
-                        <div>
-                            <p>await forceRefreshAllClients('Nouvelle version disponible !');</p>
                         </div>
                     </div>
                     <div class="card">
@@ -266,40 +259,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Gestion des téléchargements -->
-                <div class="section" id="downloads-manage">
-                    <div class="card">
-                        <h2>🔧 Gestion des téléchargements</h2>
-
-                        <div class="download-controls">
-                            <div class="control-item">
-                                <label class="switch-label">
-                                    <input type="checkbox" id="toggle-kit" class="download-toggle">
-                                    <span class="switch-slider"></span>
-                                    <span class="control-text">Kit Complet</span>
-                                </label>
-                            </div>
-                            <div class="control-item">
-                                <label class="switch-label">
-                                    <input type="checkbox" id="toggle-pdf" class="download-toggle">
-                                    <span class="switch-slider"></span>
-                                    <span class="control-text">PDF Charte Graphique</span>
-                                </label>
-                            </div>
-                            <div class="control-item">
-                                <label class="switch-label">
-                                    <input type="checkbox" id="toggle-assets" class="download-toggle">
-                                    <span class="switch-slider"></span>
-                                    <span class="control-text">Assets Pack</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="btn btn-success" onclick="saveDownloadSettings()" style="margin-top: 20px;">
-                            💾 Enregistrer les modifications
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Section Stats GitHub -->
                 <div class="section" id="github-stats">
                     <div class="card">
@@ -610,7 +569,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0" integrity="sha384-JBR+x8blGwjDRO63aHCGiZMD4VNiTR4ZUGA+N6ZKLf3zNt1fK8IBpcgPaMrxqWBp" crossorigin="anonymous"></script>
     <script>
 
         function escapeHtml(str) {
@@ -624,7 +583,7 @@
         }
 
         const ROLE_PERMISSIONS = {
-            admin: ['overview', 'versions', 'forms', 'downloads-manage', 'github-stats', 'tracking', 'users', 'site-settings'],
+            admin: ['overview', 'versions', 'forms', 'github-stats', 'tracking', 'users', 'site-settings'],
             user: []
         };
 
@@ -806,60 +765,6 @@
                 console.error('Erreur activités:', error);
             }
         }
-
-
-        // Charger l'état des téléchargements
-        async function loadDownloadSettings() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('download_packs')
-                    .select('*')
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('toggle-assets').checked = data.assets_pack_enabled;
-                document.getElementById('toggle-pdf').checked = data.pdf_charter_enabled;
-                document.getElementById('toggle-kit').checked = data.complete_kit_enabled;
-            } catch (error) {
-                console.error('Erreur chargement settings:', error);
-            }
-        }
-
-        // Sauvegarder les paramètres
-        window.saveDownloadSettings = async function () {
-            if (currentUserProfile?.role !== 'admin') { showToast('❌ Action réservée aux admins', 'danger'); return; }
-            try {
-                const settings = {
-                    assets_pack_enabled: document.getElementById('toggle-assets').checked,
-                    pdf_charter_enabled: document.getElementById('toggle-pdf').checked,
-                    complete_kit_enabled: document.getElementById('toggle-kit').checked,
-                    updated_at: new Date().toISOString()
-                };
-
-                const user = await supabaseClient.auth.getUser();
-                if (user.data.user) {
-                    settings.updated_by = user.data.user.id;
-                }
-
-                const { error } = await supabaseClient
-                    .from('download_packs')
-                    .update(settings)
-                    .eq('id', '00000000-0000-0000-0000-000000000001');
-
-                if (error) throw error;
-
-                alert('✅ Paramètres sauvegardés avec succès !');
-            } catch (error) {
-                console.error('Erreur sauvegarde:', error);
-                alert('❌ Erreur : ' + error.message);
-            }
-        };
-
-        // Charger au clic sur la section
-        document.querySelector('[data-section="downloads-manage"]')?.addEventListener('click', () => {
-            loadDownloadSettings();
-        });
 
 
         // ===== TOAST (remplace les alert) =====
