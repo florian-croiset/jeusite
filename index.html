@@ -9,8 +9,6 @@
     <link rel="preload" as="image" href="assets/arriere.webp">
     <!-- Précharger la police d'icônes (subset local ~7 Ko au lieu de ~270 Ko depuis le CDN) -->
     <link rel="preload" href="assets/fonts/fa-solid-900.subset.woff2" as="font" type="font/woff2" crossorigin>
-    <!-- Font Awesome — subset local (uniquement les icônes utilisées sur cette page) -->
-    <link rel="stylesheet" href="css/fontawesome-subset.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echo</title>
@@ -18,7 +16,21 @@
         content="Découvrez Echo, un metroidvania intense signé Team Nightberry : exploration, plateformes et secrets dans un monde envoûtant.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- CSS critique du splash screen, inline : s'applique instantanément (pas d'attente
+         réseau), avant même que css/style.css (qui contient la même règle #splash-screen,
+         importée en 1er depuis là aussi) n'arrive et ne prenne le relais. Évite un flash
+         blanc au tout premier paint. -->
     <style>
+        html, body { background: #0a0a0a; }
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+        }
         @media (max-width: 768px) {
             .mobile {
                 display: none !important;
