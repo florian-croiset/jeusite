@@ -188,7 +188,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleSplash" ${this.settings.splashEnabled ? 'checked' : ''}>
+                                    <input type="checkbox" id="toggleSplash" aria-label="${this.t('splashScreen')}" ${this.settings.splashEnabled ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -202,7 +202,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleParticles" ${this.settings.particlesEnabled ? 'checked' : ''}>
+                                    <input type="checkbox" id="toggleParticles" aria-label="${this.t('particles')}" ${this.settings.particlesEnabled ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -216,7 +216,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleAnimations" ${this.settings.animationsEnabled ? 'checked' : ''}>
+                                    <input type="checkbox" id="toggleAnimations" aria-label="${this.t('animations')}" ${this.settings.animationsEnabled ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -230,7 +230,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleDarkMode" ${this.settings.darkMode ? 'checked' : ''}>
+                                    <input type="checkbox" id="toggleDarkMode" aria-label="${this.t('darkMode')}" ${this.settings.darkMode ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -254,7 +254,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="togglePerformance" ${this.settings.performanceMode ? 'checked' : ''}>
+                                    <input type="checkbox" id="togglePerformance" aria-label="${this.t('performanceMode')}" ${this.settings.performanceMode ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -268,7 +268,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleSound" ${this.settings.soundEnabled ? 'checked' : ''}>
+                                    <input type="checkbox" id="toggleSound" aria-label="${this.t('sound')}" ${this.settings.soundEnabled ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -282,7 +282,7 @@ class SettingsManager {
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="toggleAutoPlay" ${this.settings.autoPlayVideo ? 'checked' : ''}>
+                                    <input type="checkbox" id="toggleAutoPlay" aria-label="${this.t('autoPlay')}" ${this.settings.autoPlayVideo ? 'checked' : ''}>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
