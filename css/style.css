@@ -32,3 +32,8 @@
 
 /* Settings */
 @import url("settings.css");
+
+/* Sections spécifiques à index.html (chargées séparément avant, jamais utilisées ailleurs) */
+@import url("install.css");
+@import url("lore.css");
+@import url("gameplay.css");
